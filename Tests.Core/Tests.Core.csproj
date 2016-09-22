@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C688D9F1-7DCE-4C2C-BAE7-B08147E09876}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tests.Core</RootNamespace>
+    <AssemblyName>Tests.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.2.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs" />
+    <Compile Include="DateTests.cs" />
+    <Compile Include="Entities\MoneyTests\Arrange.cs" />
+    <Compile Include="Entities\MoneyTests\WithDefaultCurrency.cs" />
+    <Compile Include="Entities\MoneyTests\WithSwedishCurrency.cs" />
+    <Compile Include="Services\GlobalizationTests.cs" />
+    <Compile Include="UseCases\ActionsChartTests.cs" />
+    <Compile Include="UseCases\ActionsTests.cs" />
+    <Compile Include="UseCases\AddAppTests.cs" />
+    <Compile Include="UseCases\AddBunchFormTests.cs" />
+    <Compile Include="UseCases\AddBunchTests.cs" />
+    <Compile Include="UseCases\AddCashgameFormTests.cs" />
+    <Compile Include="UseCases\AddCashgameTests.cs" />
+    <Compile Include="UseCases\AddEventTests.cs" />
+    <Compile Include="UseCases\AddLocationTests.cs" />
+    <Compile Include="UseCases\AddPlayerTests.cs" />
+    <Compile Include="UseCases\AddUserTests.cs" />
+    <Compile Include="UseCases\AppContextTests.cs" />
+    <Compile Include="UseCases\AppDetailsTests.cs" />
+    <Compile Include="UseCases\AppListTests.cs" />
+    <Compile Include="UseCases\BaseContextTests.cs" />
+    <Compile Include="UseCases\BunchContextTests.cs" />
+    <Compile Include="UseCases\BunchDetailsTests\WithManager.cs" />
+    <Compile Include="UseCases\BunchDetailsTests\WithNoRole.cs" />
+    <Compile Include="UseCases\BunchDetailsTests\WithPlayer.cs" />
+    <Compile Include="UseCases\BunchDetailsTests\Arrange.cs" />
+    <Compile Include="UseCases\BunchListTests.cs" />
+    <Compile Include="UseCases\BuyinTests.cs" />
+    <Compile Include="UseCases\CashgameChartTests.cs" />
+    <Compile Include="UseCases\CashgameContextTests.cs" />
+    <Compile Include="UseCases\CashgameDetailsChartTests.cs" />
+    <Compile Include="UseCases\CashgameDetailsTests.cs" />
+    <Compile Include="UseCases\CashgameFactsTests.cs" />
+    <Compile Include="UseCases\CashgameListTests.cs" />
+    <Compile Include="UseCases\CashoutTests\Arrange.cs" />
+    <Compile Include="UseCases\CashoutTests\PlayerHasNotCheckedOutBefore.cs" />
+    <Compile Include="UseCases\CashoutTests\PlayerHasCheckedOutBefore.cs" />
+    <Compile Include="UseCases\CashoutTests\InvalidStack.cs" />
+    <Compile Include="UseCases\ChangePasswordTests.cs" />
+    <Compile Include="UseCases\DeleteCashgameTests.cs" />
+    <Compile Include="UseCases\DeleteCheckpointTests.cs" />
+    <Compile Include="UseCases\EditBunchTests.cs" />
+    <Compile Include="UseCases\EditCashgameFormTests.cs" />
+    <Compile Include="UseCases\EditCashgameTests.cs" />
+    <Compile Include="UseCases\EditCheckpointTests.cs" />
+    <Compile Include="UseCases\EditUserTests.cs" />
+    <Compile Include="UseCases\EndCashgameTests.cs" />
+    <Compile Include="UseCases\LocationDetailsTests.cs" />
+    <Compile Include="UseCases\LoginFormTests.cs" />
+    <Compile Include="UseCases\ReportTests.cs" />
+    <Compile Include="UseCases\DeletePlayerTests.cs" />
+    <Compile Include="UseCases\EditBunchFormTests.cs" />
+    <Compile Include="UseCases\EditCheckpointFormTests.cs" />
+    <Compile Include="UseCases\EditUserFormTests.cs" />
+    <Compile Include="UseCases\EventDetailsTests.cs" />
+    <Compile Include="UseCases\EventListTests.cs" />
+    <Compile Include="UseCases\ForgotPasswordTests.cs" />
+    <Compile Include="UseCases\InvitePlayerTests.cs" />
+    <Compile Include="UseCases\JoinBunchConfirmationTests.cs" />
+    <Compile Include="UseCases\JoinBunchFormTests.cs" />
+    <Compile Include="UseCases\JoinBunchTests.cs" />
+    <Compile Include="UseCases\LoginTests.cs" />
+    <Compile Include="UseCases\MatrixTests.cs" />
+    <Compile Include="UseCases\PlayerBadgesTests.cs" />
+    <Compile Include="UseCases\PlayerDetailsTests.cs" />
+    <Compile Include="UseCases\PlayerFactsTests.cs" />
+    <Compile Include="UseCases\PlayerListTests.cs" />
+    <Compile Include="UseCases\RunningCashgameTests.cs" />
+    <Compile Include="UseCases\TestEmailTests.cs" />
+    <Compile Include="UseCases\TopListTests.cs" />
+    <Compile Include="UseCases\UserDetailsTests\Arrange.cs" />
+    <Compile Include="UseCases\UserDetailsTests\OtherUserAsAdmin.cs" />
+    <Compile Include="UseCases\UserDetailsTests\OtherUser.cs" />
+    <Compile Include="UseCases\UserDetailsTests\OwnUser.cs" />
+    <Compile Include="UseCases\UserListTests.cs" />
+    <Compile Include="UseCases\VerifyAppKeyTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{4D5D8057-AFD8-40AF-A756-558E1038F193}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tests.Common\Tests.Common.csproj">
+      <Project>{D30140A0-6006-4D0E-AD74-067EE44F4FC9}</Project>
+      <Name>Tests.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

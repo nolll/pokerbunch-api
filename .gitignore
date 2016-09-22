@@ -1,0 +1,17 @@
+packages
+*.ncrunchproject
+*.ncrunchsolution.user
+_NCrunch_*/
+.vs/
+*.suo
+**/obj/
+**/bin/
+**/*proj.user
+*.pubxml
+*.pubxml.user
+**/*.dbmdl
+Web/_build/main.js
+**/Properties/PublishProfiles/*.*
+Web/node_modules
+Web/Assets
+**/*.Debug.config

@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[App]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [AppKey] NVARCHAR(50) NOT NULL, 
+    [Name] NVARCHAR(50) NOT NULL, 
+    [UserId] INT NOT NULL
+)
