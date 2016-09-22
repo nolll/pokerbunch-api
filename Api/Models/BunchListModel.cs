@@ -6,14 +6,14 @@ using Core.UseCases;
 namespace Api.Models
 {
     [CollectionDataContract(Namespace = "", Name = "bunches", ItemName = "bunch")]
-    public class ApiBunchList : List<ApiBunch>
+    public class BunchListModel : List<BunchModel>
     {
-        public ApiBunchList(BunchList.Result bunchListResult)
+        public BunchListModel(GetBunchList.Result bunchListResult)
         {
-            AddRange(bunchListResult.Bunches.Select(o => new ApiBunch(o.Id, o.Slug, o.DisplayName)));
+            AddRange(bunchListResult.Bunches.Select(o => new BunchModel(o.Id, o.Slug, o.DisplayName)));
         }
 
-        public ApiBunchList()
+        public BunchListModel()
         {
         }
     }

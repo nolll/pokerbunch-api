@@ -5,12 +5,12 @@ using Core.Services;
 
 namespace Core.UseCases
 {
-    public class BunchList
+    public class GetBunchList
     {
         private readonly BunchService _bunchService;
         private readonly UserService _userService;
 
-        public BunchList(BunchService bunchService, UserService userService)
+        public GetBunchList(BunchService bunchService, UserService userService)
         {
             _bunchService = bunchService;
             _userService = userService;

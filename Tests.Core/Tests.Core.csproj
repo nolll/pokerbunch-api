@@ -65,10 +65,10 @@
     <Compile Include="UseCases\AppListTests.cs" />
     <Compile Include="UseCases\BaseContextTests.cs" />
     <Compile Include="UseCases\BunchContextTests.cs" />
-    <Compile Include="UseCases\BunchDetailsTests\WithManager.cs" />
-    <Compile Include="UseCases\BunchDetailsTests\WithNoRole.cs" />
-    <Compile Include="UseCases\BunchDetailsTests\WithPlayer.cs" />
-    <Compile Include="UseCases\BunchDetailsTests\Arrange.cs" />
+    <Compile Include="UseCases\GetBunchTests\WithManager.cs" />
+    <Compile Include="UseCases\GetBunchTests\WithNoRole.cs" />
+    <Compile Include="UseCases\GetBunchTests\WithPlayer.cs" />
+    <Compile Include="UseCases\GetBunchTests\Arrange.cs" />
     <Compile Include="UseCases\BunchListTests.cs" />
     <Compile Include="UseCases\BuyinTests.cs" />
     <Compile Include="UseCases\CashgameChartTests.cs" />

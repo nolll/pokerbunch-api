@@ -11,19 +11,19 @@ namespace Api.Controllers
         [Route(ApiRoutes.BunchList)]
         [AcceptVerbs("GET")]
         [ApiAuthorize]
-        public ApiBunchList List()
+        public BunchListModel GetList()
         {
-            var bunchListResult = UseCase.BunchList.Execute(new BunchList.UserBunchesRequest(CurrentUserName));
-            return new ApiBunchList(bunchListResult);
+            var bunchListResult = UseCase.GetBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
+            return new BunchListModel(bunchListResult);
         }
 
-        [Route(ApiRoutes.BunchDetails)]
+        [Route(ApiRoutes.BunchGet)]
         [AcceptVerbs("GET")]
         [ApiAuthorize]
-        public IHttpActionResult Details(string slug)
+        public IHttpActionResult Get(string slug)
         {
-            var bunchDetails = UseCase.BunchDetails.Execute(new BunchDetails.Request(CurrentUserName, slug));
-            var bunchModel = new ApiBunch(bunchDetails.Id, bunchDetails.Slug, bunchDetails.BunchName);
+            var bunchDetails = UseCase.GetBunch.Execute(new GetBunch.Request(CurrentUserName, slug));
+            var bunchModel = new BunchModel(bunchDetails.Id, bunchDetails.Slug, bunchDetails.BunchName);
             return Ok(bunchModel);
         }
     }

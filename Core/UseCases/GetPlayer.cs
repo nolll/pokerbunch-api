@@ -3,14 +3,14 @@ using Core.Services;
 
 namespace Core.UseCases
 {
-    public class PlayerDetails
+    public class GetPlayer
     {
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
         private readonly CashgameService _cashgameService;
         private readonly UserService _userService;
 
-        public PlayerDetails(BunchService bunchService, PlayerService playerService, CashgameService cashgameService, UserService userService)
+        public GetPlayer(BunchService bunchService, PlayerService playerService, CashgameService cashgameService, UserService userService)
         {
             _bunchService = bunchService;
             _playerService = playerService;

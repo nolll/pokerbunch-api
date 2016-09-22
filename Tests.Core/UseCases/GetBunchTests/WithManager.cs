@@ -1,7 +1,7 @@
 using Core.Entities;
 using NUnit.Framework;
 
-namespace Tests.Core.UseCases.BunchDetailsTests
+namespace Tests.Core.UseCases.GetBunchTests
 {
     public class WithManager : Arrange
     {

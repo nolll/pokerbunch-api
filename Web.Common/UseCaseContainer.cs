@@ -22,8 +22,8 @@ namespace Web.Common
         // User
 
         // Bunch
-        public BunchList BunchList => new BunchList(_deps.BunchService, _deps.UserService);
-        public BunchDetails BunchDetails => new BunchDetails(_deps.BunchService, _deps.UserService, _deps.PlayerService);
+        public GetBunchList GetBunchList => new GetBunchList(_deps.BunchService, _deps.UserService);
+        public GetBunch GetBunch => new GetBunch(_deps.BunchService, _deps.UserService, _deps.PlayerService);
 
         // Events
 
@@ -37,8 +37,8 @@ namespace Web.Common
         public Cashout Cashout => new Cashout(_deps.BunchService, _deps.CashgameService, _deps.PlayerService, _deps.UserService);
 
         // Player
-        public PlayerList PlayerList => new PlayerList(_deps.BunchService, _deps.UserService, _deps.PlayerService);
-        public PlayerDetails PlayerDetails => new PlayerDetails(_deps.BunchService, _deps.PlayerService, _deps.CashgameService, _deps.UserService);
+        public GetPlayerList GetPlayerList => new GetPlayerList(_deps.BunchService, _deps.UserService, _deps.PlayerService);
+        public GetPlayer GetPlayer => new GetPlayer(_deps.BunchService, _deps.PlayerService, _deps.CashgameService, _deps.UserService);
 
         // Apps
         public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppService);

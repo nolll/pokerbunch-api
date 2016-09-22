@@ -4,7 +4,7 @@ using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
 
-namespace Tests.Core.UseCases.BunchDetailsTests
+namespace Tests.Core.UseCases.GetBunchTests
 {
     public abstract class Arrange : ArrangeBase
     {
@@ -17,22 +17,22 @@ namespace Tests.Core.UseCases.BunchDetailsTests
         protected const string Description = "description";
         protected const string HouseRules = "houserules";
         protected virtual Role Role => Role.None;
-        private BunchDetails.Request _request;
-        private BunchDetails _sut;
+        private GetBunch.Request _request;
+        private GetBunch _sut;
 
         [SetUp]
         public void Setup()
         {
-            _sut = CreateSut<BunchDetails>();
+            _sut = CreateSut<GetBunch>();
 
             MockOf<IBunchService>().Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug, DisplayName, Description, HouseRules));
             MockOf<IPlayerService>().Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId, role: Role));
             MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(UserName)).Returns(new User(UserId, UserName));
         }
 
-        protected BunchDetails.Result Execute()
+        protected GetBunch.Result Execute()
         {
-            _request = new BunchDetails.Request(UserName, Slug);
+            _request = new GetBunch.Request(UserName, Slug);
             return _sut.Execute(_request);
         }
     }

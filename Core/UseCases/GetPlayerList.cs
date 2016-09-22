@@ -5,13 +5,13 @@ using Core.Services;
 
 namespace Core.UseCases
 {
-    public class PlayerList
+    public class GetPlayerList
     {
         private readonly BunchService _bunchService;
         private readonly UserService _userService;
         private readonly PlayerService _playerService;
 
-        public PlayerList(BunchService bunchService, UserService userService, PlayerService playerService)
+        public GetPlayerList(BunchService bunchService, UserService userService, PlayerService playerService)
         {
             _bunchService = bunchService;
             _userService = userService;
@@ -44,25 +44,25 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<PlayerListItem> Players { get; private set; }
+            public IList<ResultItem> Players { get; private set; }
             public bool CanAddPlayer { get; private set; }
             public string Slug { get; private set; }
 
             public Result(Bunch bunch, IEnumerable<Player> players, bool isManager)
             {
-                Players = players.Select(o => new PlayerListItem(o)).OrderBy(o => o.Name).ToList();
+                Players = players.Select(o => new ResultItem(o)).OrderBy(o => o.Name).ToList();
                 CanAddPlayer = isManager;
                 Slug = bunch.Slug;
             }
         }
 
-        public class PlayerListItem
+        public class ResultItem
         {
             public string Name { get; }
             public int Id { get; private set; }
             public string Color { get; set; }
 
-            public PlayerListItem(Player player)
+            public ResultItem(Player player)
             {
                 Name = player.DisplayName;
                 Id = player.Id;

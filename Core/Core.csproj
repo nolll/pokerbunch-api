@@ -121,8 +121,8 @@
     <Compile Include="UseCases\AppList.cs" />
     <Compile Include="UseCases\BaseContext.cs" />
     <Compile Include="UseCases\BunchContext.cs" />
-    <Compile Include="UseCases\BunchDetails.cs" />
-    <Compile Include="UseCases\BunchList.cs" />
+    <Compile Include="UseCases\GetBunch.cs" />
+    <Compile Include="UseCases\GetBunchList.cs" />
     <Compile Include="UseCases\Buyin.cs" />
     <Compile Include="UseCases\CashgameChart.cs" />
     <Compile Include="UseCases\CashgameContext.cs" />
@@ -162,9 +162,9 @@
     <Compile Include="UseCases\Login.cs" />
     <Compile Include="UseCases\Matrix.cs" />
     <Compile Include="UseCases\PlayerBadges.cs" />
-    <Compile Include="UseCases\PlayerDetails.cs" />
+    <Compile Include="UseCases\GetPlayer.cs" />
     <Compile Include="UseCases\PlayerFacts.cs" />
-    <Compile Include="UseCases\PlayerList.cs" />
+    <Compile Include="UseCases\GetPlayerList.cs" />
     <Compile Include="UseCases\Report.cs" />
     <Compile Include="UseCases\RunningCashgame.cs" />
     <Compile Include="UseCases\TestEmail.cs" />

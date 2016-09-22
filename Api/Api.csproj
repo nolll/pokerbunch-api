@@ -135,12 +135,12 @@
     <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Extensions\EnsureHttpsAttribute.cs" />
     <Compile Include="Extensions\ApiUrlExtensions.cs" />
-    <Compile Include="Models\ApiBunch.cs" />
-    <Compile Include="Models\ApiBunchList.cs" />
+    <Compile Include="Models\BunchModel.cs" />
+    <Compile Include="Models\BunchListModel.cs" />
     <Compile Include="Models\ApiCashgameTopList.cs" />
     <Compile Include="Models\ApiCashgameTopListItem.cs" />
-    <Compile Include="Models\ApiPlayer.cs" />
-    <Compile Include="Models\ApiPlayerList.cs" />
+    <Compile Include="Models\PlayerModel.cs" />
+    <Compile Include="Models\PlayerListModel.cs" />
     <Compile Include="Models\ApiRunning.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
     <Compile Include="ApiSettings.cs" />

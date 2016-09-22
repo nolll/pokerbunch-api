@@ -3,13 +3,13 @@ using Core.Services;
 
 namespace Core.UseCases
 {
-    public class BunchDetails
+    public class GetBunch
     {
         private readonly IBunchService _bunchService;
         private readonly IUserService _userService;
         private readonly IPlayerService _playerService;
 
-        public BunchDetails(IBunchService bunchService, IUserService userService, IPlayerService playerService)
+        public GetBunch(IBunchService bunchService, IUserService userService, IPlayerService playerService)
         {
             _bunchService = bunchService;
             _userService = userService;

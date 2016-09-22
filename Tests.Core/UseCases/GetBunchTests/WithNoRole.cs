@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
 using NUnit.Framework;
 
-namespace Tests.Core.UseCases.BunchDetailsTests
+namespace Tests.Core.UseCases.GetBunchTests
 {
     public class WithNoRole : Arrange
     {

@@ -6,14 +6,14 @@ using Core.UseCases;
 namespace Api.Models
 {
     [CollectionDataContract(Namespace = "", Name = "players", ItemName = "player")]
-    public class ApiPlayerList : List<ApiPlayer>
+    public class PlayerListModel : List<PlayerModel>
     {
-        public ApiPlayerList(PlayerList.Result playerListResult)
+        public PlayerListModel(GetPlayerList.Result playerListResult)
         {
-            AddRange(playerListResult.Players.Select(o => new ApiPlayer(o.Name)));
+            AddRange(playerListResult.Players.Select(o => new PlayerModel(o)));
         }
 
-        public ApiPlayerList()
+        public PlayerListModel()
         {
         }
     }

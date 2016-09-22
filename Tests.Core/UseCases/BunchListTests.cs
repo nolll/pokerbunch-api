@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void BunchList_ReturnsListOfBunchItems()
         {
-            var result = Sut.Execute(new BunchList.AllBunchesRequest(TestData.AdminUser.UserName));
+            var result = Sut.Execute(new GetBunchList.AllBunchesRequest(TestData.AdminUser.UserName));
 
             Assert.AreEqual(2, result.Bunches.Count);
             Assert.AreEqual("bunch-a", result.Bunches[0].Slug);
@@ -18,9 +18,9 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.BunchB.DisplayName, result.Bunches[1].DisplayName);
         }
 
-        private BunchList Sut
+        private GetBunchList Sut
         {
-            get { return new BunchList(Services.BunchService, Services.UserService); }
+            get { return new GetBunchList(Services.BunchService, Services.UserService); }
         }
     }
 }

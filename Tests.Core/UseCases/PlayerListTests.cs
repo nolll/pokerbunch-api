@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Execute_WithSlug_SlugAndPlayersAreSet()
         {
-            var request = new PlayerList.Request(TestData.UserNameA, TestData.SlugA);
+            var request = new GetPlayerList.Request(TestData.UserNameA, TestData.SlugA);
 
             var result = Sut.Execute(request);
 
@@ -23,7 +23,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Execute_PlayersAreSortedAlphabetically()
         {
-            var request = new PlayerList.Request(TestData.UserNameA, TestData.SlugA);
+            var request = new GetPlayerList.Request(TestData.UserNameA, TestData.SlugA);
 
             var result = Sut.Execute(request);
 
@@ -34,18 +34,18 @@ namespace Tests.Core.UseCases
         [Test]
         public void Execute_PlayerIsManager_CanAddPlayerIsTrue()
         {
-            var request = new PlayerList.Request(TestData.UserNameC, TestData.SlugA);
+            var request = new GetPlayerList.Request(TestData.UserNameC, TestData.SlugA);
 
             var result = Sut.Execute(request);
 
             Assert.IsTrue(result.CanAddPlayer);
         }
 
-        private PlayerList Sut
+        private GetPlayerList Sut
         {
             get
             {
-                return new PlayerList(
+                return new GetPlayerList(
                     Services.BunchService,
                     Services.UserService,
                     Services.PlayerService);

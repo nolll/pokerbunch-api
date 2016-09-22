@@ -95,16 +95,16 @@ namespace Tests.Core.UseCases
             Assert.IsFalse(result.CanDelete);
         }
 
-        private static PlayerDetails.Request CreateRequest(string userName, int playerId)
+        private static GetPlayer.Request CreateRequest(string userName, int playerId)
         {
-            return new PlayerDetails.Request(userName, playerId);
+            return new GetPlayer.Request(userName, playerId);
         }
 
-        private PlayerDetails Sut
+        private GetPlayer Sut
         {
             get
             {
-                return new PlayerDetails(
+                return new GetPlayer(
                     Services.BunchService,
                     Services.PlayerService,
                     Services.CashgameService,
