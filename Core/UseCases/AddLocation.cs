@@ -33,9 +33,9 @@ namespace Core.UseCases
             RequireRole.Player(currentUser, currentPlayer);
 
             var location = new Location(0, request.Name, bunch.Id);
-            _locationService.Add(location);
+            var id = _locationService.Add(location);
 
-            return new Result(bunch.Slug);
+            return new Result(bunch.Slug, id, location.Name);
         }
 
         public class Request
@@ -55,11 +55,15 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string Slug { get; private set; }
+            public string Slug { get; }
+            public int Id { get; }
+            public string Name { get; }
 
-            public Result(string slug)
+            public Result(string slug, int id, string name)
             {
                 Slug = slug;
+                Id = id;
+                Name = name;
             }
         }
     }

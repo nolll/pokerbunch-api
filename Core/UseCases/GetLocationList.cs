@@ -28,14 +28,14 @@ namespace Core.UseCases
             RequireRole.Player(user, player);
             var locations = _locationService.GetByBunch(bunch.Id);
 
-            var locationItems = locations.Select(CreateLocationItem).ToList();
+            var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).ToList();
 
             return new Result(locationItems);
         }
 
-        private static Location CreateLocationItem(Entities.Location location)
+        private static Location CreateLocationItem(Entities.Location location, string slug)
         {
-            return new Location(location.Id, location.Name);
+            return new Location(location.Id, location.Name, slug);
         }
 
         public class Request
@@ -64,11 +64,13 @@ namespace Core.UseCases
         {
             public int Id { get; }
             public string Name { get; }
+            public string Slug { get; set; }
 
-            public Location(int id, string name)
+            public Location(int id, string name, string slug)
             {
                 Id = id;
                 Name = name;
+                Slug = slug;
             }
         }
     }

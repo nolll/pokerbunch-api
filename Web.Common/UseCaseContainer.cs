@@ -30,6 +30,7 @@ namespace Web.Common
         // Locations
         public GetLocationList GetLocationList => new GetLocationList(_deps.BunchService, _deps.UserService, _deps.PlayerService, _deps.LocationService);
         public GetLocation GetLocation => new GetLocation(_deps.LocationService, _deps.UserService, _deps.PlayerService, _deps.BunchService);
+        public AddLocation AddLocation => new AddLocation(_deps.BunchService, _deps.PlayerService, _deps.UserService, _deps.LocationService);
 
         // Cashgame
         public TopList TopList => new TopList(_deps.BunchService, _deps.CashgameService, _deps.PlayerService, _deps.UserService);

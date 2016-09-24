@@ -2,6 +2,7 @@
 using Api.Auth;
 using Api.Models;
 using Core.UseCases;
+using JetBrains.Annotations;
 using Web.Common.Routes;
 
 namespace Api.Controllers
@@ -9,7 +10,7 @@ namespace Api.Controllers
     public class LocationController : BaseApiController
     {
         [Route(ApiRoutes.LocationList)]
-        [AcceptVerbs("GET")]
+        [AcceptVerbs(HttpVerb.Get)]
         [ApiAuthorize]
         public LocationListModel GetList(string slug)
         {
@@ -18,13 +19,31 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.LocationGet)]
-        [AcceptVerbs("GET")]
+        [AcceptVerbs(HttpVerb.Get)]
         [ApiAuthorize]
         public IHttpActionResult Get(int id)
         {
             var result = UseCase.GetLocation.Execute(new GetLocation.Request(CurrentUserName, id));
             var locationModel = new LocationModel(result);
             return Ok(locationModel);
+        }
+
+        [Route(ApiRoutes.LocationAdd)]
+        [AcceptVerbs(HttpVerb.Post)]
+        [ApiAuthorize]
+        public IHttpActionResult Add(LocationAddPostModel location)
+        {
+            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.bunch, location.name));
+            var locationModel = new LocationModel(result);
+            return Ok(locationModel);
+        }
+        
+        public class LocationAddPostModel
+        {
+            // ReSharper disable once InconsistentNaming
+            public string bunch { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public string name { get; [UsedImplicitly] set; }
         }
     }
 }

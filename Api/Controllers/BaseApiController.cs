@@ -8,6 +8,8 @@ namespace Api.Controllers
     [EnsureHttps]
     public abstract class BaseApiController : ApiController
     {
+        private const string DevUserName = "henriks";
+
         private readonly Bootstrapper _bootstrapper = new Bootstrapper(ApiSettings.ConnectionString);
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;
 
@@ -20,11 +22,17 @@ namespace Api.Controllers
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
                 if (Environment.IsNoAuth(Request.RequestUri.Host))
-                    return "henriks";
+                    return DevUserName;
                 if (Environment.IsDev(Request.RequestUri.Host))
-                    return "henriks";
+                    return DevUserName;
                 return null;
             }
         }
+    }
+
+    public static class HttpVerb
+    {
+        public const string Get = "GET";
+        public const string Post = "POST";
     }
 }
