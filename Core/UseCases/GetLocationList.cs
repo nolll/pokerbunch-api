@@ -5,14 +5,14 @@ using Core.Services;
 
 namespace Core.UseCases
 {
-    public class LocationList
+    public class GetLocationList
     {
         private readonly BunchService _bunchService;
         private readonly UserService _userService;
         private readonly PlayerService _playerService;
         private readonly LocationService _locationService;
 
-        public LocationList(BunchService bunchService, UserService userService, PlayerService playerService, LocationService locationService)
+        public GetLocationList(BunchService bunchService, UserService userService, PlayerService playerService, LocationService locationService)
         {
             _bunchService = bunchService;
             _userService = userService;
@@ -33,9 +33,9 @@ namespace Core.UseCases
             return new Result(locationItems);
         }
 
-        private static Item CreateLocationItem(Location location)
+        private static Location CreateLocationItem(Entities.Location location)
         {
-            return new Item(location.Id, location.Name);
+            return new Location(location.Id, location.Name);
         }
 
         public class Request
@@ -52,37 +52,23 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<Item> Events { get; private set; }
+            public IList<Location> Locations { get; }
 
-            public Result(IList<Item> events)
+            public Result(IList<Location> locations)
             {
-                Events = events;
+                Locations = locations;
             }
         }
 
-        public class Item
+        public class Location
         {
-            public int EventId { get; private set; }
-            public string Name { get; private set; }
-            public string Location { get; private set; }
-            public Date StartDate { get; private set; }
-            public Date EndDate { get; private set; }
-            public bool HasGames { get; private set; }
+            public int Id { get; }
+            public string Name { get; }
 
-            public Item(int id, string name)
+            public Location(int id, string name)
             {
-                EventId = id;
+                Id = id;
                 Name = name;
-                HasGames = false;
-            }
-
-            public Item(int id, string name, string location, Date startDate, Date endDate)
-                : this(id, name)
-            {
-                Location = location;
-                StartDate = startDate;
-                EndDate = endDate;
-                HasGames = true;
             }
         }
     }

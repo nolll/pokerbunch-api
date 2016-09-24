@@ -28,7 +28,9 @@ namespace Web.Common
         // Events
 
         // Locations
-        
+        public GetLocationList GetLocationList => new GetLocationList(_deps.BunchService, _deps.UserService, _deps.PlayerService, _deps.LocationService);
+        public GetLocation GetLocation => new GetLocation(_deps.LocationService, _deps.UserService, _deps.PlayerService, _deps.BunchService);
+
         // Cashgame
         public TopList TopList => new TopList(_deps.BunchService, _deps.CashgameService, _deps.PlayerService, _deps.UserService);
         public RunningCashgame RunningCashgame => new RunningCashgame(_deps.BunchService, _deps.CashgameService, _deps.PlayerService, _deps.UserService, _deps.LocationService);

@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void LocationDetails_AllPropertiesAreSet()
         {
-            var request = new LocationDetails.Request(TestData.UserA.UserName, TestData.LocationIdA);
+            var request = new GetLocation.Request(TestData.UserA.UserName, TestData.LocationIdA);
             var result = Sut.Execute(request);
 
             Assert.AreEqual(TestData.BunchA.Id, result.Id);
@@ -17,11 +17,11 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.BunchA.Slug, result.Slug);
         }
 
-        private LocationDetails Sut
+        private GetLocation Sut
         {
             get
             {
-                return new LocationDetails(
+                return new GetLocation(
                     Services.LocationService,
                     Services.UserService,
                     Services.PlayerService,

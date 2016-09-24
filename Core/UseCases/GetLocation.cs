@@ -2,14 +2,14 @@ using Core.Services;
 
 namespace Core.UseCases
 {
-    public class LocationDetails
+    public class GetLocation
     {
         private readonly LocationService _locationService;
         private readonly UserService _userService;
         private readonly PlayerService _playerService;
         private readonly BunchService _bunchService;
 
-        public LocationDetails(LocationService locationService, UserService userService, PlayerService playerService, BunchService bunchService)
+        public GetLocation(LocationService locationService, UserService userService, PlayerService playerService, BunchService bunchService)
         {
             _locationService = locationService;
             _userService = userService;

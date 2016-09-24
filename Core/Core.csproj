@@ -134,8 +134,8 @@
     <Compile Include="UseCases\CashgameStatus.cs" />
     <Compile Include="UseCases\InvitePlayerConfirmation.cs" />
     <Compile Include="UseCases\InvitePlayerForm.cs" />
-    <Compile Include="UseCases\LocationDetails.cs" />
-    <Compile Include="UseCases\LocationList.cs" />
+    <Compile Include="UseCases\GetLocation.cs" />
+    <Compile Include="UseCases\GetLocationList.cs" />
     <Compile Include="UseCases\TopList.cs" />
     <Compile Include="UseCases\Cashout.cs" />
     <Compile Include="UseCases\ChangePassword.cs" />
