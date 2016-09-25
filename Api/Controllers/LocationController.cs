@@ -31,19 +31,11 @@ namespace Api.Controllers
         [Route(ApiRoutes.LocationAdd)]
         [AcceptVerbs(HttpVerb.Post)]
         [ApiAuthorize]
-        public IHttpActionResult Add(LocationAddPostModel location)
+        public IHttpActionResult Add([FromBody] LocationModel location)
         {
-            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.bunch, location.name));
+            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.Bunch, location.Name));
             var locationModel = new LocationModel(result);
             return Ok(locationModel);
-        }
-        
-        public class LocationAddPostModel
-        {
-            // ReSharper disable once InconsistentNaming
-            public string bunch { get; [UsedImplicitly] set; }
-            // ReSharper disable once InconsistentNaming
-            public string name { get; [UsedImplicitly] set; }
         }
     }
 }
