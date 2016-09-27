@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Core.Entities;
 using Core.Services;
 
 namespace Core.UseCases
@@ -28,7 +27,7 @@ namespace Core.UseCases
             RequireRole.Player(user, player);
             var locations = _locationService.GetByBunch(bunch.Id);
 
-            var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).ToList();
+            var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 
             return new Result(locationItems);
         }
@@ -64,7 +63,7 @@ namespace Core.UseCases
         {
             public int Id { get; }
             public string Name { get; }
-            public string Slug { get; set; }
+            public string Slug { get; }
 
             public Location(int id, string name, string slug)
             {
