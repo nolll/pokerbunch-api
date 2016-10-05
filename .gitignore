@@ -15,3 +15,4 @@ Web/_build/main.js
 Web/node_modules
 Web/Assets
 **/*.Debug.config
+**/Local.config
