@@ -1,8 +1,8 @@
 ﻿using System.Web.Http;
 using Api.Auth;
 using Api.Models;
+using Core.Exceptions;
 using Core.UseCases;
-using JetBrains.Annotations;
 using Web.Common.Routes;
 
 namespace Api.Controllers

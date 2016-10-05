@@ -10,8 +10,6 @@ namespace Api.Auth
         {
             if (Environment.IsNoAuth(actionContext.Request.RequestUri.Host))
                 return true;
-            if (!ApiSettings.RequireAuthorization)
-                return true;
             return base.IsAuthorized(actionContext);
         }
     }

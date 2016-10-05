@@ -2,13 +2,15 @@
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 using Api;
 using Api.Auth;
+using Api.Extensions;
+using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 using Owin;
-using Web.Common;
 using Web.Common.Urls.ApiUrls;
 
 [assembly: OwinStartup(typeof(Startup))]
@@ -16,14 +18,27 @@ namespace Api
 {
     public class Startup
     {
+        [UsedImplicitly]
         public void Configuration(IAppBuilder app)
         {
             var config = new HttpConfiguration();
             ConfigureOAuth(app);
             ConfigRoutes(config);
             ConfigFormatters(config);
+            ConfigureErrorHandler(config);
+            ConfigureErrorLogger(config);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
+        }
+        
+        private void ConfigureErrorHandler(HttpConfiguration config)
+        {
+            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
+        }
+
+        private void ConfigureErrorLogger(HttpConfiguration config)
+        {
+            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
         }
 
         private void ConfigureOAuth(IAppBuilder app)
@@ -36,7 +51,6 @@ namespace Api
                 Provider = new SimpleAuthorizationServerProvider()
             };
 
-            // Token Generation
             app.UseOAuthAuthorizationServer(oAuthServerOptions);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
         }

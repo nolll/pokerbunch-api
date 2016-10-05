@@ -1,11 +1,13 @@
 ﻿using System.Web.Http;
 using Api.Extensions;
+using JetBrains.Annotations;
 using Web.Common;
 using Web.Common.Cache;
 
 namespace Api.Controllers
 {
     [EnsureHttps]
+    [UsedImplicitly]
     public abstract class BaseApiController : ApiController
     {
         private const string DevUserName = "henriks";
@@ -17,13 +19,11 @@ namespace Api.Controllers
         {
             get
             {
-                if (User == null || User.Identity == null)
+                if (User?.Identity == null)
                     return null;
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
                 if (Environment.IsNoAuth(Request.RequestUri.Host))
-                    return DevUserName;
-                if (Environment.IsDev(Request.RequestUri.Host))
                     return DevUserName;
                 return null;
             }
