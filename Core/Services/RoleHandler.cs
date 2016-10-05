@@ -6,7 +6,7 @@ namespace Core.Services
     {
         public static bool IsInRole(User user, Player player, Role role)
         {
-            return user.IsAdmin || player.IsInRole(role);
+            return user.IsAdmin || player != null && player.IsInRole(role);
         }
     }
 }
