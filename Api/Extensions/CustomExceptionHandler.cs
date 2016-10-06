@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
@@ -22,6 +23,13 @@ namespace Api.Extensions
 
             if (e is AccessDeniedException)
                 return CreateResponse(context, HttpStatusCode.Forbidden, "Forbidden");
+
+            if (e is ValidationException)
+            {
+                var validationException = e as ValidationException;
+                var message = validationException.Messages.First() ?? validationException.Message;
+                return CreateResponse(context, HttpStatusCode.BadRequest, message);
+            }
 
             return CreateResponse(context, HttpStatusCode.InternalServerError, "Unhandled error");
         }
