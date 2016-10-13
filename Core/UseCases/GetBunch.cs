@@ -49,16 +49,16 @@ namespace Core.UseCases
         {
             public int Id { get; }
             public string Slug { get; }
-            public string BunchName { get; }
+            public string Name { get; }
             public string Description { get; }
             public string HouseRules { get; }
             public Role Role { get; }
 
-            public Result(int id, string slug, string bunchName, string description, string houseRules, Role role)
+            public Result(int id, string slug, string name, string description, string houseRules, Role role)
             {
                 Id = id;
                 Slug = slug;
-                BunchName = bunchName;
+                Name = name;
                 Description = description;
                 HouseRules = houseRules;
                 Role = role;

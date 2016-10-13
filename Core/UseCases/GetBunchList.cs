@@ -67,14 +67,14 @@ namespace Core.UseCases
         {
             public int Id { get; }
             public string Slug { get; }
-            public string DisplayName { get; }
+            public string Name { get; }
             public string Description { get; }
 
             public ResultItem(Bunch bunch)
             {
                 Id = bunch.Id;
                 Slug = bunch.Slug;
-                DisplayName = bunch.DisplayName;
+                Name = bunch.DisplayName;
                 Description = bunch.Description;
             }
         }

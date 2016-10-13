@@ -10,7 +10,7 @@ namespace Tests.Core.UseCases.GetBunchTests
         [Test]
         public void BunchNameIsSet()
         {
-            Assert.AreEqual(DisplayName, Execute().BunchName);
+            Assert.AreEqual(DisplayName, Execute().Name);
         }
 
         [Test]

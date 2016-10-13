@@ -13,9 +13,9 @@ namespace Tests.Core.UseCases
 
             Assert.AreEqual(2, result.Bunches.Count);
             Assert.AreEqual("bunch-a", result.Bunches[0].Slug);
-            Assert.AreEqual(TestData.BunchA.DisplayName, result.Bunches[0].DisplayName);
+            Assert.AreEqual(TestData.BunchA.DisplayName, result.Bunches[0].Name);
             Assert.AreEqual("bunch-b", result.Bunches[1].Slug);
-            Assert.AreEqual(TestData.BunchB.DisplayName, result.Bunches[1].DisplayName);
+            Assert.AreEqual(TestData.BunchB.DisplayName, result.Bunches[1].Name);
         }
 
         private GetBunchList Sut
