@@ -32,7 +32,7 @@ namespace Api.Controllers
                 var runningResult = UseCase.RunningCashgame.Execute(new RunningCashgame.Request(CurrentUserName, slug));
                 return Ok(new ApiRunning(runningResult));
             }
-            catch (CashgameNotRunningException e)
+            catch (CashgameNotRunningException)
             {
                 return new ResponseMessageResult(new HttpResponseMessage(HttpStatusCode.NoContent));
             }
@@ -48,7 +48,7 @@ namespace Api.Controllers
                 UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, slug, buyin.playerid, buyin.amount, buyin.stack, DateTime.UtcNow));
                 return Ok();
             }
-            catch (CashgameNotRunningException e)
+            catch (CashgameNotRunningException)
             {
                 return InternalServerError();
             }
@@ -74,7 +74,7 @@ namespace Api.Controllers
                 UseCase.Report.Execute(new Report.Request(CurrentUserName, slug, report.playerid, report.stack, DateTime.UtcNow));
                 return Ok();
             }
-            catch (CashgameNotRunningException e)
+            catch (CashgameNotRunningException)
             {
                 return InternalServerError();
             }
@@ -98,7 +98,7 @@ namespace Api.Controllers
                 UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, slug, cashout.playerid, cashout.stack, DateTime.UtcNow));
                 return Ok();
             }
-            catch (CashgameNotRunningException e)
+            catch (CashgameNotRunningException)
             {
                 return InternalServerError();
             }

@@ -28,7 +28,7 @@ namespace Tests.Core.UseCases.GetBunchTests
         [Test]
         public void CanEditIsFalse()
         {
-            Assert.IsFalse(Execute().CanEdit);
+            Assert.AreEqual(Role.Player, Execute().Role);
         }
     }
 }

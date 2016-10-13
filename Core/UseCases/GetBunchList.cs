@@ -65,15 +65,17 @@ namespace Core.UseCases
 
         public class ResultItem
         {
-            public int Id { get; private set; }
-            public string Slug { get; private set; }
-            public string DisplayName { get; private set; }
+            public int Id { get; }
+            public string Slug { get; }
+            public string DisplayName { get; }
+            public string Description { get; }
 
             public ResultItem(Bunch bunch)
             {
                 Id = bunch.Id;
                 Slug = bunch.Slug;
                 DisplayName = bunch.DisplayName;
+                Description = bunch.Description;
             }
         }
     }

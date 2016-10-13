@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Api.Extensions;
+using Api.Services;
 using JetBrains.Annotations;
 using Web.Common;
 using Web.Common.Cache;
@@ -10,7 +11,8 @@ namespace Api.Controllers
     [UsedImplicitly]
     public abstract class BaseApiController : ApiController
     {
-        private const string DevUserName = "henriks";
+        private const string DevAdminUserName = "henriks";
+        private const string DevPlayerUserName = "kudden";
 
         private readonly Bootstrapper _bootstrapper = new Bootstrapper(ApiSettings.ConnectionString);
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;
@@ -23,8 +25,10 @@ namespace Api.Controllers
                     return null;
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
-                if (Environment.IsNoAuth(Request.RequestUri.Host))
-                    return DevUserName;
+                if (Environment.IsNoAuthAdmin(Request.RequestUri.Host))
+                    return DevAdminUserName;
+                if (Environment.IsNoAuthPlayer(Request.RequestUri.Host))
+                    return DevPlayerUserName;
                 return null;
             }
         }

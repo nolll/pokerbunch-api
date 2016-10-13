@@ -8,9 +8,9 @@ namespace Tests.Core.UseCases.GetBunchTests
         protected override Role Role => Role.Manager;
 
         [Test]
-        public void CanEditIsTrue()
+        public void RoleIsManager()
         {
-            Assert.IsTrue(Execute().CanEdit);
+            Assert.AreEqual(Role.Manager, Execute().Role);
         }
     }
 }

@@ -9,6 +9,7 @@ using Api.Extensions;
 using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
 using Web.Common.Urls.ApiUrls;
@@ -40,7 +41,7 @@ namespace Api
         {
             config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
         }
-
+        
         private void ConfigureOAuth(IAppBuilder app)
         {
             var oAuthServerOptions = new OAuthAuthorizationServerOptions
@@ -65,6 +66,7 @@ namespace Api
         {
             var jsonFormatter = new JsonMediaTypeFormatter();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            jsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 
             config.Formatters.Clear();

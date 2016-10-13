@@ -52,11 +52,9 @@
     <Compile Include="Cache\CacheKeyProvider.cs" />
     <Compile Include="Cache\CacheTime.cs" />
     <Compile Include="CommonSettings.cs" />
-    <Compile Include="Environment.cs" />
     <Compile Include="Routes\ApiRoutes.cs" />
     <Compile Include="Routes\WebRoutes.cs" />
     <Compile Include="Services\JsonHelper.cs" />
-    <Compile Include="Services\RequestEvaluator.cs" />
     <Compile Include="Urls\ApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiBunchListUrl.cs" />
     <Compile Include="Urls\ApiUrls\SlugApiUrl.cs" />

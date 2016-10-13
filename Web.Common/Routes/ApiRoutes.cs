@@ -5,8 +5,10 @@ namespace Web.Common.Routes
         public const string Home = "";
         public const string Token = "token";
 
-        public const string BunchList = "bunch";
-        public const string BunchGet = "bunch/{slug}";
+        public const string UserBunchList = "user/bunches";
+
+        public const string BunchList = "bunches";
+        public const string BunchGet = "bunches/{slug}";
 
         public const string PlayerList = "player/list/{slug}";
         public const string PlayerGet = "player/get/{id}";

@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using Web.Common.Services;
+using Api.Services;
 
 namespace Api.Extensions
 {

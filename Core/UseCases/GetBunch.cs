@@ -28,9 +28,9 @@ namespace Core.UseCases
             var bunchName = bunch.DisplayName;
             var description = bunch.Description;
             var houseRules = bunch.HouseRules;
-            var canEdit = RoleHandler.IsInRole(user, player, Role.Manager);
+            var role = player.Role;
 
-            return new Result(id, slug, bunchName, description, houseRules, canEdit);
+            return new Result(id, slug, bunchName, description, houseRules, role);
         }
 
         public class Request
@@ -47,21 +47,21 @@ namespace Core.UseCases
 
         public class Result
         {
-            public int Id { get; private set; }
-            public string Slug { get; private set; }
-            public string BunchName { get; private set; }
-            public string Description { get; private set; }
-            public string HouseRules { get; private set; }
-            public bool CanEdit { get; private set; }
+            public int Id { get; }
+            public string Slug { get; }
+            public string BunchName { get; }
+            public string Description { get; }
+            public string HouseRules { get; }
+            public Role Role { get; }
 
-            public Result(int id, string slug, string bunchName, string description, string houseRules, bool canEdit)
+            public Result(int id, string slug, string bunchName, string description, string houseRules, Role role)
             {
                 Id = id;
                 Slug = slug;
                 BunchName = bunchName;
                 Description = description;
                 HouseRules = houseRules;
-                CanEdit = canEdit;
+                Role = role;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Core.Entities;
 using Core.UseCases;
 
 namespace Api.Models
@@ -16,24 +17,25 @@ namespace Api.Models
         public string Description { get; set; }
         [DataMember(Name = "houseRules")]
         public string HouseRules { get; set; }
-        [DataMember(Name = "canEdit")]
-        public bool CanEdit { get; set; }
+        [DataMember(Name = "role")]
+        public string Role { get; set; }
 
-        public BunchModel(GetBunch.Result getBunchResult)
+        public BunchModel(GetBunch.Result result)
         {
-            Id = getBunchResult.Id;
-            Slug = getBunchResult.Slug;
-            Name = getBunchResult.BunchName;
-            Description = getBunchResult.Description;
-            HouseRules = getBunchResult.HouseRules;
-            CanEdit = getBunchResult.CanEdit;
+            Id = result.Id;
+            Slug = result.Slug;
+            Name = result.BunchName;
+            Description = result.Description;
+            HouseRules = result.HouseRules;
+            Role = result.Role.ToString().ToLower();
         }
 
-        public BunchModel(int id, string slug, string name)
+        public BunchModel(GetBunchList.ResultItem result)
         {
-            Id = id;
-            Slug = slug;
-            Name = name;
+            Id = result.Id;
+            Slug = result.Slug;
+            Name = result.DisplayName;
+            Description = result.Description;
         }
 
         public BunchModel()

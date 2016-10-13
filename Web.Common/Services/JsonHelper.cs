@@ -12,7 +12,8 @@ namespace Web.Common.Services
 
         private static JsonSerializerSettings Settings => new JsonSerializerSettings
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
         };
     }
 }

@@ -1,7 +1,8 @@
 using System.Net.Http;
 using System.Web;
+using Web.Common;
 
-namespace Web.Common.Services
+namespace Api.Services
 {
     public static class RequestEvaluator
     {

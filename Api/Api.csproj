@@ -134,6 +134,7 @@
     <Compile Include="Controllers\CashgameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Extensions\CustomErrorLogger.cs" />
     <Compile Include="Extensions\CustomExceptionHandler.cs" />
     <Compile Include="Extensions\EnsureHttpsAttribute.cs" />
@@ -149,6 +150,8 @@
     <Compile Include="Models\ApiRunning.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
     <Compile Include="ApiSettings.cs" />
+    <Compile Include="Services\Environment.cs" />
+    <Compile Include="Services\RequestEvaluator.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
