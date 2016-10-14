@@ -16,6 +16,14 @@ namespace Api.Models
         public string Description { get; set; }
         [DataMember(Name = "houseRules")]
         public string HouseRules { get; set; }
+        [DataMember(Name = "timezone")]
+        public string Timezone { get; set; }
+        [DataMember(Name = "currencySymbol")]
+        public string CurrencySymbol { get; set; }
+        [DataMember(Name = "currencyLayout")]
+        public string CurrencyLayout { get; set; }
+        [DataMember(Name = "defaultBuyin")]
+        public int DefaultBuyin { get; set; }
         [DataMember(Name = "role")]
         public string Role { get; set; }
 
@@ -23,6 +31,10 @@ namespace Api.Models
             : this(r.Id, r.Slug, r.Name, r.Description)
         {
             HouseRules = r.HouseRules;
+            Timezone = r.Timezone.Id;
+            CurrencySymbol = r.Currency.Symbol;
+            CurrencyLayout = r.Currency.Layout;
+            DefaultBuyin = r.DefaultBuyin;
             Role = r.Role.ToString().ToLower();
         }
 

@@ -1,3 +1,4 @@
+using System;
 using Core.Entities;
 using Core.Services;
 
@@ -28,9 +29,12 @@ namespace Core.UseCases
             var bunchName = bunch.DisplayName;
             var description = bunch.Description;
             var houseRules = bunch.HouseRules;
+            var timezone = bunch.Timezone;
+            var currency = bunch.Currency;
+            var defaultBuyin = bunch.DefaultBuyin;
             var role = player.Role;
 
-            return new Result(id, slug, bunchName, description, houseRules, role);
+            return new Result(id, slug, bunchName, description, houseRules, timezone, currency, defaultBuyin, role);
         }
 
         public class Request
@@ -52,15 +56,21 @@ namespace Core.UseCases
             public string Name { get; }
             public string Description { get; }
             public string HouseRules { get; }
+            public TimeZoneInfo Timezone { get; }
+            public Currency Currency { get; }
+            public int DefaultBuyin { get; }
             public Role Role { get; }
 
-            public Result(int id, string slug, string name, string description, string houseRules, Role role)
+            public Result(int id, string slug, string name, string description, string houseRules, TimeZoneInfo timezone, Currency currency, int defaultBuyin, Role role)
             {
                 Id = id;
                 Slug = slug;
                 Name = name;
                 Description = description;
                 HouseRules = houseRules;
+                Timezone = timezone;
+                Currency = currency;
+                DefaultBuyin = defaultBuyin;
                 Role = role;
             }
         }
