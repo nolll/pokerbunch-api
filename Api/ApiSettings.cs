@@ -8,5 +8,7 @@ namespace Api
         public static string ApiHost => Get("ApiHost");
         public static string ConnectionString => Get("SqlConnectionString");
         public static bool AllowAuthOverride => GetBool("AllowAuthOverride");
+        public static string NoAuthAdminUserName => Get("NoAuthAdminUserName");
+        public static string NoAuthPlayerUserName => Get("NoAuthPlayerUserName");
     }
 }

@@ -11,9 +11,6 @@ namespace Api.Controllers
     [UsedImplicitly]
     public abstract class BaseApiController : ApiController
     {
-        private const string DevAdminUserName = "henriks";
-        private const string DevPlayerUserName = "kudden";
-
         private readonly Bootstrapper _bootstrapper = new Bootstrapper(ApiSettings.ConnectionString);
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;
 
@@ -25,10 +22,10 @@ namespace Api.Controllers
                     return null;
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
-                if (Environment.IsNoAuthAdmin(Request.RequestUri.Host))
-                    return DevAdminUserName;
-                if (Environment.IsNoAuthPlayer(Request.RequestUri.Host))
-                    return DevPlayerUserName;
+                if (ApiSettings.AllowAuthOverride && Environment.IsNoAuthAdmin(Request.RequestUri.Host))
+                    return ApiSettings.NoAuthAdminUserName;
+                if (ApiSettings.AllowAuthOverride && Environment.IsNoAuthPlayer(Request.RequestUri.Host))
+                    return ApiSettings.NoAuthPlayerUserName;
                 return null;
             }
         }
