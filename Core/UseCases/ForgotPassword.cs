@@ -27,7 +27,7 @@ namespace Core.UseCases
 
             var user = _userService.GetByNameOrEmail(request.Email);
             if(user == null)
-                throw new UserNotFoundException();
+                throw new UserNotFoundException(request.Email);
 
             var password = PasswordGenerator.CreatePassword(_randomService.GetAllowedChars());
             var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());

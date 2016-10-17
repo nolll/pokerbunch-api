@@ -20,7 +20,7 @@ namespace Core.UseCases
             _playerService = playerService;
         }
 
-        public void Execute(Request request)
+        public BunchResult Execute(Request request)
         {
             var validator = new Validator(request);
             if(!validator.IsValid)
@@ -40,13 +40,15 @@ namespace Core.UseCases
             }
 
             if (bunchExists)
-                throw new BunchExistsException();
+                throw new BunchExistsException(slug);
 
             var bunch = CreateBunch(request);
             var id = _bunchService.Add(bunch);
             var user = _userService.GetByNameOrEmail(request.UserName);
             var player = Player.New(id, user.Id, Role.Manager);
             _playerService.Add(player);
+
+            return new BunchResult(bunch, Role.Manager);
         }
 
         private static Bunch CreateBunch(Request request)

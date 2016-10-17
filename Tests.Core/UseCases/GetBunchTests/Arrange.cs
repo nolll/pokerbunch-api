@@ -30,7 +30,7 @@ namespace Tests.Core.UseCases.GetBunchTests
             MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(UserName)).Returns(new User(UserId, UserName));
         }
 
-        protected GetBunch.Result Execute()
+        protected BunchResult Execute()
         {
             _request = new GetBunch.Request(UserName, Slug);
             return _sut.Execute(_request);

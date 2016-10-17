@@ -19,7 +19,7 @@ namespace Core.UseCases
             _playerService = playerService;
         }
 
-        public Result Execute(Request request)
+        public BunchResult Execute(Request request)
         {
             var validator = new Validator(request);
             if(!validator.IsValid)
@@ -32,7 +32,7 @@ namespace Core.UseCases
             var postedHomegame = CreateBunch(bunch, request);
             _bunchService.Save(postedHomegame);
 
-            return new Result(bunch.Id, bunch.Slug);
+            return new BunchResult(bunch, player.Role);
         }
 
         private static Bunch CreateBunch(Bunch bunch, Request request)

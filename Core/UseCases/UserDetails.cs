@@ -1,4 +1,5 @@
-﻿using Core.Services;
+﻿using Core.Exceptions;
+using Core.Services;
 
 namespace Core.UseCases
 {
@@ -16,6 +17,8 @@ namespace Core.UseCases
             var currentUser = _userService.GetByNameOrEmail(request.CurrentUserName);
             var displayUser = _userService.GetByNameOrEmail(request.UserName);
 
+            if(displayUser == null)
+                throw new UserNotFoundException(request.UserName);
             var isViewingCurrentUser = displayUser.UserName == currentUser.UserName;
 
             var userName = displayUser.UserName;

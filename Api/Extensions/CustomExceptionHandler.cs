@@ -19,10 +19,13 @@ namespace Api.Extensions
             var e = context.Exception;
 
             if (e is NotFoundException)
-                return CreateResponse(context, HttpStatusCode.NotFound, "Not found");
+                return CreateResponse(context, HttpStatusCode.NotFound, e.Message);
 
             if (e is AccessDeniedException)
                 return CreateResponse(context, HttpStatusCode.Forbidden, "Forbidden");
+
+            if (e is ConflictException)
+                return CreateResponse(context, HttpStatusCode.Conflict, e.Message);
 
             if (e is ValidationException)
             {

@@ -25,6 +25,8 @@ namespace Web.Common
         // Bunch
         public GetBunchList GetBunchList => new GetBunchList(_deps.BunchService, _deps.UserService);
         public GetBunch GetBunch => new GetBunch(_deps.BunchService, _deps.UserService, _deps.PlayerService);
+        public AddBunch AddBunch => new AddBunch(_deps.UserService, _deps.BunchService, _deps.PlayerService);
+        public EditBunch EditBunch => new EditBunch(_deps.BunchService, _deps.UserService, _deps.PlayerService);
 
         // Events
 

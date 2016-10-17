@@ -57,6 +57,7 @@
     <Compile Include="Exceptions\CashgameNotFoundException.cs" />
     <Compile Include="Exceptions\CashgameNotRunningException.cs" />
     <Compile Include="Exceptions\CashgameRunningException.cs" />
+    <Compile Include="Exceptions\ConflictException.cs" />
     <Compile Include="Exceptions\EmailExistsException.cs" />
     <Compile Include="Exceptions\InvalidJoinCodeException.cs" />
     <Compile Include="Exceptions\LoginException.cs" />

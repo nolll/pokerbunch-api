@@ -25,7 +25,7 @@ namespace Api.Models
         [DataMember(Name = "role")]
         public string Role { get; set; }
 
-        public BunchModel(GetBunch.Result r)
+        public BunchModel(BunchResult r)
             : this(r.Slug, r.Name, r.Description)
         {
             HouseRules = r.HouseRules;

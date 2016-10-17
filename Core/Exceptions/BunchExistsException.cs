@@ -1,9 +1,9 @@
 namespace Core.Exceptions
 {
-    public class BunchExistsException : PokerBunchException
+    public class BunchExistsException : ConflictException
     {
-        public BunchExistsException()
-            : base("The Bunch name is not available")
+        public BunchExistsException(string id)
+            : base($"A bunch with the id \"{id}\" already exists")
         {
         }
     }
