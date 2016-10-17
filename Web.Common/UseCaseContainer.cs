@@ -20,6 +20,7 @@ namespace Web.Common
         // Admin
 
         // User
+        public UserDetails UserDetails => new UserDetails(_deps.UserService);
 
         // Bunch
         public GetBunchList GetBunchList => new GetBunchList(_deps.BunchService, _deps.UserService);

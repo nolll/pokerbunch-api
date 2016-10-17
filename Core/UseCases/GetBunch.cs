@@ -24,7 +24,6 @@ namespace Core.UseCases
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
 
-            var id = bunch.Id;
             var slug = bunch.Slug;
             var bunchName = bunch.DisplayName;
             var description = bunch.Description;
@@ -34,7 +33,7 @@ namespace Core.UseCases
             var defaultBuyin = bunch.DefaultBuyin;
             var role = player.Role;
 
-            return new Result(id, slug, bunchName, description, houseRules, timezone, currency, defaultBuyin, role);
+            return new Result(slug, bunchName, description, houseRules, timezone, currency, defaultBuyin, role);
         }
 
         public class Request
@@ -51,7 +50,6 @@ namespace Core.UseCases
 
         public class Result
         {
-            public int Id { get; }
             public string Slug { get; }
             public string Name { get; }
             public string Description { get; }
@@ -61,9 +59,8 @@ namespace Core.UseCases
             public int DefaultBuyin { get; }
             public Role Role { get; }
 
-            public Result(int id, string slug, string name, string description, string houseRules, TimeZoneInfo timezone, Currency currency, int defaultBuyin, Role role)
+            public Result(string slug, string name, string description, string houseRules, TimeZoneInfo timezone, Currency currency, int defaultBuyin, Role role)
             {
-                Id = id;
                 Slug = slug;
                 Name = name;
                 Description = description;

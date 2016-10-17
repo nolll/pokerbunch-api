@@ -6,6 +6,9 @@ namespace Web.Common.Routes
         public const string Token = "token";
 
         public const string UserBunchList = "user/bunches";
+        public const string UserProfile = "user";
+
+        public const string UserGet = "users/{name}";
 
         public const string BunchList = "bunches";
         public const string BunchGet = "bunches/{slug}";

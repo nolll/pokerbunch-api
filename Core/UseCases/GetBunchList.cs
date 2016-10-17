@@ -28,9 +28,9 @@ namespace Core.UseCases
         public Result Execute(UserBunchesRequest request)
         {
             var user = _userService.GetByNameOrEmail(request.UserName);
-            var homegames = user != null ? _bunchService.GetByUserId(user.Id) : new List<Bunch>();
+            var bunches = user != null ? _bunchService.GetByUserId(user.Id) : new List<Bunch>();
             
-            return new Result(homegames);
+            return new Result(bunches);
         }
 
         public class AllBunchesRequest
@@ -65,14 +65,12 @@ namespace Core.UseCases
 
         public class ResultItem
         {
-            public int Id { get; }
             public string Slug { get; }
             public string Name { get; }
             public string Description { get; }
 
             public ResultItem(Bunch bunch)
             {
-                Id = bunch.Id;
                 Slug = bunch.Slug;
                 Name = bunch.DisplayName;
                 Description = bunch.Description;

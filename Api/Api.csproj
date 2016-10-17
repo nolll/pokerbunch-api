@@ -150,6 +150,7 @@
     <Compile Include="Models\ApiRunning.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
     <Compile Include="ApiSettings.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Services\Environment.cs" />
     <Compile Include="Services\RequestEvaluator.cs" />
     <Compile Include="Startup.cs" />

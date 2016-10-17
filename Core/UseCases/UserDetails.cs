@@ -34,10 +34,10 @@ namespace Core.UseCases
             public string CurrentUserName { get; }
             public string UserName { get; }
 
-            public Request(string currentUserName, string userName)
+            public Request(string currentUserName, string userName = null)
             {
                 CurrentUserName = currentUserName;
-                UserName = userName;
+                UserName = userName ?? currentUserName;
             }
         }
 
