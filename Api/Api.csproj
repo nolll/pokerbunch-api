@@ -140,6 +140,8 @@
     <Compile Include="Extensions\CustomExceptionHandler.cs" />
     <Compile Include="Extensions\EnsureHttpsAttribute.cs" />
     <Compile Include="Extensions\ApiUrlExtensions.cs" />
+    <Compile Include="Extensions\HttpNotFoundAwareControllerActionSelector.cs" />
+    <Compile Include="Extensions\HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="Models\AppListModel.cs" />
     <Compile Include="Models\LocationListModel.cs" />
     <Compile Include="Models\LocationModel.cs" />

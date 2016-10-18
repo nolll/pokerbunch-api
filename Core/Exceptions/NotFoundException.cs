@@ -1,8 +1,8 @@
 namespace Core.Exceptions
 {
-    public abstract class NotFoundException : PokerBunchException
+    public class NotFoundException : PokerBunchException
     {
-        protected NotFoundException(string message) : base(message)
+        public NotFoundException(string message) : base(message)
         {
         }
     }

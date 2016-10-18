@@ -2,6 +2,8 @@
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Dispatcher;
 using System.Web.Http.ExceptionHandling;
 using Api;
 using Api.Auth;
@@ -35,6 +37,8 @@ namespace Api
         private void ConfigureErrorHandler(HttpConfiguration config)
         {
             config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
+            config.Services.Replace(typeof(IHttpControllerSelector), new HttpNotFoundAwareDefaultHttpControllerSelector(config));
+            config.Services.Replace(typeof(IHttpActionSelector), new HttpNotFoundAwareControllerActionSelector());
         }
 
         private void ConfigureErrorLogger(HttpConfiguration config)
@@ -59,6 +63,9 @@ namespace Api
         private static void ConfigRoutes(HttpConfiguration config)
         {
             config.MapHttpAttributeRoutes();
+
+            // The default routing is needed for 404 handling to kick in
+            config.Routes.MapHttpRoute("default", "{controller}/{id}", new { id = RouteParameter.Optional });
         }
 
         private static void ConfigFormatters(HttpConfiguration config)
