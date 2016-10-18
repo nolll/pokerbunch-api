@@ -39,4 +39,41 @@ namespace Api.Models
         {
         }
     }
+
+    [DataContract(Namespace = "", Name = "app")]
+    public class AppModel
+    {
+        [DataMember(Name = "id")]
+        public int Id { get; set; }
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+        [DataMember(Name = "key")]
+        public string Key { get; set; }
+
+        public AppModel(AppList.Item app)
+            : this(app.AppId, app.AppName, app.AppKey)
+        {
+        }
+
+        public AppModel(GetApp.Result app)
+            : this(app.AppId, app.AppName, app.AppKey)
+        {
+        }
+
+        //public AppModel(AddLocation.Result location)
+        //    : this(location.Id, location.Name, location.Slug)
+        //{
+        //}
+
+        private AppModel(int id, string name, string key)
+        {
+            Id = id;
+            Name = name;
+            Key = key;
+        }
+
+        public AppModel()
+        {
+        }
+    }
 }

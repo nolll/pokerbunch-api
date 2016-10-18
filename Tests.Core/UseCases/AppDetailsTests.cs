@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void AppDetails_AllDataIsSet()
         {
-            var request = new AppDetails.Request(TestData.AppA.Id);
+            var request = new GetApp.Request(TestData.AppA.Id);
             var result = Sut.Execute(request);
 
             Assert.AreEqual(TestData.AppA.Id, result.AppId);
@@ -17,11 +17,11 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.AppA.Name, result.AppName);
         }
 
-        private AppDetails Sut
+        private GetApp Sut
         {
             get
             {
-                return new AppDetails(Services.AppService);
+                return new GetApp(Services.AppService);
             }
         }
     }

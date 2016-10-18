@@ -59,7 +59,6 @@ namespace Api
         private static void ConfigRoutes(HttpConfiguration config)
         {
             config.MapHttpAttributeRoutes();
-            config.Routes.MapHttpRoute("default", "{controller}/{id}", new { id = RouteParameter.Optional });
         }
 
         private static void ConfigFormatters(HttpConfiguration config)

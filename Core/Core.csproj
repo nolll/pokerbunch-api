@@ -118,7 +118,7 @@
     <Compile Include="UseCases\AddPlayer.cs" />
     <Compile Include="UseCases\AddUser.cs" />
     <Compile Include="UseCases\CoreContext.cs" />
-    <Compile Include="UseCases\AppDetails.cs" />
+    <Compile Include="UseCases\GetApp.cs" />
     <Compile Include="UseCases\AppList.cs" />
     <Compile Include="UseCases\BaseContext.cs" />
     <Compile Include="UseCases\BunchContext.cs" />

@@ -48,5 +48,7 @@ namespace Web.Common
 
         // Apps
         public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppService);
+        public GetApp GetApp => new GetApp(_deps.AppService);
+        public AppList GetAppList => new AppList(_deps.AppService, _deps.UserService);
     }
 }

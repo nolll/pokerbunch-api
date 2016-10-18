@@ -13,7 +13,8 @@ namespace Api.Controllers
         [ApiAuthorize]
         public BunchListModel List()
         {
-            var bunchListResult = UseCase.GetBunchList.Execute(new GetBunchList.AllBunchesRequest(CurrentUserName));
+            var request = new GetBunchList.AllBunchesRequest(CurrentUserName);
+            var bunchListResult = UseCase.GetBunchList.Execute(request);
             return new BunchListModel(bunchListResult);
         }
 
@@ -22,7 +23,8 @@ namespace Api.Controllers
         [ApiAuthorize]
         public BunchModel Get(string slug)
         {
-            var bunchResult = UseCase.GetBunch.Execute(new GetBunch.Request(CurrentUserName, slug));
+            var request = new GetBunch.Request(CurrentUserName, slug);
+            var bunchResult = UseCase.GetBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
 

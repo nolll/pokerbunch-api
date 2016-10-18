@@ -6,6 +6,7 @@ namespace Web.Common.Routes
         public const string Token = "token";
 
         public const string UserBunchList = "user/bunches";
+        public const string UserAppList = "user/bunches";
         public const string UserProfile = "user";
 
         public const string UserGet = "users/{name}";
@@ -21,6 +22,12 @@ namespace Web.Common.Routes
         public const string LocationAdd = "location/add";
         public const string LocationSave = "location/save";
         public const string LocationDelete = "location/delete/{id}";
+
+        public const string AppList = "apps";
+        public const string AppGet = "apps/{id}";
+        public const string AppAdd = "apps";
+        public const string AppSave = "apps/{id}";
+        public const string AppDelete = "apps/{id}";
 
         public const string RunningGame = "cashgame/running/{slug}";
         public const string Buyin = "cashgame/buyin/{slug}";

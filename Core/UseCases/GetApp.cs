@@ -2,11 +2,11 @@
 
 namespace Core.UseCases
 {
-    public class AppDetails
+    public class GetApp
     {
         private readonly AppService _appService;
         
-        public AppDetails(AppService appService)
+        public GetApp(AppService appService)
         {
             _appService = appService;
         }
