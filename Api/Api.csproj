@@ -128,12 +128,7 @@
     </Compile>
     <Compile Include="Auth\ApiAuthorizeAttribute.cs" />
     <Compile Include="Auth\SimpleAuthorizationServerProvider.cs" />
-    <Compile Include="Cache\AspNetCacheProvider.cs" />
-    <Compile Include="Cache\Bootstrapper.cs" />
-    <Compile Include="Cache\CacheBuster.cs" />
-    <Compile Include="Cache\CacheContainer.cs" />
-    <Compile Include="Cache\CacheKeyProvider.cs" />
-    <Compile Include="Cache\CacheTime.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="CommonSettings.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />

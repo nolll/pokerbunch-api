@@ -1,4 +1,6 @@
+using Core.Cache;
 using Core.Services;
+using Infrastructure.Cache;
 using Infrastructure.Email;
 using Infrastructure.Sql;
 using Infrastructure.Sql.CachedRepositories;
@@ -20,9 +22,9 @@ namespace Plumbing
         private IRandomService _randomService;
         private IMessageSender _messageSender;
                 
-        public Dependencies(ICacheContainer cacheContainer, string connectionString)
+        public Dependencies(string connectionString)
         {
-            _cacheContainer = cacheContainer;
+            _cacheContainer = new CacheContainer(new AspNetCacheProvider());
             _db = new SqlServerStorageProvider(connectionString);
         }
 

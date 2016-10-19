@@ -1,10 +1,10 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Services;
 
-namespace Api.Cache
+namespace Core.Cache
 {
     public class CacheContainer : ICacheContainer
     {
@@ -81,7 +81,7 @@ namespace Api.Cache
                 var sourceItems = sourceExpression(notInCache);
                 foreach (var sourceItem in sourceItems)
                 {
-                    if (sourceItem != null) //Om n√•got id inte har h√§mtats s√• stoppar vi inte in det i v√•rt resultat eller i cachen.
+                    if (sourceItem != null) //Om nÂgot id inte har h‰mtats sÂ stoppar vi inte in det i vÂrt resultat eller i cachen.
                     {
                         var cacheKey = CacheKeyProvider.GetKey<T>(sourceItem.Id);
                         Insert(cacheKey, sourceItem, cacheTime);

@@ -1,6 +1,6 @@
 using Plumbing;
 
-namespace Api.Cache
+namespace Api
 {
     public class Bootstrapper
     {
@@ -8,8 +8,7 @@ namespace Api.Cache
 
         public Bootstrapper(string connectionString)
         {
-            var cacheContainer = new CacheContainer(new AspNetCacheProvider());
-            var deps = new Dependencies(cacheContainer, connectionString);
+            var deps = new Dependencies(connectionString);
             UseCases = new UseCaseContainer(deps);
         }
     }

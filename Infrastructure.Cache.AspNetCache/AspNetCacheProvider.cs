@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Web;
-using Core.Services;
 
-namespace Api.Cache
+namespace Infrastructure.Cache.AspNetCache
 {
     public class AspNetCacheProvider : ICacheProvider
     {

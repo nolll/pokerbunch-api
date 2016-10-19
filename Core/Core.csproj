@@ -38,6 +38,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\CacheContainer.cs" />
+    <Compile Include="Cache\CacheKeyProvider.cs" />
     <Compile Include="Entities\App.cs" />
     <Compile Include="Entities\Checkpoints\BuyinCheckpoint.cs" />
     <Compile Include="Entities\Checkpoints\CashoutCheckpoint.cs" />

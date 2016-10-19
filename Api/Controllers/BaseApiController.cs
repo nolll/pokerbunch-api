@@ -1,5 +1,4 @@
 ﻿using System.Web.Http;
-using Api.Cache;
 using Api.Extensions;
 using Api.Services;
 using JetBrains.Annotations;
