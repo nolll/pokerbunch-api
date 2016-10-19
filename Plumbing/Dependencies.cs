@@ -1,8 +1,8 @@
 using Core.Services;
+using Infrastructure.Email;
 using Infrastructure.Storage;
 using Infrastructure.Storage.CachedRepositories;
 using Infrastructure.Storage.Repositories;
-using Infrastructure.Web;
 
 namespace Plumbing
 {
@@ -34,6 +34,6 @@ namespace Plumbing
         public LocationService LocationService => _locationService ?? (_locationService = new LocationService(new CachedLocationRepository(new SqlLocationRepository(_db), _cacheContainer)));
         public UserService UserService => _userService ?? (_userService = new UserService(new CachedUserRepository(new SqlUserRepository(_db), _cacheContainer)));
         public IRandomService RandomService => _randomService ?? (_randomService = new RandomService());
-        public IMessageSender MessageSender => _messageSender ?? (_messageSender = new MessageSender());
+        public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender());
     }
 }

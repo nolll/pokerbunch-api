@@ -2,9 +2,9 @@ using System.Net.Mail;
 using Core;
 using Core.Services;
 
-namespace Infrastructure.Web
+namespace Infrastructure.Email
 {
-	public class MessageSender : IMessageSender
+	public class EmailMessageSender : IMessageSender
     {
         public void Send(string to, IMessage message)
         {

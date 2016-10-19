@@ -43,6 +43,18 @@
       <Project>{4d5d8057-afd8-40af-a756-558e1038f193}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Infrastructure.Cache\Infrastructure.Cache.csproj">
+      <Project>{75d945a7-20cb-4213-8a1a-432dcbd54bdf}</Project>
+      <Name>Infrastructure.Cache</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure.Email\Infrastructure.Email.csproj">
+      <Project>{17ae9c59-2860-42e8-b423-696a31e3b321}</Project>
+      <Name>Infrastructure.Email</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure.Sql\Infrastructure.Sql.csproj">
+      <Project>{a354476a-38c4-4f65-9d95-0e306f5b07ca}</Project>
+      <Name>Infrastructure.Sql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
       <Project>{6f33f0bd-4cbb-4b6e-bdf0-eea841267c87}</Project>
       <Name>Infrastructure</Name>
