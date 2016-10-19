@@ -16,7 +16,7 @@ namespace Core.UseCases
             _userService = userService;
         }
 
-        public void Execute(Request request)
+        public AppResult Execute(Request request)
         {
             var appName = request.AppName;
             var apiKey = Guid.NewGuid().ToString();
@@ -24,7 +24,8 @@ namespace Core.UseCases
 
             var app = new App(0, apiKey, appName, user.Id);
 
-            _appService.Add(app);
+            var id = _appService.Add(app);
+            return new AppResult(id, apiKey, appName);
         }
 
         public class Request

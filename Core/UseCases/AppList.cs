@@ -61,25 +61,11 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<Item> Items { get; private set; }
+            public IList<AppResult> Items { get; private set; }
 
             public Result(IEnumerable<App> apps)
             {
-                Items = apps.Select(o => new Item(o)).ToList();
-            }
-        }
-
-        public class Item
-        {
-            public int AppId { get; private set; }
-            public string AppKey { get; private set; }
-            public string AppName { get; private set; }
-
-            public Item(App app)
-            {
-                AppId = app.Id;
-                AppKey = app.AppKey;
-                AppName = app.Name;
+                Items = apps.Select(o => new AppResult(o.Id, o.AppKey, o.Name)).ToList();
             }
         }
     }

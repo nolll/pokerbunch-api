@@ -50,20 +50,10 @@ namespace Api.Models
         [DataMember(Name = "key")]
         public string Key { get; set; }
 
-        public AppModel(AppList.Item app)
+        public AppModel(AppResult app)
             : this(app.AppId, app.AppName, app.AppKey)
         {
         }
-
-        public AppModel(GetApp.Result app)
-            : this(app.AppId, app.AppName, app.AppKey)
-        {
-        }
-
-        //public AppModel(AddLocation.Result location)
-        //    : this(location.Id, location.Name, location.Slug)
-        //{
-        //}
 
         private AppModel(int id, string name, string key)
         {

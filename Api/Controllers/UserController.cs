@@ -34,5 +34,15 @@ namespace Api.Controllers
             var bunchListResult = UseCase.GetBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
             return new BunchListModel(bunchListResult);
         }
+
+        [Route(ApiRoutes.UserAppList)]
+        [AcceptVerbs(HttpVerb.Get)]
+        [ApiAuthorize]
+        public AppListModel Apps()
+        {
+            var request = new AppList.UserAppsRequest(CurrentUserName);
+            var appListResult = UseCase.GetAppList.Execute(request);
+            return new AppListModel(appListResult);
+        }
     }
 }

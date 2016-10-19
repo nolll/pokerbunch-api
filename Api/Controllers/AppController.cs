@@ -27,22 +27,13 @@ namespace Api.Controllers
             return new AppModel(result);
         }
 
-        //[Route(ApiRoutes.AppAdd)]
-        //[AcceptVerbs(HttpVerb.Post)]
-        //[ApiAuthorize]
-        //public LocationModel Add([FromBody] LocationModel location)
-        //{
-        //    var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.Bunch, location.Name));
-        //    return new LocationModel(result);
-        //}
-
-        //[Route(ApiRoutes.AppAdd)]
-        //[AcceptVerbs(HttpVerb.Post)]
-        //[ApiAuthorize]
-        //public LocationModel Save([FromBody] LocationModel location)
-        //{
-        //    var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.Bunch, location.Name));
-        //    return new LocationModel(result);
-        //}
+        [Route(ApiRoutes.AppAdd)]
+        [AcceptVerbs(HttpVerb.Post)]
+        [ApiAuthorize]
+        public AppModel Add([FromBody] AppModel app)
+        {
+            var result = UseCase.AddApp.Execute(new AddApp.Request(CurrentUserName, app.Name));
+            return new AppModel(result);
+        }
     }
 }

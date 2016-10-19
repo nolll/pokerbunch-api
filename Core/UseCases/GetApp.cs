@@ -11,11 +11,11 @@ namespace Core.UseCases
             _appService = appService;
         }
 
-        public Result Execute(Request request)
+        public AppResult Execute(Request request)
         {
             var app = _appService.Get(request.AppId);
 
-            return new Result(app.Id, app.AppKey, app.Name);
+            return new AppResult(app.Id, app.AppKey, app.Name);
         }
 
         public class Request
@@ -27,19 +27,19 @@ namespace Core.UseCases
                 AppId = appId;
             }
         }
+    }
 
-        public class Result
+    public class AppResult
+    {
+        public int AppId { get; private set; }
+        public string AppKey { get; private set; }
+        public string AppName { get; private set; }
+
+        public AppResult(int appId, string appKey, string appName)
         {
-            public int AppId { get; private set; }
-            public string AppKey { get; private set; }
-            public string AppName { get; private set; }
-
-            public Result(int appId, string appKey, string appName)
-            {
-                AppId = appId;
-                AppKey = appKey;
-                AppName = appName;
-            }
+            AppId = appId;
+            AppKey = appKey;
+            AppName = appName;
         }
     }
 }
