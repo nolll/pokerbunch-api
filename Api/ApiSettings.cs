@@ -1,6 +1,4 @@
-﻿using Web.Common;
-
-namespace Api
+﻿namespace Api
 {
     public class ApiSettings : CommonSettings
     {

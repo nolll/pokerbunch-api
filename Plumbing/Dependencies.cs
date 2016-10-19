@@ -1,8 +1,8 @@
 using Core.Services;
 using Infrastructure.Email;
-using Infrastructure.Storage;
-using Infrastructure.Storage.CachedRepositories;
-using Infrastructure.Storage.Repositories;
+using Infrastructure.Sql;
+using Infrastructure.Sql.CachedRepositories;
+using Infrastructure.Sql.Repositories;
 
 namespace Plumbing
 {

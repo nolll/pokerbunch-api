@@ -1,8 +1,8 @@
 ﻿using System.Web.Http;
 using Api.Auth;
 using Api.Models;
+using Api.Routes;
 using Core.UseCases;
-using Web.Common.Routes;
 
 namespace Api.Controllers
 {

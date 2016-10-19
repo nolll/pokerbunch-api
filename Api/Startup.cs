@@ -8,13 +8,13 @@ using System.Web.Http.ExceptionHandling;
 using Api;
 using Api.Auth;
 using Api.Extensions;
+using Api.Urls.ApiUrls;
 using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
-using Web.Common.Urls.ApiUrls;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace Api

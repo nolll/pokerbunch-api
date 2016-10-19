@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Api.Cache;
 using Core.Exceptions;
 using Core.UseCases;
 using Microsoft.Owin.Security.OAuth;
-using Web.Common;
-using Web.Common.Cache;
 
 namespace Api.Auth
 {

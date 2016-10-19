@@ -1,7 +1,6 @@
 ﻿using System.Web.Http;
 using System.Web.Http.Controllers;
 using Api.Services;
-using Web.Common;
 
 namespace Api.Auth
 {

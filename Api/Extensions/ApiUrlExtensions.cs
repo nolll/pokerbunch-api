@@ -1,4 +1,4 @@
-using Web.Common.Urls;
+using Api.Urls;
 
 namespace Api.Extensions
 {

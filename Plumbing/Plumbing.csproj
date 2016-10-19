@@ -55,10 +55,6 @@
       <Project>{a354476a-38c4-4f65-9d95-0e306f5b07ca}</Project>
       <Name>Infrastructure.Sql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
-      <Project>{6f33f0bd-4cbb-4b6e-bdf0-eea841267c87}</Project>
-      <Name>Infrastructure</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
