@@ -73,11 +73,12 @@ namespace Api
             var jsonFormatter = new JsonMediaTypeFormatter();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             jsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
+
+            config.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
 
             config.Formatters.Clear();
             config.Formatters.Add(jsonFormatter);
-            config.Formatters.Add(new XmlMediaTypeFormatter());
         }
     }
 }
