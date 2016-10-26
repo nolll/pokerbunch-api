@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Core.Exceptions;
 using Core.UseCases;
 using Microsoft.Owin.Security.OAuth;
+using Plumbing;
 
 namespace Api.Auth
 {
@@ -52,6 +53,6 @@ namespace Api.Auth
             }
         }
 
-        private UseCaseContainer UseCase => new Bootstrapper(ApiSettings.ConnectionString).UseCases;
+        private UseCaseContainer UseCase => new Bootstrapper(Settings.ConnectionString).UseCases;
     }
 }

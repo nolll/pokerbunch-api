@@ -1,6 +1,4 @@
-using Plumbing;
-
-namespace Api
+namespace Plumbing
 {
     public class Bootstrapper
     {

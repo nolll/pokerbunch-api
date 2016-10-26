@@ -1,7 +1,6 @@
 using Core.UseCases;
-using Plumbing;
 
-namespace Api
+namespace Plumbing
 {
     public class UseCaseContainer
     {

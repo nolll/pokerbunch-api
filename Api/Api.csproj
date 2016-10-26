@@ -128,8 +128,6 @@
     </Compile>
     <Compile Include="Auth\ApiAuthorizeAttribute.cs" />
     <Compile Include="Auth\SimpleAuthorizationServerProvider.cs" />
-    <Compile Include="Bootstrapper.cs" />
-    <Compile Include="CommonSettings.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
@@ -156,7 +154,7 @@
     <Compile Include="Models\PlayerListModel.cs" />
     <Compile Include="Models\ApiRunning.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
-    <Compile Include="ApiSettings.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Routes\ApiRoutes.cs" />
     <Compile Include="Routes\WebRoutes.cs" />
@@ -245,7 +243,6 @@
     <Compile Include="Urls\SiteUrls\UserListUrl.cs" />
     <Compile Include="Urls\SiteUrls\UserUrl.cs" />
     <Compile Include="Urls\Url.cs" />
-    <Compile Include="UseCaseContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
