@@ -41,13 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CachedRepositories\CachedAppRepository.cs" />
-    <Compile Include="CachedRepositories\CachedBunchRepository.cs" />
-    <Compile Include="CachedRepositories\CachedCashgameRepository.cs" />
-    <Compile Include="CachedRepositories\CachedEventRepository.cs" />
-    <Compile Include="CachedRepositories\CachedLocationRepository.cs" />
-    <Compile Include="CachedRepositories\CachedPlayerRepository.cs" />
-    <Compile Include="CachedRepositories\CachedUserRepository.cs" />
+    <Compile Include="CachedRepositories\AppRepository.cs" />
+    <Compile Include="CachedRepositories\BunchRepository.cs" />
+    <Compile Include="CachedRepositories\CashgameRepository.cs" />
+    <Compile Include="CachedRepositories\EventRepository.cs" />
+    <Compile Include="CachedRepositories\LocationRepository.cs" />
+    <Compile Include="CachedRepositories\PlayerRepository.cs" />
+    <Compile Include="CachedRepositories\UserRepository.cs" />
     <Compile Include="CacheTime.cs" />
     <Compile Include="Classes\RawBunch.cs" />
     <Compile Include="Classes\RawCashgame.cs" />
@@ -59,13 +59,13 @@
     <Compile Include="Interfaces\IStorageDataReader.cs" />
     <Compile Include="ListSqlParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\SqlAppRepository.cs" />
-    <Compile Include="Repositories\SqlBunchRepository.cs" />
-    <Compile Include="Repositories\SqlCashgameRepository.cs" />
-    <Compile Include="Repositories\SqlEventRepository.cs" />
-    <Compile Include="Repositories\SqlLocationRepository.cs" />
-    <Compile Include="Repositories\SqlPlayerRepository.cs" />
-    <Compile Include="Repositories\SqlUserRepository.cs" />
+    <Compile Include="Repositories\SqlAppDb.cs" />
+    <Compile Include="Repositories\SqlBunchDb.cs" />
+    <Compile Include="Repositories\SqlCashgameDb.cs" />
+    <Compile Include="Repositories\SqlEventDb.cs" />
+    <Compile Include="Repositories\SqlLocationDb.cs" />
+    <Compile Include="Repositories\SqlPlayerDb.cs" />
+    <Compile Include="Repositories\SqlUserDb.cs" />
     <Compile Include="SimpleSqlParameter.cs" />
     <Compile Include="SqlParameters.cs" />
     <Compile Include="SqlServerStorageProvider.cs" />

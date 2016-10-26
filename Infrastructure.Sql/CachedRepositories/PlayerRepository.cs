@@ -3,58 +3,59 @@ using System.Collections.Generic;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Repositories;
 
 namespace Infrastructure.Sql.CachedRepositories
 {
-    public class CachedPlayerRepository : IPlayerRepository
+    public class PlayerRepository : IPlayerRepository
     {
-        private readonly IPlayerRepository _playerRepository;
+        private readonly SqlPlayerDb _playerDb;
         private readonly ICacheContainer _cacheContainer;
 
-        public CachedPlayerRepository(IPlayerRepository playerRepository, ICacheContainer cacheContainer)
+        public PlayerRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
         {
-            _playerRepository = playerRepository;
+            _playerDb = new SqlPlayerDb(db);
             _cacheContainer = cacheContainer;
         }
 
         public Player Get(int id)
         {
-            return _cacheContainer.GetAndStore(_playerRepository.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+            return _cacheContainer.GetAndStore(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
         public IList<Player> Get(IList<int> ids)
         {
-            return _cacheContainer.GetAndStore(_playerRepository.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+            return _cacheContainer.GetAndStore(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
         public IList<int> Find(int bunchId)
         {
-            return _playerRepository.Find(bunchId);
+            return _playerDb.Find(bunchId);
         }
 
         public IList<int> Find(int bunchId, string name)
         {
-            return _playerRepository.Find(bunchId, name);
+            return _playerDb.Find(bunchId, name);
         }
 
         public IList<int> Find(int bunchId, int userId)
         {
-            return _playerRepository.Find(bunchId, userId);
+            return _playerDb.Find(bunchId, userId);
         }
 
         public int Add(Player player)
         {
-            return _playerRepository.Add(player);
+            return _playerDb.Add(player);
         }
 
         public bool JoinHomegame(Player player, Bunch bunch, int userId)
         {
-            return _playerRepository.JoinHomegame(player, bunch, userId);
+            return _playerDb.JoinHomegame(player, bunch, userId);
         }
 
         public void Delete(int playerId)
         {
-            _playerRepository.Delete(playerId);
+            _playerDb.Delete(playerId);
             _cacheContainer.Remove<Player>(playerId);
         }
     }

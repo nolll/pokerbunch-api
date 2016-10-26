@@ -1,20 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Repositories;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql.Repositories
 {
-	public class SqlPlayerRepository : IPlayerRepository
+	public class SqlPlayerDb
     {
         private const string DataSql = "SELECT p.HomegameID, p.PlayerID, p.UserID, p.RoleID, ISNULL(p.PlayerName, u.DisplayName) AS PlayerName, p.Color FROM player p LEFT JOIN [user] u ON u.UserID = p.UserID ";
         private const string SearchSql = "SELECT p.PlayerID FROM player p ";
 
 	    private readonly SqlServerStorageProvider _db;
 
-	    public SqlPlayerRepository(SqlServerStorageProvider db)
+	    public SqlPlayerDb(SqlServerStorageProvider db)
 	    {
 	        _db = db;
 	    }

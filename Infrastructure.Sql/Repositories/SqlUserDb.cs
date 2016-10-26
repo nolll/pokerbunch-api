@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Repositories;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql.Repositories
 {
-    public class SqlUserRepository : IUserRepository
+    public class SqlUserDb
     {
         private const string DataSql = "SELECT u.UserID, u.UserName, u.DisplayName, u.RealName, u.Email, u.Password, u.Salt, u.RoleID FROM [User] u ";
         private const string SearchSql = "SELECT u.UserID FROM [User] u ";
         
         private readonly SqlServerStorageProvider _db;
 
-        public SqlUserRepository(SqlServerStorageProvider db)
+        public SqlUserDb(SqlServerStorageProvider db)
         {
             _db = db;
         }

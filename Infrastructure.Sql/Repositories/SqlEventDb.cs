@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Repositories;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql.Repositories
 {
-    public class SqlEventRepository : IEventRepository
+    public class SqlEventDb
     {
         private const string EventSql = @"SELECT e.EventID, e.BunchID, e.Name, g.LocationId, g.Date
                                         FROM [Event] e
@@ -18,7 +17,7 @@ namespace Infrastructure.Sql.Repositories
 
         private readonly SqlServerStorageProvider _db;
 
-        public SqlEventRepository(SqlServerStorageProvider db)
+        public SqlEventDb(SqlServerStorageProvider db)
         {
             _db = db;
         }

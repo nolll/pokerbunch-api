@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Core.Entities;
-using Core.Repositories;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql.Repositories
 {
-	public class SqlBunchRepository : IBunchRepository
+	public class SqlBunchDb
 	{
         private const string DataSql = "SELECT h.HomegameID, h.Name, h.DisplayName, h.Description, h.Currency, h.CurrencyLayout, h.Timezone, h.DefaultBuyin, h.CashgamesEnabled, h.TournamentsEnabled, h.VideosEnabled, h.HouseRules FROM homegame h";
         private const string SearchSql = "SELECT h.HomegameID FROM homegame h";
         private readonly SqlServerStorageProvider _db;
         
-        public SqlBunchRepository(SqlServerStorageProvider db)
+        public SqlBunchDb(SqlServerStorageProvider db)
 	    {
             _db = db;
 	    }

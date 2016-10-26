@@ -1,19 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Repositories;
 using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql.Repositories
 {
-    public class SqlLocationRepository : ILocationRepository
+    public class SqlLocationDb
     {
         private const string DataSql = "SELECT l.Id, l.Name, l.BunchId FROM Location l ";
         private const string SearchIdSql = "SELECT l.Id FROM Location l ";
 
         private readonly SqlServerStorageProvider _db;
 
-        public SqlLocationRepository(SqlServerStorageProvider db)
+        public SqlLocationDb(SqlServerStorageProvider db)
         {
             _db = db;
         }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
-using Core.Repositories;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql.Repositories
 {
-    public class SqlCashgameRepository : ICashgameRepository
+    public class SqlCashgameDb
     {
         private const string DataSql = "SELECT g.GameID, g.HomegameID, g.LocationId, g.Status, g.Date FROM game g ";
         private const string SearchSql = "SELECT g.GameID FROM game g ";
@@ -17,7 +16,7 @@ namespace Infrastructure.Sql.Repositories
         
         private readonly SqlServerStorageProvider _db;
 
-	    public SqlCashgameRepository(SqlServerStorageProvider db)
+	    public SqlCashgameDb(SqlServerStorageProvider db)
 	    {
 	        _db = db;
 	    }
