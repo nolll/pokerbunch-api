@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -20,27 +21,27 @@ namespace Infrastructure.Sql.CachedRepositories
         
         public App Get(int id)
         {
-            return _cacheContainer.GetAndStore(_appDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+            return GetAndCache(id);
         }
 
-        public IList<App> GetList(IList<int> ids)
+        public IList<App> List()
         {
-            return _cacheContainer.GetAndStore(_appDb.GetList, ids, TimeSpan.FromMinutes(CacheTime.Long));
+            var ids = _appDb.Find();
+            return GetAndCache(ids);
         }
 
-        public IList<int> Find()
+        public IList<App> List(int userId)
         {
-            return _appDb.Find();
+            var ids = _appDb.Find(userId);
+            return GetAndCache(ids);
         }
 
-        public IList<int> Find(int userId)
+        public App Get(string appKey)
         {
-            return _appDb.Find(userId);
-        }
-
-        public IList<int> Find(string appKey)
-        {
-            return _appDb.Find(appKey);
+            var ids = _appDb.Find(appKey);
+            if (ids.Any())
+                return GetAndCache(ids.First());
+            return null;
         }
 
         public int Add(App app)
@@ -52,6 +53,16 @@ namespace Infrastructure.Sql.CachedRepositories
         {
             _appDb.Update(app);
             _cacheContainer.Remove<App>(app.Id);
+        }
+
+        private App GetAndCache(int id)
+        {
+            return _cacheContainer.GetAndStore(_appDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        }
+
+        private IList<App> GetAndCache(IList<int> ids)
+        {
+            return _cacheContainer.GetAndStore(_appDb.GetList, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
     }
 }

@@ -17,14 +17,12 @@ namespace Core.Services
 
         public IList<App> ListApps()
         {
-            var ids = _appRepository.Find();
-            return _appRepository.GetList(ids);
+            return _appRepository.List();
         }
 
         public IList<App> ListApps(int userId)
         {
-            var ids = _appRepository.Find(userId);
-            return _appRepository.GetList(ids);
+            return _appRepository.List(userId);
         }
 
         public App Get(int id)
@@ -34,10 +32,10 @@ namespace Core.Services
 
         public App Get(string appKey)
         {
-            var ids = _appRepository.Find(appKey);
-            if(ids.Count == 0)
+            var app = _appRepository.Get(appKey);
+            if(app == null)
                 throw new AppNotFoundException();
-            return _appRepository.Get(ids.First());
+            return app;
         }
 
         public int Add(App app)

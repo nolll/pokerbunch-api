@@ -6,10 +6,9 @@ namespace Core.Repositories
     public interface IAppRepository
     {
         App Get(int id);
-        IList<App> GetList(IList<int> ids);
-        IList<int> Find();
-        IList<int> Find(int userId);
-        IList<int> Find(string appKey);
+        App Get(string appKey);
+        IList<App> List();
+        IList<App> List(int userId);
         int Add(App app);
         void Update(App app);
     }
