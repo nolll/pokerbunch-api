@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 
@@ -14,23 +13,19 @@ namespace Core.Services
             _userRepository = userRepository;
         }
 
-        public User GetById(int id)
+        public User Get(int id)
         {
             return _userRepository.Get(id);
         }
 
         public User GetByNameOrEmail(string nameOrEmail)
         {
-            var ids = _userRepository.Find(nameOrEmail);
-            if (ids.Any())
-                return _userRepository.Get(ids.First());
-            return null;
+            return _userRepository.Get(nameOrEmail);
         }
 
-        public IList<User> GetList()
+        public IList<User> List()
         {
-            var ids = _userRepository.Find();
-            return _userRepository.Get(ids);
+            return _userRepository.List();
         }
         
         public void Save(User user)

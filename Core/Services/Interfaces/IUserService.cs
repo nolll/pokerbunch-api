@@ -5,9 +5,9 @@ namespace Core.Services
 {
     public interface IUserService
     {
-        User GetById(int id);
+        User Get(int id);
         User GetByNameOrEmail(string nameOrEmail);
-        IList<User> GetList();
+        IList<User> List();
         void Save(User user);
         int Add(User user);
     }

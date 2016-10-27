@@ -6,9 +6,8 @@ namespace Core.Repositories
     public interface IUserRepository
     {
         User Get(int id);
-        IList<User> Get(IList<int> ids);
-        IList<int> Find();
-        IList<int> Find(string nameOrEmail);
+        User Get(string nameOrEmail);
+        IList<User> List();
         void Update(User user);
         int Add(User user);
     }

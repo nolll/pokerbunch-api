@@ -22,7 +22,7 @@ namespace Core.UseCases
         {
             var player = _playerService.Get(request.PlayerId);
             var bunch = _bunchService.Get(player.BunchId);
-            var user = _userService.GetById(player.UserId);
+            var user = _userService.Get(player.UserId);
             var currentUser = _userService.GetByNameOrEmail(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);

@@ -2,7 +2,7 @@ using Core.Entities;
 
 namespace Infrastructure.Sql.Classes
 {
-	public class RawUser
+	public class RawUser : IEntity
     {
 	    public int Id { get; }
 	    public string UserName { get; }

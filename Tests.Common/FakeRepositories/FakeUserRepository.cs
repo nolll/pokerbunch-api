@@ -21,19 +21,14 @@ namespace Tests.Common.FakeRepositories
             return _list.FirstOrDefault(o => o.Id == id);
         }
 
-        public IList<User> Get(IList<int> ids)
+        public IList<User> List()
         {
-            return _list.Where(o => ids.Contains(o.Id)).ToList();
+            return _list;
         }
 
-        public IList<int> Find()
+        public User Get(string nameOrEmail)
         {
-            return _list.Select(o => o.Id).ToList();
-        }
-
-        public IList<int> Find(string nameOrEmail)
-        {
-            return _list.Where(o => o.UserName == nameOrEmail || o.Email == nameOrEmail).Select(o => o.Id).ToList();
+            return _list.FirstOrDefault(o => o.UserName == nameOrEmail || o.Email == nameOrEmail);
         }
 
         public int Add(User user)

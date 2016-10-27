@@ -23,19 +23,18 @@ namespace Infrastructure.Sql.CachedRepositories
             return _cacheContainer.GetAndStore(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<User> Get(IList<int> ids)
+        public IList<User> List()
         {
-            return _cacheContainer.GetAndStore(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
-        }
-        
-        public IList<int> Find()
-        {
-            return _userDb.Find();
+            var ids = _userDb.Find();
+            return _userDb.Get(ids);
         }
 
-        public IList<int> Find(string nameOrEmail)
+        public User Get(string nameOrEmail)
         {
-            return _userDb.Find(nameOrEmail);
+            var id = _userDb.Find(nameOrEmail);
+            if (id == 0)
+                return null;
+            return Get(id);
         }
 
         public void Update(User user)

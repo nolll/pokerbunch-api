@@ -44,12 +44,10 @@ namespace Infrastructure.Sql.Repositories
             return GetIds();
         }
 
-        public IList<int> Find(string nameOrEmail)
+        public int Find(string nameOrEmail)
         {
             var userId = GetIdByNameOrEmail(nameOrEmail);
-            if(userId.HasValue)
-                return new List<int>{userId.Value};
-            return new List<int>();
+            return userId ?? 0;
         }
 
         public void Update(User user)
