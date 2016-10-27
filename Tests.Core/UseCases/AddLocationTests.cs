@@ -28,16 +28,10 @@ namespace Tests.Core.UseCases
             Assert.Throws<ValidationException>(() => Sut.Execute(request));
         }
 
-        private AddLocation Sut
-        {
-            get
-            {
-                return new AddLocation(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.UserService,
-                    Services.LocationService);
-            }
-        }
+        private AddLocation Sut => new AddLocation(
+            Services.BunchService,
+            Services.PlayerService,
+            Services.UserService,
+            Repos.Location);
     }
 }

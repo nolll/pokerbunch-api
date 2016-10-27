@@ -17,12 +17,6 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.UserA.Id, Repos.App.Added.UserId);
         }
 
-        private AddApp Sut
-        {
-            get
-            {
-                return new AddApp(Services.AppService, Services.UserService);
-            }
-        }
+        private AddApp Sut => new AddApp(Repos.App, Services.UserService);
     }
 }

@@ -35,18 +35,12 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(4, result.Locations.Count);
         }
 
-        private AddCashgameForm Sut
-        {
-            get
-            {
-                return new AddCashgameForm(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService,
-                    Services.EventService);
-            }
-        }
+        private AddCashgameForm Sut => new AddCashgameForm(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.UserService,
+            Services.PlayerService,
+            Repos.Location,
+            Services.EventService);
     }
 }

@@ -76,7 +76,6 @@
     <Compile Include="Repositories\ILocationRepository.cs" />
     <Compile Include="Repositories\IRepositoryFactory.cs" />
     <Compile Include="Services\ApplicationVersion.cs" />
-    <Compile Include="Services\AppService.cs" />
     <Compile Include="Services\BunchService.cs" />
     <Compile Include="Services\CashgameService.cs" />
     <Compile Include="Services\CheckpointService.cs" />
@@ -95,7 +94,6 @@
     <Compile Include="Services\Interfaces\IUserService.cs" />
     <Compile Include="Services\InvitationCodeCreator.cs" />
     <Compile Include="Services\InvitationMessageBuilder.cs" />
-    <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\PasswordGenerator.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\RandomService.cs" />

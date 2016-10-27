@@ -45,17 +45,11 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(1, Repos.Event.AddedCashgameId);
         }
 
-        private EditCashgame Sut
-        {
-            get
-            {
-                return new EditCashgame(
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService,
-                    Services.EventService);
-            }
-        }
+        private EditCashgame Sut => new EditCashgame(
+            Services.CashgameService,
+            Services.UserService,
+            Services.PlayerService,
+            Repos.Location,
+            Services.EventService);
     }
 }

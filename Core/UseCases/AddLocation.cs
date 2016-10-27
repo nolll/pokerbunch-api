@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -10,14 +11,14 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
         private readonly UserService _userService;
-        private readonly LocationService _locationService;
+        private readonly ILocationRepository _locationRepository;
 
-        public AddLocation(BunchService bunchService, PlayerService playerService, UserService userService, LocationService locationService)
+        public AddLocation(BunchService bunchService, PlayerService playerService, UserService userService, ILocationRepository locationRepository)
         {
             _bunchService = bunchService;
             _playerService = playerService;
             _userService = userService;
-            _locationService = locationService;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
@@ -33,7 +34,7 @@ namespace Core.UseCases
             RequireRole.Player(currentUser, currentPlayer);
 
             var location = new Location(0, request.Name, bunch.Id);
-            var id = _locationService.Add(location);
+            var id = _locationRepository.Add(location);
 
             return new Result(bunch.Slug, id, location.Name);
         }

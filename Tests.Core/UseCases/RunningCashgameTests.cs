@@ -82,17 +82,11 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.PlayerD.Id, result.BunchPlayerItems[3].PlayerId);
         }
 
-        private RunningCashgame Sut
-        {
-            get
-            {
-                return new RunningCashgame(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService,
-                    Services.LocationService);
-            }
-        }
+        private RunningCashgame Sut => new RunningCashgame(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.PlayerService,
+            Services.UserService,
+            Repos.Location);
     }
 }

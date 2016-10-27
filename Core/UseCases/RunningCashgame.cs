@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -14,15 +15,15 @@ namespace Core.UseCases
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
         private readonly UserService _userService;
-        private readonly LocationService _locationService;
+        private readonly ILocationRepository _locationRepository;
 
-        public RunningCashgame(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService, LocationService locationService)
+        public RunningCashgame(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService, ILocationRepository locationRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
             _userService = userService;
-            _locationService = locationService;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
@@ -41,7 +42,7 @@ namespace Core.UseCases
 
             var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
             
-            var location = _locationService.Get(cashgame.LocationId);
+            var location = _locationRepository.Get(cashgame.LocationId);
 
             var playerItems = GetPlayerItems(cashgame, players);
             var bunchPlayerItems = bunchPlayers.Select(o => new BunchPlayerItem(o.Id, o.DisplayName, o.Color)).OrderBy(o => o.Name).ToList();

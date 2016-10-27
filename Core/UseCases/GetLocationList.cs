@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -9,14 +10,14 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly UserService _userService;
         private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
+        private readonly ILocationRepository _locationRepository;
 
-        public GetLocationList(BunchService bunchService, UserService userService, PlayerService playerService, LocationService locationService)
+        public GetLocationList(BunchService bunchService, UserService userService, PlayerService playerService, ILocationRepository locationRepository)
         {
             _bunchService = bunchService;
             _userService = userService;
             _playerService = playerService;
-            _locationService = locationService;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
@@ -25,7 +26,7 @@ namespace Core.UseCases
             var user = _userService.GetByNameOrEmail(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var locations = _locationService.ListByBunch(bunch.Id);
+            var locations = _locationRepository.List(bunch.Id);
 
             var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 

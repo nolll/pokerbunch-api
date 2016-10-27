@@ -51,19 +51,13 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(1, result.Events[1].EventId);
         }
 
-        private EventList Sut
-        {
-            get
-            {
-                return new EventList(
-                    Services.BunchService,
-                    Services.EventService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService);
-            }
-        }
-        
+        private EventList Sut => new EventList(
+            Services.BunchService,
+            Services.EventService,
+            Services.UserService,
+            Services.PlayerService,
+            Repos.Location);
+
         private EventList.Request CreateInput()
         {
             return new EventList.Request(TestData.UserNameA, TestData.SlugA);

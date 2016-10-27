@@ -167,17 +167,11 @@ namespace Tests.Core.UseCases
             return new CashgameList.Request(TestData.UserNameA, TestData.SlugA, orderBy, year);
         }
 
-        private CashgameList Sut
-        {
-            get
-            {
-                return new CashgameList(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService);
-            }
-        }
+        private CashgameList Sut => new CashgameList(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.UserService,
+            Services.PlayerService,
+            Repos.Location);
     }
 }

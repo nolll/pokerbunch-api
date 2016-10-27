@@ -49,18 +49,12 @@ namespace Tests.Core.UseCases
             return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId, eventId);
         }
 
-        private AddCashgame Sut
-        {
-            get
-            {
-                return new AddCashgame(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService,
-                    Services.EventService);
-            }
-        }
+        private AddCashgame Sut => new AddCashgame(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.UserService,
+            Services.PlayerService,
+            Repos.Location,
+            Services.EventService);
     }
 }
