@@ -21,10 +21,10 @@ namespace Infrastructure.Sql.Repositories
 	    public IList<int> Find(int bunchId)
 	    {
             var sql = string.Concat(SearchSql, "WHERE p.HomegameID = @homegameId");
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@homegameId", bunchId)
-                };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@homegameId", bunchId)
+	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("PlayerID");
 
@@ -33,11 +33,11 @@ namespace Infrastructure.Sql.Repositories
 	    public IList<int> Find(int bunchId, string name)
 	    {
             var sql = string.Concat(SearchSql, "LEFT JOIN [user] u on p.UserID = u.UserID WHERE p.HomegameID = @homegameId AND (p.PlayerName = @playerName OR u.DisplayName = @playerName)");
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@homegameId", bunchId),
-                    new SimpleSqlParameter("@playerName", name)
-                };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@homegameId", bunchId),
+	            new SimpleSqlParameter("@playerName", name)
+	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("PlayerID");
 
@@ -46,11 +46,11 @@ namespace Infrastructure.Sql.Repositories
 	    public IList<int> Find(int bunchId, int userId)
 	    {
             var sql = string.Concat(SearchSql, "WHERE p.HomegameID = @homegameId AND p.UserID = @userId");
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@homegameId", bunchId),
-                    new SimpleSqlParameter("@userId", userId)
-                };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@homegameId", bunchId),
+	            new SimpleSqlParameter("@userId", userId)
+	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("PlayerID");
 	    }
@@ -70,9 +70,9 @@ namespace Infrastructure.Sql.Repositories
         {
             var sql = string.Concat(DataSql, "WHERE p.PlayerID = @id");
             var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@id", id)
-                };
+            {
+                new SimpleSqlParameter("@id", id)
+            };
             var reader = _db.Query(sql, parameters);
             var rawPlayer = reader.ReadOne(CreateRawPlayer);
             return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
@@ -109,13 +109,13 @@ namespace Infrastructure.Sql.Repositories
 		public bool JoinHomegame(Player player, Bunch bunch, int userId)
         {
             const string sql = "UPDATE player SET HomegameID = @homegameId, PlayerName = NULL, UserID = @userId, RoleID = @role, Approved = 1 WHERE PlayerID = @playerId";
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@homegameId", bunch.Id),
-                    new SimpleSqlParameter("@userId", userId),
-                    new SimpleSqlParameter("@role", (int)player.Role),
-                    new SimpleSqlParameter("@playerId", player.Id)
-                };
+		    var parameters = new List<SimpleSqlParameter>
+		    {
+		        new SimpleSqlParameter("@homegameId", bunch.Id),
+		        new SimpleSqlParameter("@userId", userId),
+		        new SimpleSqlParameter("@role", (int) player.Role),
+		        new SimpleSqlParameter("@playerId", player.Id)
+		    };
             var rowCount = _db.Execute(sql, parameters);
             return rowCount > 0;
 		}
@@ -123,10 +123,10 @@ namespace Infrastructure.Sql.Repositories
 		public void Delete(int playerId)
         {
             const string sql = @"DELETE FROM player WHERE PlayerID = @playerId";
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@playerId", playerId)
-                };
+		    var parameters = new List<SimpleSqlParameter>
+		    {
+		        new SimpleSqlParameter("@playerId", playerId)
+		    };
             _db.Execute(sql, parameters);
         }
 

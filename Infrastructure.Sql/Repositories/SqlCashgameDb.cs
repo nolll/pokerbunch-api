@@ -25,9 +25,9 @@ namespace Infrastructure.Sql.Repositories
         {
             var sql = string.Concat(DataSql, "WHERE g.GameID = @cashgameId ORDER BY g.GameId");
             var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@cashgameId", cashgameId)
-		        };
+            {
+                new SimpleSqlParameter("@cashgameId", cashgameId)
+            };
             var reader = _db.Query(sql, parameters);
             var rawGame = reader.ReadOne(CreateRawCashgame);
             var rawCheckpoints = GetCheckpoints(cashgameId);
@@ -70,10 +70,10 @@ namespace Infrastructure.Sql.Repositories
 	    public IList<int> FindByEvent(int eventId)
 	    {
             var sql = string.Concat(SearchSql, "WHERE g.GameID IN (SELECT ecg.GameID FROM eventcashgame ecg WHERE ecg.EventId = @eventId)");
-            var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@eventId", eventId),
-		        };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@eventId", eventId),
+	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("GameID");
 	    }
@@ -82,11 +82,11 @@ namespace Infrastructure.Sql.Repositories
 	    {
             const int status = (int)GameStatus.Running;
             var sql = string.Concat(SearchSql, "WHERE g.HomegameID = @homegameId AND g.Status = @status");
-            var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@homegameId", bunchId),
-                    new SimpleSqlParameter("@status", status)
-		        };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@homegameId", bunchId),
+	            new SimpleSqlParameter("@status", status)
+	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("GameID");
 	    }
@@ -94,10 +94,10 @@ namespace Infrastructure.Sql.Repositories
 	    public IList<int> FindByCheckpoint(int checkpointId)
 	    {
             var sql = string.Concat(SearchByCheckpointSql, "WHERE cp.CheckpointID = @checkpointId");
-            var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@checkpointId", checkpointId)
-		        };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@checkpointId", checkpointId)
+	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("GameID");
 	    }
@@ -117,10 +117,10 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "SELECT DISTINCT YEAR(g.[Date]) as 'Year' FROM Game g WHERE g.HomegameID = @homegameId AND g.Status = @status ORDER BY 'Year' DESC";
             var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@homegameId", bunchId),
-                    new SimpleSqlParameter("@status", (int)GameStatus.Finished)
-		        };
+            {
+                new SimpleSqlParameter("@homegameId", bunchId),
+                new SimpleSqlParameter("@status", (int) GameStatus.Finished)
+            };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("Year");
         }
@@ -139,13 +139,13 @@ namespace Infrastructure.Sql.Repositories
 		    var rawCashgame = CreateRawCashgame(cashgame);
             const string sql = "INSERT INTO game (HomegameID, LocationId, Status, Date) VALUES (@homegameId, @locationId, @status, @date) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
             var timezoneAdjustedDate = TimeZoneInfo.ConvertTime(rawCashgame.Date, bunch.Timezone);
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@homegameId", bunch.Id),
-                    new SimpleSqlParameter("@locationId", rawCashgame.LocationId),
-                    new SimpleSqlParameter("@status", rawCashgame.Status),
-                    new SimpleSqlParameter("@date", timezoneAdjustedDate)
-                };
+		    var parameters = new List<SimpleSqlParameter>
+		    {
+		        new SimpleSqlParameter("@homegameId", bunch.Id),
+		        new SimpleSqlParameter("@locationId", rawCashgame.LocationId),
+		        new SimpleSqlParameter("@status", rawCashgame.Status),
+		        new SimpleSqlParameter("@date", timezoneAdjustedDate)
+		    };
             return _db.ExecuteInsert(sql, parameters);
 		}
         
@@ -153,13 +153,13 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "UPDATE game SET LocationId = @locationId, Date = @date, Status = @status WHERE GameID = @cashgameId";
             var rawCashgame = CreateRawCashgame(cashgame);
-            var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@locationId", rawCashgame.LocationId),
-                    new SimpleSqlParameter("@date", rawCashgame.Date),
-                    new SimpleSqlParameter("@status", rawCashgame.Status),
-                    new SimpleSqlParameter("@cashgameId", rawCashgame.Id)
-		        };
+		    var parameters = new List<SimpleSqlParameter>
+		    {
+		        new SimpleSqlParameter("@locationId", rawCashgame.LocationId),
+		        new SimpleSqlParameter("@date", rawCashgame.Date),
+		        new SimpleSqlParameter("@status", rawCashgame.Status),
+		        new SimpleSqlParameter("@cashgameId", rawCashgame.Id)
+		    };
             if (cashgame.AddedCheckpoints.Any())
             {
                 foreach (var checkpoint in cashgame.AddedCheckpoints)
@@ -188,9 +188,9 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "SELECT DISTINCT GameID FROM cashgamecheckpoint WHERE PlayerId = @playerId";
             var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@playerId", playerId)
-		        };
+            {
+                new SimpleSqlParameter("@playerId", playerId)
+            };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("GameID");
         }
@@ -252,48 +252,48 @@ namespace Infrastructure.Sql.Repositories
 	    private int AddCheckpoint(Checkpoint checkpoint)
         {
             const string sql = "INSERT INTO cashgamecheckpoint (GameID, PlayerID, Type, Amount, Stack, Timestamp) VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
-            var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@gameId", checkpoint.CashgameId),
-                    new SimpleSqlParameter("@playerId", checkpoint.PlayerId),
-                    new SimpleSqlParameter("@type", checkpoint.Type),
-                    new SimpleSqlParameter("@amount", checkpoint.Amount),
-                    new SimpleSqlParameter("@stack", checkpoint.Stack),
-                    new SimpleSqlParameter("@timestamp", checkpoint.Timestamp.ToUniversalTime())
-                };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@gameId", checkpoint.CashgameId),
+	            new SimpleSqlParameter("@playerId", checkpoint.PlayerId),
+	            new SimpleSqlParameter("@type", checkpoint.Type),
+	            new SimpleSqlParameter("@amount", checkpoint.Amount),
+	            new SimpleSqlParameter("@stack", checkpoint.Stack),
+	            new SimpleSqlParameter("@timestamp", checkpoint.Timestamp.ToUniversalTime())
+	        };
             return _db.ExecuteInsert(sql, parameters);
         }
 
 	    private void UpdateCheckpoint(Checkpoint checkpoint)
         {
             const string sql = "UPDATE cashgamecheckpoint SET Timestamp = @timestamp, Amount = @amount, Stack = @stack WHERE CheckpointID = @checkpointId";
-            var parameters = new List<SimpleSqlParameter>
-		        {
-                    new SimpleSqlParameter("@timestamp", checkpoint.Timestamp),
-		            new SimpleSqlParameter("@amount", checkpoint.Amount),
-		            new SimpleSqlParameter("@stack", checkpoint.Stack),
-		            new SimpleSqlParameter("@checkpointId", checkpoint.Id)
-		        };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@timestamp", checkpoint.Timestamp),
+	            new SimpleSqlParameter("@amount", checkpoint.Amount),
+	            new SimpleSqlParameter("@stack", checkpoint.Stack),
+	            new SimpleSqlParameter("@checkpointId", checkpoint.Id)
+	        };
             _db.Execute(sql, parameters);
         }
 
 	    private void DeleteCheckpoint(Checkpoint checkpoint)
         {
             const string sql = "DELETE FROM cashgamecheckpoint WHERE CheckpointID = @checkpointId";
-            var parameters = new List<SimpleSqlParameter>
-		        {
-		            new SimpleSqlParameter("@checkpointId", checkpoint.Id)
-		        };
+	        var parameters = new List<SimpleSqlParameter>
+	        {
+	            new SimpleSqlParameter("@checkpointId", checkpoint.Id)
+	        };
             _db.Execute(sql, parameters);
         }
 
  	    private IList<RawCheckpoint> GetCheckpoints(int cashgameId)
         {
             const string sql = "SELECT cp.GameID, cp.CheckpointID, cp.PlayerID, cp.Type, cp.Stack, cp.Amount, cp.Timestamp FROM cashgamecheckpoint cp WHERE cp.GameID = @cashgameId ORDER BY cp.PlayerID, cp.Timestamp";
-            var parameters = new List<SimpleSqlParameter>
-		        {
-		            new SimpleSqlParameter("@cashgameId", cashgameId)
-		        };
+ 	        var parameters = new List<SimpleSqlParameter>
+ 	        {
+ 	            new SimpleSqlParameter("@cashgameId", cashgameId)
+ 	        };
             var reader = _db.Query(sql, parameters);
             return reader.ReadList(CreateRawCheckpoint);
         }

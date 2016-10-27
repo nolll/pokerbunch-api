@@ -32,12 +32,7 @@ namespace Infrastructure.Sql.CachedRepositories
         {
             return _locationDb.Find(bunchId);
         }
-
-        public IList<int> Find(int bunchId, string name)
-        {
-            return _locationDb.Find(bunchId, name);
-        }
-
+        
         public int Add(Location location)
         {
             return _locationDb.Add(location);

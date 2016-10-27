@@ -8,7 +8,6 @@ namespace Core.Repositories
         Location Get(int id);
         IList<Location> Get(IList<int> ids);
         IList<int> Find(int bunchId);
-        IList<int> Find(int bunchId, string name);
         int Add(Location location);
     }
 }

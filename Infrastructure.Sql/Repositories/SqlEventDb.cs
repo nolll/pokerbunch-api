@@ -27,9 +27,9 @@ namespace Infrastructure.Sql.Repositories
             const string whereClause = "WHERE e.EventID = @id";
             var sql = string.Format(EventSql, whereClause);
             var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@id", id)
-                };
+            {
+                new SimpleSqlParameter("@id", id)
+            };
             var reader = _db.Query(sql, parameters);
             var rawEvents = CreateRawEvents(reader);
             var rawEvent = rawEvents.FirstOrDefault();
@@ -50,9 +50,9 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "SELECT e.EventID FROM [Event] e WHERE e.BunchID = @id";
             var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@id", bunchId)
-                };
+            {
+                new SimpleSqlParameter("@id", bunchId)
+            };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("EventID");
         }
@@ -61,9 +61,9 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "SELECT ecg.EventID FROM [EventCashgame] ecg WHERE ecg.CashgameId = @id";
             var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@id", cashgameId)
-                };
+            {
+                new SimpleSqlParameter("@id", cashgameId)
+            };
             var reader = _db.Query(sql, parameters);
             return reader.ReadIntList("EventID");
         }
@@ -72,10 +72,10 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "INSERT INTO event (Name, BunchId) VALUES (@name, @bunchId) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
             var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@name", e.Name),
-                    new SimpleSqlParameter("@bunchId", e.BunchId)
-                };
+            {
+                new SimpleSqlParameter("@name", e.Name),
+                new SimpleSqlParameter("@bunchId", e.BunchId)
+            };
             return _db.ExecuteInsert(sql, parameters);
         }
 
@@ -83,10 +83,10 @@ namespace Infrastructure.Sql.Repositories
         {
             const string sql = "INSERT INTO eventcashgame (EventId, GameId) VALUES (@eventId, @cashgameId)";
             var parameters = new List<SimpleSqlParameter>
-                {
-                    new SimpleSqlParameter("@eventId", eventId),
-                    new SimpleSqlParameter("@cashgameId", cashgameId)
-                };
+            {
+                new SimpleSqlParameter("@eventId", eventId),
+                new SimpleSqlParameter("@cashgameId", cashgameId)
+            };
             _db.ExecuteInsert(sql, parameters);
         }
 

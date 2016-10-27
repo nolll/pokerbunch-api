@@ -29,12 +29,7 @@ namespace Tests.Common.FakeRepositories
         {
             return _list.Where(o => o.BunchId == bunchId).Select(o => o.Id).ToList();
         }
-
-        public IList<int> Find(int bunchId, string name)
-        {
-            return _list.Where(o => o.BunchId == bunchId && o.Name == name).Select(o => o.Id).ToList();
-        }
-
+        
         public int Add(Location location)
         {
             Added = location;
