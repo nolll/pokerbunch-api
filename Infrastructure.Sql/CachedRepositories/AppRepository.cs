@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using Infrastructure.Sql.Repositories;
@@ -41,7 +42,7 @@ namespace Infrastructure.Sql.CachedRepositories
             var ids = _appDb.Find(appKey);
             if (ids.Any())
                 return GetAndCache(ids.First());
-            return null;
+            throw new AppNotFoundException();
         }
 
         public int Add(App app)

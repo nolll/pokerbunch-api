@@ -46,9 +46,9 @@ namespace Plumbing
         public GetPlayer GetPlayer => new GetPlayer(_deps.BunchService, _deps.PlayerService, _deps.CashgameService, _deps.UserService);
 
         // Apps
-        public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppService);
-        public GetApp GetApp => new GetApp(_deps.AppService);
-        public AppList GetAppList => new AppList(_deps.AppService, _deps.UserService);
-        public AddApp AddApp => new AddApp(_deps.AppService, _deps.UserService);
+        public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppRepository);
+        public GetApp GetApp => new GetApp(_deps.AppRepository);
+        public AppList GetAppList => new AppList(_deps.AppRepository, _deps.UserService);
+        public AddApp AddApp => new AddApp(_deps.AppRepository, _deps.UserService);
     }
 }

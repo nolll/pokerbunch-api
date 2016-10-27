@@ -27,9 +27,6 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.AppB.Name, result.Items[1].AppName);
         }
 
-        private AppList Sut
-        {
-            get { return new AppList(Services.AppService, Services.UserService); }
-        }
+        private AppList Sut => new AppList(Repos.App, Services.UserService);
     }
 }

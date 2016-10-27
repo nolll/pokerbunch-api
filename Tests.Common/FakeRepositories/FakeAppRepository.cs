@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 
 namespace Tests.Common.FakeRepositories
@@ -32,7 +33,10 @@ namespace Tests.Common.FakeRepositories
 
         public App Get(string appKey)
         {
-            return _list.FirstOrDefault(o => o.AppKey == appKey);
+            var app = _list.FirstOrDefault(o => o.AppKey == appKey);
+            if(app == null)
+                throw new AppNotFoundException();
+            return app;
         }
 
         public int Add(App app)
