@@ -21,13 +21,12 @@ namespace Core.Services
 
         public IList<Location> Get(IList<int> ids)
         {
-            return _locationRepository.Get(ids);
+            return _locationRepository.List(ids);
         }
 
-        public IList<Location> GetByBunch(int bunchId)
+        public IList<Location> ListByBunch(int bunchId)
         {
-            var ids = _locationRepository.Find(bunchId);
-            var locations = _locationRepository.Get(ids);
+            var locations = _locationRepository.List(bunchId);
             return locations.OrderBy(o => o.Name).ToList();
         }
 

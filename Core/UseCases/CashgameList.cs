@@ -31,7 +31,7 @@ namespace Core.UseCases
             RequireRole.Player(user, player);
             var cashgames = _cashgameService.GetFinished(bunch.Id, request.Year);
             cashgames = SortItems(cashgames, request.SortOrder).ToList();
-            var locations = _locationService.GetByBunch(bunch.Id);
+            var locations = _locationService.ListByBunch(bunch.Id);
             var list = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations)));
 
             return new Result(request.Slug, list.ToList(), request.SortOrder, request.Year, bunch.Currency.Format, bunch.Currency.ThousandSeparator);

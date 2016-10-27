@@ -25,7 +25,7 @@ namespace Core.UseCases
             var user = _userService.GetByNameOrEmail(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var locations = _locationService.GetByBunch(bunch.Id);
+            var locations = _locationService.ListByBunch(bunch.Id);
 
             var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 

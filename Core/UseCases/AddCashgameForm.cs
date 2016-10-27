@@ -35,7 +35,7 @@ namespace Core.UseCases
             {
                 throw new CashgameRunningException();
             }
-            var locations = _locationService.GetByBunch(bunch.Id);
+            var locations = _locationService.ListByBunch(bunch.Id);
             var locationItems = locations.Select(o => new LocationItem(o.Id, o.Name)).ToList();
             var events = _eventService.GetByBunch(bunch.Id);
             var eventItems = events.Select(o => new EventItem(o.Id, o.Name)).ToList();

@@ -31,7 +31,7 @@ namespace Core.UseCases
             var player = _playerService.GetByUserId(cashgame.BunchId, user.Id);
             RequireRole.Manager(user, player);
 
-            var locations = _locationService.GetByBunch(cashgame.BunchId);
+            var locations = _locationService.ListByBunch(cashgame.BunchId);
             var locationItems = locations.Select(o => new LocationItem(o.Id, o.Name)).ToList();
 
             var events = _eventService.GetByBunch(bunch.Id);
