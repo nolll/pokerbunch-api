@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -28,15 +29,10 @@ namespace Infrastructure.Sql.CachedRepositories
             return GetAndCache(ids);
         }
 
-        public IList<int> Find(int bunchId)
-        {
-            return _locationDb.Find(bunchId);
-        }
-
         public IList<Location> List(int bunchId)
         {
             var ids = _locationDb.Find(bunchId);
-            return GetAndCache(ids);
+            return GetAndCache(ids).OrderBy(o => o.Name).ToList();
         }
 
         public int Add(Location location)
@@ -44,12 +40,12 @@ namespace Infrastructure.Sql.CachedRepositories
             return _locationDb.Add(location);
         }
 
-        public Location GetAndCache(int id)
+        private Location GetAndCache(int id)
         {
             return _cacheContainer.GetAndStore(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<Location> GetAndCache(IList<int> ids)
+        private IList<Location> GetAndCache(IList<int> ids)
         {
             return _cacheContainer.GetAndStore(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }

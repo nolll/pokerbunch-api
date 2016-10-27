@@ -26,8 +26,7 @@ namespace Core.Services
 
         public IList<Location> ListByBunch(int bunchId)
         {
-            var locations = _locationRepository.List(bunchId);
-            return locations.OrderBy(o => o.Name).ToList();
+            return _locationRepository.List(bunchId);
         }
 
         public int Add(Location location)
