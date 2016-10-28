@@ -107,7 +107,7 @@ Please sign in here: /loginUrl";
 
         private AddUser Sut => new AddUser(
             Deps.User,
-            Deps.RandomService,
+            Deps.Randomizer,
             Deps.MessageSender);
     }
 }

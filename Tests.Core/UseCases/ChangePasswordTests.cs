@@ -34,6 +34,6 @@ namespace Tests.Core.UseCases
         
         private ChangePassword Sut => new ChangePassword(
             Deps.User,
-            Deps.RandomService);
+            Deps.Randomizer);
     }
 }

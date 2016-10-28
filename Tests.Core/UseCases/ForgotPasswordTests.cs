@@ -60,6 +60,6 @@ Please sign in here: loginUrl";
         private ForgotPassword Sut => new ForgotPassword(
             Deps.User,
             Deps.MessageSender,
-            Deps.RandomService);
+            Deps.Randomizer);
     }
 }

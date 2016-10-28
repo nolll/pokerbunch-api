@@ -10,13 +10,13 @@ namespace Core.UseCases
     {
         private readonly IUserRepository _userRepository;
         private readonly IMessageSender _messageSender;
-        private readonly IRandomService _randomService;
+        private readonly IRandomizer _randomizer;
 
-        public ForgotPassword(IUserRepository userRepository, IMessageSender messageSender, IRandomService randomService)
+        public ForgotPassword(IUserRepository userRepository, IMessageSender messageSender, IRandomizer randomizer)
         {
             _userRepository = userRepository;
             _messageSender = messageSender;
-            _randomService = randomService;
+            _randomizer = randomizer;
         }
 
         public void Execute(Request request)
@@ -30,8 +30,8 @@ namespace Core.UseCases
             if(user == null)
                 throw new UserNotFoundException(request.Email);
 
-            var password = PasswordGenerator.CreatePassword(_randomService.GetAllowedChars());
-            var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());
+            var password = PasswordGenerator.CreatePassword(_randomizer.GetAllowedChars());
+            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(password, salt);
 
             user.SetPassword(encryptedPassword, salt);

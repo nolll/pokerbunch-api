@@ -14,7 +14,7 @@ namespace Tests.Common
         public FakeAppRepository App { get; }
 
         public FakeMessageSender MessageSender { get; }
-        public FakeRandomService RandomService { get; }
+        public FakeRandomizer Randomizer { get; }
 
         public TestDependencies()
         {
@@ -27,7 +27,7 @@ namespace Tests.Common
             App = new FakeAppRepository();
 
             MessageSender = new FakeMessageSender();
-            RandomService = new FakeRandomService();
+            Randomizer = new FakeRandomizer();
         }
 
         public void Clear()

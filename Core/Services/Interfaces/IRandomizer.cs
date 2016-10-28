@@ -1,6 +1,6 @@
 namespace Core.Services
 {
-    public interface IRandomService
+    public interface IRandomizer
     {
         string GetAllowedChars();
     }

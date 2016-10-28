@@ -9,12 +9,12 @@ namespace Core.UseCases
     public class ChangePassword
     {
         private readonly IUserRepository _userRepository;
-        private readonly IRandomService _randomService;
+        private readonly IRandomizer _randomizer;
 
-        public ChangePassword(IUserRepository userRepository, IRandomService randomService)
+        public ChangePassword(IUserRepository userRepository, IRandomizer randomizer)
         {
             _userRepository = userRepository;
-            _randomService = randomService;
+            _randomizer = randomizer;
         }
 
         public void Execute(Request request)
@@ -26,7 +26,7 @@ namespace Core.UseCases
             if (request.Password != request.Repeat)
                 throw new ValidationException("The passwords dos not match");
 
-            var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());
+            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
             var user = _userRepository.Get(request.UserName);
             user = CreateUser(user, encryptedPassword, salt);

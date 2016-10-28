@@ -10,16 +10,16 @@ namespace Core.UseCases
     public class AddUser
     {
         private readonly IUserRepository _userRepository;
-        private readonly IRandomService _randomService;
+        private readonly IRandomizer _randomizer;
         private readonly IMessageSender _messageSender;
 
         public AddUser(
             IUserRepository userRepository,
-            IRandomService randomService,
+            IRandomizer randomizer,
             IMessageSender messageSender)
         {
             _userRepository = userRepository;
-            _randomService = randomService;
+            _randomizer = randomizer;
             _messageSender = messageSender;
         }
 
@@ -36,7 +36,7 @@ namespace Core.UseCases
             if (_userRepository.Get(request.Email) != null)
                 throw new EmailExistsException();
 
-            var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());
+            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
             var user = CreateUser(request, encryptedPassword, salt);
 

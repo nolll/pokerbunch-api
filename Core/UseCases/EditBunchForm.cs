@@ -30,7 +30,7 @@ namespace Core.UseCases
             var timeZoneId = bunch.Timezone.Id;
             var currencySymbol = bunch.Currency.Symbol;
             var currencyLayout = bunch.Currency.Layout;
-            var timeZones = TimeZoneService.GetTimeZones();
+            var timeZones = TimeZones.GetTimeZones();
             var currencyLayouts = Globalization.GetCurrencyLayouts();
             
             return new Result(heading, bunch.Slug, description, houseRules, defaultBuyin, timeZoneId, currencySymbol, currencyLayout, timeZones, currencyLayouts);

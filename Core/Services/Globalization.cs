@@ -89,7 +89,7 @@ namespace Core.Services
             return dateTime.ToString("yyyy", CultureInfo.InvariantCulture);
         }
 
-        public static IEnumerable<TimeZoneInfo> GetTimezones()
+        public static IEnumerable<TimeZoneInfo> Get()
         {
             return TimeZoneInfo.GetSystemTimeZones();
         }

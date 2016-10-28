@@ -2,7 +2,7 @@ using Core.Services;
 
 namespace Tests.Common.FakeServices
 {
-    public class FakeRandomService : IRandomService
+    public class FakeRandomizer : IRandomizer
     {
         public string GetAllowedChars()
         {

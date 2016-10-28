@@ -19,7 +19,7 @@ namespace Plumbing
         private IPlayerRepository _playerRepository;
         private ILocationRepository _locationRepository;
         private IUserRepository _userRepository;
-        private IRandomService _randomService;
+        private IRandomizer _randomizer;
         private IMessageSender _messageSender;
                 
         public Dependencies(string connectionString)
@@ -35,7 +35,7 @@ namespace Plumbing
         public IPlayerRepository PlayerRepository => _playerRepository ?? (_playerRepository = new PlayerRepository(_db, _cacheContainer));
         public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(_db, _cacheContainer));
         public IUserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(_db, _cacheContainer));
-        public IRandomService RandomService => _randomService ?? (_randomService = new RandomService());
+        public IRandomizer Randomizer => _randomizer ?? (_randomizer = new Randomizer());
         public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender());
     }
 }
