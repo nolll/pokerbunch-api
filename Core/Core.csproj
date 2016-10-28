@@ -80,7 +80,6 @@
     <Compile Include="Services\CashgameService.cs" />
     <Compile Include="Services\CheckpointService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
-    <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\Globalization.cs" />
     <Compile Include="Services\GravatarService.cs" />
     <Compile Include="Services\Interfaces\IBunchService.cs" />

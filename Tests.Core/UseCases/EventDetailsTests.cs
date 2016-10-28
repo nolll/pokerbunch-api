@@ -16,7 +16,7 @@ namespace Tests.Core.UseCases
         }
 
         private EventDetails Sut => new EventDetails(
-            Services.EventService,
+            Repos.Event,
             Repos.User,
             Services.PlayerService,
             Services.BunchService);

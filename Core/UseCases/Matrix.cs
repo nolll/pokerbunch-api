@@ -13,15 +13,15 @@ namespace Core.UseCases
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
         private readonly IUserRepository _userRepository;
-        private readonly EventService _eventService;
+        private readonly IEventRepository _eventRepository;
 
-        public Matrix(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository, EventService eventServicey)
+        public Matrix(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository, IEventRepository eventRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
             _userRepository = userRepository;
-            _eventService = eventServicey;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -36,7 +36,7 @@ namespace Core.UseCases
 
         public Result Execute(EventMatrixRequest request)
         {
-            var e = _eventService.Get(request.EventId);
+            var e = _eventRepository.Get(request.EventId);
             var bunch = _bunchService.Get(e.BunchId);
             var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);

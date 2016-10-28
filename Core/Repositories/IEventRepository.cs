@@ -7,8 +7,8 @@ namespace Core.Repositories
     {
         Event Get(int id);
         IList<Event> Get(IList<int> ids);
-        IList<Event> GetByBunchId(int bunchId);
-        Event GetByCashgameId(int cashgameId);
+        IList<Event> List(int bunchId);
+        Event GetByCashgame(int cashgameId);
         int Add(Event e);
         void AddCashgame(int eventId, int cashgameId);
     }

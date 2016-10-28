@@ -27,12 +27,12 @@ namespace Tests.Common.FakeRepositories
             return _list.Where(o => ids.Contains(o.Id)).ToList();
         }
 
-        public IList<Event> GetByBunchId(int bunchId)
+        public IList<Event> List(int bunchId)
         {
             return _list.Where(o => o.BunchId == bunchId).ToList();
         }
 
-        public Event GetByCashgameId(int cashgameId)
+        public Event GetByCashgame(int cashgameId)
         {
             return _list.First();
         }

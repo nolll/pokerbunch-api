@@ -12,15 +12,15 @@ namespace Core.UseCases
         private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
         private readonly ILocationRepository _locationRepository;
-        private readonly EventService _eventService;
+        private readonly IEventRepository _eventRepository;
 
-        public EditCashgame(CashgameService cashgameService, IUserRepository userRepository, PlayerService playerService, ILocationRepository locationRepository, EventService eventService)
+        public EditCashgame(CashgameService cashgameService, IUserRepository userRepository, PlayerService playerService, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
             _cashgameService = cashgameService;
             _userRepository = userRepository;
             _playerService = playerService;
             _locationRepository = locationRepository;
-            _eventService = eventService;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -39,7 +39,7 @@ namespace Core.UseCases
 
             if (request.EventId > 0)
             {
-                _eventService.AddCashgame(request.EventId, cashgame.Id);
+                _eventRepository.AddCashgame(request.EventId, cashgame.Id);
             }
             
             return new Result(cashgame.Id);

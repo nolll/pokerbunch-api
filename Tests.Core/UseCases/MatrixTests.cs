@@ -46,6 +46,6 @@ namespace Tests.Core.UseCases
             Services.CashgameService,
             Services.PlayerService,
             Repos.User,
-            Services.EventService);
+            Repos.Event);
     }
 }

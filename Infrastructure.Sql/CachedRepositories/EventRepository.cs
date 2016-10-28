@@ -29,13 +29,13 @@ namespace Infrastructure.Sql.CachedRepositories
             return _cacheContainer.GetAndStore(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<Event> GetByBunchId(int bunchId)
+        public IList<Event> List(int bunchId)
         {
             var ids = _eventDb.FindByBunchId(bunchId);
             return Get(ids);
         }
 
-        public Event GetByCashgameId(int cashgameId)
+        public Event GetByCashgame(int cashgameId)
         {
             var ids = _eventDb.FindByBunchId(cashgameId);
             return Get(ids).FirstOrDefault();

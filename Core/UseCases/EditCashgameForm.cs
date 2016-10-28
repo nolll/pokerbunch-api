@@ -12,16 +12,16 @@ namespace Core.UseCases
         private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
         private readonly ILocationRepository _locationRepository;
-        private readonly EventService _eventService;
+        private readonly IEventRepository _eventRepository;
 
-        public EditCashgameForm(BunchService bunchService, CashgameService cashgameService, IUserRepository userRepository, PlayerService playerService, ILocationRepository locationRepository, EventService eventService)
+        public EditCashgameForm(BunchService bunchService, CashgameService cashgameService, IUserRepository userRepository, PlayerService playerService, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _userRepository = userRepository;
             _playerService = playerService;
             _locationRepository = locationRepository;
-            _eventService = eventService;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -35,9 +35,9 @@ namespace Core.UseCases
             var locations = _locationRepository.List(cashgame.BunchId);
             var locationItems = locations.Select(o => new LocationItem(o.Id, o.Name)).ToList();
 
-            var events = _eventService.GetByBunch(bunch.Id);
+            var events = _eventRepository.List(bunch.Id);
             var eventItems = events.Select(o => new EventItem(o.Id, o.Name)).ToList();
-            var selectedEvent = _eventService.GetByCashgame(cashgame.Id);
+            var selectedEvent = _eventRepository.GetByCashgame(cashgame.Id);
             var selectedEventId = selectedEvent != null ? selectedEvent.Id : 0;
 
             return new Result(cashgame.DateString, cashgame.Id, bunch.Slug, cashgame.LocationId, locationItems, selectedEventId, eventItems);
