@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -23,34 +24,39 @@ namespace Infrastructure.Sql.CachedRepositories
             return _cacheContainer.GetAndStore(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<Cashgame> Get(IList<int> ids)
+        private IList<Cashgame> Get(IList<int> ids)
         {
             return _cacheContainer.GetAndStore(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<int> FindFinished(int bunchId, int? year = null)
+        public IList<Cashgame> GetFinished(int bunchId, int? year = null)
         {
-            return _cashgameDb.FindFinished(bunchId, year);
+            var ids = _cashgameDb.FindFinished(bunchId, year);
+            return Get(ids);
         }
 
-        public IList<int> FindByEvent(int eventId)
+        public IList<Cashgame> GetByEvent(int eventId)
         {
-            return _cashgameDb.FindByEvent(eventId);
+            var ids = _cashgameDb.FindByEvent(eventId);
+            return Get(ids);
         }
 
-        public IList<int> FindByPlayerId(int playerId)
+        public IList<Cashgame> GetByPlayer(int playerId)
         {
-            return _cashgameDb.FindByPlayerId(playerId);
+            var ids = _cashgameDb.FindByPlayerId(playerId);
+            return Get(ids);
         }
 
-        public IList<int> FindRunning(int bunchId)
+        public Cashgame GetRunning(int bunchId)
         {
-            return _cashgameDb.FindRunning(bunchId);
+            var ids = _cashgameDb.FindRunning(bunchId);
+            return Get(ids).FirstOrDefault();
         }
 
-        public IList<int> FindByCheckpoint(int checkpointId)
+        public Cashgame GetByCheckpoint(int checkpointId)
         {
-            return _cashgameDb.FindByCheckpoint(checkpointId);
+            var ids = _cashgameDb.FindByCheckpoint(checkpointId);
+            return Get(ids).FirstOrDefault();
         }
 
         public IList<int> GetYears(int bunchId)
@@ -64,12 +70,12 @@ namespace Infrastructure.Sql.CachedRepositories
             _cacheContainer.Remove<Cashgame>(id);
         }
 
-        public int AddGame(Bunch bunch, Cashgame cashgame)
+        public int Add(Bunch bunch, Cashgame cashgame)
         {
             return _cashgameDb.AddGame(bunch, cashgame);
         }
 
-        public void UpdateGame(Cashgame cashgame)
+        public void Update(Cashgame cashgame)
         {
             _cashgameDb.UpdateGame(cashgame);
             _cacheContainer.Remove<Cashgame>(cashgame.Id);

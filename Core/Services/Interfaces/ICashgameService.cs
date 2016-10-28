@@ -9,12 +9,10 @@ namespace Core.Services
         IList<Cashgame> GetByEvent(int eventId);
         Cashgame GetRunning(int bunchId);
         Cashgame GetByCheckpoint(int checkpointId);
-        Cashgame GetById(int cashgameId);
+        Cashgame Get(int cashgameId);
         IList<int> GetYears(int bunchId);
         void DeleteGame(int id);
-        int AddGame(Bunch bunch, Cashgame cashgame);
-        void UpdateGame(Cashgame cashgame);
-        void EndGame(Cashgame cashgame);
-        bool HasPlayed(int playerId);
+        int Add(Bunch bunch, Cashgame cashgame);
+        void Update(Cashgame cashgame);
     }
 }

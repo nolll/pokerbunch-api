@@ -41,7 +41,7 @@ namespace Tests.Core.UseCases.CashoutTests
 
             var csm = new Mock<ICashgameService>();
             csm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
-            csm.Setup(o => o.UpdateGame(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+            csm.Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
 
             var prm = new Mock<IPlayerRepository>();
             prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));

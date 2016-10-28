@@ -46,7 +46,7 @@ namespace Core.UseCases
                 existingCheckpoint.Id);
 
             cashgame.UpdateCheckpoint(postedCheckpoint);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameService.Update(cashgame);
 
             return new Result(cashgame.Id, existingCheckpoint.PlayerId);
         }

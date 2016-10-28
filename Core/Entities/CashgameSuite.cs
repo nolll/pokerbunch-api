@@ -8,7 +8,7 @@ namespace Core.Entities
     {
 	    public IList<Cashgame> Cashgames { get; }
         public IList<CashgameTotalResult> TotalResults { get; }
-        public bool SpansMultipleYears => CashgameService.SpansMultipleYears(Cashgames);
+        public bool SpansMultipleYears => CashgameServiceTemp.SpansMultipleYears(Cashgames);
 
         public CashgameSuite(IList<Cashgame> cashgames, IEnumerable<Player> players)
         {

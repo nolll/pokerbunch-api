@@ -29,13 +29,13 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var cashgame = _cashgameService.GetById(request.Id);
+            var cashgame = _cashgameService.Get(request.Id);
             var user = _userRepository.Get(request.UserName);
             var player = _playerRepository.Get(cashgame.BunchId, user.Id);
             RequireRole.Manager(user, player);
             var location = _locationRepository.Get(request.LocationId);
             cashgame = new Cashgame(cashgame.BunchId, location.Id, cashgame.Status, cashgame.Id);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameService.Update(cashgame);
 
             if (request.EventId > 0)
             {

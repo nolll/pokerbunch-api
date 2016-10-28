@@ -36,7 +36,7 @@ namespace Core.UseCases
 
             var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
             cashgame.AddCheckpoint(checkpoint);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameService.Update(cashgame);
         }
 
         public class Request

@@ -24,7 +24,7 @@ namespace Core.UseCases
 
         public Result Execute(Request request)
         {
-            var cashgame = _cashgameService.GetById(request.CashgameId);
+            var cashgame = _cashgameService.Get(request.CashgameId);
             var bunch = _bunchRepository.Get(cashgame.BunchId);
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);

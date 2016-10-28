@@ -77,7 +77,6 @@
     <Compile Include="Repositories\IRepositoryFactory.cs" />
     <Compile Include="Services\ApplicationVersion.cs" />
     <Compile Include="Services\CashgameService.cs" />
-    <Compile Include="Services\CheckpointService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
     <Compile Include="Services\Globalization.cs" />
     <Compile Include="Services\GravatarService.cs" />

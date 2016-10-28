@@ -28,7 +28,7 @@ namespace Core.UseCases
             var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
             cashgame.DeleteCheckpoint(checkpoint);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameService.Update(cashgame);
 
             var gameIsRunning = cashgame.Status == GameStatus.Running;
             return new Result(bunch.Slug, gameIsRunning, cashgame.Id);

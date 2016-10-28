@@ -29,39 +29,39 @@ namespace Tests.Common.FakeRepositories
             return _list.Where(o => ids.Contains(o.Id)).ToList();
         }
 
-        public IList<int> FindFinished(int bunchId, int? year = null)
+        public IList<Cashgame> GetFinished(int bunchId, int? year = null)
         {
             if (year.HasValue)
-                return _list.Where(o => o.StartTime.HasValue && o.StartTime.Value.Year == year && o.Status == GameStatus.Finished).Select(o => o.Id).ToList();
-            return _list.Where(o => o.Status == GameStatus.Finished).Select(o => o.Id).ToList();
+                return _list.Where(o => o.StartTime.HasValue && o.StartTime.Value.Year == year && o.Status == GameStatus.Finished).ToList();
+            return _list.Where(o => o.Status == GameStatus.Finished).ToList();
         }
 
-        public IList<int> FindByEvent(int eventId)
+        public IList<Cashgame> GetByEvent(int eventId)
         {
             throw new NotImplementedException();
         }
 
-        public IList<int> FindByPlayerId(int playerId)
+        public IList<Cashgame> GetByPlayer(int playerId)
         {
-            var ids = new List<int>();
+            var ids = new List<Cashgame>();
             foreach (var game in _list)
             {
                 if (game.GetResult(playerId) != null)
                 {
-                    ids.Add(game.Id);
+                    ids.Add(game);
                 }
             }
             return ids;
         }
 
-        public IList<int> FindRunning(int bunchId)
+        public Cashgame GetRunning(int bunchId)
         {
-            return _list.Where(o => o.Status == GameStatus.Running).Select(o => o.Id).ToList();
+            return _list.FirstOrDefault(o => o.Status == GameStatus.Running);
         }
 
-        public IList<int> FindByCheckpoint(int checkpointId)
+        public Cashgame GetByCheckpoint(int checkpointId)
         {
-            return _list.Where(o => o.Checkpoints.Any(p => p.Id == checkpointId)).Select(o => o.Id).ToList();
+            return _list.FirstOrDefault(o => o.Checkpoints.Any(p => p.Id == checkpointId));
         }
 
         public IList<int> GetYears(int bunchId)
@@ -74,13 +74,13 @@ namespace Tests.Common.FakeRepositories
             Deleted = id;
         }
 
-        public int AddGame(Bunch bunch, Cashgame cashgame)
+        public int Add(Bunch bunch, Cashgame cashgame)
         {
             Added = cashgame;
             return 1;
         }
 
-        public void UpdateGame(Cashgame cashgame)
+        public void Update(Cashgame cashgame)
         {
             Updated = cashgame;
         }

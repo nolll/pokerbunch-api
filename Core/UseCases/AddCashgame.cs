@@ -38,7 +38,7 @@ namespace Core.UseCases
             RequireRole.Player(user, player);
             var location = _locationRepository.Get(request.LocationId);
             var cashgame = new Cashgame(bunch.Id, location.Id, GameStatus.Running);
-            var cashgameId = _cashgameService.AddGame(bunch, cashgame);
+            var cashgameId = _cashgameService.Add(bunch, cashgame);
 
             if (request.EventId > 0)
             {

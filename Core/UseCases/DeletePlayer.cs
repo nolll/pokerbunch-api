@@ -1,3 +1,4 @@
+using System.Linq;
 using Core.Repositories;
 using Core.Services;
 
@@ -25,7 +26,9 @@ namespace Core.UseCases
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
-            var canDelete = !_cashgameService.HasPlayed(player.Id);
+            var cashgames = _cashgameService.GetByPlayer(player.Id);
+            var hasPlayed = cashgames.Any();
+            var canDelete = !hasPlayed;
 
             if (canDelete)
             {

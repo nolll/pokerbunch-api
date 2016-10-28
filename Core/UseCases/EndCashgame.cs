@@ -1,4 +1,5 @@
-﻿using Core.Repositories;
+﻿using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -27,7 +28,10 @@ namespace Core.UseCases
             var cashgame = _cashgameService.GetRunning(bunch.Id);
 
             if (cashgame != null)
-                _cashgameService.EndGame(cashgame);
+            {
+                cashgame.ChangeStatus(GameStatus.Finished);
+                _cashgameService.Update(cashgame);
+            }
         }
 
         public class Request

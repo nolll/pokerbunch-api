@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using System.Linq;
+using Core.Entities;
 using Core.Repositories;
 using Core.Services;
 
@@ -28,7 +29,8 @@ namespace Core.UseCases
             var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
             var isManager = RoleHandler.IsInRole(currentUser, currentPlayer, Role.Manager);
-            var hasPlayed = _cashgameService.HasPlayed(request.PlayerId);
+            var cashgames = _cashgameService.GetByPlayer(player.Id);
+            var hasPlayed = cashgames.Any();
             var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : string.Empty;
 
             return new Result(bunch, player, user, isManager, hasPlayed, avatarUrl);

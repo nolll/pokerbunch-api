@@ -49,7 +49,7 @@ namespace Core.UseCases
                 cashgame.UpdateCheckpoint(postedCheckpoint);
             else
                 cashgame.AddCheckpoint(postedCheckpoint);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameService.Update(cashgame);
 
             return new Result(cashgame.Id);
         }
