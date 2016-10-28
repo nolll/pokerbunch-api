@@ -25,11 +25,11 @@ namespace Tests.Core.UseCases
         }
 
         private EditCashgameForm Sut => new EditCashgameForm(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.User,
-            Repos.Player,
-            Repos.Location,
-            Repos.Event);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player,
+            Deps.Location,
+            Deps.Event);
     }
 }

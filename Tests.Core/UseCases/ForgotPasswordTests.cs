@@ -37,9 +37,9 @@ aaaaaaaa
 Please sign in here: loginUrl";
             Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(ValidEmail, Services.MessageSender.To);
-            Assert.AreEqual(subject, Services.MessageSender.Message.Subject);
-            Assert.AreEqual(body, Services.MessageSender.Message.Body);
+            Assert.AreEqual(ValidEmail, Deps.MessageSender.To);
+            Assert.AreEqual(subject, Deps.MessageSender.Message.Subject);
+            Assert.AreEqual(body, Deps.MessageSender.Message.Body);
         }
 
         [Test]
@@ -47,7 +47,7 @@ Please sign in here: loginUrl";
         {
             Sut.Execute(CreateRequest());
 
-            var savedUser = Repos.User.Saved;
+            var savedUser = Deps.User.Saved;
             Assert.AreEqual("0478095c8ece0bbc11f94663ac2c4f10b29666de", savedUser.EncryptedPassword);
             Assert.AreEqual("aaaaaaaaaa", savedUser.Salt);
         }
@@ -58,8 +58,8 @@ Please sign in here: loginUrl";
         }
 
         private ForgotPassword Sut => new ForgotPassword(
-            Repos.User,
-            Services.MessageSender,
-            Services.RandomService);
+            Deps.User,
+            Deps.MessageSender,
+            Deps.RandomService);
     }
 }

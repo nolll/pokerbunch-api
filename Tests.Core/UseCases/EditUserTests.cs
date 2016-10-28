@@ -52,11 +52,11 @@ namespace Tests.Core.UseCases
 
             Sut.Execute(request);
 
-            Assert.AreEqual(TestData.UserNameA, Repos.User.Saved.UserName);
-            Assert.AreEqual(ChangedDisplayName, Repos.User.Saved.DisplayName);
-            Assert.AreEqual(ChangedEmail, Repos.User.Saved.Email);
+            Assert.AreEqual(TestData.UserNameA, Deps.User.Saved.UserName);
+            Assert.AreEqual(ChangedDisplayName, Deps.User.Saved.DisplayName);
+            Assert.AreEqual(ChangedEmail, Deps.User.Saved.Email);
         }
 
-        private EditUser Sut => new EditUser(Repos.User);
+        private EditUser Sut => new EditUser(Deps.User);
     }
 }

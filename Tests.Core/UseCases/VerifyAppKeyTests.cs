@@ -24,6 +24,6 @@ namespace Tests.Core.UseCases
             Assert.IsFalse(result.IsValid);
         }
 
-        private VerifyAppKey Sut => new VerifyAppKey(Repos.App);
+        private VerifyAppKey Sut => new VerifyAppKey(Deps.App);
     }
 }

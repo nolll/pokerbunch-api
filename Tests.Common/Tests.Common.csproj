@@ -55,8 +55,7 @@
     <Compile Include="FakeRepositories\FakeUserRepository.cs" />
     <Compile Include="FakeServices\FakeMessageSender.cs" />
     <Compile Include="FakeServices\FakeRandomService.cs" />
-    <Compile Include="RepositoryContainer.cs" />
-    <Compile Include="ServiceContainer.cs" />
+    <Compile Include="TestDependencies.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="..\GlobalAssemblyInfo.cs" />
   </ItemGroup>

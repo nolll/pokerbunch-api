@@ -15,7 +15,7 @@ namespace Tests.Core.UseCases
             var request = new AddEvent.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
             Sut.Execute(request);
 
-            Assert.AreEqual(addedEventName, Repos.Event.Added.Name);
+            Assert.AreEqual(addedEventName, Deps.Event.Added.Name);
         }
 
         [Test]
@@ -29,9 +29,9 @@ namespace Tests.Core.UseCases
         }
 
         private AddEvent Sut => new AddEvent(
-            Repos.Bunch,
-            Repos.Player,
-            Repos.User,
-            Repos.Event);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.User,
+            Deps.Event);
     }
 }

@@ -16,6 +16,6 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.BunchA.DisplayName, result.BunchName);
         }
 
-        private JoinBunchForm Sut => new JoinBunchForm(Repos.Bunch);
+        private JoinBunchForm Sut => new JoinBunchForm(Deps.Bunch);
     }
 }

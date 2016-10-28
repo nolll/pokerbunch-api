@@ -101,9 +101,9 @@ namespace Tests.Core.UseCases
         }
 
         private GetPlayer Sut => new GetPlayer(
-            Repos.Bunch,
-            Repos.Player,
-            Repos.Cashgame,
-            Repos.User);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.Cashgame,
+            Deps.User);
     }
 }

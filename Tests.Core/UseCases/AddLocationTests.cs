@@ -15,7 +15,7 @@ namespace Tests.Core.UseCases
             var request = new AddLocation.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
             Sut.Execute(request);
 
-            Assert.AreEqual(addedEventName, Repos.Location.Added.Name);
+            Assert.AreEqual(addedEventName, Deps.Location.Added.Name);
         }
 
         [Test]
@@ -29,9 +29,9 @@ namespace Tests.Core.UseCases
         }
 
         private AddLocation Sut => new AddLocation(
-            Repos.Bunch,
-            Repos.Player,
-            Repos.User,
-            Repos.Location);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.User,
+            Deps.Location);
     }
 }

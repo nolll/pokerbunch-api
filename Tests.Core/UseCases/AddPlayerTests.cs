@@ -36,7 +36,7 @@ namespace Tests.Core.UseCases
             var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
             Sut.Execute(request);
 
-            Assert.IsNotNull(Repos.Player.Added);
+            Assert.IsNotNull(Deps.Player.Added);
         }
 
         [Test]
@@ -47,8 +47,8 @@ namespace Tests.Core.UseCases
         }
 
         private AddPlayer Sut => new AddPlayer(
-            Repos.Bunch,
-            Repos.Player,
-            Repos.User);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.User);
     }
 }

@@ -99,8 +99,8 @@ namespace Tests.Core.UseCases
         }
 
         private EditBunchForm Sut => new EditBunchForm(
-            Repos.Bunch,
-            Repos.User,
-            Repos.Player);
+            Deps.Bunch,
+            Deps.User,
+            Deps.Player);
     }
 }

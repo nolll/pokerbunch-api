@@ -17,6 +17,6 @@ namespace Tests.Core.UseCases
             Assert.AreEqual("user-name-a", result.Users.First().UserName);
         }
 
-        private UserList Sut => new UserList(Repos.User);
+        private UserList Sut => new UserList(Deps.User);
     }
 }

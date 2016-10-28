@@ -63,10 +63,10 @@ namespace Tests.Core.UseCases
         }
 
         private CashgameDetails Sut => new CashgameDetails(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.User,
-            Repos.Player,
-            Repos.Location);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player,
+            Deps.Location);
     }
 }

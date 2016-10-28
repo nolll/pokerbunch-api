@@ -25,9 +25,9 @@ namespace Tests.Core.UseCases
         }
 
         private CashgameDetailsChart Sut => new CashgameDetailsChart(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.Player,
-            Repos.User);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

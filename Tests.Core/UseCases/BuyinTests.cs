@@ -41,12 +41,12 @@ namespace Tests.Core.UseCases
             const int stack = 2;
             const int savedStack = 3;
 
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new Buyin.Request(TestData.UserNameA, TestData.SlugA, PlayerId, buyin, stack, timestamp);
             Sut.Execute(request);
 
-            var result = Repos.Cashgame.Updated.AddedCheckpoints.First();
+            var result = Deps.Cashgame.Updated.AddedCheckpoints.First();
 
             Assert.AreEqual(timestamp, result.Timestamp);
             Assert.AreEqual(buyin, result.Amount);
@@ -54,9 +54,9 @@ namespace Tests.Core.UseCases
         }
 
         private Buyin Sut => new Buyin(
-            Repos.Bunch,
-            Repos.Player,
-            Repos.Cashgame,
-            Repos.User);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.Cashgame,
+            Deps.User);
     }
 }

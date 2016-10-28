@@ -18,7 +18,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_AllSimplePropertiesAreSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -32,7 +32,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_SlugIsSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -43,7 +43,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_PlayerItemsAreSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -66,7 +66,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_BunchPlayerItemsAreSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -83,10 +83,10 @@ namespace Tests.Core.UseCases
         }
 
         private RunningCashgame Sut => new RunningCashgame(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.Player,
-            Repos.User,
-            Repos.Location);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User,
+            Deps.Location);
     }
 }

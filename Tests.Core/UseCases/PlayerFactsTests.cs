@@ -24,9 +24,9 @@ namespace Tests.Core.UseCases
         }
 
         private PlayerFacts Sut => new PlayerFacts(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.Player,
-            Repos.User);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

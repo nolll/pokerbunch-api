@@ -17,7 +17,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void BunchContext_OneBunchWithoutSlug_HasBunchIsTrue()
         {
-            Repos.Bunch.SetupOneBunchList();
+            Deps.Bunch.SetupOneBunchList();
 
             var result = Sut.Execute(new BunchContext.BunchRequest(TestData.UserA.UserName));
 
@@ -27,7 +27,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void BunchContext_WithoutSlugAndBunches_HasBunchIsFalse()
         {
-            Repos.Bunch.ClearList();
+            Deps.Bunch.ClearList();
 
             var result = Sut.Execute(new BunchContext.BunchRequest(TestData.UserA.UserName));
 
@@ -45,7 +45,7 @@ namespace Tests.Core.UseCases
         }
 
         private BunchContext Sut => new BunchContext(
-            Repos.User,
-            Repos.Bunch);
+            Deps.User,
+            Deps.Bunch);
     }
 }

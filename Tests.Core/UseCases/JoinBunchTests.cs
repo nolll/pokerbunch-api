@@ -42,14 +42,14 @@ namespace Tests.Core.UseCases
             var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, ValidCode);
 
             Sut.Execute(request);
-            Assert.AreEqual(TestData.PlayerA.Id, Repos.Player.Joined.PlayerId);
-            Assert.AreEqual(TestData.BunchA.Id, Repos.Player.Joined.BunchId);
-            Assert.AreEqual(TestData.UserA.Id, Repos.Player.Joined.UserId);
+            Assert.AreEqual(TestData.PlayerA.Id, Deps.Player.Joined.PlayerId);
+            Assert.AreEqual(TestData.BunchA.Id, Deps.Player.Joined.BunchId);
+            Assert.AreEqual(TestData.UserA.Id, Deps.Player.Joined.UserId);
         }
 
         private JoinBunch Sut => new JoinBunch(
-            Repos.Bunch,
-            Repos.Player,
-            Repos.User);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.User);
     }
 }

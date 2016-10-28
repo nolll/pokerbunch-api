@@ -28,8 +28,8 @@ namespace Tests.Core.UseCases
         }
 
         private JoinBunchConfirmation Sut => new JoinBunchConfirmation(
-            Repos.Bunch,
-            Repos.User,
-            Repos.Player);
+            Deps.Bunch,
+            Deps.User,
+            Deps.Player);
     }
 }

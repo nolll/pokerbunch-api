@@ -29,11 +29,11 @@ namespace Tests.Core.UseCases
             var request = new ChangePassword.Request(TestData.UserNameA, "a", "a");
             Sut.Execute(request);
 
-            Assert.AreNotEqual(TestData.UserA.EncryptedPassword, Repos.User.Saved.EncryptedPassword);
+            Assert.AreNotEqual(TestData.UserA.EncryptedPassword, Deps.User.Saved.EncryptedPassword);
         }
         
         private ChangePassword Sut => new ChangePassword(
-            Repos.User,
-            Services.RandomService);
+            Deps.User,
+            Deps.RandomService);
     }
 }

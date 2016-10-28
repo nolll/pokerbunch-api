@@ -13,25 +13,25 @@ namespace Tests.Core.UseCases
             var request = new EndCashgame.Request(TestData.UserNameA, TestData.SlugA);
             Sut.Execute(request);
 
-            Assert.IsNull(Repos.Cashgame.Updated);
+            Assert.IsNull(Deps.Cashgame.Updated);
         }
 
         [Test]
         public void EndGame_WithRunningGame_EndsGame()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new EndCashgame.Request(TestData.UserNameA, TestData.SlugA);
             Sut.Execute(request);
 
-            Assert.AreEqual(TestData.CashgameIdC, Repos.Cashgame.Updated.Id);
-            Assert.AreEqual(GameStatus.Finished, Repos.Cashgame.Updated.Status);
+            Assert.AreEqual(TestData.CashgameIdC, Deps.Cashgame.Updated.Id);
+            Assert.AreEqual(GameStatus.Finished, Deps.Cashgame.Updated.Status);
         }
 
         private EndCashgame Sut => new EndCashgame(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.User,
-            Repos.Player);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player);
     }
 }

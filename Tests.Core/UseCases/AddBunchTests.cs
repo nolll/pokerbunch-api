@@ -57,15 +57,15 @@ namespace Tests.Core.UseCases
         {
             Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(0, Repos.Bunch.Added.Id);
-            Assert.AreEqual("a-display-name", Repos.Bunch.Added.Slug);
-            Assert.AreEqual(DisplayName, Repos.Bunch.Added.DisplayName);
-            Assert.AreEqual(Description, Repos.Bunch.Added.Description);
-            Assert.AreEqual("", Repos.Bunch.Added.HouseRules);
-            Assert.AreEqual(TestData.TimeZoneLocal.Id, Repos.Bunch.Added.Timezone.Id);
-            Assert.AreEqual(200, Repos.Bunch.Added.DefaultBuyin);
-            Assert.AreEqual(CurrencySymbol, Repos.Bunch.Added.Currency.Symbol);
-            Assert.AreEqual(CurrencyLayout, Repos.Bunch.Added.Currency.Layout);
+            Assert.AreEqual(0, Deps.Bunch.Added.Id);
+            Assert.AreEqual("a-display-name", Deps.Bunch.Added.Slug);
+            Assert.AreEqual(DisplayName, Deps.Bunch.Added.DisplayName);
+            Assert.AreEqual(Description, Deps.Bunch.Added.Description);
+            Assert.AreEqual("", Deps.Bunch.Added.HouseRules);
+            Assert.AreEqual(TestData.TimeZoneLocal.Id, Deps.Bunch.Added.Timezone.Id);
+            Assert.AreEqual(200, Deps.Bunch.Added.DefaultBuyin);
+            Assert.AreEqual(CurrencySymbol, Deps.Bunch.Added.Currency.Symbol);
+            Assert.AreEqual(CurrencyLayout, Deps.Bunch.Added.Currency.Layout);
         }
 
         [Test]
@@ -73,9 +73,9 @@ namespace Tests.Core.UseCases
         {
             Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(1, Repos.Player.Added.BunchId);
-            Assert.AreEqual(3, Repos.Player.Added.UserId);
-            Assert.AreEqual(Role.Manager, Repos.Player.Added.Role);
+            Assert.AreEqual(1, Deps.Player.Added.BunchId);
+            Assert.AreEqual(3, Deps.Player.Added.UserId);
+            Assert.AreEqual(Role.Manager, Deps.Player.Added.Role);
         }
 
         private AddBunch.Request CreateRequest(string displayName = DisplayName, string currencySymbol = CurrencySymbol, string currencyLayout = CurrencyLayout, string timeZone = null)
@@ -84,8 +84,8 @@ namespace Tests.Core.UseCases
         }
 
         private AddBunch Sut => new AddBunch(
-            Repos.User,
-            Repos.Bunch,
-            Repos.Player);
+            Deps.User,
+            Deps.Bunch,
+            Deps.Player);
     }
 }

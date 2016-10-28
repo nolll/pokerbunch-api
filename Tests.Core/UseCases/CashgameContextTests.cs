@@ -69,7 +69,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Execute_WithRunningGame_GameIsRunningIsTrue()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             const string slug = "a";
             var request = new CashgameContext.Request(TestData.UserNameA, slug, DateTime.UtcNow);
@@ -110,8 +110,8 @@ namespace Tests.Core.UseCases
         }
 
         private CashgameContext Sut => new CashgameContext(
-            Repos.User,
-            Repos.Bunch,
-            Repos.Cashgame);
+            Deps.User,
+            Deps.Bunch,
+            Deps.Cashgame);
     }
 }

@@ -18,19 +18,19 @@ namespace Tests.Core.UseCases
         [Test]
         public void DeleteCashgame_GameHasNoResults_DeletesGame()
         {
-            Repos.Cashgame.SetupEmptyGame();
+            Deps.Cashgame.SetupEmptyGame();
 
             var request = new DeleteCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA);
 
             Sut.Execute(request);
 
-            Assert.AreEqual(TestData.CashgameIdA, Repos.Cashgame.Deleted);
+            Assert.AreEqual(TestData.CashgameIdA, Deps.Cashgame.Deleted);
         }
 
         [Test]
         public void DeleteCashgame_GameHasNoResults_ReturnUrlIsSet()
         {
-            Repos.Cashgame.SetupEmptyGame();
+            Deps.Cashgame.SetupEmptyGame();
 
             var request = new DeleteCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA);
 
@@ -40,9 +40,9 @@ namespace Tests.Core.UseCases
         }
 
         private DeleteCashgame Sut => new DeleteCashgame(
-            Repos.Cashgame,
-            Repos.Bunch,
-            Repos.User,
-            Repos.Player);
+            Deps.Cashgame,
+            Deps.Bunch,
+            Deps.User,
+            Deps.Player);
     }
 }

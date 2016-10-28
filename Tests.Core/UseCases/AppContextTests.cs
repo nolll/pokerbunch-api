@@ -33,6 +33,6 @@ namespace Tests.Core.UseCases
             Assert.Throws<NotLoggedInException>(() => Sut.Execute(request));
         }
 
-        private CoreContext Sut => new CoreContext(Repos.User);
+        private CoreContext Sut => new CoreContext(Deps.User);
     }
 }

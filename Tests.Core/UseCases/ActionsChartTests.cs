@@ -105,7 +105,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void ActionsChart_RunningGame_CheckpointItemsAreCorrect()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new ActionsChart.Request(TestData.UserNameA, TestData.CashgameIdC, TestData.PlayerIdA, TestData.StartTimeC.AddHours(1));
 
@@ -125,9 +125,9 @@ namespace Tests.Core.UseCases
         }
 
         private ActionsChart Sut => new ActionsChart(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.User,
-            Repos.Player);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player);
     }
 }

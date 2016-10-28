@@ -52,11 +52,11 @@ namespace Tests.Core.UseCases
         }
 
         private EventList Sut => new EventList(
-            Repos.Bunch,
-            Repos.Event,
-            Repos.User,
-            Repos.Player,
-            Repos.Location);
+            Deps.Bunch,
+            Deps.Event,
+            Deps.User,
+            Deps.Player,
+            Deps.Location);
 
         private EventList.Request CreateInput()
         {

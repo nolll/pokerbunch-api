@@ -29,7 +29,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void CashgameList_WithoutGames_HasEmptyListOfGames()
         {
-            Repos.Cashgame.ClearList();
+            Deps.Cashgame.ClearList();
 
             var result = Sut.Execute(CreateRequest());
 
@@ -168,10 +168,10 @@ namespace Tests.Core.UseCases
         }
 
         private CashgameList Sut => new CashgameList(
-            Repos.Bunch,
-            Repos.Cashgame,
-            Repos.User,
-            Repos.Player,
-            Repos.Location);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player,
+            Deps.Location);
     }
 }

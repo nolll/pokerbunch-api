@@ -18,9 +18,9 @@ namespace Tests.Core.UseCases
         }
 
         private GetLocation Sut => new GetLocation(
-            Repos.Location,
-            Repos.User,
-            Repos.Player,
-            Repos.Bunch);
+            Deps.Location,
+            Deps.User,
+            Deps.Player,
+            Deps.Bunch);
     }
 }

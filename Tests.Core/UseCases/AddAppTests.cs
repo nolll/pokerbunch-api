@@ -13,10 +13,10 @@ namespace Tests.Core.UseCases
 
             Sut.Execute(new AddApp.Request(TestData.UserA.UserName, addedAppName));
 
-            Assert.AreEqual(addedAppName, Repos.App.Added.Name);
-            Assert.AreEqual(TestData.UserA.Id, Repos.App.Added.UserId);
+            Assert.AreEqual(addedAppName, Deps.App.Added.Name);
+            Assert.AreEqual(TestData.UserA.Id, Deps.App.Added.UserId);
         }
 
-        private AddApp Sut => new AddApp(Repos.App, Repos.User);
+        private AddApp Sut => new AddApp(Deps.App, Deps.User);
     }
 }

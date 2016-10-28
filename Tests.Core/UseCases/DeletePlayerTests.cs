@@ -17,7 +17,7 @@ namespace Tests.Core.UseCases
             Assert.IsTrue(result.Deleted);
             Assert.AreEqual(TestData.SlugA, result.Slug);
             Assert.AreEqual(playerIdThatHasNotPlayed, result.PlayerId);
-            Assert.AreEqual(playerIdThatHasNotPlayed, Repos.Player.Deleted);
+            Assert.AreEqual(playerIdThatHasNotPlayed, Deps.Player.Deleted);
         }
 
         [Test]
@@ -32,9 +32,9 @@ namespace Tests.Core.UseCases
         }
 
         private DeletePlayer Sut => new DeletePlayer(
-            Repos.Player,
-            Repos.Cashgame,
-            Repos.User,
-            Repos.Bunch);
+            Deps.Player,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Bunch);
     }
 }
