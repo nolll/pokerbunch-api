@@ -25,7 +25,7 @@ namespace Core.UseCases
             var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
             var bunch = _bunchRepository.Get(cashgame.BunchId);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(cashgame.BunchId, currentUser.Id);
+            var currentPlayer = _playerService.Get(cashgame.BunchId, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
             cashgame.DeleteCheckpoint(checkpoint);
             _cashgameService.UpdateGame(cashgame);

@@ -23,7 +23,7 @@ namespace Core.UseCases
             var location = _locationRepository.Get(request.LocationId);
             var bunch = _bunchRepository.Get(location.BunchId);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.GetByUserId(location.BunchId, user.Id);
+            var player = _playerService.Get(location.BunchId, user.Id);
             RequireRole.Player(user, player);
 
             return new Result(location.Id, location.Name, bunch.Slug);

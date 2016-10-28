@@ -31,9 +31,9 @@ namespace Core.UseCases
 
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
-            var existingPlayers = _playerService.GetList(bunch.Id);
+            var existingPlayers = _playerService.List(bunch.Id);
             var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
             if(player != null)
                 throw new PlayerExistsException();

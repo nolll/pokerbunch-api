@@ -14,10 +14,9 @@ namespace Core.Services
             _playerRepository = playerRepository;
         }
 
-        public IList<Player> GetList(int bunchId)
+        public IList<Player> List(int bunchId)
         {
-            var ids = _playerRepository.Find(bunchId);
-            return _playerRepository.Get(ids);
+            return _playerRepository.List(bunchId);
         }
 
         public IList<Player> Get(IList<int> ids)
@@ -30,12 +29,9 @@ namespace Core.Services
             return _playerRepository.Get(id);
         }
 
-        public Player GetByUserId(int bunchId, int userId)
+        public Player Get(int bunchId, int userId)
         {
-            var ids = _playerRepository.Find(bunchId, userId);
-            if (!ids.Any())
-                return null;
-            return _playerRepository.Get(ids).First();
+            return _playerRepository.Get(bunchId, userId);
         }
 
         public int Add(Player player)
@@ -43,9 +39,9 @@ namespace Core.Services
             return _playerRepository.Add(player);
         }
 
-        public bool JoinHomegame(Player player, Bunch bunch, int userId)
+        public bool JoinBunch(Player player, Bunch bunch, int userId)
         {
-            return _playerRepository.JoinHomegame(player, bunch, userId);
+            return _playerRepository.JoinBunch(player, bunch, userId);
         }
 
         public void Delete(int playerId)

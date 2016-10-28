@@ -24,7 +24,7 @@ namespace Core.UseCases
             var cashgame = _cashgameService.GetById(request.Id);
             var bunch = _bunchRepository.Get(cashgame.BunchId);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var player = _playerService.Get(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
 
             if (cashgame.PlayerCount > 0)

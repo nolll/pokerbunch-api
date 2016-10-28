@@ -32,7 +32,7 @@ namespace Core.UseCases
             
             RequireRole.Player(user, player);
             var playerResult = cashgame.GetResult(player.Id);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, user.Id);
+            var currentPlayer = _playerService.Get(bunch.Id, user.Id);
             var isManager = RoleHandler.IsInRole(user, currentPlayer, Role.Manager);
 
             var date = cashgame.StartTime.HasValue ? cashgame.StartTime.Value : DateTime.MinValue;

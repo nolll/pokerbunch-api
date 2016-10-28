@@ -27,7 +27,7 @@ namespace Core.UseCases
         {
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var player = _playerService.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var events = _eventRepository.List(bunch.Id);
             var locationIds = events.Select(o => o.LocationId).Distinct().ToList();

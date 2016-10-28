@@ -35,10 +35,10 @@ namespace Core.UseCases
                 throw new CashgameNotRunningException();
 
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var player = _playerService.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var players = _playerService.Get(GetPlayerIds(cashgame));
-            var bunchPlayers = _playerService.GetList(bunch.Id);
+            var bunchPlayers = _playerService.List(bunch.Id);
 
             var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
             

@@ -23,7 +23,7 @@ namespace Core.UseCases
             var player = _playerService.Get(request.PlayerId);
             var bunch = _bunchRepository.Get(player.BunchId);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
             var canDelete = !_cashgameService.HasPlayed(player.Id);
 
