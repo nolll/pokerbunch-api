@@ -43,7 +43,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrangeBase.cs" />
     <Compile Include="Builders\DateTimeBuilder.cs" />
     <Compile Include="FakeRepositories\FakeAppRepository.cs" />
     <Compile Include="FakeRepositories\FakeLocationRepository.cs" />

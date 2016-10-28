@@ -11,7 +11,7 @@ using Tests.Common;
 
 namespace Tests.Core.UseCases.CashoutTests
 {
-    public abstract class Arrange : ArrangeBase
+    public abstract class Arrange
     {
         private const int BunchId = 1;
         private const int CashgameId = 2;
@@ -33,16 +33,23 @@ namespace Tests.Core.UseCases.CashoutTests
         [SetUp]
         public void Setup()
         {
-            Sut = CreateSut<Cashout>();
-
             var cashgame = CreateCashgame();
             CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
-            MockOf<IBunchService>().Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
-            MockOf<ICashgameService>().Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
-            MockOf<IPlayerService>().Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
-            MockOf<IUserRepository>().Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
 
-            MockOf<ICashgameService>().Setup(o => o.UpdateGame(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+            var bsm = new Mock<IBunchService>();
+            bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
+
+            var csm = new Mock<ICashgameService>();
+            csm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
+            csm.Setup(o => o.UpdateGame(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+
+            var psm = new Mock<IPlayerService>();
+            psm.Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
+
+            var urm = new Mock<IUserRepository>();
+            urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
+            
+            Sut = new Cashout(bsm.Object, csm.Object, psm.Object, urm.Object);
         }
 
         private Cashgame CreateCashgame()

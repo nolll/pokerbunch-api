@@ -1,13 +1,13 @@
 ﻿using Core.Entities;
 using Core.Repositories;
-using Core.Services;
 using Core.UseCases;
+using Moq;
 using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases.UserDetailsTests
 {
-    public class Arrange : ArrangeBase
+    public class Arrange
     {
         private const int CurrentUserId = 1;
         private const int ViewUserId = 2;
@@ -23,19 +23,19 @@ namespace Tests.Core.UseCases.UserDetailsTests
         [SetUp]
         public void Setup()
         {
-            var sut = CreateSut<UserDetails>();
-
+            var urm = new Mock<IUserRepository>();
             if (ViewingOwnUser)
             {
-                MockOf<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+                urm.Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
                 _currentUserName = ViewUserName;
             }
             else
             {
-                MockOf<IUserRepository>().Setup(s => s.Get(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
-                MockOf<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+                urm.Setup(s => s.Get(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
+                urm.Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
             }
 
+            var sut = new UserDetails(urm.Object);
             Result = sut.Execute(new UserDetails.Request(_currentUserName, ViewUserName));
         }
     }
