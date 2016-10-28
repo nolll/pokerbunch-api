@@ -7,8 +7,8 @@ namespace Core.Services
     {
         Bunch Get(int id);
         Bunch GetBySlug(string slug);
-        IList<Bunch> GetByUserId(int userId);
-        IList<Bunch> GetList();
+        IList<Bunch> List(int userId);
+        IList<Bunch> List();
         int Add(Bunch bunch);
         void Save(Bunch bunch);
     }

@@ -22,22 +22,17 @@ namespace Core.Services
 
         public Bunch GetBySlug(string slug)
         {
-            var ids = _bunchRepository.Search(slug);
-            if(ids.Any())
-                return _bunchRepository.Get(ids.First());
-            throw new BunchNotFoundException(slug);
+            return _bunchRepository.GetBySlug(slug);
         }
 
-        public IList<Bunch> GetByUserId(int userId)
+        public IList<Bunch> List(int userId)
         {
-            var ids = _bunchRepository.Search(userId);
-            return _bunchRepository.Get(ids);
+            return _bunchRepository.List(userId);
         }
 
-        public IList<Bunch> GetList()
+        public IList<Bunch> List()
         {
-            var ids = _bunchRepository.Search();
-            return _bunchRepository.Get(ids);
+            return _bunchRepository.List();
         }
 
         public int Add(Bunch bunch)

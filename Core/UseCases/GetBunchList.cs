@@ -22,14 +22,14 @@ namespace Core.UseCases
             var user = _userRepository.Get(request.UserName);
             RequireRole.Admin(user);
 
-            var bunches = _bunchService.GetList();
+            var bunches = _bunchService.List();
             return new Result(bunches);
         }
 
         public Result Execute(UserBunchesRequest request)
         {
             var user = _userRepository.Get(request.UserName);
-            var bunches = user != null ? _bunchService.GetByUserId(user.Id) : new List<Bunch>();
+            var bunches = user != null ? _bunchService.List(user.Id) : new List<Bunch>();
             
             return new Result(bunches);
         }

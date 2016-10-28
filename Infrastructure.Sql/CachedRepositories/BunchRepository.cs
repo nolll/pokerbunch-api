@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using Infrastructure.Sql.Repositories;
@@ -23,14 +25,23 @@ namespace Infrastructure.Sql.CachedRepositories
             return _cacheContainer.GetAndStore(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<Bunch> Get(IList<int> ids)
+        public Bunch GetBySlug(string slug)
+        {
+            var ids = Search(slug);
+            if (ids.Any())
+                return Get(ids.First());
+            throw new BunchNotFoundException(slug);
+        }
+
+        public IList<Bunch> List(IList<int> ids)
         {
             return _cacheContainer.GetAndStore(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<int> Search()
+        public IList<Bunch> List()
         {
-            return _bunchDb.Search();
+            var ids = _bunchDb.Search();
+            return List(ids);
         }
 
         public IList<int> Search(string slug)
@@ -38,9 +49,10 @@ namespace Infrastructure.Sql.CachedRepositories
             return _bunchDb.Search(slug);
         }
 
-        public IList<int> Search(int userId)
+        public IList<Bunch> List(int userId)
         {
-            return _bunchDb.Search(userId);
+            var ids = _bunchDb.Search(userId);
+            return List(ids);
         }
 
         public int Add(Bunch bunch)

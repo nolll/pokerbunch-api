@@ -22,7 +22,7 @@ namespace Tests.Common.FakeRepositories
             return _list.First(o => o.Id == id);
         }
 
-        public IList<Bunch> Get(IList<int> ids)
+        public IList<Bunch> List(IList<int> ids)
         {
             return _list.Where(o => ids.Contains(o.Id)).ToList();
         }
@@ -40,19 +40,14 @@ namespace Tests.Common.FakeRepositories
             return _list;
         }
 
-        public IList<int> Search()
+        public IList<Bunch> List()
         {
-            return _list.Select(o => o.Id).ToList();
+            return _list;
         }
 
-        public IList<int> Search(string slug)
+        public IList<Bunch> List(int userId)
         {
-            return _list.Where(o => o.Slug == slug).Select(o => o.Id).ToList();
-        }
-
-        public IList<int> Search(int userId)
-        {
-            return _list.Select(o => o.Id).ToList();
+            return _list;
         }
 
         public int Add(Bunch bunch)
