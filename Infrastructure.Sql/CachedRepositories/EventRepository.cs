@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -28,14 +29,16 @@ namespace Infrastructure.Sql.CachedRepositories
             return _cacheContainer.GetAndStore(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
 
-        public IList<int> FindByBunchId(int bunchId)
+        public IList<Event> GetByBunchId(int bunchId)
         {
-            return _eventDb.FindByBunchId(bunchId);
+            var ids = _eventDb.FindByBunchId(bunchId);
+            return Get(ids);
         }
 
-        public IList<int> FindByCashgameId(int cashgameId)
+        public Event GetByCashgameId(int cashgameId)
         {
-            return _eventDb.FindByBunchId(cashgameId);
+            var ids = _eventDb.FindByBunchId(cashgameId);
+            return Get(ids).FirstOrDefault();
         }
 
         public int Add(Event e)
