@@ -11,14 +11,14 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public Report(IBunchRepository bunchRepository, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
+        public Report(IBunchRepository bunchRepository, CashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
 
@@ -31,7 +31,7 @@ namespace Core.UseCases
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var cashgame = _cashgameService.GetRunning(bunch.Id);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
 
             var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);

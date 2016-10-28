@@ -49,7 +49,7 @@ namespace Tests.Core.UseCases
         private Actions Sut => new Actions(
             Repos.Bunch,
             Services.CashgameService,
-            Services.PlayerService,
+            Repos.Player,
             Repos.User);
     }
 }

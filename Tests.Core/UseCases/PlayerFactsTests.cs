@@ -26,7 +26,7 @@ namespace Tests.Core.UseCases
         private PlayerFacts Sut => new PlayerFacts(
             Repos.Bunch,
             Services.CashgameService,
-            Services.PlayerService,
+            Repos.Player,
             Repos.User);
     }
 }

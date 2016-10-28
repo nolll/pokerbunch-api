@@ -7,14 +7,14 @@ namespace Core.UseCases
     {
         private readonly ILocationRepository _locationRepository;
         private readonly IUserRepository _userRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IBunchRepository _bunchRepository;
 
-        public GetLocation(ILocationRepository locationRepository, IUserRepository userRepository, PlayerService playerService, IBunchRepository bunchRepository)
+        public GetLocation(ILocationRepository locationRepository, IUserRepository userRepository, IPlayerRepository playerRepository, IBunchRepository bunchRepository)
         {
             _locationRepository = locationRepository;
             _userRepository = userRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _bunchRepository = bunchRepository;
         }
 
@@ -23,7 +23,7 @@ namespace Core.UseCases
             var location = _locationRepository.Get(request.LocationId);
             var bunch = _bunchRepository.Get(location.BunchId);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.Get(location.BunchId, user.Id);
+            var player = _playerRepository.Get(location.BunchId, user.Id);
             RequireRole.Player(user, player);
 
             return new Result(location.Id, location.Name, bunch.Slug);

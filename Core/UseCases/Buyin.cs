@@ -10,14 +10,14 @@ namespace Core.UseCases
     public class Buyin
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly CashgameService _cashgameService;
         private readonly IUserRepository _userRepository;
 
-        public Buyin(IBunchRepository bunchRepository, PlayerService playerService, CashgameService cashgameService, IUserRepository userRepository)
+        public Buyin(IBunchRepository bunchRepository, IPlayerRepository playerRepository, CashgameService cashgameService, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _cashgameService = cashgameService;
             _userRepository = userRepository;
         }
@@ -31,7 +31,7 @@ namespace Core.UseCases
 
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
             var cashgame = _cashgameService.GetRunning(bunch.Id);
 

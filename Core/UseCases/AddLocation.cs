@@ -9,14 +9,14 @@ namespace Core.UseCases
     public class AddLocation
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILocationRepository _locationRepository;
 
-        public AddLocation(IBunchRepository bunchRepository, PlayerService playerService, IUserRepository userRepository, ILocationRepository locationRepository)
+        public AddLocation(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository)
         {
             _bunchRepository = bunchRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
             _locationRepository = locationRepository;
         }
@@ -30,7 +30,7 @@ namespace Core.UseCases
 
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
 
             var location = new Location(0, request.Name, bunch.Id);

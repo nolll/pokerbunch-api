@@ -12,27 +12,27 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public Actions(IBunchRepository bunchRepository, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
+        public Actions(IBunchRepository bunchRepository, CashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
-            var player = _playerService.Get(request.PlayerId);
+            var player = _playerRepository.Get(request.PlayerId);
             var user = _userRepository.Get(request.CurrentUserName);
             var bunch = _bunchRepository.Get(player.BunchId);
             var cashgame = _cashgameService.GetById(request.CashgameId);
             
             RequireRole.Player(user, player);
             var playerResult = cashgame.GetResult(player.Id);
-            var currentPlayer = _playerService.Get(bunch.Id, user.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, user.Id);
             var isManager = RoleHandler.IsInRole(user, currentPlayer, Role.Manager);
 
             var date = cashgame.StartTime.HasValue ? cashgame.StartTime.Value : DateTime.MinValue;

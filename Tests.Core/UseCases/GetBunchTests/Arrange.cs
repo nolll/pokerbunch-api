@@ -4,7 +4,6 @@ using Core.Services;
 using Core.UseCases;
 using Moq;
 using NUnit.Framework;
-using Tests.Common;
 
 namespace Tests.Core.UseCases.GetBunchTests
 {
@@ -28,13 +27,13 @@ namespace Tests.Core.UseCases.GetBunchTests
             var bsm = new Mock<IBunchRepository>();
             bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug, DisplayName, Description, HouseRules));
 
-            var psm = new Mock<IPlayerService>();
-            psm.Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId, role: Role));
+            var prm = new Mock<IPlayerRepository>();
+            prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId, role: Role));
 
             var urm = new Mock<IUserRepository>();
             urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
 
-            _sut = new GetBunch(bsm.Object, urm.Object, psm.Object);
+            _sut = new GetBunch(bsm.Object, urm.Object, prm.Object);
         }
 
         protected BunchResult Execute()

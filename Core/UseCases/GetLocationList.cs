@@ -9,14 +9,14 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly IUserRepository _userRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly ILocationRepository _locationRepository;
 
-        public GetLocationList(IBunchRepository bunchRepository, IUserRepository userRepository, PlayerService playerService, ILocationRepository locationRepository)
+        public GetLocationList(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
         {
             _bunchRepository = bunchRepository;
             _userRepository = userRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _locationRepository = locationRepository;
         }
 
@@ -24,7 +24,7 @@ namespace Core.UseCases
         {
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.Get(bunch.Id, user.Id);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var locations = _locationRepository.List(bunch.Id);
 

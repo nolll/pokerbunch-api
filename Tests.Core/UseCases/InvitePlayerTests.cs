@@ -53,7 +53,7 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
 
         private InvitePlayer Sut => new InvitePlayer(
             Repos.Bunch,
-            Services.PlayerService,
+            Repos.Player,
             Services.MessageSender,
             Repos.User);
     }

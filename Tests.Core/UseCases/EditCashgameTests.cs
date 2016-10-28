@@ -48,7 +48,7 @@ namespace Tests.Core.UseCases
         private EditCashgame Sut => new EditCashgame(
             Services.CashgameService,
             Repos.User,
-            Services.PlayerService,
+            Repos.Player,
             Repos.Location,
             Repos.Event);
     }

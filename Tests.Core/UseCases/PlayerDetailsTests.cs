@@ -102,7 +102,7 @@ namespace Tests.Core.UseCases
 
         private GetPlayer Sut => new GetPlayer(
             Repos.Bunch,
-            Services.PlayerService,
+            Repos.Player,
             Services.CashgameService,
             Repos.User);
     }

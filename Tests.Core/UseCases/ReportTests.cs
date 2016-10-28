@@ -35,7 +35,7 @@ namespace Tests.Core.UseCases
         private Report Sut => new Report(
             Repos.Bunch,
             Services.CashgameService,
-            Services.PlayerService,
+            Repos.Player,
             Repos.User);
     }
 }

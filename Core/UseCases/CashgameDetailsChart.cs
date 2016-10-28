@@ -12,14 +12,14 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public CashgameDetailsChart(IBunchRepository bunchRepository, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
+        public CashgameDetailsChart(IBunchRepository bunchRepository, CashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
 
@@ -28,9 +28,9 @@ namespace Core.UseCases
             var cashgame = _cashgameService.GetById(request.CashgameId);
             var bunch = _bunchRepository.Get(cashgame.BunchId);
             var playerIds = cashgame.Results.Select(result => result.PlayerId).ToList();
-            var players = _playerService.Get(playerIds).OrderBy(o => o.Id).ToList();
+            var players = _playerRepository.Get(playerIds).OrderBy(o => o.Id).ToList();
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.Get(bunch.Id, user.Id);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
 
             var playerItems = GetPlayerItems(bunch, cashgame, players, request.CurrentTime);

@@ -39,7 +39,7 @@ namespace Tests.Core.UseCases
         private CashgameChart Sut => new CashgameChart(
             Repos.Bunch,
             Services.CashgameService,
-            Services.PlayerService,
+            Repos.Player,
             Repos.User);
     }
 }

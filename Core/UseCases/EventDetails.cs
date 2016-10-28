@@ -7,14 +7,14 @@ namespace Core.UseCases
     {
         private readonly IEventRepository _eventRepository;
         private readonly IUserRepository _userRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IBunchRepository _bunchRepository;
 
-        public EventDetails(IEventRepository eventRepository, IUserRepository userRepository, PlayerService playerService, IBunchRepository bunchRepository)
+        public EventDetails(IEventRepository eventRepository, IUserRepository userRepository, IPlayerRepository playerRepository, IBunchRepository bunchRepository)
         {
             _eventRepository = eventRepository;
             _userRepository = userRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _bunchRepository = bunchRepository;
         }
 
@@ -23,7 +23,7 @@ namespace Core.UseCases
             var e = _eventRepository.Get(request.EventId);
             var bunch = _bunchRepository.Get(e.BunchId);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.Get(e.BunchId, user.Id);
+            var player = _playerRepository.Get(e.BunchId, user.Id);
             RequireRole.Player(user, player);
             
             return new Result(e.Name, bunch.Slug);

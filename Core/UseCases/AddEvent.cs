@@ -9,14 +9,14 @@ namespace Core.UseCases
     public class AddEvent
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
         private readonly IEventRepository _eventRepository;
 
-        public AddEvent(IBunchRepository bunchRepository, PlayerService playerService, IUserRepository userRepository, IEventRepository eventRepository)
+        public AddEvent(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository, IEventRepository eventRepository)
         {
             _bunchRepository = bunchRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
             _eventRepository = eventRepository;
         }
@@ -30,7 +30,7 @@ namespace Core.UseCases
 
             var bunch = _bunchRepository.GetBySlug(request.Slug);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
 
             var e = new Event(0, bunch.Id, request.Name);

@@ -75,6 +75,6 @@ namespace Tests.Core.UseCases
         private EditBunch Sut => new EditBunch(
             Repos.Bunch,
             Repos.User,
-            Services.PlayerService);
+            Repos.Player);
     }
 }

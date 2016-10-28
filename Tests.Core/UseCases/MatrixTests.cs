@@ -44,7 +44,7 @@ namespace Tests.Core.UseCases
         private Matrix Sut => new Matrix(
             Repos.Bunch,
             Services.CashgameService,
-            Services.PlayerService,
+            Repos.Player,
             Repos.User,
             Repos.Event);
     }

@@ -23,27 +23,27 @@ namespace Plumbing
 
         // Bunch
         public GetBunchList GetBunchList => new GetBunchList(_deps.BunchRepository, _deps.UserRepository);
-        public GetBunch GetBunch => new GetBunch(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerService);
-        public AddBunch AddBunch => new AddBunch(_deps.UserRepository, _deps.BunchRepository, _deps.PlayerService);
-        public EditBunch EditBunch => new EditBunch(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerService);
+        public GetBunch GetBunch => new GetBunch(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository);
+        public AddBunch AddBunch => new AddBunch(_deps.UserRepository, _deps.BunchRepository, _deps.PlayerRepository);
+        public EditBunch EditBunch => new EditBunch(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository);
 
         // Events
 
         // Locations
-        public GetLocationList GetLocationList => new GetLocationList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerService, _deps.LocationRepository);
-        public GetLocation GetLocation => new GetLocation(_deps.LocationRepository, _deps.UserRepository, _deps.PlayerService, _deps.BunchRepository);
-        public AddLocation AddLocation => new AddLocation(_deps.BunchRepository, _deps.PlayerService, _deps.UserRepository, _deps.LocationRepository);
+        public GetLocationList GetLocationList => new GetLocationList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository);
+        public GetLocation GetLocation => new GetLocation(_deps.LocationRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.BunchRepository);
+        public AddLocation AddLocation => new AddLocation(_deps.BunchRepository, _deps.PlayerRepository, _deps.UserRepository, _deps.LocationRepository);
 
         // Cashgame
-        public TopList TopList => new TopList(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerService, _deps.UserRepository);
-        public RunningCashgame RunningCashgame => new RunningCashgame(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerService, _deps.UserRepository, _deps.LocationRepository);
-        public Buyin Buyin => new Buyin(_deps.BunchRepository, _deps.PlayerService, _deps.CashgameService, _deps.UserRepository);
-        public Report Report => new Report(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerService, _deps.UserRepository);
-        public Cashout Cashout => new Cashout(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerService, _deps.UserRepository);
+        public TopList TopList => new TopList(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerRepository, _deps.UserRepository);
+        public RunningCashgame RunningCashgame => new RunningCashgame(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerRepository, _deps.UserRepository, _deps.LocationRepository);
+        public Buyin Buyin => new Buyin(_deps.BunchRepository, _deps.PlayerRepository, _deps.CashgameService, _deps.UserRepository);
+        public Report Report => new Report(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerRepository, _deps.UserRepository);
+        public Cashout Cashout => new Cashout(_deps.BunchRepository, _deps.CashgameService, _deps.PlayerRepository, _deps.UserRepository);
 
         // Player
-        public GetPlayerList GetPlayerList => new GetPlayerList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerService);
-        public GetPlayer GetPlayer => new GetPlayer(_deps.BunchRepository, _deps.PlayerService, _deps.CashgameService, _deps.UserRepository);
+        public GetPlayerList GetPlayerList => new GetPlayerList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository);
+        public GetPlayer GetPlayer => new GetPlayer(_deps.BunchRepository, _deps.PlayerRepository, _deps.CashgameService, _deps.UserRepository);
 
         // Apps
         public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppRepository);

@@ -30,6 +30,6 @@ namespace Tests.Core.UseCases
         private JoinBunchConfirmation Sut => new JoinBunchConfirmation(
             Repos.Bunch,
             Repos.User,
-            Services.PlayerService);
+            Repos.Player);
     }
 }

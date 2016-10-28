@@ -9,14 +9,14 @@ namespace Core.UseCases
         private readonly CashgameService _cashgameService;
         private readonly IBunchRepository _bunchRepository;
         private readonly IUserRepository _userRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
 
-        public DeleteCashgame(CashgameService cashgameService, IBunchRepository bunchRepository, IUserRepository userRepository, PlayerService playerService)
+        public DeleteCashgame(CashgameService cashgameService, IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
         {
             _cashgameService = cashgameService;
             _bunchRepository = bunchRepository;
             _userRepository = userRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
         }
 
         public Result Execute(Request request)
@@ -24,7 +24,7 @@ namespace Core.UseCases
             var cashgame = _cashgameService.GetById(request.Id);
             var bunch = _bunchRepository.Get(cashgame.BunchId);
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.Get(bunch.Id, user.Id);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
 
             if (cashgame.PlayerCount > 0)

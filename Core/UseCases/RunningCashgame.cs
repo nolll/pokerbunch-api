@@ -13,15 +13,15 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILocationRepository _locationRepository;
 
-        public RunningCashgame(IBunchRepository bunchRepository, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository, ILocationRepository locationRepository)
+        public RunningCashgame(IBunchRepository bunchRepository, CashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository)
         {
             _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
             _locationRepository = locationRepository;
         }
@@ -35,10 +35,10 @@ namespace Core.UseCases
                 throw new CashgameNotRunningException();
 
             var user = _userRepository.Get(request.UserName);
-            var player = _playerService.Get(bunch.Id, user.Id);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var players = _playerService.Get(GetPlayerIds(cashgame));
-            var bunchPlayers = _playerService.List(bunch.Id);
+            var players = _playerRepository.Get(GetPlayerIds(cashgame));
+            var bunchPlayers = _playerRepository.List(bunch.Id);
 
             var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
             

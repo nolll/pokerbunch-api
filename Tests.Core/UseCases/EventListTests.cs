@@ -55,7 +55,7 @@ namespace Tests.Core.UseCases
             Repos.Bunch,
             Repos.Event,
             Repos.User,
-            Services.PlayerService,
+            Repos.Player,
             Repos.Location);
 
         private EventList.Request CreateInput()

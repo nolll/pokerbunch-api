@@ -43,13 +43,13 @@ namespace Tests.Core.UseCases.CashoutTests
             csm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
             csm.Setup(o => o.UpdateGame(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
 
-            var psm = new Mock<IPlayerService>();
-            psm.Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
+            var prm = new Mock<IPlayerRepository>();
+            prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
 
             var urm = new Mock<IUserRepository>();
             urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
             
-            Sut = new Cashout(bsm.Object, csm.Object, psm.Object, urm.Object);
+            Sut = new Cashout(bsm.Object, csm.Object, prm.Object, urm.Object);
         }
 
         private Cashgame CreateCashgame()

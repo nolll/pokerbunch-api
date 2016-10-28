@@ -6,22 +6,22 @@ namespace Core.UseCases
     public class InvitePlayerForm
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly PlayerService _playerService;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public InvitePlayerForm(IBunchRepository bunchRepository, PlayerService playerService, IUserRepository userRepository)
+        public InvitePlayerForm(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
-            _playerService = playerService;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
-            var player = _playerService.Get(request.PlayerId);
+            var player = _playerRepository.Get(request.PlayerId);
             var bunch = _bunchRepository.Get(player.BunchId);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerService.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
 
             return new Result(bunch.Slug);
