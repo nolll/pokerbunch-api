@@ -8,15 +8,15 @@ namespace Core.UseCases
 {
     public class EditCashgame
     {
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly ILocationRepository _locationRepository;
         private readonly IEventRepository _eventRepository;
 
-        public EditCashgame(CashgameService cashgameService, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
+        public EditCashgame(ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _userRepository = userRepository;
             _playerRepository = playerRepository;
             _locationRepository = locationRepository;
@@ -29,13 +29,13 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var cashgame = _cashgameService.Get(request.Id);
+            var cashgame = _cashgameRepository.Get(request.Id);
             var user = _userRepository.Get(request.UserName);
             var player = _playerRepository.Get(cashgame.BunchId, user.Id);
             RequireRole.Manager(user, player);
             var location = _locationRepository.Get(request.LocationId);
             cashgame = new Cashgame(cashgame.BunchId, location.Id, cashgame.Status, cashgame.Id);
-            _cashgameService.Update(cashgame);
+            _cashgameRepository.Update(cashgame);
 
             if (request.EventId > 0)
             {

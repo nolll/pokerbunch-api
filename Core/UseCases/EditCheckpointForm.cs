@@ -8,21 +8,21 @@ namespace Core.UseCases
     public class EditCheckpointForm
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPlayerRepository _playerRepository;
 
-        public EditCheckpointForm(IBunchRepository bunchRepository, CashgameService cashgameService, IUserRepository userRepository, IPlayerRepository playerRepository)
+        public EditCheckpointForm(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
         {
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _userRepository = userRepository;
             _playerRepository = playerRepository;
         }
 
         public Result Execute(Request request)
         {
-            var cashgame = _cashgameService.GetByCheckpoint(request.CheckpointId);
+            var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
             var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
             var bunch = _bunchRepository.Get(cashgame.BunchId);
             var user = _userRepository.Get(request.UserName);

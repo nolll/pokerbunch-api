@@ -9,16 +9,16 @@ namespace Core.UseCases
     public class AddCashgame
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly ILocationRepository _locationRepository;
         private readonly IEventRepository _eventRepository;
 
-        public AddCashgame(IBunchRepository bunchRepository, CashgameService cashgameService, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
+        public AddCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _userRepository = userRepository;
             _playerRepository = playerRepository;
             _locationRepository = locationRepository;
@@ -38,7 +38,7 @@ namespace Core.UseCases
             RequireRole.Player(user, player);
             var location = _locationRepository.Get(request.LocationId);
             var cashgame = new Cashgame(bunch.Id, location.Id, GameStatus.Running);
-            var cashgameId = _cashgameService.Add(bunch, cashgame);
+            var cashgameId = _cashgameRepository.Add(bunch, cashgame);
 
             if (request.EventId > 0)
             {

@@ -39,9 +39,9 @@ namespace Tests.Core.UseCases.CashoutTests
             var bsm = new Mock<IBunchRepository>();
             bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
 
-            var csm = new Mock<ICashgameService>();
-            csm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
-            csm.Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+            var crm = new Mock<ICashgameRepository>();
+            crm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
+            crm.Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
 
             var prm = new Mock<IPlayerRepository>();
             prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
@@ -49,7 +49,7 @@ namespace Tests.Core.UseCases.CashoutTests
             var urm = new Mock<IUserRepository>();
             urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
             
-            Sut = new Cashout(bsm.Object, csm.Object, prm.Object, urm.Object);
+            Sut = new Cashout(bsm.Object, crm.Object, prm.Object, urm.Object);
         }
 
         private Cashgame CreateCashgame()

@@ -10,14 +10,14 @@ namespace Core.UseCases
     public class Cashout
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly ICashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public Cashout(IBunchRepository bunchRepository, ICashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository)
+        public Cashout(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
@@ -32,7 +32,7 @@ namespace Core.UseCases
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
-            var cashgame = _cashgameService.GetRunning(bunch.Id);
+            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
             var result = cashgame.GetResult(request.PlayerId);
 
             var existingCashoutCheckpoint = result.CashoutCheckpoint;
@@ -49,7 +49,7 @@ namespace Core.UseCases
                 cashgame.UpdateCheckpoint(postedCheckpoint);
             else
                 cashgame.AddCheckpoint(postedCheckpoint);
-            _cashgameService.Update(cashgame);
+            _cashgameRepository.Update(cashgame);
 
             return new Result(cashgame.Id);
         }

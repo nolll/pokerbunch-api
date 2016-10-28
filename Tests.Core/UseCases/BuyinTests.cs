@@ -56,7 +56,7 @@ namespace Tests.Core.UseCases
         private Buyin Sut => new Buyin(
             Repos.Bunch,
             Repos.Player,
-            Services.CashgameService,
+            Repos.Cashgame,
             Repos.User);
     }
 }

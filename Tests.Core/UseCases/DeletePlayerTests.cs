@@ -33,7 +33,7 @@ namespace Tests.Core.UseCases
 
         private DeletePlayer Sut => new DeletePlayer(
             Repos.Player,
-            Services.CashgameService,
+            Repos.Cashgame,
             Repos.User,
             Repos.Bunch);
     }

@@ -9,14 +9,14 @@ namespace Core.UseCases
     public class CurrentRankings
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public CurrentRankings(IBunchRepository bunchRepository, CashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository)
+        public CurrentRankings(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
@@ -27,9 +27,9 @@ namespace Core.UseCases
             var user = _userRepository.Get(request.UserName);
             var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var years = _cashgameService.GetYears(bunch.Id);
+            var years = _cashgameRepository.GetYears(bunch.Id);
             var latestYear = years.Count > 0 ? years.OrderBy(o => o).Last() : (int?)null;
-            var cashgames = _cashgameService.GetFinished(bunch.Id, latestYear);
+            var cashgames = _cashgameRepository.GetFinished(bunch.Id, latestYear);
             if (!cashgames.Any())
                 return new Result(new List<Item>(), 0);
 

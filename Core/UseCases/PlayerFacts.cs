@@ -10,14 +10,14 @@ namespace Core.UseCases
     public class PlayerFacts
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public PlayerFacts(IBunchRepository bunchRepository, CashgameService cashgameService, IPlayerRepository playerRepository, IUserRepository userRepository)
+        public PlayerFacts(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
@@ -28,7 +28,7 @@ namespace Core.UseCases
             var user = _userRepository.Get(request.UserName);
             RequireRole.Player(user, player);
             var bunch = _bunchRepository.Get(player.BunchId);
-            var cashgames = _cashgameService.GetFinished(bunch.Id);
+            var cashgames = _cashgameRepository.GetFinished(bunch.Id);
 
             return new Result(cashgames, player.Id, bunch.Currency);
         }

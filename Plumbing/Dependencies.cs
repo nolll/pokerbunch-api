@@ -14,7 +14,7 @@ namespace Plumbing
         private readonly SqlServerStorageProvider _db;
         private IAppRepository _appRepository;
         private IBunchRepository _bunchRepository;
-        private CashgameService _cashgameService;
+        private ICashgameRepository _cashgameRepository;
         private IEventRepository _eventRepository;
         private IPlayerRepository _playerRepository;
         private ILocationRepository _locationRepository;
@@ -30,7 +30,7 @@ namespace Plumbing
 
         public IAppRepository AppRepository => _appRepository ?? (_appRepository = new AppRepository(_db, _cacheContainer));
         public IBunchRepository BunchRepository => _bunchRepository ?? (_bunchRepository = new BunchRepository(_db, _cacheContainer));
-        public CashgameService CashgameService => _cashgameService ?? (_cashgameService = new CashgameService(new CashgameRepository(_db, _cacheContainer)));
+        public ICashgameRepository CashgameRepository => _cashgameRepository ?? (_cashgameRepository = new CashgameRepository(_db, _cacheContainer));
         public IEventRepository EventRepository => _eventRepository ?? (_eventRepository = new EventRepository(_db, _cacheContainer));
         public IPlayerRepository PlayerRepository => _playerRepository ?? (_playerRepository = new PlayerRepository(_db, _cacheContainer));
         public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(_db, _cacheContainer));

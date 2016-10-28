@@ -37,7 +37,7 @@ namespace Tests.Core.UseCases
 
         private DeleteCheckpoint Sut => new DeleteCheckpoint(
             Repos.Bunch,
-            Services.CashgameService,
+            Repos.Cashgame,
             Repos.User,
             Repos.Player);
     }

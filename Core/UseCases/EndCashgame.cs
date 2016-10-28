@@ -7,14 +7,14 @@ namespace Core.UseCases
     public class EndCashgame
     {
         private readonly IBunchRepository _bunchRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPlayerRepository _playerRepository;
 
-        public EndCashgame(IBunchRepository bunchRepository, CashgameService cashgameService, IUserRepository userRepository, IPlayerRepository playerRepository)
+        public EndCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
         {
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _userRepository = userRepository;
             _playerRepository = playerRepository;
         }
@@ -25,12 +25,12 @@ namespace Core.UseCases
             var user = _userRepository.Get(request.UserName);
             var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var cashgame = _cashgameService.GetRunning(bunch.Id);
+            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
 
             if (cashgame != null)
             {
                 cashgame.ChangeStatus(GameStatus.Finished);
-                _cashgameService.Update(cashgame);
+                _cashgameRepository.Update(cashgame);
             }
         }
 

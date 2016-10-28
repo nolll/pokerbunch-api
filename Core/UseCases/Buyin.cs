@@ -11,14 +11,14 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly IPlayerRepository _playerRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
         private readonly IUserRepository _userRepository;
 
-        public Buyin(IBunchRepository bunchRepository, IPlayerRepository playerRepository, CashgameService cashgameService, IUserRepository userRepository)
+        public Buyin(IBunchRepository bunchRepository, IPlayerRepository playerRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
             _playerRepository = playerRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
             _userRepository = userRepository;
         }
 
@@ -33,12 +33,12 @@ namespace Core.UseCases
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
-            var cashgame = _cashgameService.GetRunning(bunch.Id);
+            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
 
             var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
             var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
             cashgame.AddCheckpoint(checkpoint);
-            _cashgameService.Update(cashgame);
+            _cashgameRepository.Update(cashgame);
         }
 
         public class Request

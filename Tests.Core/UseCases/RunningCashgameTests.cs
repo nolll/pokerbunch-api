@@ -84,7 +84,7 @@ namespace Tests.Core.UseCases
 
         private RunningCashgame Sut => new RunningCashgame(
             Repos.Bunch,
-            Services.CashgameService,
+            Repos.Cashgame,
             Repos.Player,
             Repos.User,
             Repos.Location);

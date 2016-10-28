@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Repositories;
-using Core.Services;
 
 namespace Core.UseCases
 {
@@ -10,22 +9,22 @@ namespace Core.UseCases
     {
         private readonly IUserRepository _userRepository;
         private readonly IBunchRepository _bunchRepository;
-        private readonly CashgameService _cashgameService;
+        private readonly ICashgameRepository _cashgameRepository;
 
-        public CashgameContext(IUserRepository userRepository, IBunchRepository bunchRepository, CashgameService cashgameService)
+        public CashgameContext(IUserRepository userRepository, IBunchRepository bunchRepository, ICashgameRepository cashgameRepository)
         {
             _userRepository = userRepository;
             _bunchRepository = bunchRepository;
-            _cashgameService = cashgameService;
+            _cashgameRepository = cashgameRepository;
         }
 
         public Result Execute(Request request)
         {
             var bunchContextResult = new BunchContext(_userRepository, _bunchRepository).Execute(request);
-            var runningGame = _cashgameService.GetRunning(bunchContextResult.BunchId);
+            var runningGame = _cashgameRepository.GetRunning(bunchContextResult.BunchId);
 
             var gameIsRunning = runningGame != null;
-            var years = _cashgameService.GetYears(bunchContextResult.BunchId);
+            var years = _cashgameRepository.GetYears(bunchContextResult.BunchId);
 
             var selectedYear = request.Year;
             if (request.SelectedPage == CashgamePage.Overview)
