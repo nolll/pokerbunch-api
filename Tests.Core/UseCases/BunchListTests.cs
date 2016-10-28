@@ -18,6 +18,6 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.BunchB.DisplayName, result.Bunches[1].Name);
         }
 
-        private GetBunchList Sut => new GetBunchList(Services.BunchService, Repos.User);
+        private GetBunchList Sut => new GetBunchList(Repos.Bunch, Repos.User);
     }
 }

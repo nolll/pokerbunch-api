@@ -85,7 +85,7 @@ namespace Tests.Core.UseCases
 
         private AddBunch Sut => new AddBunch(
             Repos.User,
-            Services.BunchService,
+            Repos.Bunch,
             Services.PlayerService);
     }
 }

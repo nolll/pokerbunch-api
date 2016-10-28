@@ -25,7 +25,7 @@ namespace Tests.Core.UseCases.GetBunchTests
         [SetUp]
         public void Setup()
         {
-            var bsm = new Mock<IBunchService>();
+            var bsm = new Mock<IBunchRepository>();
             bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug, DisplayName, Description, HouseRules));
 
             var psm = new Mock<IPlayerService>();

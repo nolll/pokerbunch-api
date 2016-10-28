@@ -29,7 +29,7 @@ namespace Tests.Core.UseCases
         }
 
         private EndCashgame Sut => new EndCashgame(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Repos.User,
             Services.PlayerService);

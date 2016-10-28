@@ -25,7 +25,7 @@ namespace Tests.Core.UseCases
         }
 
         private EditCashgameForm Sut => new EditCashgameForm(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Repos.User,
             Services.PlayerService,

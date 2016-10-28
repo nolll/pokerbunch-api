@@ -50,7 +50,7 @@ namespace Tests.Core.UseCases
         }
 
         private AddCashgame Sut => new AddCashgame(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Repos.User,
             Services.PlayerService,

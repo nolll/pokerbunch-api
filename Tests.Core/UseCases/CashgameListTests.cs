@@ -168,7 +168,7 @@ namespace Tests.Core.UseCases
         }
 
         private CashgameList Sut => new CashgameList(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Repos.User,
             Services.PlayerService,

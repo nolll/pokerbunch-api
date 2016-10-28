@@ -47,7 +47,7 @@ namespace Tests.Core.UseCases
         }
 
         private Actions Sut => new Actions(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Services.PlayerService,
             Repos.User);

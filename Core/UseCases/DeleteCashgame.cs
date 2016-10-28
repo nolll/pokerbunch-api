@@ -7,14 +7,14 @@ namespace Core.UseCases
     public class DeleteCashgame
     {
         private readonly CashgameService _cashgameService;
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public DeleteCashgame(CashgameService cashgameService, BunchService bunchService, IUserRepository userRepository, PlayerService playerService)
+        public DeleteCashgame(CashgameService cashgameService, IBunchRepository bunchRepository, IUserRepository userRepository, PlayerService playerService)
         {
             _cashgameService = cashgameService;
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _userRepository = userRepository;
             _playerService = playerService;
         }
@@ -22,7 +22,7 @@ namespace Core.UseCases
         public Result Execute(Request request)
         {
             var cashgame = _cashgameService.GetById(request.Id);
-            var bunch = _bunchService.Get(cashgame.BunchId);
+            var bunch = _bunchRepository.Get(cashgame.BunchId);
             var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Manager(user, player);

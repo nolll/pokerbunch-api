@@ -11,13 +11,13 @@ namespace Core.UseCases
 {
     public class AddPlayer
     {
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly PlayerService _playerService;
         private readonly IUserRepository _userRepository;
 
-        public AddPlayer(BunchService bunchService, PlayerService playerService, IUserRepository userRepository)
+        public AddPlayer(IBunchRepository bunchRepository, PlayerService playerService, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _playerService = playerService;
             _userRepository = userRepository;
         }
@@ -29,7 +29,7 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);

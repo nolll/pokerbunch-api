@@ -5,20 +5,20 @@ namespace Core.UseCases
 {
     public class JoinBunchConfirmation
     {
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public JoinBunchConfirmation(BunchService bunchService, IUserRepository userRepository, PlayerService playerService)
+        public JoinBunchConfirmation(IBunchRepository bunchRepository, IUserRepository userRepository, PlayerService playerService)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _userRepository = userRepository;
             _playerService = playerService;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
             var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);

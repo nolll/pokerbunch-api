@@ -9,13 +9,13 @@ namespace Core.UseCases
 {
     public class EditBunch
     {
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public EditBunch(BunchService bunchService, IUserRepository userRepository, PlayerService playerService)
+        public EditBunch(IBunchRepository bunchRepository, IUserRepository userRepository, PlayerService playerService)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _userRepository = userRepository;
             _playerService = playerService;
         }
@@ -26,12 +26,12 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
             var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
             var postedHomegame = CreateBunch(bunch, request);
-            _bunchService.Save(postedHomegame);
+            _bunchRepository.Update(postedHomegame);
 
             return new BunchResult(bunch, player.Role);
         }

@@ -21,6 +21,6 @@ namespace Tests.Core.UseCases
             Repos.Location,
             Repos.User,
             Services.PlayerService,
-            Services.BunchService);
+            Repos.Bunch);
     }
 }

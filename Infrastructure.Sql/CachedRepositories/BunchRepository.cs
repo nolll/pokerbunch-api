@@ -33,7 +33,7 @@ namespace Infrastructure.Sql.CachedRepositories
             throw new BunchNotFoundException(slug);
         }
 
-        public IList<Bunch> List(IList<int> ids)
+        private IList<Bunch> List(IList<int> ids)
         {
             return _cacheContainer.GetAndStore(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
         }
@@ -44,7 +44,7 @@ namespace Infrastructure.Sql.CachedRepositories
             return List(ids);
         }
 
-        public IList<int> Search(string slug)
+        private IList<int> Search(string slug)
         {
             return _bunchDb.Search(slug);
         }

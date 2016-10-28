@@ -8,14 +8,14 @@ namespace Core.UseCases
 {
     public class PlayerBadges
     {
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
         private readonly IUserRepository _userRepository;
 
-        public PlayerBadges(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
+        public PlayerBadges(IBunchRepository bunchRepository, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
             _playerService = playerService;
             _userRepository = userRepository;
@@ -26,7 +26,7 @@ namespace Core.UseCases
             var player = _playerService.Get(request.PlayerId);
             var user = _userRepository.Get(request.UserName);
             RequireRole.Player(user, player);
-            var bunch = _bunchService.Get(player.BunchId);
+            var bunch = _bunchRepository.Get(player.BunchId);
             var cashgames = _cashgameService.GetFinished(bunch.Id);
 
             return new Result(player.Id, cashgames);

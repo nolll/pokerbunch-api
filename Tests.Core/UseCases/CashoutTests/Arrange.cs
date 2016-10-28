@@ -36,7 +36,7 @@ namespace Tests.Core.UseCases.CashoutTests
             var cashgame = CreateCashgame();
             CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
 
-            var bsm = new Mock<IBunchService>();
+            var bsm = new Mock<IBunchRepository>();
             bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
 
             var csm = new Mock<ICashgameService>();

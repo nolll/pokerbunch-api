@@ -9,15 +9,15 @@ namespace Core.UseCases
 {
     public class Matrix
     {
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
         private readonly IUserRepository _userRepository;
         private readonly IEventRepository _eventRepository;
 
-        public Matrix(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository, IEventRepository eventRepository)
+        public Matrix(IBunchRepository bunchRepository, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository, IEventRepository eventRepository)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
             _playerService = playerService;
             _userRepository = userRepository;
@@ -26,7 +26,7 @@ namespace Core.UseCases
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
             var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
@@ -37,7 +37,7 @@ namespace Core.UseCases
         public Result Execute(EventMatrixRequest request)
         {
             var e = _eventRepository.Get(request.EventId);
-            var bunch = _bunchService.Get(e.BunchId);
+            var bunch = _bunchRepository.Get(e.BunchId);
             var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);

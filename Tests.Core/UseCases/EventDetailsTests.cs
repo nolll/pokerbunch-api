@@ -19,6 +19,6 @@ namespace Tests.Core.UseCases
             Repos.Event,
             Repos.User,
             Services.PlayerService,
-            Services.BunchService);
+            Repos.Bunch);
     }
 }

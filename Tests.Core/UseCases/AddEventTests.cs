@@ -29,7 +29,7 @@ namespace Tests.Core.UseCases
         }
 
         private AddEvent Sut => new AddEvent(
-            Services.BunchService,
+            Repos.Bunch,
             Services.PlayerService,
             Repos.User,
             Repos.Event);

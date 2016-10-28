@@ -85,7 +85,7 @@ namespace Tests.Core.UseCases
         }
 
         private PlayerBadges Sut => new PlayerBadges(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Services.PlayerService,
             Repos.User);

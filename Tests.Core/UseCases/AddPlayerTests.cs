@@ -47,7 +47,7 @@ namespace Tests.Core.UseCases
         }
 
         private AddPlayer Sut => new AddPlayer(
-            Services.BunchService,
+            Repos.Bunch,
             Services.PlayerService,
             Repos.User);
     }

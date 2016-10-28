@@ -9,14 +9,14 @@ namespace Core.UseCases
 {
     public class Cashout
     {
-        private readonly IBunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly ICashgameService _cashgameService;
         private readonly IPlayerService _playerService;
         private readonly IUserRepository _userRepository;
 
-        public Cashout(IBunchService bunchService, ICashgameService cashgameService, IPlayerService playerService, IUserRepository userRepository)
+        public Cashout(IBunchRepository bunchRepository, ICashgameService cashgameService, IPlayerService playerService, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _cashgameService = cashgameService;
             _playerService = playerService;
             _userRepository = userRepository;
@@ -28,7 +28,7 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);

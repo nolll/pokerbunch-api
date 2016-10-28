@@ -6,14 +6,14 @@ namespace Core.UseCases
 {
     public class GetPlayer
     {
-        private readonly BunchService _bunchService;
+        private readonly IBunchRepository _bunchRepository;
         private readonly PlayerService _playerService;
         private readonly CashgameService _cashgameService;
         private readonly IUserRepository _userRepository;
 
-        public GetPlayer(BunchService bunchService, PlayerService playerService, CashgameService cashgameService, IUserRepository userRepository)
+        public GetPlayer(IBunchRepository bunchRepository, PlayerService playerService, CashgameService cashgameService, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
+            _bunchRepository = bunchRepository;
             _playerService = playerService;
             _cashgameService = cashgameService;
             _userRepository = userRepository;
@@ -22,7 +22,7 @@ namespace Core.UseCases
         public Result Execute(Request request)
         {
             var player = _playerService.Get(request.PlayerId);
-            var bunch = _bunchService.Get(player.BunchId);
+            var bunch = _bunchRepository.Get(player.BunchId);
             var user = _userRepository.Get(player.UserId);
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);

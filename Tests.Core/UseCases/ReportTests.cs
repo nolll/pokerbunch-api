@@ -33,7 +33,7 @@ namespace Tests.Core.UseCases
         }
 
         private Report Sut => new Report(
-            Services.BunchService,
+            Repos.Bunch,
             Services.CashgameService,
             Services.PlayerService,
             Repos.User);
