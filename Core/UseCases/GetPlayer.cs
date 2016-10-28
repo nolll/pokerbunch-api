@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -8,22 +9,22 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
         private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public GetPlayer(BunchService bunchService, PlayerService playerService, CashgameService cashgameService, UserService userService)
+        public GetPlayer(BunchService bunchService, PlayerService playerService, CashgameService cashgameService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _playerService = playerService;
             _cashgameService = cashgameService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
             var player = _playerService.Get(request.PlayerId);
             var bunch = _bunchService.Get(player.BunchId);
-            var user = _userService.Get(player.UserId);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(player.UserId);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
             var isManager = RoleHandler.IsInRole(currentUser, currentPlayer, Role.Manager);

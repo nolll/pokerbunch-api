@@ -100,16 +100,10 @@ namespace Tests.Core.UseCases
             return new GetPlayer.Request(userName, playerId);
         }
 
-        private GetPlayer Sut
-        {
-            get
-            {
-                return new GetPlayer(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.CashgameService,
-                    Services.UserService);
-            }
-        }
+        private GetPlayer Sut => new GetPlayer(
+            Services.BunchService,
+            Services.PlayerService,
+            Services.CashgameService,
+            Repos.User);
     }
 }

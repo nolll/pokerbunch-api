@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,13 +8,13 @@ namespace Core.UseCases
 {
     public class ForgotPassword
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly IMessageSender _messageSender;
         private readonly IRandomService _randomService;
 
-        public ForgotPassword(UserService userService, IMessageSender messageSender, IRandomService randomService)
+        public ForgotPassword(IUserRepository userRepository, IMessageSender messageSender, IRandomService randomService)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _messageSender = messageSender;
             _randomService = randomService;
         }
@@ -25,7 +26,7 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var user = _userService.GetByNameOrEmail(request.Email);
+            var user = _userRepository.Get(request.Email);
             if(user == null)
                 throw new UserNotFoundException(request.Email);
 
@@ -35,7 +36,7 @@ namespace Core.UseCases
 
             user.SetPassword(encryptedPassword, salt);
 
-            _userService.Save(user);
+            _userRepository.Update(user);
             
             var message = new ForgotPasswordMessage(password, request.LoginUrl);
             _messageSender.Send(request.Email, message);

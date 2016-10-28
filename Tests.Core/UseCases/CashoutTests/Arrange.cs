@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using Moq;
@@ -39,7 +40,7 @@ namespace Tests.Core.UseCases.CashoutTests
             MockOf<IBunchService>().Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
             MockOf<ICashgameService>().Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
             MockOf<IPlayerService>().Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
-            MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(UserName)).Returns(new User(UserId, UserName));
+            MockOf<IUserRepository>().Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
 
             MockOf<ICashgameService>().Setup(o => o.UpdateGame(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
         }

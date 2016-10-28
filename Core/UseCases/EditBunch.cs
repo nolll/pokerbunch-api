@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -9,13 +10,13 @@ namespace Core.UseCases
     public class EditBunch
     {
         private readonly BunchService _bunchService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public EditBunch(BunchService bunchService, UserService userService, PlayerService playerService)
+        public EditBunch(BunchService bunchService, IUserRepository userRepository, PlayerService playerService)
         {
             _bunchService = bunchService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
         }
 
@@ -26,7 +27,7 @@ namespace Core.UseCases
                 throw new ValidationException(validator);
 
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
             var postedHomegame = CreateBunch(bunch, request);

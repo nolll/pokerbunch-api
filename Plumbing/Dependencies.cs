@@ -18,7 +18,7 @@ namespace Plumbing
         private EventService _eventService;
         private PlayerService _playerService;
         private ILocationRepository _locationRepository;
-        private UserService _userService;
+        private IUserRepository _userRepository;
         private IRandomService _randomService;
         private IMessageSender _messageSender;
                 
@@ -34,7 +34,7 @@ namespace Plumbing
         public EventService EventService => _eventService ?? (_eventService = new EventService(new EventRepository(_db, _cacheContainer)));
         public PlayerService PlayerService => _playerService ?? (_playerService = new PlayerService(new PlayerRepository(_db, _cacheContainer)));
         public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(_db, _cacheContainer));
-        public UserService UserService => _userService ?? (_userService = new UserService(new UserRepository(_db, _cacheContainer)));
+        public IUserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(_db, _cacheContainer));
         public IRandomService RandomService => _randomService ?? (_randomService = new RandomService());
         public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender());
     }

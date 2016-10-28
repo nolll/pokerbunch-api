@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -8,20 +9,20 @@ namespace Core.UseCases
     public class GetPlayerList
     {
         private readonly BunchService _bunchService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public GetPlayerList(BunchService bunchService, UserService userService, PlayerService playerService)
+        public GetPlayerList(BunchService bunchService, IUserRepository userRepository, PlayerService playerService)
         {
             _bunchService = bunchService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
         }
 
         public Result Execute(Request request)
         {
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var players = _playerService.GetList(bunch.Id);

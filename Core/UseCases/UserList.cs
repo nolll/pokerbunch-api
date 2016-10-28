@@ -1,24 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class UserList
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public UserList(UserService userService)
+        public UserList(IUserRepository userRepository)
         {
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             RequireRole.Admin(user);
             
-            var users = _userService.List();
+            var users = _userRepository.List();
             var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();
 
             return new Result(userItems);

@@ -124,16 +124,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(200, result.CheckpointItems[1].TotalBuyin);
         }
 
-        private ActionsChart Sut
-        {
-            get
-            {
-                return new ActionsChart(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private ActionsChart Sut => new ActionsChart(
+            Services.BunchService,
+            Services.CashgameService,
+            Repos.User,
+            Services.PlayerService);
     }
 }

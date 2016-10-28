@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -11,22 +12,22 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly EventService _eventService;
 
-        public Matrix(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService, EventService eventServicey)
+        public Matrix(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository, EventService eventServicey)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
             _eventService = eventServicey;
         }
 
         public Result Execute(Request request)
         {
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var cashgames = _cashgameService.GetFinished(bunch.Id, request.Year);
@@ -37,7 +38,7 @@ namespace Core.UseCases
         {
             var e = _eventService.Get(request.EventId);
             var bunch = _bunchService.Get(e.BunchId);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var cashgames = _cashgameService.GetByEvent(request.EventId);

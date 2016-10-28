@@ -9,7 +9,6 @@ namespace Tests.Common
         public FakeRandomService RandomService { get; }
         public BunchService BunchService { get; }
         public CashgameService CashgameService { get; }
-        public UserService UserService { get; }
         public EventService EventService { get; }
         public PlayerService PlayerService { get; }
 
@@ -19,7 +18,6 @@ namespace Tests.Common
             RandomService = new FakeRandomService();
             BunchService = new BunchService(repos.Bunch);
             CashgameService = new CashgameService(repos.Cashgame);
-            UserService = new UserService(repos.User);
             EventService = new EventService(repos.Event);
             PlayerService = new PlayerService(repos.Player);
         }

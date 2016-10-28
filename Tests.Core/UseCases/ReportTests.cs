@@ -32,16 +32,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(stack, result.Stack);
         }
 
-        private Report Sut
-        {
-            get
-            {
-                return new Report(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private Report Sut => new Report(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.PlayerService,
+            Repos.User);
     }
 }

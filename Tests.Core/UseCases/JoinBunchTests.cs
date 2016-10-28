@@ -47,15 +47,9 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.UserA.Id, Repos.Player.Joined.UserId);
         }
 
-        private JoinBunch Sut
-        {
-            get
-            {
-                return new JoinBunch(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private JoinBunch Sut => new JoinBunch(
+            Services.BunchService,
+            Services.PlayerService,
+            Repos.User);
     }
 }

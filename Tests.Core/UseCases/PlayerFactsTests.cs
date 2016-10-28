@@ -23,16 +23,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(1, result.LosingStreak);
         }
 
-        private PlayerFacts Sut
-        {
-            get
-            {
-                return new PlayerFacts(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private PlayerFacts Sut => new PlayerFacts(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.PlayerService,
+            Repos.User);
     }
 }

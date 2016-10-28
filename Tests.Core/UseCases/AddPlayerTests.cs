@@ -46,15 +46,9 @@ namespace Tests.Core.UseCases
             Assert.Throws<PlayerExistsException>(() => Sut.Execute(request));
         }
 
-        private AddPlayer Sut
-        {
-            get
-            {
-                return new AddPlayer(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private AddPlayer Sut => new AddPlayer(
+            Services.BunchService,
+            Services.PlayerService,
+            Repos.User);
     }
 }

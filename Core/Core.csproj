@@ -91,7 +91,6 @@
     <Compile Include="Services\Interfaces\IPlayerService.cs" />
     <Compile Include="Services\Interfaces\IRandomService.cs" />
     <Compile Include="Services\Interfaces\ISocialService.cs" />
-    <Compile Include="Services\Interfaces\IUserService.cs" />
     <Compile Include="Services\InvitationCodeCreator.cs" />
     <Compile Include="Services\InvitationMessageBuilder.cs" />
     <Compile Include="Services\PasswordGenerator.cs" />
@@ -105,7 +104,6 @@
     <Compile Include="Services\SaltGenerator.cs" />
     <Compile Include="Services\SlugGenerator.cs" />
     <Compile Include="Services\TimeZoneService.cs" />
-    <Compile Include="Services\UserService.cs" />
     <Compile Include="UseCases\ActionsChart.cs" />
     <Compile Include="UseCases\Actions.cs" />
     <Compile Include="UseCases\AddApp.cs" />

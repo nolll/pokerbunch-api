@@ -41,17 +41,11 @@ namespace Tests.Core.UseCases
             return new Matrix.Request(TestData.UserNameA, TestData.SlugA, year);
         }
 
-        private Matrix Sut
-        {
-            get
-            {
-                return new Matrix(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService,
-                    Services.EventService);
-            }
-        }
+        private Matrix Sut => new Matrix(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.PlayerService,
+            Repos.User,
+            Services.EventService);
     }
 }

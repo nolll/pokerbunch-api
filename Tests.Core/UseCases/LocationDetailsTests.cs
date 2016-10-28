@@ -19,7 +19,7 @@ namespace Tests.Core.UseCases
 
         private GetLocation Sut => new GetLocation(
             Repos.Location,
-            Services.UserService,
+            Repos.User,
             Services.PlayerService,
             Services.BunchService);
     }

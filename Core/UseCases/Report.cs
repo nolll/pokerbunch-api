@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -11,14 +12,14 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public Report(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService)
+        public Report(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public void Execute(Request request)
@@ -29,7 +30,7 @@ namespace Core.UseCases
 
             var bunch = _bunchService.GetBySlug(request.Slug);
             var cashgame = _cashgameService.GetRunning(bunch.Id);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
 

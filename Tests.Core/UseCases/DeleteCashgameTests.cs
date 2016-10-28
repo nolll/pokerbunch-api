@@ -39,16 +39,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.SlugA, result.Slug);
         }
 
-        private DeleteCashgame Sut
-        {
-            get
-            {
-                return new DeleteCashgame(
-                    Services.CashgameService,
-                    Services.BunchService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private DeleteCashgame Sut => new DeleteCashgame(
+            Services.CashgameService,
+            Services.BunchService,
+            Repos.User,
+            Services.PlayerService);
     }
 }

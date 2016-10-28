@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -10,20 +11,20 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public CurrentRankings(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService)
+        public CurrentRankings(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var years = _cashgameService.GetYears(bunch.Id);

@@ -32,14 +32,8 @@ namespace Tests.Core.UseCases
             Assert.AreNotEqual(TestData.UserA.EncryptedPassword, Repos.User.Saved.EncryptedPassword);
         }
         
-        private ChangePassword Sut
-        {
-            get
-            {
-                return new ChangePassword(
-                    Services.UserService,
-                    Services.RandomService);
-            }
-        }
+        private ChangePassword Sut => new ChangePassword(
+            Repos.User,
+            Services.RandomService);
     }
 }

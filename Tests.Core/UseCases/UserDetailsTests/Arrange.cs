@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using NUnit.Framework;
@@ -26,13 +27,13 @@ namespace Tests.Core.UseCases.UserDetailsTests
 
             if (ViewingOwnUser)
             {
-                MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+                MockOf<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
                 _currentUserName = ViewUserName;
             }
             else
             {
-                MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
-                MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+                MockOf<IUserRepository>().Setup(s => s.Get(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
+                MockOf<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
             }
 
             Result = sut.Execute(new UserDetails.Request(_currentUserName, ViewUserName));

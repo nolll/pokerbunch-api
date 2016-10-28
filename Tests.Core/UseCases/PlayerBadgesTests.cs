@@ -84,16 +84,10 @@ namespace Tests.Core.UseCases
             return new PlayerBadges.Request(TestData.UserNameA, TestData.PlayerIdA);
         }
 
-        private PlayerBadges Sut
-        {
-            get
-            {
-                return new PlayerBadges(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private PlayerBadges Sut => new PlayerBadges(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.PlayerService,
+            Repos.User);
     }
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -9,14 +10,14 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
         private readonly IMessageSender _messageSender;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public InvitePlayer(BunchService bunchService, PlayerService playerService, IMessageSender messageSender, UserService userService)
+        public InvitePlayer(BunchService bunchService, PlayerService playerService, IMessageSender messageSender, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _playerService = playerService;
             _messageSender = messageSender;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
@@ -28,7 +29,7 @@ namespace Core.UseCases
 
             var player = _playerService.Get(request.PlayerId);
             var bunch = _bunchService.Get(player.BunchId);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
 

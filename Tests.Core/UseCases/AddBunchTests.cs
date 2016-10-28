@@ -83,15 +83,9 @@ namespace Tests.Core.UseCases
             return new AddBunch.Request(TestData.UserNameC, displayName, Description, currencySymbol, currencyLayout, timeZone ?? _timeZone);
         }
 
-        private AddBunch Sut
-        {
-            get
-            {
-                return new AddBunch(
-                    Services.UserService,
-                    Services.BunchService,
-                    Services.PlayerService);
-            }
-        }
+        private AddBunch Sut => new AddBunch(
+            Repos.User,
+            Services.BunchService,
+            Services.PlayerService);
     }
 }

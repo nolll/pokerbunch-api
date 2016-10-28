@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -12,20 +13,20 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public Actions(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService)
+        public Actions(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
             var player = _playerService.Get(request.PlayerId);
-            var user = _userService.GetByNameOrEmail(request.CurrentUserName);
+            var user = _userRepository.Get(request.CurrentUserName);
             var bunch = _bunchService.Get(player.BunchId);
             var cashgame = _cashgameService.GetById(request.CashgameId);
             

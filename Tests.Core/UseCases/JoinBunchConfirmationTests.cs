@@ -27,15 +27,9 @@ namespace Tests.Core.UseCases
             return new JoinBunchConfirmation.Request(TestData.UserNameA, TestData.SlugA);
         }
 
-        private JoinBunchConfirmation Sut
-        {
-            get
-            {
-                return new JoinBunchConfirmation(
-                    Services.BunchService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private JoinBunchConfirmation Sut => new JoinBunchConfirmation(
+            Services.BunchService,
+            Repos.User,
+            Services.PlayerService);
     }
 }

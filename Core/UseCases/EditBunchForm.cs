@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -6,20 +7,20 @@ namespace Core.UseCases
     public class EditBunchForm
     {
         private readonly BunchService _bunchService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public EditBunchForm(BunchService bunchService, UserService userService, PlayerService playerService)
+        public EditBunchForm(BunchService bunchService, IUserRepository userRepository, PlayerService playerService)
         {
             _bunchService = bunchService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
         }
 
         public Result Execute(Request request)
         {
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
             var heading = string.Format("{0} Settings", bunch.DisplayName);

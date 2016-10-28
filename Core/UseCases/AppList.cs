@@ -9,17 +9,17 @@ namespace Core.UseCases
     public class AppList
     {
         private readonly IAppRepository _appRepository;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public AppList(IAppRepository appRepository, UserService userService)
+        public AppList(IAppRepository appRepository, IUserRepository userRepository)
         {
             _appRepository = appRepository;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(AllAppsRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.CurrentUserName);
+            var user = _userRepository.Get(request.CurrentUserName);
             RequireRole.Admin(user);
             var apps = _appRepository.List();
 
@@ -28,7 +28,7 @@ namespace Core.UseCases
 
         public Result Execute(UserAppsRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.CurrentUserName);
+            var user = _userRepository.Get(request.CurrentUserName);
             var apps = _appRepository.List(user.Id);
 
             return new Result(apps);

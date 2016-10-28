@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -12,14 +13,14 @@ namespace Core.UseCases
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public CashgameDetailsChart(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService)
+        public CashgameDetailsChart(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
@@ -28,7 +29,7 @@ namespace Core.UseCases
             var bunch = _bunchService.Get(cashgame.BunchId);
             var playerIds = cashgame.Results.Select(result => result.PlayerId).ToList();
             var players = _playerService.Get(playerIds).OrderBy(o => o.Id).ToList();
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
 

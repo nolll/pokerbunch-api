@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -8,17 +9,17 @@ namespace Core.UseCases
     public class GetBunchList
     {
         private readonly BunchService _bunchService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public GetBunchList(BunchService bunchService, UserService userService)
+        public GetBunchList(BunchService bunchService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(AllBunchesRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             RequireRole.Admin(user);
 
             var bunches = _bunchService.GetList();
@@ -27,7 +28,7 @@ namespace Core.UseCases
 
         public Result Execute(UserBunchesRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var bunches = user != null ? _bunchService.GetByUserId(user.Id) : new List<Bunch>();
             
             return new Result(bunches);

@@ -1,5 +1,6 @@
 using System;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -7,20 +8,20 @@ namespace Core.UseCases
     public class GetBunch
     {
         private readonly IBunchService _bunchService;
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly IPlayerService _playerService;
 
-        public GetBunch(IBunchService bunchService, IUserService userService, IPlayerService playerService)
+        public GetBunch(IBunchService bunchService, IUserRepository userRepository, IPlayerService playerService)
         {
             _bunchService = bunchService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
         }
 
         public BunchResult Execute(Request request)
         {
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
 

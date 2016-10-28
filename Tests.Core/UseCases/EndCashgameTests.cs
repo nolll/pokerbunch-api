@@ -28,16 +28,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(GameStatus.Finished, Repos.Cashgame.Updated.Status);
         }
 
-        private EndCashgame Sut
-        {
-            get
-            {
-                return new EndCashgame(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private EndCashgame Sut => new EndCashgame(
+            Services.BunchService,
+            Services.CashgameService,
+            Repos.User,
+            Services.PlayerService);
     }
 }

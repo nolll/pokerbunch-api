@@ -1,3 +1,4 @@
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -5,14 +6,14 @@ namespace Core.UseCases
     public class EventDetails
     {
         private readonly EventService _eventService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
         private readonly BunchService _bunchService;
 
-        public EventDetails(EventService eventService, UserService userService, PlayerService playerService, BunchService bunchService)
+        public EventDetails(EventService eventService, IUserRepository userRepository, PlayerService playerService, BunchService bunchService)
         {
             _eventService = eventService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
             _bunchService = bunchService;
         }
@@ -21,7 +22,7 @@ namespace Core.UseCases
         {
             var e = _eventService.Get(request.EventId);
             var bunch = _bunchService.Get(e.BunchId);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(e.BunchId, user.Id);
             RequireRole.Player(user, player);
             

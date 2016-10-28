@@ -11,15 +11,15 @@ namespace Core.UseCases
     {
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
         private readonly ILocationRepository _locationRepository;
 
-        public CashgameList(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService, ILocationRepository locationRepository)
+        public CashgameList(BunchService bunchService, CashgameService cashgameService, IUserRepository userRepository, PlayerService playerService, ILocationRepository locationRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
             _locationRepository = locationRepository;
         }
@@ -27,7 +27,7 @@ namespace Core.UseCases
         public Result Execute(Request request)
         {
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = _playerService.GetByUserId(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var cashgames = _cashgameService.GetFinished(bunch.Id, request.Year);

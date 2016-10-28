@@ -38,7 +38,7 @@ namespace Tests.Core.UseCases
         private AddCashgameForm Sut => new AddCashgameForm(
             Services.BunchService,
             Services.CashgameService,
-            Services.UserService,
+            Repos.User,
             Services.PlayerService,
             Repos.Location,
             Services.EventService);

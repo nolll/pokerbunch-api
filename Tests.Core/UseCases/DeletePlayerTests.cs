@@ -31,16 +31,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.PlayerIdA, result.PlayerId);
         }
 
-        private DeletePlayer Sut
-        {
-            get
-            {
-                return new DeletePlayer(
-                    Services.PlayerService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.BunchService);
-            }
-        }
+        private DeletePlayer Sut => new DeletePlayer(
+            Services.PlayerService,
+            Services.CashgameService,
+            Repos.User,
+            Services.BunchService);
     }
 }

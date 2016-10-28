@@ -10,14 +10,14 @@ namespace Core.UseCases
     {
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly ILocationRepository _locationRepository;
 
-        public AddLocation(BunchService bunchService, PlayerService playerService, UserService userService, ILocationRepository locationRepository)
+        public AddLocation(BunchService bunchService, PlayerService playerService, IUserRepository userRepository, ILocationRepository locationRepository)
         {
             _bunchService = bunchService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
             _locationRepository = locationRepository;
         }
 
@@ -29,7 +29,7 @@ namespace Core.UseCases
                 throw new ValidationException(validator);
 
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
 

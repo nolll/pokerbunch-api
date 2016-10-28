@@ -57,15 +57,9 @@ Please sign in here: loginUrl";
             return new ForgotPassword.Request(email, "loginUrl");
         }
 
-        private ForgotPassword Sut
-        {
-            get
-            {
-                return new ForgotPassword(
-                    Services.UserService,
-                    Services.MessageSender,
-                    Services.RandomService);
-            }
-        }
+        private ForgotPassword Sut => new ForgotPassword(
+            Repos.User,
+            Services.MessageSender,
+            Services.RandomService);
     }
 }

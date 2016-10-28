@@ -35,16 +35,10 @@ namespace Tests.Core.UseCases
             Assert.IsTrue(result.GameIsRunning);
         }
 
-        private DeleteCheckpoint Sut
-        {
-            get
-            {
-                return new DeleteCheckpoint(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private DeleteCheckpoint Sut => new DeleteCheckpoint(
+            Services.BunchService,
+            Services.CashgameService,
+            Repos.User,
+            Services.PlayerService);
     }
 }

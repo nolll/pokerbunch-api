@@ -98,15 +98,9 @@ namespace Tests.Core.UseCases
             return new EditBunchForm.Request(TestData.ManagerUser.UserName, TestData.SlugA);
         }
 
-        private EditBunchForm Sut
-        {
-            get
-            {
-                return new EditBunchForm(
-                    Services.BunchService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private EditBunchForm Sut => new EditBunchForm(
+            Services.BunchService,
+            Repos.User,
+            Services.PlayerService);
     }
 }

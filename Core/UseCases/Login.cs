@@ -1,16 +1,17 @@
 using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class Login
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public Login(UserService userService)
+        public Login(IUserRepository userRepository)
         {
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
@@ -24,7 +25,7 @@ namespace Core.UseCases
 
         private User GetLoggedInUser(string loginName, string password)
         {
-            var user = _userService.GetByNameOrEmail(loginName);
+            var user = _userRepository.Get(loginName);
             if (user == null)
                 return null;
             var encryptedPassword = EncryptionService.Encrypt(password, user.Salt);

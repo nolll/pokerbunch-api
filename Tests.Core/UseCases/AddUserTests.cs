@@ -106,7 +106,7 @@ Please sign in here: /loginUrl";
         }
 
         private AddUser Sut => new AddUser(
-            Services.UserService,
+            Repos.User,
             Services.RandomService,
             Services.MessageSender);
     }

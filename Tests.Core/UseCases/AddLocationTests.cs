@@ -31,7 +31,7 @@ namespace Tests.Core.UseCases
         private AddLocation Sut => new AddLocation(
             Services.BunchService,
             Services.PlayerService,
-            Services.UserService,
+            Repos.User,
             Repos.Location);
     }
 }

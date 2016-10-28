@@ -46,16 +46,10 @@ namespace Tests.Core.UseCases
             Assert.IsTrue(result.CheckpointItems[0].CanEdit);
         }
 
-        private Actions Sut
-        {
-            get
-            {
-                return new Actions(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private Actions Sut => new Actions(
+            Services.BunchService,
+            Services.CashgameService,
+            Services.PlayerService,
+            Repos.User);
     }
 }

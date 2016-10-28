@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -9,13 +10,13 @@ namespace Core.UseCases
 {
     public class AddBunch
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
 
-        public AddBunch(UserService userService, BunchService bunchService, PlayerService playerService)
+        public AddBunch(IUserRepository userRepository, BunchService bunchService, PlayerService playerService)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _bunchService = bunchService;
             _playerService = playerService;
         }
@@ -44,7 +45,7 @@ namespace Core.UseCases
 
             var bunch = CreateBunch(request);
             var id = _bunchService.Add(bunch);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             var player = Player.New(id, user.Id, Role.Manager);
             _playerService.Add(player);
 

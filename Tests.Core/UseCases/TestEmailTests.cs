@@ -26,14 +26,8 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(Email, result.Email);
         }
 
-        private TestEmail Sut
-        {
-            get
-            {
-                return new TestEmail(
-                    Services.MessageSender,
-                    Services.UserService);
-            }
-        }
+        private TestEmail Sut => new TestEmail(
+            Services.MessageSender,
+            Repos.User);
     }
 }

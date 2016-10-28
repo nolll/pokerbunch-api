@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
@@ -7,14 +8,14 @@ namespace Core.UseCases
     {
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly PlayerService _playerService;
 
-        public DeleteCheckpoint(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService)
+        public DeleteCheckpoint(BunchService bunchService, CashgameService cashgameService, IUserRepository userRepository, PlayerService playerService)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
-            _userService = userService;
+            _userRepository = userRepository;
             _playerService = playerService;
         }
 
@@ -23,7 +24,7 @@ namespace Core.UseCases
             var cashgame = _cashgameService.GetByCheckpoint(request.CheckpointId);
             var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
             var bunch = _bunchService.Get(cashgame.BunchId);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(cashgame.BunchId, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
             cashgame.DeleteCheckpoint(checkpoint);

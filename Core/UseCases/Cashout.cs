@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -11,14 +12,14 @@ namespace Core.UseCases
         private readonly IBunchService _bunchService;
         private readonly ICashgameService _cashgameService;
         private readonly IPlayerService _playerService;
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public Cashout(IBunchService bunchService, ICashgameService cashgameService, IPlayerService playerService, IUserService userService)
+        public Cashout(IBunchService bunchService, ICashgameService cashgameService, IPlayerService playerService, IUserRepository userRepository)
         {
             _bunchService = bunchService;
             _cashgameService = cashgameService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
@@ -28,7 +29,7 @@ namespace Core.UseCases
                 throw new ValidationException(validator);
 
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
             var cashgame = _cashgameService.GetRunning(bunch.Id);

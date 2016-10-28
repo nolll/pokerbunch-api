@@ -53,16 +53,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(ChangedAmount, updatedCheckpoint.Amount);
         }
 
-        private EditCheckpoint Sut
-        {
-            get
-            {
-                return new EditCheckpoint(
-                    Services.BunchService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.CashgameService);
-            }
-        }
+        private EditCheckpoint Sut => new EditCheckpoint(
+            Services.BunchService,
+            Repos.User,
+            Services.PlayerService,
+            Services.CashgameService);
     }
 }

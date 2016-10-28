@@ -53,16 +53,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(savedStack, result.Stack);
         }
 
-        private Buyin Sut
-        {
-            get
-            {
-                return new Buyin(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.CashgameService,
-                    Services.UserService);
-            }
-        }
+        private Buyin Sut => new Buyin(
+            Services.BunchService,
+            Services.PlayerService,
+            Services.CashgameService,
+            Repos.User);
     }
 }

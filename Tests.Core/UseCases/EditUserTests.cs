@@ -57,12 +57,6 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(ChangedEmail, Repos.User.Saved.Email);
         }
 
-        private EditUser Sut
-        {
-            get
-            {
-                return new EditUser(Services.UserService);
-            }
-        }
+        private EditUser Sut => new EditUser(Repos.User);
     }
 }

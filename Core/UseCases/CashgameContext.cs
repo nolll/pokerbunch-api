@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class CashgameContext
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly BunchService _bunchService;
         private readonly CashgameService _cashgameService;
 
-        public CashgameContext(UserService userService, BunchService bunchService, CashgameService cashgameService)
+        public CashgameContext(IUserRepository userRepository, BunchService bunchService, CashgameService cashgameService)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _bunchService = bunchService;
             _cashgameService = cashgameService;
         }
 
         public Result Execute(Request request)
         {
-            var bunchContextResult = new BunchContext(_userService, _bunchService).Execute(request);
+            var bunchContextResult = new BunchContext(_userRepository, _bunchService).Execute(request);
             var runningGame = _cashgameService.GetRunning(bunchContextResult.BunchId);
 
             var gameIsRunning = runningGame != null;

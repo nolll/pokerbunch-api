@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using NUnit.Framework;
@@ -27,7 +28,7 @@ namespace Tests.Core.UseCases.GetBunchTests
 
             MockOf<IBunchService>().Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug, DisplayName, Description, HouseRules));
             MockOf<IPlayerService>().Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId, role: Role));
-            MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(UserName)).Returns(new User(UserId, UserName));
+            MockOf<IUserRepository>().Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
         }
 
         protected BunchResult Execute()

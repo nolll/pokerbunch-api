@@ -1,23 +1,24 @@
 ﻿using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class BunchContext
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly BunchService _bunchService;
 
-        public BunchContext(UserService userService, BunchService bunchService)
+        public BunchContext(IUserRepository userRepository, BunchService bunchService)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _bunchService = bunchService;
         }
 
         public Result Execute(BunchRequest request)
         {
-            var appContext = new CoreContext(_userService).Execute(new CoreContext.Request(request.UserName));
+            var appContext = new CoreContext(_userRepository).Execute(new CoreContext.Request(request.UserName));
             var bunch = GetBunch(appContext, request);
             return GetResult(appContext, bunch);
         }

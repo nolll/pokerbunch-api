@@ -1,21 +1,22 @@
 ﻿using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class UserDetails
     {
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public UserDetails(IUserService userService)
+        public UserDetails(IUserRepository userRepository)
         {
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
-            var currentUser = _userService.GetByNameOrEmail(request.CurrentUserName);
-            var displayUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.CurrentUserName);
+            var displayUser = _userRepository.Get(request.UserName);
 
             if(displayUser == null)
                 throw new UserNotFoundException(request.UserName);

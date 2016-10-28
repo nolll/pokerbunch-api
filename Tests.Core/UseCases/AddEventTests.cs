@@ -28,16 +28,10 @@ namespace Tests.Core.UseCases
             Assert.Throws<ValidationException>(() => Sut.Execute(request));
         }
 
-        private AddEvent Sut
-        {
-            get
-            {
-                return new AddEvent(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.UserService,
-                    Services.EventService);
-            }
-        }
+        private AddEvent Sut => new AddEvent(
+            Services.BunchService,
+            Services.PlayerService,
+            Repos.User,
+            Services.EventService);
     }
 }

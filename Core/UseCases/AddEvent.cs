@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -9,14 +10,14 @@ namespace Core.UseCases
     {
         private readonly BunchService _bunchService;
         private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly EventService _eventService;
 
-        public AddEvent(BunchService bunchService, PlayerService playerService, UserService userService, EventService eventService)
+        public AddEvent(BunchService bunchService, PlayerService playerService, IUserRepository userRepository, EventService eventService)
         {
             _bunchService = bunchService;
             _playerService = playerService;
-            _userService = userService;
+            _userRepository = userRepository;
             _eventService = eventService;
         }
 
@@ -28,7 +29,7 @@ namespace Core.UseCases
                 throw new ValidationException(validator);
 
             var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
+            var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
 
