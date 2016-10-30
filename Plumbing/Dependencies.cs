@@ -10,8 +10,11 @@ namespace Plumbing
 {
     public class Dependencies
     {
-        private readonly ICacheContainer _cacheContainer;
-        private readonly SqlServerStorageProvider _db;
+        private readonly string _connectionString;
+
+        private ICacheContainer _cacheContainer;
+        private SqlServerStorageProvider _db;
+
         private IAppRepository _appRepository;
         private IBunchRepository _bunchRepository;
         private ICashgameRepository _cashgameRepository;
@@ -24,17 +27,19 @@ namespace Plumbing
                 
         public Dependencies(string connectionString)
         {
-            _cacheContainer = new CacheContainer(new AspNetCacheProvider());
-            _db = new SqlServerStorageProvider(connectionString);
+            _connectionString = connectionString;
         }
 
-        public IAppRepository AppRepository => _appRepository ?? (_appRepository = new AppRepository(_db, _cacheContainer));
-        public IBunchRepository BunchRepository => _bunchRepository ?? (_bunchRepository = new BunchRepository(_db, _cacheContainer));
-        public ICashgameRepository CashgameRepository => _cashgameRepository ?? (_cashgameRepository = new CashgameRepository(_db, _cacheContainer));
-        public IEventRepository EventRepository => _eventRepository ?? (_eventRepository = new EventRepository(_db, _cacheContainer));
-        public IPlayerRepository PlayerRepository => _playerRepository ?? (_playerRepository = new PlayerRepository(_db, _cacheContainer));
-        public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(_db, _cacheContainer));
-        public IUserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(_db, _cacheContainer));
+        private SqlServerStorageProvider Db => _db ?? (_db = new SqlServerStorageProvider(_connectionString));
+        private ICacheContainer Cache => _cacheContainer ?? (_cacheContainer = new CacheContainer(new AspNetCacheProvider()));
+
+        public IAppRepository AppRepository => _appRepository ?? (_appRepository = new AppRepository(Db, Cache));
+        public IBunchRepository BunchRepository => _bunchRepository ?? (_bunchRepository = new BunchRepository(Db, Cache));
+        public ICashgameRepository CashgameRepository => _cashgameRepository ?? (_cashgameRepository = new CashgameRepository(Db, Cache));
+        public IEventRepository EventRepository => _eventRepository ?? (_eventRepository = new EventRepository(Db, Cache));
+        public IPlayerRepository PlayerRepository => _playerRepository ?? (_playerRepository = new PlayerRepository(Db, Cache));
+        public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(Db, Cache));
+        public IUserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(Db, Cache));
         public IRandomizer Randomizer => _randomizer ?? (_randomizer = new Randomizer());
         public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender());
     }
