@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
-using Infrastructure.Sql.Repositories;
+using Infrastructure.Sql.SqlDb;
 
-namespace Infrastructure.Sql.CachedRepositories
+namespace Infrastructure.Sql.Repositories
 {
     public class UserRepository : IUserRepository
     {

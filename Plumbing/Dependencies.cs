@@ -4,7 +4,7 @@ using Core.Services;
 using Infrastructure.Cache;
 using Infrastructure.Email;
 using Infrastructure.Sql;
-using Infrastructure.Sql.CachedRepositories;
+using Infrastructure.Sql.Repositories;
 
 namespace Plumbing
 {

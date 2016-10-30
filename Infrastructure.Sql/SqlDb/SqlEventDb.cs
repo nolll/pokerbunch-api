@@ -4,7 +4,7 @@ using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 
-namespace Infrastructure.Sql.Repositories
+namespace Infrastructure.Sql.SqlDb
 {
     public class SqlEventDb
     {
