@@ -91,7 +91,6 @@
     <Compile Include="UseCases\EditUserTests.cs" />
     <Compile Include="UseCases\EndCashgameTests.cs" />
     <Compile Include="UseCases\LocationDetailsTests.cs" />
-    <Compile Include="UseCases\LoginFormTests.cs" />
     <Compile Include="UseCases\ReportTests.cs" />
     <Compile Include="UseCases\DeletePlayerTests.cs" />
     <Compile Include="UseCases\EditBunchFormTests.cs" />
@@ -101,8 +100,6 @@
     <Compile Include="UseCases\EventListTests.cs" />
     <Compile Include="UseCases\ForgotPasswordTests.cs" />
     <Compile Include="UseCases\InvitePlayerTests.cs" />
-    <Compile Include="UseCases\JoinBunchConfirmationTests.cs" />
-    <Compile Include="UseCases\JoinBunchFormTests.cs" />
     <Compile Include="UseCases\JoinBunchTests.cs" />
     <Compile Include="UseCases\LoginTests.cs" />
     <Compile Include="UseCases\MatrixTests.cs" />

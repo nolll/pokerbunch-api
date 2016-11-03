@@ -123,8 +123,6 @@
     <Compile Include="UseCases\CashgameFacts.cs" />
     <Compile Include="UseCases\CashgameList.cs" />
     <Compile Include="UseCases\CashgameStatus.cs" />
-    <Compile Include="UseCases\InvitePlayerConfirmation.cs" />
-    <Compile Include="UseCases\InvitePlayerForm.cs" />
     <Compile Include="UseCases\GetLocation.cs" />
     <Compile Include="UseCases\GetLocationList.cs" />
     <Compile Include="UseCases\TopList.cs" />
@@ -146,10 +144,7 @@
     <Compile Include="UseCases\EventList.cs" />
     <Compile Include="UseCases\ForgotPassword.cs" />
     <Compile Include="UseCases\InvitePlayer.cs" />
-    <Compile Include="UseCases\JoinBunchConfirmation.cs" />
-    <Compile Include="UseCases\JoinBunchForm.cs" />
     <Compile Include="UseCases\JoinBunch.cs" />
-    <Compile Include="UseCases\LoginForm.cs" />
     <Compile Include="UseCases\Login.cs" />
     <Compile Include="UseCases\Matrix.cs" />
     <Compile Include="UseCases\PlayerBadges.cs" />
