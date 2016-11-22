@@ -47,7 +47,7 @@ namespace Plumbing
 
         // Apps
         public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppRepository);
-        public GetApp GetApp => new GetApp(_deps.AppRepository);
+        public GetApp GetApp => new GetApp(_deps.AppRepository, _deps.UserRepository);
         public AppList GetAppList => new AppList(_deps.AppRepository, _deps.UserRepository);
         public AddApp AddApp => new AddApp(_deps.AppRepository, _deps.UserRepository);
     }
