@@ -23,7 +23,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public AppModel Get(int id)
         {
-            var result = UseCase.GetApp.Execute(new GetApp.Request(id));
+            var result = UseCase.GetApp.Execute(new GetApp.Request(CurrentUserName, id));
             return new AppModel(result);
         }
 
