@@ -136,6 +136,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Extensions\Compression\Compressors\Compressor.cs" />
+    <Compile Include="Extensions\Compression\Compressors\DeflateCompressor.cs" />
+    <Compile Include="Extensions\Compression\CompressedContent.cs" />
+    <Compile Include="Extensions\Compression\Compressors\GZipCompressor.cs" />
+    <Compile Include="Extensions\Compression\CompressionHandler.cs" />
+    <Compile Include="Extensions\Compression\Compressors\ICompressor.cs" />
     <Compile Include="Extensions\JsonContentNegotiator.cs" />
     <Compile Include="Extensions\CustomErrorLogger.cs" />
     <Compile Include="Extensions\CustomExceptionHandler.cs" />

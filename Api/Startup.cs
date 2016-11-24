@@ -8,6 +8,7 @@ using System.Web.Http.ExceptionHandling;
 using Api;
 using Api.Auth;
 using Api.Extensions;
+using Api.Extensions.Compression;
 using Api.Urls.ApiUrls;
 using JetBrains.Annotations;
 using Microsoft.Owin;
@@ -30,22 +31,11 @@ namespace Api
             ConfigFormatters(config);
             ConfigureErrorHandler(config);
             ConfigureErrorLogger(config);
+            ConfigureCompression(config);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
         }
-        
-        private void ConfigureErrorHandler(HttpConfiguration config)
-        {
-            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
-            config.Services.Replace(typeof(IHttpControllerSelector), new HttpNotFoundAwareDefaultHttpControllerSelector(config));
-            config.Services.Replace(typeof(IHttpActionSelector), new HttpNotFoundAwareControllerActionSelector());
-        }
 
-        private void ConfigureErrorLogger(HttpConfiguration config)
-        {
-            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
-        }
-        
         private void ConfigureOAuth(IAppBuilder app)
         {
             var oAuthServerOptions = new OAuthAuthorizationServerOptions
@@ -79,6 +69,23 @@ namespace Api
 
             config.Formatters.Clear();
             config.Formatters.Add(jsonFormatter);
+        }
+
+        private void ConfigureErrorHandler(HttpConfiguration config)
+        {
+            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
+            config.Services.Replace(typeof(IHttpControllerSelector), new HttpNotFoundAwareDefaultHttpControllerSelector(config));
+            config.Services.Replace(typeof(IHttpActionSelector), new HttpNotFoundAwareControllerActionSelector());
+        }
+
+        private void ConfigureErrorLogger(HttpConfiguration config)
+        {
+            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
+        }
+
+        private void ConfigureCompression(HttpConfiguration config)
+        {
+            config.MessageHandlers.Insert(0, new CompressionHandler()); // first runs last
         }
     }
 }
