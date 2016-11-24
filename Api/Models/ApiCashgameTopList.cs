@@ -17,4 +17,17 @@ namespace Api.Models
         {
         }
     }
+
+    [CollectionDataContract(Namespace = "", Name = "cashgames", ItemName = "cashgame")]
+    public class CashgameListModel : List<CashgameListItemModel>
+    {
+        public CashgameListModel(CashgameList.Result listResult)
+        {
+            AddRange(listResult.Items.Select(o => new CashgameListItemModel(o)));
+        }
+
+        public CashgameListModel()
+        {
+        }
+    }
 }

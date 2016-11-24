@@ -15,6 +15,7 @@ namespace Api.Routes
         public const string BunchGet = "bunches/{slug}";
         public const string LocationList = "bunches/{slug}/locations";
         public const string PlayerList = "bunches/{slug}/players";
+        public const string CashgameList = "bunches/{slug}/cashgames/{year?}";
 
         public const string PlayerGet = "players/{id}";
 
