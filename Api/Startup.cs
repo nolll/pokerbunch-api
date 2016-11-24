@@ -32,6 +32,7 @@ namespace Api
             ConfigureErrorHandler(config);
             ConfigureErrorLogger(config);
             ConfigureCompression(config);
+            RemoveUnwantedHeaders(app);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
         }
@@ -86,6 +87,15 @@ namespace Api
         private void ConfigureCompression(HttpConfiguration config)
         {
             config.MessageHandlers.Insert(0, new CompressionHandler()); // first runs last
+        }
+
+        private void RemoveUnwantedHeaders(IAppBuilder app)
+        {
+            app.Use((context, next) =>
+            {
+                context.Response.Headers.Remove("Server");
+                return next.Invoke();
+            });
         }
     }
 }
