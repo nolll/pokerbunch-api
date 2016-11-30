@@ -18,7 +18,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_AllSimplePropertiesAreSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -32,7 +32,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_SlugIsSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -43,7 +43,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_PlayerItemsAreSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -66,7 +66,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void RunningCashgame_CashgameRunning_BunchPlayerItemsAreSet()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new RunningCashgame.Request(TestData.UserNameA, TestData.SlugA);
             var result = Sut.Execute(request);
@@ -82,17 +82,11 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.PlayerD.Id, result.BunchPlayerItems[3].PlayerId);
         }
 
-        private RunningCashgame Sut
-        {
-            get
-            {
-                return new RunningCashgame(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService,
-                    Services.LocationService);
-            }
-        }
+        private RunningCashgame Sut => new RunningCashgame(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User,
+            Deps.Location);
     }
 }

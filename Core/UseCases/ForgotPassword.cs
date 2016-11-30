@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,15 +8,15 @@ namespace Core.UseCases
 {
     public class ForgotPassword
     {
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly IMessageSender _messageSender;
-        private readonly IRandomService _randomService;
+        private readonly IRandomizer _randomizer;
 
-        public ForgotPassword(UserService userService, IMessageSender messageSender, IRandomService randomService)
+        public ForgotPassword(IUserRepository userRepository, IMessageSender messageSender, IRandomizer randomizer)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _messageSender = messageSender;
-            _randomService = randomService;
+            _randomizer = randomizer;
         }
 
         public void Execute(Request request)
@@ -25,17 +26,17 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var user = _userService.GetByNameOrEmail(request.Email);
+            var user = _userRepository.Get(request.Email);
             if(user == null)
-                throw new UserNotFoundException();
+                throw new UserNotFoundException(request.Email);
 
-            var password = PasswordGenerator.CreatePassword(_randomService.GetAllowedChars());
-            var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());
+            var password = PasswordGenerator.CreatePassword(_randomizer.GetAllowedChars());
+            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(password, salt);
 
             user.SetPassword(encryptedPassword, salt);
 
-            _userService.Save(user);
+            _userRepository.Update(user);
             
             var message = new ForgotPasswordMessage(password, request.LoginUrl);
             _messageSender.Send(request.Email, message);

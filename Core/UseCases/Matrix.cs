@@ -2,51 +2,52 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class Matrix
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
-        private readonly UserService _userService;
-        private readonly EventService _eventService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public Matrix(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService, EventService eventServicey)
+        public Matrix(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository, IEventRepository eventRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _playerService = playerService;
-            _userService = userService;
-            _eventService = eventServicey;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var cashgames = _cashgameService.GetFinished(bunch.Id, request.Year);
+            var cashgames = _cashgameRepository.GetFinished(bunch.Id, request.Year);
             return Execute(bunch, cashgames);
         }
 
         public Result Execute(EventMatrixRequest request)
         {
-            var e = _eventService.Get(request.EventId);
-            var bunch = _bunchService.Get(e.BunchId);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var e = _eventRepository.Get(request.EventId);
+            var bunch = _bunchRepository.Get(e.BunchId);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var cashgames = _cashgameService.GetByEvent(request.EventId);
+            var cashgames = _cashgameRepository.GetByEvent(request.EventId);
             return Execute(bunch, cashgames);
         }
 
         private Result Execute(Bunch bunch, IList<Cashgame> cashgames)
         {
-            var players = _playerService.GetList(bunch.Id);
+            var players = _playerRepository.List(bunch.Id);
             var suite = new CashgameSuite(cashgames, players);
 
             var gameItems = CreateGameItems(cashgames);

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,13 +8,13 @@ namespace Core.UseCases
 {
     public class ChangePassword
     {
-        private readonly UserService _userService;
-        private readonly IRandomService _randomService;
+        private readonly IUserRepository _userRepository;
+        private readonly IRandomizer _randomizer;
 
-        public ChangePassword(UserService userService, IRandomService randomService)
+        public ChangePassword(IUserRepository userRepository, IRandomizer randomizer)
         {
-            _userService = userService;
-            _randomService = randomService;
+            _userRepository = userRepository;
+            _randomizer = randomizer;
         }
 
         public void Execute(Request request)
@@ -25,12 +26,12 @@ namespace Core.UseCases
             if (request.Password != request.Repeat)
                 throw new ValidationException("The passwords dos not match");
 
-            var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());
+            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             user = CreateUser(user, encryptedPassword, salt);
 
-            _userService.Save(user);
+            _userRepository.Update(user);
         }
 
         private static User CreateUser(User user, string encryptedPassword, string salt)

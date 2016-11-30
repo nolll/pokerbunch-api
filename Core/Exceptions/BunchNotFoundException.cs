@@ -9,7 +9,7 @@ namespace Core.Exceptions
 
         private static string GetMessage(string slug)
         {
-            return string.Format("Bunch not found: slug = '{0}'", slug);
+            return $"Bunch not found: {slug}";
         }
     }
 }

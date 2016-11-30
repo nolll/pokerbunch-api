@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -8,17 +9,17 @@ namespace Core.UseCases
 {
     public class Buyin
     {
-        private readonly BunchService _bunchService;
-        private readonly PlayerService _playerService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
 
-        public Buyin(BunchService bunchService, PlayerService playerService, CashgameService cashgameService, UserService userService)
+        public Buyin(IBunchRepository bunchRepository, IPlayerRepository playerRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
-            _playerService = playerService;
-            _cashgameService = cashgameService;
-            _userService = userService;
+            _bunchRepository = bunchRepository;
+            _playerRepository = playerRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
         }
 
         public void Execute(Request request)
@@ -28,16 +29,16 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var currentUser = _userRepository.Get(request.UserName);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
-            var cashgame = _cashgameService.GetRunning(bunch.Id);
+            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
 
             var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
             var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
             cashgame.AddCheckpoint(checkpoint);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameRepository.Update(cashgame);
         }
 
         public class Request

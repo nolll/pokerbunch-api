@@ -2,45 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class CashgameDetails
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public CashgameDetails(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService, LocationService locationService)
+        public CashgameDetails(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _playerService = playerService;
-            _locationService = locationService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
         {
-            var cashgame = _cashgameService.GetById(request.CashgameId);
-            var bunch = _bunchService.Get(cashgame.BunchId);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var cashgame = _cashgameRepository.Get(request.CashgameId);
+            var bunch = _bunchRepository.Get(cashgame.BunchId);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
-            var players = GetPlayers(_playerService, cashgame);
-            var location = _locationService.Get(cashgame.LocationId);
+            var players = GetPlayers(_playerRepository, cashgame);
+            var location = _locationRepository.Get(cashgame.LocationId);
 
             return new Result(bunch, cashgame, location, players, isManager);
         }
 
-        private static IEnumerable<Player> GetPlayers(PlayerService playerService, Cashgame cashgame)
+        private static IEnumerable<Player> GetPlayers(IPlayerRepository playerRepository, Cashgame cashgame)
         {
             var playerIds = cashgame.Results.Select(o => o.PlayerId).ToList();
-            return playerService.Get(playerIds);
+            return playerRepository.Get(playerIds);
         }
 
         public class Request

@@ -1,42 +1,43 @@
 using System.Collections.Generic;
 using System.Linq;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class EditCashgameForm
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
-        private readonly EventService _eventService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationRepository _locationRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public EditCashgameForm(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService, LocationService locationService, EventService eventService)
+        public EditCashgameForm(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _playerService = playerService;
-            _locationService = locationService;
-            _eventService = eventService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _locationRepository = locationRepository;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
         {
-            var cashgame = _cashgameService.GetById(request.Id);
-            var bunch = _bunchService.Get(cashgame.BunchId);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(cashgame.BunchId, user.Id);
+            var cashgame = _cashgameRepository.Get(request.Id);
+            var bunch = _bunchRepository.Get(cashgame.BunchId);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(cashgame.BunchId, user.Id);
             RequireRole.Manager(user, player);
 
-            var locations = _locationService.GetByBunch(cashgame.BunchId);
+            var locations = _locationRepository.List(cashgame.BunchId);
             var locationItems = locations.Select(o => new LocationItem(o.Id, o.Name)).ToList();
 
-            var events = _eventService.GetByBunch(bunch.Id);
+            var events = _eventRepository.List(bunch.Id);
             var eventItems = events.Select(o => new EventItem(o.Id, o.Name)).ToList();
-            var selectedEvent = _eventService.GetByCashgame(cashgame.Id);
+            var selectedEvent = _eventRepository.GetByCashgame(cashgame.Id);
             var selectedEventId = selectedEvent != null ? selectedEvent.Id : 0;
 
             return new Result(cashgame.DateString, cashgame.Id, bunch.Slug, cashgame.LocationId, locationItems, selectedEventId, eventItems);

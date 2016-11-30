@@ -12,7 +12,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Cashout_InvalidStack_ThrowsValidationException()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new Report.Request(TestData.UserNameA, TestData.SlugA, TestData.PlayerIdA, -1, DateTime.Now);
 
@@ -23,25 +23,19 @@ namespace Tests.Core.UseCases
         [TestCase(1)]
         public void Cashout_PlayerHasNotCheckedOutBefore_AddsCheckpoint(int stack)
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new Report.Request(TestData.UserNameA, TestData.SlugA, TestData.PlayerIdA, stack, DateTime.Now);
             Sut.Execute(request);
 
-            var result = Repos.Cashgame.Updated.AddedCheckpoints.First();
+            var result = Deps.Cashgame.Updated.AddedCheckpoints.First();
             Assert.AreEqual(stack, result.Stack);
         }
 
-        private Report Sut
-        {
-            get
-            {
-                return new Report(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private Report Sut => new Report(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

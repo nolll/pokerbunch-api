@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -8,31 +9,31 @@ namespace Core.UseCases
 {
     public class EditBunch
     {
-        private readonly BunchService _bunchService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public EditBunch(BunchService bunchService, UserService userService, PlayerService playerService)
+        public EditBunch(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
         {
-            _bunchService = bunchService;
-            _userService = userService;
-            _playerService = playerService;
+            _bunchRepository = bunchRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
         }
 
-        public Result Execute(Request request)
+        public BunchResult Execute(Request request)
         {
             var validator = new Validator(request);
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
             var postedHomegame = CreateBunch(bunch, request);
-            _bunchService.Save(postedHomegame);
+            _bunchRepository.Update(postedHomegame);
 
-            return new Result(bunch.Id, bunch.Slug);
+            return new BunchResult(bunch, player.Role);
         }
 
         private static Bunch CreateBunch(Bunch bunch, Request request)

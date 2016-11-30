@@ -45,9 +45,9 @@ namespace Tests.Core.UseCases
         }
 
         private TopList Sut => new TopList(
-            Services.BunchService,
-            Services.CashgameService,
-            Services.PlayerService,
-            Services.UserService);
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

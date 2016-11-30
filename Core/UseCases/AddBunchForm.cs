@@ -7,7 +7,7 @@ namespace Core.UseCases
     {
         public Result Execute()
         {
-            var timeZones = TimeZoneService.GetTimeZones();
+            var timeZones = TimeZones.GetTimeZones();
             var currencyLayouts = Globalization.GetCurrencyLayouts();
 
             return new Result(timeZones, currencyLayouts);

@@ -1,8 +1,8 @@
 ﻿using System.Web.Http;
 using Api.Auth;
 using Api.Models;
+using Api.Routes;
 using Core.UseCases;
-using Web.Common.Routes;
 
 namespace Api.Controllers
 {
@@ -20,21 +20,19 @@ namespace Api.Controllers
         [Route(ApiRoutes.LocationGet)]
         [AcceptVerbs(HttpVerb.Get)]
         [ApiAuthorize]
-        public IHttpActionResult Get(int id)
+        public LocationModel Get(int id)
         {
             var result = UseCase.GetLocation.Execute(new GetLocation.Request(CurrentUserName, id));
-            var locationModel = new LocationModel(result);
-            return Ok(locationModel);
+            return new LocationModel(result);
         }
 
         [Route(ApiRoutes.LocationAdd)]
         [AcceptVerbs(HttpVerb.Post)]
         [ApiAuthorize]
-        public IHttpActionResult Add([FromBody] LocationModel location)
+        public LocationModel Add([FromBody] LocationModel location)
         {
             var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.Bunch, location.Name));
-            var locationModel = new LocationModel(result);
-            return Ok(locationModel);
+            return new LocationModel(result);
         }
     }
 }

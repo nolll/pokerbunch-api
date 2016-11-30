@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,17 +8,17 @@ namespace Core.UseCases
 {
     public class AddLocation
     {
-        private readonly BunchService _bunchService;
-        private readonly PlayerService _playerService;
-        private readonly UserService _userService;
-        private readonly LocationService _locationService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public AddLocation(BunchService bunchService, PlayerService playerService, UserService userService, LocationService locationService)
+        public AddLocation(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository)
         {
-            _bunchService = bunchService;
-            _playerService = playerService;
-            _userService = userService;
-            _locationService = locationService;
+            _bunchRepository = bunchRepository;
+            _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
@@ -27,13 +28,13 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var currentUser = _userRepository.Get(request.UserName);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
 
             var location = new Location(0, request.Name, bunch.Id);
-            var id = _locationService.Add(location);
+            var id = _locationRepository.Add(location);
 
             return new Result(bunch.Slug, id, location.Name);
         }

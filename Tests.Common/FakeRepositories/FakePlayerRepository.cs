@@ -17,19 +17,14 @@ namespace Tests.Common.FakeRepositories
             _list = CreateList();
         }
 
-        public IList<int> Find(int bunchId)
+        public IList<Player> List(int bunchId)
         {
-            return _list.Where(o => o.BunchId == bunchId).Select(o => o.Id).ToList();
+            return _list.Where(o => o.BunchId == bunchId).ToList();
         }
 
-        public IList<int> Find(int bunchId, string name)
+        public Player Get(int bunchId, int userId)
         {
-            return _list.Where(o => o.BunchId == bunchId && o.DisplayName == name).Select(o => o.Id).ToList();
-        }
-
-        public IList<int> Find(int bunchId, int userId)
-        {
-            return _list.Where(o => o.BunchId == bunchId && o.UserId == userId).Select(o => o.Id).ToList();
+            return _list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId);
         }
 
         public IList<Player> Get(IList<int> ids)
@@ -48,7 +43,7 @@ namespace Tests.Common.FakeRepositories
             return 1;
         }
 
-        public bool JoinHomegame(Player player, Bunch bunch, int userId)
+        public bool JoinBunch(Player player, Bunch bunch, int userId)
         {
             Joined = new JoinedData(player.Id, bunch.Id, userId);
             return true;

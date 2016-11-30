@@ -2,39 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class CashgameList
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public CashgameList(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService, LocationService locationService)
+        public CashgameList(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _playerService = playerService;
-            _locationService = locationService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var cashgames = _cashgameService.GetFinished(bunch.Id, request.Year);
+            var cashgames = _cashgameRepository.GetFinished(bunch.Id, request.Year);
             cashgames = SortItems(cashgames, request.SortOrder).ToList();
-            var locations = _locationService.GetByBunch(bunch.Id);
-            var list = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations)));
+            var locations = _locationRepository.List(bunch.Id);
+            var items = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations)));
 
-            return new Result(request.Slug, list.ToList(), request.SortOrder, request.Year, bunch.Currency.Format, bunch.Currency.ThousandSeparator);
+            return new Result(request.Slug, items.ToList(), request.SortOrder, request.Year, bunch.Currency.Format, bunch.Currency.ThousandSeparator);
         }
 
         private Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations)
@@ -77,7 +78,7 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<Item> List { get; private set; }
+            public IList<Item> Items { get; private set; }
             public SortOrder SortOrder { get; private set; }
             public string Slug { get; private set; }
             public int? Year { get; private set; }
@@ -85,10 +86,10 @@ namespace Core.UseCases
             public string CurrencyFormat { get; private set; }
             public string ThousandSeparator { get; private set; }
 
-            public Result(string slug, IList<Item> list, SortOrder sortOrder, int? year, string currencyFormat, string thousandSeparator)
+            public Result(string slug, IList<Item> items, SortOrder sortOrder, int? year, string currencyFormat, string thousandSeparator)
             {
                 Slug = slug;
-                List = list;
+                Items = items;
                 SortOrder = sortOrder;
                 Year = year;
                 ShowYear = year.HasValue;
@@ -103,19 +104,43 @@ namespace Core.UseCases
             public int CashgameId { get; private set; }
             public Time Duration { get; private set; }
             public Date Date { get; private set; }
+            public DateTime StartTime { get; }
+            public DateTime EndTime { get; }
             public Money Turnover { get; private set; }
             public Money AverageBuyin { get; private set; }
             public int PlayerCount { get; private set; }
+            public IList<ItemPlayer> Players { get; }
 
-            public Item(Bunch bunch, Cashgame cashgame, Location location)
+        public Item(Bunch bunch, Cashgame cashgame, Location location)
             {
                 Location = location.Name;
                 CashgameId = cashgame.Id;
                 Duration = Time.FromMinutes(cashgame.Duration);
                 Date = cashgame.StartTime.HasValue ? new Date(cashgame.StartTime.Value) : new Date(DateTime.MinValue);
+                StartTime = cashgame.StartTime ?? DateTime.MinValue;
+                EndTime = cashgame.EndTime ?? DateTime.MinValue;
                 Turnover = new Money(cashgame.Turnover, bunch.Currency);
                 AverageBuyin = new Money(cashgame.AverageBuyin, bunch.Currency);
                 PlayerCount = cashgame.PlayerCount;
+                Players = cashgame.Results.Select(o => new ItemPlayer(o)).ToList();
+            }
+        }
+
+        public class ItemPlayer
+        {
+            public int Id { get; }
+            public DateTime BuyinTime { get; }
+            public DateTime CashoutTime { get; }
+            public int Buyin { get; }
+            public int Cashout { get; }
+
+            public ItemPlayer(CashgameResult result)
+            {
+                Id = result.PlayerId;
+                BuyinTime = result.BuyinTime ?? DateTime.MinValue;
+                CashoutTime = result.CashoutTime ?? DateTime.MinValue;
+                Buyin = result.Buyin;
+                Cashout = result.Stack;
             }
         }
 

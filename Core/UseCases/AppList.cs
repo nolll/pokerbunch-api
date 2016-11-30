@@ -1,34 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class AppList
     {
-        private readonly AppService _appService;
-        private readonly UserService _userService;
+        private readonly IAppRepository _appRepository;
+        private readonly IUserRepository _userRepository;
 
-        public AppList(AppService appService, UserService userService)
+        public AppList(IAppRepository appRepository, IUserRepository userRepository)
         {
-            _appService = appService;
-            _userService = userService;
+            _appRepository = appRepository;
+            _userRepository = userRepository;
         }
 
         public Result Execute(AllAppsRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.CurrentUserName);
+            var user = _userRepository.Get(request.CurrentUserName);
             RequireRole.Admin(user);
-            var apps = _appService.ListApps();
+            var apps = _appRepository.List();
 
             return new Result(apps);
         }
 
         public Result Execute(UserAppsRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.CurrentUserName);
-            var apps = _appService.ListApps(user.Id);
+            var user = _userRepository.Get(request.CurrentUserName);
+            var apps = _appRepository.List(user.Id);
 
             return new Result(apps);
         }
@@ -61,25 +62,11 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<Item> Items { get; private set; }
+            public IList<AppResult> Items { get; private set; }
 
             public Result(IEnumerable<App> apps)
             {
-                Items = apps.Select(o => new Item(o)).ToList();
-            }
-        }
-
-        public class Item
-        {
-            public int AppId { get; private set; }
-            public string AppKey { get; private set; }
-            public string AppName { get; private set; }
-
-            public Item(App app)
-            {
-                AppId = app.Id;
-                AppKey = app.AppKey;
-                AppName = app.Name;
+                Items = apps.Select(o => new AppResult(o.Id, o.AppKey, o.Name)).ToList();
             }
         }
     }

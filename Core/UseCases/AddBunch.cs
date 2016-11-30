@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -9,18 +10,18 @@ namespace Core.UseCases
 {
     public class AddBunch
     {
-        private readonly UserService _userService;
-        private readonly BunchService _bunchService;
-        private readonly PlayerService _playerService;
+        private readonly IUserRepository _userRepository;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public AddBunch(UserService userService, BunchService bunchService, PlayerService playerService)
+        public AddBunch(IUserRepository userRepository, IBunchRepository bunchRepository, IPlayerRepository playerRepository)
         {
-            _userService = userService;
-            _bunchService = bunchService;
-            _playerService = playerService;
+            _userRepository = userRepository;
+            _bunchRepository = bunchRepository;
+            _playerRepository = playerRepository;
         }
 
-        public void Execute(Request request)
+        public BunchResult Execute(Request request)
         {
             var validator = new Validator(request);
             if(!validator.IsValid)
@@ -31,7 +32,7 @@ namespace Core.UseCases
             bool bunchExists;
             try
             {
-                var b = _bunchService.GetBySlug(slug);
+                var b = _bunchRepository.GetBySlug(slug);
                 bunchExists = true;
             }
             catch (BunchNotFoundException)
@@ -40,13 +41,15 @@ namespace Core.UseCases
             }
 
             if (bunchExists)
-                throw new BunchExistsException();
+                throw new BunchExistsException(slug);
 
             var bunch = CreateBunch(request);
-            var id = _bunchService.Add(bunch);
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var id = _bunchRepository.Add(bunch);
+            var user = _userRepository.Get(request.UserName);
             var player = Player.New(id, user.Id, Role.Manager);
-            _playerService.Add(player);
+            _playerRepository.Add(player);
+
+            return new BunchResult(bunch, Role.Manager);
         }
 
         private static Bunch CreateBunch(Request request)

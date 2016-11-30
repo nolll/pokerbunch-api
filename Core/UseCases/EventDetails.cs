@@ -1,28 +1,29 @@
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class EventDetails
     {
-        private readonly EventService _eventService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly BunchService _bunchService;
+        private readonly IEventRepository _eventRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IBunchRepository _bunchRepository;
 
-        public EventDetails(EventService eventService, UserService userService, PlayerService playerService, BunchService bunchService)
+        public EventDetails(IEventRepository eventRepository, IUserRepository userRepository, IPlayerRepository playerRepository, IBunchRepository bunchRepository)
         {
-            _eventService = eventService;
-            _userService = userService;
-            _playerService = playerService;
-            _bunchService = bunchService;
+            _eventRepository = eventRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _bunchRepository = bunchRepository;
         }
 
         public Result Execute(Request request)
         {
-            var e = _eventService.Get(request.EventId);
-            var bunch = _bunchService.Get(e.BunchId);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(e.BunchId, user.Id);
+            var e = _eventRepository.Get(request.EventId);
+            var bunch = _bunchRepository.Get(e.BunchId);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(e.BunchId, user.Id);
             RequireRole.Player(user, player);
             
             return new Result(e.Name, bunch.Slug);

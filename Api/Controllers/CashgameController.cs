@@ -5,6 +5,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using Api.Auth;
 using Api.Models;
+using Api.Routes;
 using Core.Exceptions;
 using Core.UseCases;
 using JetBrains.Annotations;
@@ -22,6 +23,15 @@ namespace Api.Controllers
             return new ApiCashgameTopList(topListResult);
         }
 
+        [Route(ApiRoutes.CashgameList)]
+        [AcceptVerbs("GET")]
+        [ApiAuthorize]
+        public CashgameListModel List(string slug, int? year = null)
+        {
+            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, year));
+            return new CashgameListModel(listResult);
+        }
+        
         [Route("cashgame/running/{slug}")]
         [AcceptVerbs("GET")]
         [ApiAuthorize]

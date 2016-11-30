@@ -1,29 +1,30 @@
-﻿using Core.Services;
+﻿using Core.Repositories;
+using Core.Services;
 
 namespace Core.UseCases
 {
     public class CashgameStatus
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public CashgameStatus(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService)
+        public CashgameStatus(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _playerService = playerService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var runningGame = _cashgameService.GetRunning(bunch.Id);
+            var runningGame = _cashgameRepository.GetRunning(bunch.Id);
 
             var gameIsRunning = runningGame != null;
 

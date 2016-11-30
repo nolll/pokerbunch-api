@@ -1,31 +1,32 @@
 using System.Collections.Generic;
 using System.Linq;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class GetLocationList
     {
-        private readonly BunchService _bunchService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public GetLocationList(BunchService bunchService, UserService userService, PlayerService playerService, LocationService locationService)
+        public GetLocationList(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
         {
-            _bunchService = bunchService;
-            _userService = userService;
-            _playerService = playerService;
-            _locationService = locationService;
+            _bunchRepository = bunchRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var locations = _locationService.GetByBunch(bunch.Id);
+            var locations = _locationRepository.List(bunch.Id);
 
             var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 

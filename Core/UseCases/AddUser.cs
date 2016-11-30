@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -8,17 +9,17 @@ namespace Core.UseCases
 {
     public class AddUser
     {
-        private readonly UserService _userService;
-        private readonly IRandomService _randomService;
+        private readonly IUserRepository _userRepository;
+        private readonly IRandomizer _randomizer;
         private readonly IMessageSender _messageSender;
 
         public AddUser(
-            UserService userService,
-            IRandomService randomService,
+            IUserRepository userRepository,
+            IRandomizer randomizer,
             IMessageSender messageSender)
         {
-            _userService = userService;
-            _randomService = randomService;
+            _userRepository = userRepository;
+            _randomizer = randomizer;
             _messageSender = messageSender;
         }
 
@@ -29,17 +30,17 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            if (_userService.GetByNameOrEmail(request.UserName) != null)
+            if (_userRepository.Get(request.UserName) != null)
                 throw new UserExistsException();
 
-            if (_userService.GetByNameOrEmail(request.Email) != null)
+            if (_userRepository.Get(request.Email) != null)
                 throw new EmailExistsException();
 
-            var salt = SaltGenerator.CreateSalt(_randomService.GetAllowedChars());
+            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
             var user = CreateUser(request, encryptedPassword, salt);
 
-            _userService.Add(user);
+            _userRepository.Add(user);
             
             var message = new RegistrationMessage(request.LoginUrl);
             _messageSender.Send(request.Email, message);

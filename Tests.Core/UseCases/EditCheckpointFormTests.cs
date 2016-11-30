@@ -58,16 +58,10 @@ namespace Tests.Core.UseCases
             return new EditCheckpointForm.Request(TestData.ManagerUser.UserName, id);
         }
 
-        private EditCheckpointForm Sut
-        {
-            get
-            {
-                return new EditCheckpointForm(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private EditCheckpointForm Sut => new EditCheckpointForm(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player);
     }
 }

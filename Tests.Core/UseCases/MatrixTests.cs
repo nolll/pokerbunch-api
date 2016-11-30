@@ -21,7 +21,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Matrix_WithTwoGamesOnTheSameYear_SpansMultipleYearsIsFalse()
         {
-            Repos.Cashgame.SetupSingleYear();
+            Deps.Cashgame.SetupSingleYear();
 
             var result = Sut.Execute(CreateRequest());
 
@@ -41,17 +41,11 @@ namespace Tests.Core.UseCases
             return new Matrix.Request(TestData.UserNameA, TestData.SlugA, year);
         }
 
-        private Matrix Sut
-        {
-            get
-            {
-                return new Matrix(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService,
-                    Services.EventService);
-            }
-        }
+        private Matrix Sut => new Matrix(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User,
+            Deps.Event);
     }
 }

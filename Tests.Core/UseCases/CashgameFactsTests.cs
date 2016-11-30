@@ -33,16 +33,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(152, result.MostTimePlayed.Time.Minutes);
         }
 
-        private CashgameFacts Sut
-        {
-            get
-            {
-                return new CashgameFacts(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private CashgameFacts Sut => new CashgameFacts(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

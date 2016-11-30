@@ -20,21 +20,16 @@ namespace Tests.Common.FakeRepositories
             return _list.FirstOrDefault(o => o.Id == id);
         }
 
-        public IList<Location> Get(IList<int> ids)
+        public IList<Location> List(IList<int> ids)
         {
             return _list.Where(o => ids.Contains(o.Id)).ToList();
         }
 
-        public IList<int> Find(int bunchId)
+        public IList<Location> List(int bunchId)
         {
-            return _list.Where(o => o.BunchId == bunchId).Select(o => o.Id).ToList();
+            return _list.Where(o => o.BunchId == bunchId).ToList();
         }
-
-        public IList<int> Find(int bunchId, string name)
-        {
-            return _list.Where(o => o.BunchId == bunchId && o.Name == name).Select(o => o.Id).ToList();
-        }
-
+        
         public int Add(Location location)
         {
             Added = location;

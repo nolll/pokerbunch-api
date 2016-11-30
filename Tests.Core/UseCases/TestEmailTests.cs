@@ -13,9 +13,9 @@ namespace Tests.Core.UseCases
         {
             Sut.Execute(new TestEmail.Request(TestData.AdminUser.UserName));
 
-            Assert.AreEqual(Email, Services.MessageSender.To);
-            Assert.AreEqual("Test Email", Services.MessageSender.Message.Subject);
-            Assert.AreEqual("This is a test email from pokerbunch.com", Services.MessageSender.Message.Body);
+            Assert.AreEqual(Email, Deps.MessageSender.To);
+            Assert.AreEqual("Test Email", Deps.MessageSender.Message.Subject);
+            Assert.AreEqual("This is a test email from pokerbunch.com", Deps.MessageSender.Message.Body);
         }
 
         [Test]
@@ -26,14 +26,8 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(Email, result.Email);
         }
 
-        private TestEmail Sut
-        {
-            get
-            {
-                return new TestEmail(
-                    Services.MessageSender,
-                    Services.UserService);
-            }
-        }
+        private TestEmail Sut => new TestEmail(
+            Deps.MessageSender,
+            Deps.User);
     }
 }

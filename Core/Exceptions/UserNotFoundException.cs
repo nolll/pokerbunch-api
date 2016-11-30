@@ -1,9 +1,9 @@
 namespace Core.Exceptions
 {
-    public class UserNotFoundException : PokerBunchException
+    public class UserNotFoundException : NotFoundException
     {
-        public UserNotFoundException()
-            : base(("User not found"))
+        public UserNotFoundException(string userName)
+            : base($"User not found: {userName}")
         {
         }
     }

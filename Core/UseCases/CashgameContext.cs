@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core.Services;
+using Core.Repositories;
 
 namespace Core.UseCases
 {
     public class CashgameContext
     {
-        private readonly UserService _userService;
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
+        private readonly IUserRepository _userRepository;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
 
-        public CashgameContext(UserService userService, BunchService bunchService, CashgameService cashgameService)
+        public CashgameContext(IUserRepository userRepository, IBunchRepository bunchRepository, ICashgameRepository cashgameRepository)
         {
-            _userService = userService;
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
+            _userRepository = userRepository;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunchContextResult = new BunchContext(_userService, _bunchService).Execute(request);
-            var runningGame = _cashgameService.GetRunning(bunchContextResult.BunchId);
+            var bunchContextResult = new BunchContext(_userRepository, _bunchRepository).Execute(request);
+            var runningGame = _cashgameRepository.GetRunning(bunchContextResult.BunchId);
 
             var gameIsRunning = runningGame != null;
-            var years = _cashgameService.GetYears(bunchContextResult.BunchId);
+            var years = _cashgameRepository.GetYears(bunchContextResult.BunchId);
 
             var selectedYear = request.Year;
             if (request.SelectedPage == CashgamePage.Overview)

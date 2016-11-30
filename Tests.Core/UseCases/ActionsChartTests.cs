@@ -105,7 +105,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void ActionsChart_RunningGame_CheckpointItemsAreCorrect()
         {
-            Repos.Cashgame.SetupRunningGame();
+            Deps.Cashgame.SetupRunningGame();
 
             var request = new ActionsChart.Request(TestData.UserNameA, TestData.CashgameIdC, TestData.PlayerIdA, TestData.StartTimeC.AddHours(1));
 
@@ -124,16 +124,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(200, result.CheckpointItems[1].TotalBuyin);
         }
 
-        private ActionsChart Sut
-        {
-            get
-            {
-                return new ActionsChart(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private ActionsChart Sut => new ActionsChart(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player);
     }
 }

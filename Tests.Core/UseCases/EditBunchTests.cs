@@ -54,12 +54,12 @@ namespace Tests.Core.UseCases
 
             Sut.Execute(request);
 
-            Assert.AreEqual(Description, Repos.Bunch.Saved.Description);
-            Assert.AreEqual(ValidCurrencySymbol, Repos.Bunch.Saved.Currency.Symbol);
-            Assert.AreEqual(ValidCurrencyLayout, Repos.Bunch.Saved.Currency.Layout);
-            Assert.AreEqual(ValidTimeZone, Repos.Bunch.Saved.Timezone.Id);
-            Assert.AreEqual(HouseRules, Repos.Bunch.Saved.HouseRules);
-            Assert.AreEqual(DefaultBuyin, Repos.Bunch.Saved.DefaultBuyin);
+            Assert.AreEqual(Description, Deps.Bunch.Saved.Description);
+            Assert.AreEqual(ValidCurrencySymbol, Deps.Bunch.Saved.Currency.Symbol);
+            Assert.AreEqual(ValidCurrencyLayout, Deps.Bunch.Saved.Currency.Layout);
+            Assert.AreEqual(ValidTimeZone, Deps.Bunch.Saved.Timezone.Id);
+            Assert.AreEqual(HouseRules, Deps.Bunch.Saved.HouseRules);
+            Assert.AreEqual(DefaultBuyin, Deps.Bunch.Saved.DefaultBuyin);
         }
 
         [Test]
@@ -72,15 +72,9 @@ namespace Tests.Core.UseCases
             Assert.AreEqual("bunch-a", result.Slug);
         }
 
-        private EditBunch Sut
-        {
-            get
-            {
-                return new EditBunch(
-                    Services.BunchService,
-                    Services.UserService,
-                    Services.PlayerService);
-            }
-        }
+        private EditBunch Sut => new EditBunch(
+            Deps.Bunch,
+            Deps.User,
+            Deps.Player);
     }
 }

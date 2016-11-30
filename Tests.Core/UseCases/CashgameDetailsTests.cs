@@ -62,17 +62,11 @@ namespace Tests.Core.UseCases
             Assert.IsTrue(result.CanEdit);
         }
 
-        private CashgameDetails Sut
-        {
-            get
-            {
-                return new CashgameDetails(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService);
-            }
-        }
+        private CashgameDetails Sut => new CashgameDetails(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player,
+            Deps.Location);
     }
 }

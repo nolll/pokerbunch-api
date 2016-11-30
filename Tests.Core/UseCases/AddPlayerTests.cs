@@ -36,7 +36,7 @@ namespace Tests.Core.UseCases
             var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
             Sut.Execute(request);
 
-            Assert.IsNotNull(Repos.Player.Added);
+            Assert.IsNotNull(Deps.Player.Added);
         }
 
         [Test]
@@ -46,15 +46,9 @@ namespace Tests.Core.UseCases
             Assert.Throws<PlayerExistsException>(() => Sut.Execute(request));
         }
 
-        private AddPlayer Sut
-        {
-            get
-            {
-                return new AddPlayer(
-                    Services.BunchService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private AddPlayer Sut => new AddPlayer(
+            Deps.Bunch,
+            Deps.Player,
+            Deps.User);
     }
 }

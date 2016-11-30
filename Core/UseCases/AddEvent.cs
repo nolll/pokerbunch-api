@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,17 +8,17 @@ namespace Core.UseCases
 {
     public class AddEvent
     {
-        private readonly BunchService _bunchService;
-        private readonly PlayerService _playerService;
-        private readonly UserService _userService;
-        private readonly EventService _eventService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public AddEvent(BunchService bunchService, PlayerService playerService, UserService userService, EventService eventService)
+        public AddEvent(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository, IEventRepository eventRepository)
         {
-            _bunchService = bunchService;
-            _playerService = playerService;
-            _userService = userService;
-            _eventService = eventService;
+            _bunchRepository = bunchRepository;
+            _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -27,13 +28,13 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var currentUser = _userRepository.Get(request.UserName);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Player(currentUser, currentPlayer);
 
             var e = new Event(0, bunch.Id, request.Name);
-            _eventService.Add(e);
+            _eventRepository.Add(e);
 
             return new Result(bunch.Slug);
         }

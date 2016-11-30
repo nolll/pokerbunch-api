@@ -1,34 +1,38 @@
+using System.Linq;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class DeletePlayer
     {
-        private readonly PlayerService _playerService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly BunchService _bunchService;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IBunchRepository _bunchRepository;
 
-        public DeletePlayer(PlayerService playerService, CashgameService cashgameService, UserService userService, BunchService bunchService)
+        public DeletePlayer(IPlayerRepository playerRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IBunchRepository bunchRepository)
         {
-            _playerService = playerService;
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _bunchService = bunchService;
+            _playerRepository = playerRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _bunchRepository = bunchRepository;
         }
 
         public Result Execute(Request request)
         {
-            var player = _playerService.Get(request.PlayerId);
-            var bunch = _bunchService.Get(player.BunchId);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var player = _playerRepository.Get(request.PlayerId);
+            var bunch = _bunchRepository.Get(player.BunchId);
+            var currentUser = _userRepository.Get(request.UserName);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
-            var canDelete = !_cashgameService.HasPlayed(player.Id);
+            var cashgames = _cashgameRepository.GetByPlayer(player.Id);
+            var hasPlayed = cashgames.Any();
+            var canDelete = !hasPlayed;
 
             if (canDelete)
             {
-                _playerService.Delete(request.PlayerId);
+                _playerRepository.Delete(request.PlayerId);
             }
 
             return new Result(canDelete, bunch.Slug, request.PlayerId);

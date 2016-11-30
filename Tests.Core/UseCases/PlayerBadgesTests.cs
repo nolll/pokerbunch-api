@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void PlayerBadges_ZeroGames_AllBadgesAreFalse()
         {
-            Repos.Cashgame.ClearList();
+            Deps.Cashgame.ClearList();
 
             var result = Sut.Execute(CreateRequest());
 
@@ -32,7 +32,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void PlayerBadges_TenGames_PlayedTenGamesIsTrue()
         {
-            Repos.Cashgame.SetupGameCount(10);
+            Deps.Cashgame.SetupGameCount(10);
 
             var result = Sut.Execute(CreateRequest());
 
@@ -42,7 +42,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void PlayerBadges_50Games_Played50GamesIsTrue()
         {
-            Repos.Cashgame.SetupGameCount(50);
+            Deps.Cashgame.SetupGameCount(50);
 
             var result = Sut.Execute(CreateRequest());
 
@@ -52,7 +52,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void PlayerBadges_100Games_Played100GamesIsTrue()
         {
-            Repos.Cashgame.SetupGameCount(100);
+            Deps.Cashgame.SetupGameCount(100);
 
             var result = Sut.Execute(CreateRequest());
 
@@ -62,7 +62,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void PlayerBadges_200Games_Played200GamesIsTrue()
         {
-            Repos.Cashgame.SetupGameCount(200);
+            Deps.Cashgame.SetupGameCount(200);
 
             var result = Sut.Execute(CreateRequest());
 
@@ -72,7 +72,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void PlayerBadges_500Games_Played500GamesIsTrue()
         {
-            Repos.Cashgame.SetupGameCount(500);
+            Deps.Cashgame.SetupGameCount(500);
 
             var result = Sut.Execute(CreateRequest());
 
@@ -84,16 +84,10 @@ namespace Tests.Core.UseCases
             return new PlayerBadges.Request(TestData.UserNameA, TestData.PlayerIdA);
         }
 
-        private PlayerBadges Sut
-        {
-            get
-            {
-                return new PlayerBadges(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private PlayerBadges Sut => new PlayerBadges(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

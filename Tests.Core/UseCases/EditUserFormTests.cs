@@ -43,12 +43,6 @@ namespace Tests.Core.UseCases
             return new EditUserForm.Request(TestData.UserA.UserName);
         }
 
-        private EditUserForm Sut
-        {
-            get
-            {
-                return new EditUserForm(Services.UserService);
-            }
-        }
+        private EditUserForm Sut => new EditUserForm(Deps.User);
     }
 }

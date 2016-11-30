@@ -24,12 +24,6 @@ namespace Tests.Core.UseCases
             Assert.IsFalse(result.IsValid);
         }
 
-        private VerifyAppKey Sut
-        {
-            get
-            {
-                return new VerifyAppKey(Services.AppService);
-            }
-        }
+        private VerifyAppKey Sut => new VerifyAppKey(Deps.App);
     }
 }

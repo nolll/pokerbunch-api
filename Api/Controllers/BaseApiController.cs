@@ -2,8 +2,7 @@
 using Api.Extensions;
 using Api.Services;
 using JetBrains.Annotations;
-using Web.Common;
-using Web.Common.Cache;
+using Plumbing;
 
 namespace Api.Controllers
 {
@@ -11,7 +10,7 @@ namespace Api.Controllers
     [UsedImplicitly]
     public abstract class BaseApiController : ApiController
     {
-        private readonly Bootstrapper _bootstrapper = new Bootstrapper(ApiSettings.ConnectionString);
+        private readonly Bootstrapper _bootstrapper = new Bootstrapper(Settings.ConnectionString);
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;
 
         protected string CurrentUserName
@@ -22,10 +21,10 @@ namespace Api.Controllers
                     return null;
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
-                if (ApiSettings.AllowAuthOverride && Environment.IsNoAuthAdmin(Request.RequestUri.Host))
-                    return ApiSettings.NoAuthAdminUserName;
-                if (ApiSettings.AllowAuthOverride && Environment.IsNoAuthPlayer(Request.RequestUri.Host))
-                    return ApiSettings.NoAuthPlayerUserName;
+                if (Settings.AllowAuthOverride && Environment.IsNoAuthAdmin(Request.RequestUri.Host))
+                    return Settings.NoAuthAdminUserName;
+                if (Settings.AllowAuthOverride && Environment.IsNoAuthPlayer(Request.RequestUri.Host))
+                    return Settings.NoAuthPlayerUserName;
                 return null;
             }
         }

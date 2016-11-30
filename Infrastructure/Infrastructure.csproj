@@ -49,35 +49,6 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Storage\CachedRepositories\CachedAppRepository.cs" />
-    <Compile Include="Storage\CachedRepositories\CachedBunchRepository.cs" />
-    <Compile Include="Storage\CachedRepositories\CachedCashgameRepository.cs" />
-    <Compile Include="Storage\CachedRepositories\CachedEventRepository.cs" />
-    <Compile Include="Storage\CachedRepositories\CachedLocationRepository.cs" />
-    <Compile Include="Storage\CachedRepositories\CachedPlayerRepository.cs" />
-    <Compile Include="Storage\CachedRepositories\CachedUserRepository.cs" />
-    <Compile Include="Storage\CacheTime.cs" />
-    <Compile Include="Storage\Classes\RawBunch.cs" />
-    <Compile Include="Storage\Classes\RawCashgame.cs" />
-    <Compile Include="Storage\Classes\RawCheckpoint.cs" />
-    <Compile Include="Storage\Classes\RawEvent.cs" />
-    <Compile Include="Storage\Classes\RawEventDay.cs" />
-    <Compile Include="Storage\Classes\RawPlayer.cs" />
-    <Compile Include="Storage\Classes\RawUser.cs" />
-    <Compile Include="Storage\Interfaces\IStorageDataReader.cs" />
-    <Compile Include="Storage\ListSqlParameter.cs" />
-    <Compile Include="Storage\Repositories\SqlAppRepository.cs" />
-    <Compile Include="Storage\Repositories\SqlBunchRepository.cs" />
-    <Compile Include="Storage\Repositories\SqlCashgameRepository.cs" />
-    <Compile Include="Storage\Repositories\SqlEventRepository.cs" />
-    <Compile Include="Storage\Repositories\SqlLocationRepository.cs" />
-    <Compile Include="Storage\Repositories\SqlPlayerRepository.cs" />
-    <Compile Include="Storage\Repositories\SqlUserRepository.cs" />
-    <Compile Include="Storage\SimpleSqlParameter.cs" />
-    <Compile Include="Storage\SqlParameters.cs" />
-    <Compile Include="Storage\SqlServerStorageProvider.cs" />
-    <Compile Include="Storage\StorageDataReader.cs" />
-    <Compile Include="Web\EmailMessageSender.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -86,11 +57,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Storage\Sql\Changes.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

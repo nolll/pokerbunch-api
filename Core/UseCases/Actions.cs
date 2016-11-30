@@ -3,35 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class Actions
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
 
-        public Actions(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService)
+        public Actions(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _playerService = playerService;
-            _userService = userService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _playerRepository = playerRepository;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
         {
-            var player = _playerService.Get(request.PlayerId);
-            var user = _userService.GetByNameOrEmail(request.CurrentUserName);
-            var bunch = _bunchService.Get(player.BunchId);
-            var cashgame = _cashgameService.GetById(request.CashgameId);
+            var player = _playerRepository.Get(request.PlayerId);
+            var user = _userRepository.Get(request.CurrentUserName);
+            var bunch = _bunchRepository.Get(player.BunchId);
+            var cashgame = _cashgameRepository.Get(request.CashgameId);
             
             RequireRole.Player(user, player);
             var playerResult = cashgame.GetResult(player.Id);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, user.Id);
+            var currentPlayer = _playerRepository.Get(bunch.Id, user.Id);
             var isManager = RoleHandler.IsInRole(user, currentPlayer, Role.Manager);
 
             var date = cashgame.StartTime.HasValue ? cashgame.StartTime.Value : DateTime.MinValue;

@@ -36,16 +36,10 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.PlayerNameB, result.PlayerItems[1].Name);
         }
 
-        private CashgameChart Sut
-        {
-            get
-            {
-                return new CashgameChart(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.PlayerService,
-                    Services.UserService);
-            }
-        }
+        private CashgameChart Sut => new CashgameChart(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.Player,
+            Deps.User);
     }
 }

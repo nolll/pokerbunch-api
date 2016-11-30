@@ -23,7 +23,7 @@ namespace Tests.Core.UseCases
             var request = CreateRequest(TestData.LocationIdA);
             Sut.Execute(request);
 
-            Assert.IsNotNull(Repos.Cashgame.Added);
+            Assert.IsNotNull(Deps.Cashgame.Added);
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Tests.Core.UseCases
             var request = CreateRequest(TestData.LocationIdA, 2);
             Sut.Execute(request);
 
-            Assert.AreEqual(1, Repos.Event.AddedCashgameId);
+            Assert.AreEqual(1, Deps.Event.AddedCashgameId);
         }
 
         [Test]
@@ -49,18 +49,12 @@ namespace Tests.Core.UseCases
             return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId, eventId);
         }
 
-        private AddCashgame Sut
-        {
-            get
-            {
-                return new AddCashgame(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService,
-                    Services.EventService);
-            }
-        }
+        private AddCashgame Sut => new AddCashgame(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player,
+            Deps.Location,
+            Deps.Event);
     }
 }

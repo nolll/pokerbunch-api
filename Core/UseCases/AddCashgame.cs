@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,21 +8,21 @@ namespace Core.UseCases
 {
     public class AddCashgame
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
-        private readonly EventService _eventService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationRepository _locationRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public AddCashgame(BunchService bunchService, CashgameService cashgameService, UserService userService, PlayerService playerService, LocationService locationService, EventService eventService)
+        public AddCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _playerService = playerService;
-            _locationService = locationService;
-            _eventService = eventService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _locationRepository = locationRepository;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -31,17 +32,17 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var user = _userRepository.Get(request.UserName);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var location = _locationService.Get(request.LocationId);
+            var location = _locationRepository.Get(request.LocationId);
             var cashgame = new Cashgame(bunch.Id, location.Id, GameStatus.Running);
-            var cashgameId = _cashgameService.AddGame(bunch, cashgame);
+            var cashgameId = _cashgameRepository.Add(bunch, cashgame);
 
             if (request.EventId > 0)
             {
-                _eventService.AddCashgame(request.EventId, cashgameId);
+                _eventRepository.AddCashgame(request.EventId, cashgameId);
             }
 
             return new Result(request.Slug, cashgameId);

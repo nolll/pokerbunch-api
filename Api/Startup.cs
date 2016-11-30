@@ -2,17 +2,20 @@
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Dispatcher;
 using System.Web.Http.ExceptionHandling;
 using Api;
 using Api.Auth;
 using Api.Extensions;
+using Api.Extensions.Compression;
+using Api.Urls.ApiUrls;
 using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
-using Web.Common.Urls.ApiUrls;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace Api
@@ -28,20 +31,12 @@ namespace Api
             ConfigFormatters(config);
             ConfigureErrorHandler(config);
             ConfigureErrorLogger(config);
+            ConfigureCompression(config);
+            RemoveUnwantedHeaders(app);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
         }
-        
-        private void ConfigureErrorHandler(HttpConfiguration config)
-        {
-            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
-        }
 
-        private void ConfigureErrorLogger(HttpConfiguration config)
-        {
-            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
-        }
-        
         private void ConfigureOAuth(IAppBuilder app)
         {
             var oAuthServerOptions = new OAuthAuthorizationServerOptions
@@ -59,6 +54,8 @@ namespace Api
         private static void ConfigRoutes(HttpConfiguration config)
         {
             config.MapHttpAttributeRoutes();
+
+            // The default routing is needed for 404 handling to kick in
             config.Routes.MapHttpRoute("default", "{controller}/{id}", new { id = RouteParameter.Optional });
         }
 
@@ -67,11 +64,38 @@ namespace Api
             var jsonFormatter = new JsonMediaTypeFormatter();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             jsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
+
+            config.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
 
             config.Formatters.Clear();
             config.Formatters.Add(jsonFormatter);
-            config.Formatters.Add(new XmlMediaTypeFormatter());
+        }
+
+        private void ConfigureErrorHandler(HttpConfiguration config)
+        {
+            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
+            config.Services.Replace(typeof(IHttpControllerSelector), new HttpNotFoundAwareDefaultHttpControllerSelector(config));
+            config.Services.Replace(typeof(IHttpActionSelector), new HttpNotFoundAwareControllerActionSelector());
+        }
+
+        private void ConfigureErrorLogger(HttpConfiguration config)
+        {
+            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
+        }
+
+        private void ConfigureCompression(HttpConfiguration config)
+        {
+            config.MessageHandlers.Insert(0, new CompressionHandler()); // first runs last
+        }
+
+        private void RemoveUnwantedHeaders(IAppBuilder app)
+        {
+            app.Use((context, next) =>
+            {
+                context.Response.Headers.Remove("Server");
+                return next.Invoke();
+            });
         }
     }
 }

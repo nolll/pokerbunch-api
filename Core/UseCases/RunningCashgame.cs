@@ -4,44 +4,45 @@ using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class RunningCashgame
     {
-        private readonly BunchService _bunchService;
-        private readonly CashgameService _cashgameService;
-        private readonly PlayerService _playerService;
-        private readonly UserService _userService;
-        private readonly LocationService _locationService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public RunningCashgame(BunchService bunchService, CashgameService cashgameService, PlayerService playerService, UserService userService, LocationService locationService)
+        public RunningCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository)
         {
-            _bunchService = bunchService;
-            _cashgameService = cashgameService;
-            _playerService = playerService;
-            _userService = userService;
-            _locationService = locationService;
+            _bunchRepository = bunchRepository;
+            _cashgameRepository = cashgameRepository;
+            _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _locationRepository = locationRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var cashgame = _cashgameService.GetRunning(bunch.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
 
             if(cashgame == null)
                 throw new CashgameNotRunningException();
 
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-            var players = _playerService.Get(GetPlayerIds(cashgame));
-            var bunchPlayers = _playerService.GetList(bunch.Id);
+            var players = _playerRepository.Get(GetPlayerIds(cashgame));
+            var bunchPlayers = _playerRepository.List(bunch.Id);
 
             var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
             
-            var location = _locationService.Get(cashgame.LocationId);
+            var location = _locationRepository.Get(cashgame.LocationId);
 
             var playerItems = GetPlayerItems(cashgame, players);
             var bunchPlayerItems = bunchPlayers.Select(o => new BunchPlayerItem(o.Id, o.DisplayName, o.Color)).OrderBy(o => o.Name).ToList();

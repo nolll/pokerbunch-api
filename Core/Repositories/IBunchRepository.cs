@@ -6,10 +6,9 @@ namespace Core.Repositories
     public interface IBunchRepository
     {
         Bunch Get(int id);
-        IList<Bunch> Get(IList<int> ids);
-        IList<int> Search();
-        IList<int> Search(string slug);
-        IList<int> Search(int userId);
+        Bunch GetBySlug(string slug);
+        IList<Bunch> List();
+        IList<Bunch> List(int userId);
         int Add(Bunch bunch);
         void Update(Bunch bunch);
     }

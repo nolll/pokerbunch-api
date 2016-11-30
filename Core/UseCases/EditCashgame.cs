@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -7,19 +8,19 @@ namespace Core.UseCases
 {
     public class EditCashgame
     {
-        private readonly CashgameService _cashgameService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
-        private readonly LocationService _locationService;
-        private readonly EventService _eventService;
+        private readonly ICashgameRepository _cashgameRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationRepository _locationRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public EditCashgame(CashgameService cashgameService, UserService userService, PlayerService playerService, LocationService locationService, EventService eventService)
+        public EditCashgame(ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
-            _cashgameService = cashgameService;
-            _userService = userService;
-            _playerService = playerService;
-            _locationService = locationService;
-            _eventService = eventService;
+            _cashgameRepository = cashgameRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
+            _locationRepository = locationRepository;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -28,17 +29,17 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var cashgame = _cashgameService.GetById(request.Id);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(cashgame.BunchId, user.Id);
+            var cashgame = _cashgameRepository.Get(request.Id);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(cashgame.BunchId, user.Id);
             RequireRole.Manager(user, player);
-            var location = _locationService.Get(request.LocationId);
+            var location = _locationRepository.Get(request.LocationId);
             cashgame = new Cashgame(cashgame.BunchId, location.Id, cashgame.Status, cashgame.Id);
-            _cashgameService.UpdateGame(cashgame);
+            _cashgameRepository.Update(cashgame);
 
             if (request.EventId > 0)
             {
-                _eventService.AddCashgame(request.EventId, cashgame.Id);
+                _eventRepository.AddCashgame(request.EventId, cashgame.Id);
             }
             
             return new Result(cashgame.Id);

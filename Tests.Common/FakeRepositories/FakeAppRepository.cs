@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 
 namespace Tests.Common.FakeRepositories
@@ -20,24 +21,22 @@ namespace Tests.Common.FakeRepositories
             return _list.FirstOrDefault(o => o.Id == id);
         }
 
-        public IList<App> GetList(IList<int> ids)
+        public IList<App> List()
         {
             return _list;
         }
 
-        public IList<int> Find()
-        {
-            return _list.Select(o => o.Id).ToList();
-        }
-
-        public IList<int> Find(int userId)
+        public IList<App> List(int userId)
         {
             throw new System.NotImplementedException();
         }
 
-        public IList<int> Find(string appKey)
+        public App Get(string appKey)
         {
-            return _list.Where(o => o.AppKey == appKey).Select(o => o.Id).ToList();
+            var app = _list.FirstOrDefault(o => o.AppKey == appKey);
+            if(app == null)
+                throw new AppNotFoundException();
+            return app;
         }
 
         public int Add(App app)

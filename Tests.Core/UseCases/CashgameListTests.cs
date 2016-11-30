@@ -29,11 +29,11 @@ namespace Tests.Core.UseCases
         [Test]
         public void CashgameList_WithoutGames_HasEmptyListOfGames()
         {
-            Repos.Cashgame.ClearList();
+            Deps.Cashgame.ClearList();
 
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(0, result.List.Count);
+            Assert.AreEqual(0, result.Items.Count);
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(TestData.LocationNameB, result.List[0].Location);
+            Assert.AreEqual(TestData.LocationNameB, result.Items[0].Location);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(2, result.List[0].CashgameId);
+            Assert.AreEqual(2, result.Items[0].CashgameId);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(92, result.List[0].Duration.Minutes);
+            Assert.AreEqual(92, result.Items[0].Duration.Minutes);
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest());
 
             var expected = new Date(2002, 2, 2);
-            Assert.AreEqual(expected, result.List[0].Date);
+            Assert.AreEqual(expected, result.Items[0].Date);
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(2, result.List[0].PlayerCount);
+            Assert.AreEqual(2, result.Items[0].PlayerCount);
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(600, result.List[0].Turnover.Amount);
+            Assert.AreEqual(600, result.Items[0].Turnover.Amount);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(300, result.List[0].AverageBuyin.Amount);
+            Assert.AreEqual(300, result.Items[0].AverageBuyin.Amount);
         }
 
         [Test]
@@ -108,8 +108,8 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest());
 
             Assert.AreEqual(CashgameList.SortOrder.Date, result.SortOrder);
-            Assert.AreEqual(new Date(2002, 2, 2), result.List[0].Date);
-            Assert.AreEqual(new Date(2001, 1, 1), result.List[1].Date);
+            Assert.AreEqual(new Date(2002, 2, 2), result.Items[0].Date);
+            Assert.AreEqual(new Date(2001, 1, 1), result.Items[1].Date);
         }
 
         [Test]
@@ -118,8 +118,8 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.PlayerCount));
 
             Assert.AreEqual(CashgameList.SortOrder.PlayerCount, result.SortOrder);
-            Assert.AreEqual(2, result.List[0].PlayerCount);
-            Assert.AreEqual(2, result.List[1].PlayerCount);
+            Assert.AreEqual(2, result.Items[0].PlayerCount);
+            Assert.AreEqual(2, result.Items[1].PlayerCount);
         }
 
         [Test]
@@ -128,8 +128,8 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.Location));
 
             Assert.AreEqual(CashgameList.SortOrder.Location, result.SortOrder);
-            Assert.AreEqual(TestData.LocationNameB, result.List[0].Location);
-            Assert.AreEqual(TestData.LocationNameA, result.List[1].Location);
+            Assert.AreEqual(TestData.LocationNameB, result.Items[0].Location);
+            Assert.AreEqual(TestData.LocationNameA, result.Items[1].Location);
         }
 
         [Test]
@@ -138,8 +138,8 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.Duration));
 
             Assert.AreEqual(CashgameList.SortOrder.Duration, result.SortOrder);
-            Assert.AreEqual(92, result.List[0].Duration.Minutes);
-            Assert.AreEqual(62, result.List[1].Duration.Minutes);
+            Assert.AreEqual(92, result.Items[0].Duration.Minutes);
+            Assert.AreEqual(62, result.Items[1].Duration.Minutes);
         }
 
         [Test]
@@ -148,8 +148,8 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.Turnover));
 
             Assert.AreEqual(CashgameList.SortOrder.Turnover, result.SortOrder);
-            Assert.AreEqual(600, result.List[0].Turnover.Amount);
-            Assert.AreEqual(400, result.List[1].Turnover.Amount);
+            Assert.AreEqual(600, result.Items[0].Turnover.Amount);
+            Assert.AreEqual(400, result.Items[1].Turnover.Amount);
         }
 
         [Test]
@@ -158,8 +158,8 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.AverageBuyin));
 
             Assert.AreEqual(CashgameList.SortOrder.AverageBuyin, result.SortOrder);
-            Assert.AreEqual(300, result.List[0].AverageBuyin.Amount);
-            Assert.AreEqual(200, result.List[1].AverageBuyin.Amount);
+            Assert.AreEqual(300, result.Items[0].AverageBuyin.Amount);
+            Assert.AreEqual(200, result.Items[1].AverageBuyin.Amount);
         }
 
         private CashgameList.Request CreateRequest(CashgameList.SortOrder orderBy = CashgameList.SortOrder.Date, int? year = null)
@@ -167,17 +167,11 @@ namespace Tests.Core.UseCases
             return new CashgameList.Request(TestData.UserNameA, TestData.SlugA, orderBy, year);
         }
 
-        private CashgameList Sut
-        {
-            get
-            {
-                return new CashgameList(
-                    Services.BunchService,
-                    Services.CashgameService,
-                    Services.UserService,
-                    Services.PlayerService,
-                    Services.LocationService);
-            }
-        }
+        private CashgameList Sut => new CashgameList(
+            Deps.Bunch,
+            Deps.Cashgame,
+            Deps.User,
+            Deps.Player,
+            Deps.Location);
     }
 }

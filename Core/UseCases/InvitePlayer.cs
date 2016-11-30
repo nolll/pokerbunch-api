@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -6,17 +7,17 @@ namespace Core.UseCases
 {
     public class InvitePlayer
     {
-        private readonly BunchService _bunchService;
-        private readonly PlayerService _playerService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IMessageSender _messageSender;
-        private readonly UserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public InvitePlayer(BunchService bunchService, PlayerService playerService, IMessageSender messageSender, UserService userService)
+        public InvitePlayer(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IMessageSender messageSender, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
-            _playerService = playerService;
+            _bunchRepository = bunchRepository;
+            _playerRepository = playerRepository;
             _messageSender = messageSender;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
@@ -26,10 +27,10 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var player = _playerService.Get(request.PlayerId);
-            var bunch = _bunchService.Get(player.BunchId);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var player = _playerRepository.Get(request.PlayerId);
+            var bunch = _bunchRepository.Get(player.BunchId);
+            var currentUser = _userRepository.Get(request.UserName);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
 
             var invitationCode = InvitationCodeCreator.GetCode(player);

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
@@ -10,15 +11,15 @@ namespace Core.UseCases
 {
     public class AddPlayer
     {
-        private readonly BunchService _bunchService;
-        private readonly PlayerService _playerService;
-        private readonly UserService _userService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
 
-        public AddPlayer(BunchService bunchService, PlayerService playerService, UserService userService)
+        public AddPlayer(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
-            _playerService = playerService;
-            _userService = userService;
+            _bunchRepository = bunchRepository;
+            _playerRepository = playerRepository;
+            _userRepository = userRepository;
         }
 
         public Result Execute(Request request)
@@ -28,17 +29,17 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var currentUser = _userService.GetByNameOrEmail(request.UserName);
-            var currentPlayer = _playerService.GetByUserId(bunch.Id, currentUser.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var currentUser = _userRepository.Get(request.UserName);
+            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
             RequireRole.Manager(currentUser, currentPlayer);
-            var existingPlayers = _playerService.GetList(bunch.Id);
+            var existingPlayers = _playerRepository.List(bunch.Id);
             var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
             if(player != null)
                 throw new PlayerExistsException();
 
             player = Player.New(bunch.Id, request.Name);
-            _playerService.Add(player);
+            _playerRepository.Add(player);
 
             return new Result(bunch.Slug);
         }

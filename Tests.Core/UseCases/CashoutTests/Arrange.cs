@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using Moq;
@@ -10,7 +11,7 @@ using Tests.Common;
 
 namespace Tests.Core.UseCases.CashoutTests
 {
-    public abstract class Arrange : ArrangeBase
+    public abstract class Arrange
     {
         private const int BunchId = 1;
         private const int CashgameId = 2;
@@ -32,16 +33,23 @@ namespace Tests.Core.UseCases.CashoutTests
         [SetUp]
         public void Setup()
         {
-            Sut = CreateSut<Cashout>();
-
             var cashgame = CreateCashgame();
             CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
-            MockOf<IBunchService>().Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
-            MockOf<ICashgameService>().Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
-            MockOf<IPlayerService>().Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
-            MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(UserName)).Returns(new User(UserId, UserName));
 
-            MockOf<ICashgameService>().Setup(o => o.UpdateGame(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+            var bsm = new Mock<IBunchRepository>();
+            bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
+
+            var crm = new Mock<ICashgameRepository>();
+            crm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
+            crm.Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+
+            var prm = new Mock<IPlayerRepository>();
+            prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
+
+            var urm = new Mock<IUserRepository>();
+            urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
+            
+            Sut = new Cashout(bsm.Object, crm.Object, prm.Object, urm.Object);
         }
 
         private Cashgame CreateCashgame()

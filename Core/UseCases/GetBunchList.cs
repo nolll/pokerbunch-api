@@ -1,36 +1,37 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class GetBunchList
     {
-        private readonly BunchService _bunchService;
-        private readonly UserService _userService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IUserRepository _userRepository;
 
-        public GetBunchList(BunchService bunchService, UserService userService)
+        public GetBunchList(IBunchRepository bunchRepository, IUserRepository userRepository)
         {
-            _bunchService = bunchService;
-            _userService = userService;
+            _bunchRepository = bunchRepository;
+            _userRepository = userRepository;
         }
 
         public Result Execute(AllBunchesRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.UserName);
+            var user = _userRepository.Get(request.UserName);
             RequireRole.Admin(user);
 
-            var bunches = _bunchService.GetList();
+            var bunches = _bunchRepository.List();
             return new Result(bunches);
         }
 
         public Result Execute(UserBunchesRequest request)
         {
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var homegames = user != null ? _bunchService.GetByUserId(user.Id) : new List<Bunch>();
+            var user = _userRepository.Get(request.UserName);
+            var bunches = user != null ? _bunchRepository.List(user.Id) : new List<Bunch>();
             
-            return new Result(homegames);
+            return new Result(bunches);
         }
 
         public class AllBunchesRequest
@@ -65,14 +66,12 @@ namespace Core.UseCases
 
         public class ResultItem
         {
-            public int Id { get; }
             public string Slug { get; }
             public string Name { get; }
             public string Description { get; }
 
             public ResultItem(Bunch bunch)
             {
-                Id = bunch.Id;
                 Slug = bunch.Slug;
                 Name = bunch.DisplayName;
                 Description = bunch.Description;

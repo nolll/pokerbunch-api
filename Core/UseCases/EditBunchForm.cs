@@ -1,26 +1,27 @@
 using System.Collections.Generic;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class EditBunchForm
     {
-        private readonly BunchService _bunchService;
-        private readonly UserService _userService;
-        private readonly PlayerService _playerService;
+        private readonly IBunchRepository _bunchRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public EditBunchForm(BunchService bunchService, UserService userService, PlayerService playerService)
+        public EditBunchForm(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
         {
-            _bunchService = bunchService;
-            _userService = userService;
-            _playerService = playerService;
+            _bunchRepository = bunchRepository;
+            _userRepository = userRepository;
+            _playerRepository = playerRepository;
         }
 
         public Result Execute(Request request)
         {
-            var bunch = _bunchService.GetBySlug(request.Slug);
-            var user = _userService.GetByNameOrEmail(request.UserName);
-            var player = _playerService.GetByUserId(bunch.Id, user.Id);
+            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var user = _userRepository.Get(request.UserName);
+            var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Manager(user, player);
             var heading = string.Format("{0} Settings", bunch.DisplayName);
             var description = bunch.Description;
@@ -29,7 +30,7 @@ namespace Core.UseCases
             var timeZoneId = bunch.Timezone.Id;
             var currencySymbol = bunch.Currency.Symbol;
             var currencyLayout = bunch.Currency.Layout;
-            var timeZones = TimeZoneService.GetTimeZones();
+            var timeZones = TimeZones.GetTimeZones();
             var currencyLayouts = Globalization.GetCurrencyLayouts();
             
             return new Result(heading, bunch.Slug, description, houseRules, defaultBuyin, timeZoneId, currencySymbol, currencyLayout, timeZones, currencyLayouts);

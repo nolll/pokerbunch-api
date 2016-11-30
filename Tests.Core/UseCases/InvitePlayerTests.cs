@@ -41,9 +41,9 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
 
             Sut.Execute(request);
 
-            Assert.AreEqual(TestData.UserEmailA, Services.MessageSender.To);
-            Assert.AreEqual(subject, Services.MessageSender.Message.Subject);
-            Assert.AreEqual(body, Services.MessageSender.Message.Body);
+            Assert.AreEqual(TestData.UserEmailA, Deps.MessageSender.To);
+            Assert.AreEqual(subject, Deps.MessageSender.Message.Subject);
+            Assert.AreEqual(body, Deps.MessageSender.Message.Body);
         }
 
         private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)
@@ -52,9 +52,9 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
         }
 
         private InvitePlayer Sut => new InvitePlayer(
-            Services.BunchService,
-            Services.PlayerService,
-            Services.MessageSender,
-            Services.UserService);
+            Deps.Bunch,
+            Deps.Player,
+            Deps.MessageSender,
+            Deps.User);
     }
 }

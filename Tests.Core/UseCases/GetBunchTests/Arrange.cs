@@ -1,12 +1,13 @@
 ﻿using Core.Entities;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
+using Moq;
 using NUnit.Framework;
-using Tests.Common;
 
 namespace Tests.Core.UseCases.GetBunchTests
 {
-    public abstract class Arrange : ArrangeBase
+    public abstract class Arrange
     {
         private const int BunchId = 1;
         private const int UserId = 4;
@@ -23,14 +24,19 @@ namespace Tests.Core.UseCases.GetBunchTests
         [SetUp]
         public void Setup()
         {
-            _sut = CreateSut<GetBunch>();
+            var bsm = new Mock<IBunchRepository>();
+            bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug, DisplayName, Description, HouseRules));
 
-            MockOf<IBunchService>().Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug, DisplayName, Description, HouseRules));
-            MockOf<IPlayerService>().Setup(s => s.GetByUserId(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId, role: Role));
-            MockOf<IUserService>().Setup(s => s.GetByNameOrEmail(UserName)).Returns(new User(UserId, UserName));
+            var prm = new Mock<IPlayerRepository>();
+            prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId, role: Role));
+
+            var urm = new Mock<IUserRepository>();
+            urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
+
+            _sut = new GetBunch(bsm.Object, urm.Object, prm.Object);
         }
 
-        protected GetBunch.Result Execute()
+        protected BunchResult Execute()
         {
             _request = new GetBunch.Request(UserName, Slug);
             return _sut.Execute(_request);

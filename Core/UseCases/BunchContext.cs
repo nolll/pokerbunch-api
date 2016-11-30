@@ -1,23 +1,24 @@
 ﻿using Core.Entities;
 using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
     public class BunchContext
     {
-        private readonly UserService _userService;
-        private readonly BunchService _bunchService;
+        private readonly IUserRepository _userRepository;
+        private readonly IBunchRepository _bunchRepository;
 
-        public BunchContext(UserService userService, BunchService bunchService)
+        public BunchContext(IUserRepository userRepository, IBunchRepository bunchRepository)
         {
-            _userService = userService;
-            _bunchService = bunchService;
+            _userRepository = userRepository;
+            _bunchRepository = bunchRepository;
         }
 
         public Result Execute(BunchRequest request)
         {
-            var appContext = new CoreContext(_userService).Execute(new CoreContext.Request(request.UserName));
+            var appContext = new CoreContext(_userRepository).Execute(new CoreContext.Request(request.UserName));
             var bunch = GetBunch(appContext, request);
             return GetResult(appContext, bunch);
         }
@@ -39,14 +40,14 @@ namespace Core.UseCases
             {
                 try
                 {
-                    return _bunchService.GetBySlug(request.Slug);
+                    return _bunchRepository.GetBySlug(request.Slug);
                 }
                 catch (BunchNotFoundException)
                 {
                     return null;
                 }
             }
-            var bunches = _bunchService.GetByUserId(appContext.UserId);
+            var bunches = _bunchRepository.List(appContext.UserId);
             return bunches.Count == 1 ? bunches[0] : null;
         }
 
