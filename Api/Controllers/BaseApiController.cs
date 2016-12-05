@@ -6,7 +6,7 @@ using Plumbing;
 
 namespace Api.Controllers
 {
-    //[EnsureHttps]
+    [EnsureHttps]
     [UsedImplicitly]
     public abstract class BaseApiController : ApiController
     {
