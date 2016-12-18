@@ -31,7 +31,7 @@ namespace Api.Extensions.Compression
 
                 var compressor = Compressors.FirstOrDefault(c => c.EncodingType.Equals(encoding.Value, StringComparison.InvariantCultureIgnoreCase));
 
-                if (compressor != null)
+                if (response.Content != null && compressor != null)
                 {
                     response.Content = new CompressedContent(response.Content, compressor);
                 }

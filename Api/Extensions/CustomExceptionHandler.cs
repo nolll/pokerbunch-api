@@ -34,7 +34,7 @@ namespace Api.Extensions
                 return CreateResponse(context, HttpStatusCode.BadRequest, message);
             }
 
-            return CreateResponse(context, HttpStatusCode.InternalServerError, "Unhandled error");
+            return CreateResponse(context, HttpStatusCode.InternalServerError, "Unhandled error.");
         }
 
         private HttpResponseMessage CreateResponse(ExceptionHandlerContext context, HttpStatusCode code, string message)

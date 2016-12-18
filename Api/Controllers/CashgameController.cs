@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
 using Api.Auth;
@@ -12,8 +11,20 @@ using JetBrains.Annotations;
 
 namespace Api.Controllers
 {
+    public class NoContentResult<T> : NegotiatedContentResult<T>
+    {
+        public NoContentResult(T content, ApiController controller) : base(HttpStatusCode.NoContent, content, controller)
+        {
+        }
+    }
+
     public class CashgameController : BaseApiController
     {
+        protected NoContentResult<T> NoContent<T>(T content)
+        {
+            return new NoContentResult<T>(content, this);
+        }
+
         [Route("cashgame/toplist/{slug}/{year?}")]
         [AcceptVerbs("GET")]
         [ApiAuthorize]
@@ -23,16 +34,7 @@ namespace Api.Controllers
             return new ApiCashgameTopList(topListResult);
         }
 
-        [Route(ApiRoutes.CashgameList)]
-        [AcceptVerbs("GET")]
-        [ApiAuthorize]
-        public CashgameListModel List(string slug, int? year = null)
-        {
-            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, year));
-            return new CashgameListModel(listResult);
-        }
-        
-        [Route("cashgame/running/{slug}")]
+        [Route(ApiRoutes.RunningGame)]
         [AcceptVerbs("GET")]
         [ApiAuthorize]
         public IHttpActionResult Running(string slug)
@@ -44,10 +46,19 @@ namespace Api.Controllers
             }
             catch (CashgameNotRunningException)
             {
-                return new ResponseMessageResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+                return Ok(new object());
             }
         }
 
+        [Route(ApiRoutes.CashgameList)]
+        [AcceptVerbs("GET")]
+        [ApiAuthorize]
+        public CashgameListModel List(string slug, int? year = null)
+        {
+            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, year));
+            return new CashgameListModel(listResult);
+        }
+        
         [Route("cashgame/buyin/{slug}")]
         [AcceptVerbs("POST")]
         [ApiAuthorize]
