@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -34,20 +35,14 @@ namespace Api.Controllers
             return new ApiCashgameTopList(topListResult);
         }
 
-        [Route(ApiRoutes.RunningGame)]
+        [Route(ApiRoutes.CurrentGames)]
         [HttpGet]
         [ApiAuthorize]
-        public IHttpActionResult Running(string slug)
+        public IHttpActionResult Current(string slug)
         {
-            try
-            {
-                var runningResult = UseCase.RunningCashgame.Execute(new RunningCashgame.Request(CurrentUserName, slug));
-                return Ok(new ApiRunning(runningResult));
-            }
-            catch (CashgameNotRunningException)
-            {
-                return Ok(new object());
-            }
+            var currentGamesResult = UseCase.CurrentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, slug));
+            var items = currentGamesResult.Games.Select(o => new ApiCurrentGame(o)).ToList();
+            return Ok(items);
         }
 
         [Route(ApiRoutes.CashgameList)]

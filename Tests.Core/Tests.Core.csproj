@@ -49,6 +49,10 @@
     <Compile Include="Entities\MoneyTests\WithDefaultCurrency.cs" />
     <Compile Include="Entities\MoneyTests\WithSwedishCurrency.cs" />
     <Compile Include="Services\GlobalizationTests.cs" />
+    <Compile Include="TestClasses\BunchInTest.cs" />
+    <Compile Include="TestClasses\CashgameInTest.cs" />
+    <Compile Include="TestClasses\PlayerInTest.cs" />
+    <Compile Include="TestClasses\UserInTest.cs" />
     <Compile Include="UseCases\ActionsChartTests.cs" />
     <Compile Include="UseCases\ActionsTests.cs" />
     <Compile Include="UseCases\AddAppTests.cs" />
@@ -65,6 +69,10 @@
     <Compile Include="UseCases\AppListTests.cs" />
     <Compile Include="UseCases\BaseContextTests.cs" />
     <Compile Include="UseCases\BunchContextTests.cs" />
+    <Compile Include="UseCases\CurrentCashgamesTests\Arrange.cs" />
+    <Compile Include="UseCases\CurrentCashgamesTests\WithGames.cs" />
+    <Compile Include="UseCases\CurrentCashgamesTests\WithGuest.cs" />
+    <Compile Include="UseCases\CurrentCashgamesTests\WithoutGames.cs" />
     <Compile Include="UseCases\GetBunchTests\WithManager.cs" />
     <Compile Include="UseCases\GetBunchTests\WithNoRole.cs" />
     <Compile Include="UseCases\GetBunchTests\WithPlayer.cs" />
@@ -131,6 +139,7 @@
       <Name>Tests.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

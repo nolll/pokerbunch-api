@@ -158,7 +158,6 @@
     <Compile Include="Models\ApiCashgameTopListItem.cs" />
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\PlayerListModel.cs" />
-    <Compile Include="Models\ApiRunning.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Models\UserModel.cs" />
@@ -171,9 +170,11 @@
     <Compile Include="Urls\ApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiBunchListUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiBuyinUrl.cs" />
+    <Compile Include="Urls\ApiUrls\ApiCashgameUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiCashoutUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiReportUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiRunningGameUrl.cs" />
+    <Compile Include="Urls\ApiUrls\IdApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\SlugApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\TokenUrl.cs" />
     <Compile Include="Urls\SiteUrls\AddAppConfirmationUrl.cs" />

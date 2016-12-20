@@ -1,5 +1,7 @@
 using System;
 using System.Runtime.Serialization;
+using Api.Extensions;
+using Api.Urls.ApiUrls;
 using Core.UseCases;
 
 namespace Api.Models
@@ -25,6 +27,18 @@ namespace Api.Models
             Stack = playerItem.Stack;
             Winnings = playerItem.Winnings;
             LastUpdate = playerItem.LastReport;
+        }
+    }
+
+    [DataContract(Namespace = "", Name = "game")]
+    public class ApiCurrentGame
+    {
+        [DataMember(Name = "url")]
+        public string Url { get; set; }
+
+        public ApiCurrentGame(CurrentCashgames.Game game)
+        {
+            Url = new ApiCashgameUrl(game.Id).GetAbsolute();
         }
     }
 }

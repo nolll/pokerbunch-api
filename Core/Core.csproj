@@ -108,6 +108,7 @@
     <Compile Include="UseCases\AddPlayer.cs" />
     <Compile Include="UseCases\AddUser.cs" />
     <Compile Include="UseCases\CoreContext.cs" />
+    <Compile Include="UseCases\CurrentCashgames.cs" />
     <Compile Include="UseCases\GetApp.cs" />
     <Compile Include="UseCases\AppList.cs" />
     <Compile Include="UseCases\BaseContext.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="UseCases\CashgameStatus.cs" />
     <Compile Include="UseCases\GetLocation.cs" />
     <Compile Include="UseCases\GetLocationList.cs" />
+    <Compile Include="UseCases\RunningCashgame.cs" />
     <Compile Include="UseCases\TopList.cs" />
     <Compile Include="UseCases\Cashout.cs" />
     <Compile Include="UseCases\ChangePassword.cs" />
@@ -152,7 +154,6 @@
     <Compile Include="UseCases\PlayerFacts.cs" />
     <Compile Include="UseCases\GetPlayerList.cs" />
     <Compile Include="UseCases\Report.cs" />
-    <Compile Include="UseCases\RunningCashgame.cs" />
     <Compile Include="UseCases\TestEmail.cs" />
     <Compile Include="UseCases\UserDetails.cs" />
     <Compile Include="UseCases\UserList.cs" />
