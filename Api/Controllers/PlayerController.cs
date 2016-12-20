@@ -9,7 +9,7 @@ namespace Api.Controllers
     public class PlayerController : BaseApiController
     {
         [Route(ApiRoutes.PlayerList)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public IHttpActionResult GetList(string slug)
         {
@@ -19,7 +19,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.PlayerGet)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public IHttpActionResult Get(int id)
         {

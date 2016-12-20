@@ -26,7 +26,7 @@ namespace Api.Controllers
         }
 
         [Route("cashgame/toplist/{slug}/{year?}")]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public ApiCashgameTopList TopListAction(string slug, int? year = null)
         {
@@ -35,7 +35,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.RunningGame)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public IHttpActionResult Running(string slug)
         {
@@ -51,7 +51,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.CashgameList)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug, int? year = null)
         {
@@ -60,7 +60,7 @@ namespace Api.Controllers
         }
         
         [Route("cashgame/buyin/{slug}")]
-        [AcceptVerbs("POST")]
+        [HttpPost]
         [ApiAuthorize]
         public IHttpActionResult Buyin(string slug, [FromBody] BuyinObject buyin)
         {
@@ -86,7 +86,7 @@ namespace Api.Controllers
         }
 
         [Route("cashgame/report/{slug}")]
-        [AcceptVerbs("POST")]
+        [HttpPost]
         [ApiAuthorize]
         public IHttpActionResult Report(string slug, [FromBody] ReportObject report)
         {
@@ -110,7 +110,7 @@ namespace Api.Controllers
         }
 
         [Route("cashgame/cashout/{slug}")]
-        [AcceptVerbs("POST")]
+        [HttpPost]
         [ApiAuthorize]
         public IHttpActionResult Cashout(string slug, [FromBody] CashoutObject cashout)
         {

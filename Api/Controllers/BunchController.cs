@@ -9,7 +9,7 @@ namespace Api.Controllers
     public class BunchController : BaseApiController
     {
         [Route(ApiRoutes.BunchList)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public BunchListModel List()
         {
@@ -19,7 +19,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.BunchGet)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public BunchModel Get(string slug)
         {
@@ -29,7 +29,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.BunchList)]
-        [AcceptVerbs("POST")]
+        [HttpPost]
         [ApiAuthorize]
         public BunchModel Add([FromBody] BunchModel b)
         {
@@ -39,7 +39,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.BunchGet)]
-        [AcceptVerbs("POST")]
+        [HttpPost]
         [ApiAuthorize]
         public BunchModel Save(string slug, [FromBody] BunchModel b)
         {

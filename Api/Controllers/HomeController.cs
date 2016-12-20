@@ -8,7 +8,7 @@ namespace Api.Controllers
     public class HomeController : BaseApiController
     {
         [Route(ApiRoutes.Home)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         public IHttpActionResult Home()
         {
             return Redirect(new ApiDocsUrl().GetAbsolute());

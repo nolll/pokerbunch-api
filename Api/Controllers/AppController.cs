@@ -9,7 +9,7 @@ namespace Api.Controllers
     public class AppController : BaseApiController
     {
         [Route(ApiRoutes.AppList)]
-        [AcceptVerbs(HttpVerb.Get)]
+        [HttpGet]
         [ApiAuthorize]
         public AppListModel GetList()
         {
@@ -19,7 +19,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.AppGet)]
-        [AcceptVerbs(HttpVerb.Get)]
+        [HttpGet]
         [ApiAuthorize]
         public AppModel Get(int id)
         {
@@ -28,7 +28,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.AppAdd)]
-        [AcceptVerbs(HttpVerb.Post)]
+        [HttpGet]
         [ApiAuthorize]
         public AppModel Add([FromBody] AppModel app)
         {

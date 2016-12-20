@@ -9,7 +9,7 @@ namespace Api.Controllers
     public class UserController : BaseApiController
     {
         [Route(ApiRoutes.UserGet)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public UserModel GetUser(string name)
         {
@@ -18,7 +18,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.UserProfile)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public UserModel Profile()
         {
@@ -27,7 +27,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.UserBunchList)]
-        [AcceptVerbs("GET")]
+        [HttpGet]
         [ApiAuthorize]
         public BunchListModel Bunches()
         {
@@ -36,7 +36,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.UserAppList)]
-        [AcceptVerbs(HttpVerb.Get)]
+        [HttpGet]
         [ApiAuthorize]
         public AppListModel Apps()
         {

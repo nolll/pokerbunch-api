@@ -9,7 +9,7 @@ namespace Api.Controllers
     public class LocationController : BaseApiController
     {
         [Route(ApiRoutes.LocationList)]
-        [AcceptVerbs(HttpVerb.Get)]
+        [HttpGet]
         [ApiAuthorize]
         public LocationListModel GetList(string slug)
         {
@@ -18,7 +18,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.LocationGet)]
-        [AcceptVerbs(HttpVerb.Get)]
+        [HttpGet]
         [ApiAuthorize]
         public LocationModel Get(int id)
         {
@@ -27,7 +27,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.LocationAdd)]
-        [AcceptVerbs(HttpVerb.Post)]
+        [HttpPost]
         [ApiAuthorize]
         public LocationModel Add([FromBody] LocationModel location)
         {
