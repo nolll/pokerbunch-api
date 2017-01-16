@@ -28,6 +28,11 @@ namespace Api.Controllers
                 return null;
             }
         }
+
+        protected NoContentResult<T> NoContent<T>(T content)
+        {
+            return new NoContentResult<T>(content, this);
+        }
     }
 
     public static class HttpVerb

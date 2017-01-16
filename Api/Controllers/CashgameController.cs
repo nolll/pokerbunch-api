@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using System.Net;
 using System.Web.Http;
-using System.Web.Http.Results;
 using Api.Auth;
 using Api.Models;
 using Api.Routes;
@@ -12,13 +10,6 @@ using JetBrains.Annotations;
 
 namespace Api.Controllers
 {
-    public class NoContentResult<T> : NegotiatedContentResult<T>
-    {
-        public NoContentResult(T content, ApiController controller) : base(HttpStatusCode.NoContent, content, controller)
-        {
-        }
-    }
-
     public class CashgameController : BaseApiController
     {
         protected NoContentResult<T> NoContent<T>(T content)
@@ -54,7 +45,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
         
-        [Route("cashgame/buyin/{slug}")]
+        [Route(ApiRoutes.Buyin)]
         [HttpPost]
         [ApiAuthorize]
         public IHttpActionResult Buyin(string slug, [FromBody] BuyinObject buyin)
@@ -80,7 +71,7 @@ namespace Api.Controllers
             public int stack { get; [UsedImplicitly] set; }
         }
 
-        [Route("cashgame/report/{slug}")]
+        [Route(ApiRoutes.Report)]
         [HttpPost]
         [ApiAuthorize]
         public IHttpActionResult Report(string slug, [FromBody] ReportObject report)
@@ -104,7 +95,7 @@ namespace Api.Controllers
             public int stack { get; [UsedImplicitly] set; }
         }
 
-        [Route("cashgame/cashout/{slug}")]
+        [Route(ApiRoutes.Cashout)]
         [HttpPost]
         [ApiAuthorize]
         public IHttpActionResult Cashout(string slug, [FromBody] CashoutObject cashout)
