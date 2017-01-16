@@ -56,9 +56,7 @@
     <Compile Include="UseCases\ActionsChartTests.cs" />
     <Compile Include="UseCases\ActionsTests.cs" />
     <Compile Include="UseCases\AddAppTests.cs" />
-    <Compile Include="UseCases\AddBunchFormTests.cs" />
     <Compile Include="UseCases\AddBunchTests.cs" />
-    <Compile Include="UseCases\AddCashgameFormTests.cs" />
     <Compile Include="UseCases\AddCashgameTests.cs" />
     <Compile Include="UseCases\AddEventTests.cs" />
     <Compile Include="UseCases\AddLocationTests.cs" />
@@ -93,7 +91,6 @@
     <Compile Include="UseCases\DeleteCashgameTests.cs" />
     <Compile Include="UseCases\DeleteCheckpointTests.cs" />
     <Compile Include="UseCases\EditBunchTests.cs" />
-    <Compile Include="UseCases\EditCashgameFormTests.cs" />
     <Compile Include="UseCases\EditCashgameTests.cs" />
     <Compile Include="UseCases\EditCheckpointTests.cs" />
     <Compile Include="UseCases\EditUserTests.cs" />
@@ -101,9 +98,6 @@
     <Compile Include="UseCases\LocationDetailsTests.cs" />
     <Compile Include="UseCases\ReportTests.cs" />
     <Compile Include="UseCases\DeletePlayerTests.cs" />
-    <Compile Include="UseCases\EditBunchFormTests.cs" />
-    <Compile Include="UseCases\EditCheckpointFormTests.cs" />
-    <Compile Include="UseCases\EditUserFormTests.cs" />
     <Compile Include="UseCases\EventDetailsTests.cs" />
     <Compile Include="UseCases\EventListTests.cs" />
     <Compile Include="UseCases\ForgotPasswordTests.cs" />

@@ -95,13 +95,10 @@
     <Compile Include="Services\RoleHandler.cs" />
     <Compile Include="Services\SaltGenerator.cs" />
     <Compile Include="Services\SlugGenerator.cs" />
-    <Compile Include="Services\TimeZones.cs" />
     <Compile Include="UseCases\ActionsChart.cs" />
     <Compile Include="UseCases\Actions.cs" />
     <Compile Include="UseCases\AddApp.cs" />
-    <Compile Include="UseCases\AddBunchForm.cs" />
     <Compile Include="UseCases\AddBunch.cs" />
-    <Compile Include="UseCases\AddCashgameForm.cs" />
     <Compile Include="UseCases\AddCashgame.cs" />
     <Compile Include="UseCases\AddEvent.cs" />
     <Compile Include="UseCases\AddLocation.cs" />
@@ -133,13 +130,9 @@
     <Compile Include="UseCases\DeleteCashgame.cs" />
     <Compile Include="UseCases\DeleteCheckpoint.cs" />
     <Compile Include="UseCases\DeletePlayer.cs" />
-    <Compile Include="UseCases\EditBunchForm.cs" />
     <Compile Include="UseCases\EditBunch.cs" />
-    <Compile Include="UseCases\EditCashgameForm.cs" />
     <Compile Include="UseCases\EditCashgame.cs" />
-    <Compile Include="UseCases\EditCheckpointForm.cs" />
     <Compile Include="UseCases\EditCheckpoint.cs" />
-    <Compile Include="UseCases\EditUserForm.cs" />
     <Compile Include="UseCases\EditUser.cs" />
     <Compile Include="UseCases\EndCashgame.cs" />
     <Compile Include="UseCases\EventDetails.cs" />
