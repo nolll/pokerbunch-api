@@ -34,10 +34,4 @@ namespace Api.Controllers
             return new NoContentResult<T>(content, this);
         }
     }
-
-    public static class HttpVerb
-    {
-        public const string Get = "GET";
-        public const string Post = "POST";
-    }
 }

@@ -20,7 +20,7 @@ namespace Api.Models
         [DataMember(Name = "lastupdate")]
         public DateTime LastUpdate { get; set; }
 
-        public ApiRunningResult(RunningCashgame.RunningCashgamePlayerItem playerItem)
+        public ApiRunningResult(CashgameDetails.RunningCashgamePlayerItem playerItem)
         {
             Name = playerItem.Name;
             Buyin = playerItem.Buyin;

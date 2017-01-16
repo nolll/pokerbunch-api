@@ -80,7 +80,7 @@
     <Compile Include="UseCases\CashgameChartTests.cs" />
     <Compile Include="UseCases\CashgameContextTests.cs" />
     <Compile Include="UseCases\CashgameDetailsChartTests.cs" />
-    <Compile Include="UseCases\CashgameDetailsTests.cs" />
+    <Compile Include="UseCases\CashgameDetailsOldTests.cs" />
     <Compile Include="UseCases\CashgameFactsTests.cs" />
     <Compile Include="UseCases\CashgameListTests.cs" />
     <Compile Include="UseCases\CashoutTests\Arrange.cs" />
@@ -109,7 +109,7 @@
     <Compile Include="UseCases\PlayerDetailsTests.cs" />
     <Compile Include="UseCases\PlayerFactsTests.cs" />
     <Compile Include="UseCases\PlayerListTests.cs" />
-    <Compile Include="UseCases\RunningCashgameTests.cs" />
+    <Compile Include="UseCases\CashgameDetailsTests.cs" />
     <Compile Include="UseCases\TestEmailTests.cs" />
     <Compile Include="UseCases\TopListTests.cs" />
     <Compile Include="UseCases\UserDetailsTests\Arrange.cs" />

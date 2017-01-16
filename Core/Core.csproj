@@ -117,13 +117,13 @@
     <Compile Include="UseCases\CashgameContext.cs" />
     <Compile Include="UseCases\CurrentRankings.cs" />
     <Compile Include="UseCases\CashgameDetailsChart.cs" />
-    <Compile Include="UseCases\CashgameDetails.cs" />
+    <Compile Include="UseCases\CashgameDetailsOld.cs" />
     <Compile Include="UseCases\CashgameFacts.cs" />
     <Compile Include="UseCases\CashgameList.cs" />
     <Compile Include="UseCases\CashgameStatus.cs" />
     <Compile Include="UseCases\GetLocation.cs" />
     <Compile Include="UseCases\GetLocationList.cs" />
-    <Compile Include="UseCases\RunningCashgame.cs" />
+    <Compile Include="UseCases\CashgameDetails.cs" />
     <Compile Include="UseCases\TopList.cs" />
     <Compile Include="UseCases\Cashout.cs" />
     <Compile Include="UseCases\ChangePassword.cs" />

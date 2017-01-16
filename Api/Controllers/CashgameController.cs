@@ -12,11 +12,6 @@ namespace Api.Controllers
 {
     public class CashgameController : BaseApiController
     {
-        protected NoContentResult<T> NoContent<T>(T content)
-        {
-            return new NoContentResult<T>(content, this);
-        }
-
         [Route("cashgame/toplist/{slug}/{year?}")]
         [HttpGet]
         [ApiAuthorize]
@@ -44,7 +39,16 @@ namespace Api.Controllers
             var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, year));
             return new CashgameListModel(listResult);
         }
-        
+
+        [Route(ApiRoutes.CashgameGet)]
+        [HttpGet]
+        [ApiAuthorize]
+        public CashgameDetailsModel Get(int id)
+        {
+            var listResult = UseCase.CashgameDetails.Execute(new CashgameDetails.Request(CurrentUserName, id));
+            return new CashgameDetailsModel(listResult);
+        }
+
         [Route(ApiRoutes.Buyin)]
         [HttpPost]
         [ApiAuthorize]
