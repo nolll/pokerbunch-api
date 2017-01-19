@@ -113,6 +113,10 @@ namespace Api.Models
     {
         [DataMember(Name = "id")]
         public string Id { get; set; }
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+        [DataMember(Name = "color")]
+        public string Color { get; set; }
         [DataMember(Name = "buyinTime")]
         public DateTime BuyinTime { get; set; }
         [DataMember(Name = "lastActionTime")]
@@ -127,6 +131,8 @@ namespace Api.Models
         public CashgameDetailsPlayerModel(CashgameDetails.RunningCashgamePlayerItem item)
         {
             Id = item.PlayerId.ToString();
+            Name = item.Name;
+            Color = item.Color;
             BuyinTime = item.BuyinTime;
             LastActionTime = item.LastActionTime;
             Buyin = item.Buyin;
