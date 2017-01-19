@@ -15,7 +15,7 @@ namespace Core.Entities
         public DateTime? CashoutTime { get; }
         public int PlayedTime { get; }
         public int Stack { get; }
-        public DateTime? LastReportTime { get; private set; }
+        public DateTime LastReportTime { get; private set; }
         public Checkpoint CashoutCheckpoint { get; }
         public int WinRate { get; private set; }
 
@@ -95,11 +95,9 @@ namespace Core.Entities
             return (int)Math.Round(timespan.Value.TotalMinutes);
         }
 
-        private DateTime? GetLastReportTime(IList<Checkpoint> checkpoints)
+        private DateTime GetLastReportTime(IList<Checkpoint> checkpoints)
         {
             var checkpoint = GetLastCheckpoint(checkpoints);
-            if (checkpoint == null)
-                return null;
             return checkpoint.Timestamp;
         }
 	}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Core.Entities.Checkpoints;
 using Core.UseCases;
 
 namespace Api.Models
@@ -57,8 +58,8 @@ namespace Api.Models
         public string Id { get; set; }
         [DataMember(Name = "buyinTime")]
         public DateTime BuyinTime { get; set; }
-        [DataMember(Name = "cashoutTime")]
-        public DateTime CashoutTime { get; set; }
+        [DataMember(Name = "lastActionTime")]
+        public DateTime LastActionTime { get; set; }
         [DataMember(Name = "buyin")]
         public int Buyin { get; set; }
         [DataMember(Name = "cashout")]
@@ -68,7 +69,7 @@ namespace Api.Models
         {
             Id = item.Id.ToString();
             BuyinTime = item.BuyinTime;
-            CashoutTime = item.CashoutTime;
+            LastActionTime = item.LastActionTime;
             Buyin = item.Buyin;
             Cashout = item.Cashout;
         }
@@ -83,6 +84,10 @@ namespace Api.Models
     {
         [DataMember(Name = "id")]
         public string Id { get; set; }
+        [DataMember(Name = "location")]
+        public string Location { get; set; }
+        [DataMember(Name = "isRunning")]
+        public bool IsRunning { get; set; }
         [DataMember(Name = "startTime")]
         public DateTime? StartTime { get; set; }
         [DataMember(Name = "endTime")]
@@ -93,6 +98,8 @@ namespace Api.Models
         public CashgameDetailsModel(CashgameDetails.Result details)
         {
             Id = details.CashgameId.ToString();
+            Location = details.LocationName;
+            IsRunning = details.IsRunning;
             Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
         }
 
@@ -108,19 +115,55 @@ namespace Api.Models
         public string Id { get; set; }
         [DataMember(Name = "buyinTime")]
         public DateTime BuyinTime { get; set; }
-        [DataMember(Name = "cashoutTime")]
-        public DateTime CashoutTime { get; set; }
+        [DataMember(Name = "lastActionTime")]
+        public DateTime LastActionTime { get; set; }
         [DataMember(Name = "buyin")]
         public int Buyin { get; set; }
-        [DataMember(Name = "cashout")]
-        public int Cashout { get; set; }
+        [DataMember(Name = "stack")]
+        public int Stack { get; set; }
+        [DataMember(Name = "actions")]
+        public IList<CashgameDetailsCheckpointModel> Actions { get; set; }
 
         public CashgameDetailsPlayerModel(CashgameDetails.RunningCashgamePlayerItem item)
         {
             Id = item.PlayerId.ToString();
+            BuyinTime = item.BuyinTime;
+            LastActionTime = item.LastActionTime;
+            Buyin = item.Buyin;
+            Stack = item.Stack;
+            Actions = item.Checkpoints.Select(o => new CashgameDetailsCheckpointModel(o)).ToList();
         }
 
         public CashgameDetailsPlayerModel()
+        {
+        }
+    }
+
+    [DataContract(Namespace = "", Name = "actions")]
+    public class CashgameDetailsCheckpointModel
+    {
+        [DataMember(Name = "type")]
+        public string Type { get; set; }
+        [DataMember(Name = "time")]
+        public DateTime Time { get; set; }
+        [DataMember(Name = "stack")]
+        public int Stack { get; set; }
+        [DataMember(Name = "added")]
+        public int? Added { get; set; }
+
+        public CashgameDetailsCheckpointModel(CashgameDetails.RunningCashgameCheckpointItem item)
+        {
+            Type = item.Type.ToString().ToLower();
+            Time = item.Time;
+            Stack = item.Stack;
+
+            if (item.Type == CheckpointType.Buyin)
+            {
+                Added = item.AddedMoney;
+            }
+        }
+
+        public CashgameDetailsCheckpointModel()
         {
         }
     }

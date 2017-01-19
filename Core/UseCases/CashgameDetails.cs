@@ -59,7 +59,8 @@ namespace Core.UseCases
                 defaultBuyin,
                 currencyFormat,
                 thousandSeparator,
-                isManager);
+                isManager,
+                cashgame.Status == GameStatus.Running);
         }
 
         private static IList<int> GetPlayerIds(Cashgame cashgame)
@@ -113,6 +114,7 @@ namespace Core.UseCases
             public string CurrencyFormat { get; private set; }
             public string ThousandSeparator { get; private set; }
             public bool IsManager { get; private set; }
+            public bool IsRunning { get; private set; }
 
             public Result(
                 string slug,
@@ -124,7 +126,8 @@ namespace Core.UseCases
                 int defaultBuyin,
                 string currencyFormat,
                 string thousandSeparator,
-                bool isManager)
+                bool isManager,
+                bool isRunning)
             {
                 Slug = slug;
                 PlayerId = playerId;
@@ -136,17 +139,20 @@ namespace Core.UseCases
                 CurrencyFormat = currencyFormat;
                 ThousandSeparator = thousandSeparator;
                 IsManager = isManager;
+                IsRunning = isRunning;
             }
         }
 
         public class RunningCashgameCheckpointItem
         {
+            public CheckpointType Type { get; private set; }
             public DateTime Time { get; private set; }
             public int Stack { get; private set; }
             public int AddedMoney { get; private set; }
 
             public RunningCashgameCheckpointItem(Checkpoint checkpoint)
             {
+                Type = checkpoint.Type;
                 Time = checkpoint.Timestamp;
                 Stack = checkpoint.Stack;
                 AddedMoney = checkpoint.Amount;
@@ -163,10 +169,11 @@ namespace Core.UseCases
             public int Buyin { get; }
             public int Stack { get; }
             public int Winnings { get; private set; }
-            public DateTime LastReport { get; set; }
+            public DateTime BuyinTime { get; set; }
+            public DateTime LastActionTime { get; set; }
             public IList<RunningCashgameCheckpointItem> Checkpoints { get; private set; }
 
-            public RunningCashgamePlayerItem(int playerId, string name, string color, int cashgameId, bool hasCashedOut, IEnumerable<Checkpoint> checkpoints)
+            public RunningCashgamePlayerItem(int playerId, string name, string color, int cashgameId, bool hasCashedOut, IList<Checkpoint> checkpoints)
             {
                 PlayerId = playerId;
                 Name = name;
@@ -179,7 +186,8 @@ namespace Core.UseCases
                 Buyin = list.Sum(o => o.Amount);
                 Stack = lastCheckpoint.Stack;
                 Winnings = Stack - Buyin;
-                LastReport = lastCheckpoint.Timestamp;
+                BuyinTime = checkpoints.First().Timestamp;
+                LastActionTime = lastCheckpoint.Timestamp;
             }
         }
     }

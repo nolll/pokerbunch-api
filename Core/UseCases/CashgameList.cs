@@ -130,7 +130,7 @@ namespace Core.UseCases
         {
             public int Id { get; }
             public DateTime BuyinTime { get; }
-            public DateTime CashoutTime { get; }
+            public DateTime LastActionTime { get; }
             public int Buyin { get; }
             public int Cashout { get; }
 
@@ -138,7 +138,7 @@ namespace Core.UseCases
             {
                 Id = result.PlayerId;
                 BuyinTime = result.BuyinTime ?? DateTime.MinValue;
-                CashoutTime = result.CashoutTime ?? DateTime.MinValue;
+                LastActionTime = result.LastReportTime;
                 Buyin = result.Buyin;
                 Cashout = result.Stack;
             }
