@@ -54,6 +54,7 @@ namespace Core.UseCases
 
             return new Result(
                 bunch.Slug,
+                bunch.Timezone.Id,
                 player.Id,
                 cashgame.Id,
                 startTime,
@@ -126,6 +127,7 @@ namespace Core.UseCases
         public class Result
         {
             public string Slug { get; }
+            public string Timezone { get; }
             public int PlayerId { get; }
             public int CashgameId { get; }
             public DateTime StartTime { get; }
@@ -141,6 +143,7 @@ namespace Core.UseCases
 
             public Result(
                 string slug,
+                string timezone,
                 int playerId,
                 int cashgameId,
                 DateTime startTime,
@@ -155,6 +158,7 @@ namespace Core.UseCases
                 bool isRunning)
             {
                 Slug = slug;
+                Timezone = timezone;
                 PlayerId = playerId;
                 CashgameId = cashgameId;
                 StartTime = startTime;

@@ -90,6 +90,8 @@ namespace Api.Models
         public DateTime StartTime { get; set; }
         [DataMember(Name = "endTime")]
         public DateTime? EndTime { get; set; }
+        [DataMember(Name = "bunch")]
+        public CashgameDetailsBunchModel Bunch { get; set; }
         [DataMember(Name = "location")]
         public CashgameDetailsLocationModel Location { get; set; }
         [DataMember(Name = "players")]
@@ -98,10 +100,11 @@ namespace Api.Models
         public CashgameDetailsModel(CashgameDetails.Result details)
         {
             Id = details.CashgameId.ToString();
-            Location = new CashgameDetailsLocationModel(details);
             IsRunning = details.IsRunning;
             StartTime = details.StartTime;
             EndTime = details.EndTime;
+            Bunch = new CashgameDetailsBunchModel(details);
+            Location = new CashgameDetailsLocationModel(details);
             Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
         }
 
@@ -125,6 +128,25 @@ namespace Api.Models
         }
 
         public CashgameDetailsLocationModel()
+        {
+        }
+    }
+
+    [DataContract(Namespace = "", Name = "bunch")]
+    public class CashgameDetailsBunchModel
+    {
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
+        [DataMember(Name = "timezone")]
+        public string Timezone { get; set; }
+
+        public CashgameDetailsBunchModel(CashgameDetails.Result details)
+        {
+            Id = details.Slug;
+            Timezone = details.Timezone;
+        }
+
+        public CashgameDetailsBunchModel()
         {
         }
     }
