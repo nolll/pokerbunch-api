@@ -84,21 +84,21 @@ namespace Api.Models
     {
         [DataMember(Name = "id")]
         public string Id { get; set; }
-        [DataMember(Name = "location")]
-        public string Location { get; set; }
         [DataMember(Name = "isRunning")]
         public bool IsRunning { get; set; }
         [DataMember(Name = "startTime")]
         public DateTime StartTime { get; set; }
         [DataMember(Name = "endTime")]
         public DateTime? EndTime { get; set; }
+        [DataMember(Name = "location")]
+        public CashgameDetailsLocationModel Location { get; set; }
         [DataMember(Name = "players")]
         public IList<CashgameDetailsPlayerModel> Players { get; set; }
 
         public CashgameDetailsModel(CashgameDetails.Result details)
         {
             Id = details.CashgameId.ToString();
-            Location = details.LocationName;
+            Location = new CashgameDetailsLocationModel(details);
             IsRunning = details.IsRunning;
             StartTime = details.StartTime;
             EndTime = details.EndTime;
@@ -106,6 +106,25 @@ namespace Api.Models
         }
 
         public CashgameDetailsModel()
+        {
+        }
+    }
+
+    [DataContract(Namespace = "", Name = "location")]
+    public class CashgameDetailsLocationModel
+    {
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+
+        public CashgameDetailsLocationModel(CashgameDetails.Result details)
+        {
+            Id = details.LocationId.ToString();
+            Name = details.LocationName;
+        }
+
+        public CashgameDetailsLocationModel()
         {
         }
     }
