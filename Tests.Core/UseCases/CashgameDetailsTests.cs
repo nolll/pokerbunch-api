@@ -1,3 +1,4 @@
+using System;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace Tests.Core.UseCases
         {
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC);
+            var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
             var result = Sut.Execute(request);
 
             Assert.AreEqual(TestData.PlayerIdA, result.PlayerId);
@@ -34,7 +35,7 @@ namespace Tests.Core.UseCases
         {
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC);
+            var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
             var result = Sut.Execute(request);
 
             Assert.AreEqual("bunch-a", result.Slug);
@@ -45,7 +46,7 @@ namespace Tests.Core.UseCases
         {
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC);
+            var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
             var result = Sut.Execute(request);
 
             Assert.AreEqual(2, result.PlayerItems.Count);

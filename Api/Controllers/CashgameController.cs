@@ -45,7 +45,8 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameDetailsModel Get(int id)
         {
-            var listResult = UseCase.CashgameDetails.Execute(new CashgameDetails.Request(CurrentUserName, id));
+            var listRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var listResult = UseCase.CashgameDetails.Execute(listRequest);
             return new CashgameDetailsModel(listResult);
         }
 

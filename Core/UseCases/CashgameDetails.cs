@@ -49,10 +49,15 @@ namespace Core.UseCases
             var currencyFormat = bunch.Currency.Format;
             var thousandSeparator = bunch.Currency.ThousandSeparator;
 
+            var startTime = GetStartTime(playerItems, request.CurrentUtc);
+            var endTime = GetEndTime(playerItems, cashgame.Status);
+
             return new Result(
                 bunch.Slug,
                 player.Id,
                 cashgame.Id,
+                startTime,
+                endTime,
                 location.Name,
                 location.Id,
                 playerItems,
@@ -61,6 +66,20 @@ namespace Core.UseCases
                 thousandSeparator,
                 isManager,
                 cashgame.Status == GameStatus.Running);
+        }
+
+        private DateTime GetStartTime(IList<RunningCashgamePlayerItem> playerItems, DateTime currentUtc)
+        {
+            if (playerItems.Any())
+                return playerItems.Min(o => o.BuyinTime);
+            return currentUtc;
+        }
+
+        private DateTime? GetEndTime(IList<RunningCashgamePlayerItem> playerItems, GameStatus status)
+        {
+            if (status == GameStatus.Finished && playerItems.Any())
+                return playerItems.Max(o => o.LastActionTime);
+            return null;
         }
 
         private static IList<int> GetPlayerIds(Cashgame cashgame)
@@ -94,32 +113,38 @@ namespace Core.UseCases
         {
             public string UserName { get; }
             public int Id { get; }
+            public DateTime CurrentUtc { get; }
 
-            public Request(string userName, int id)
+            public Request(string userName, int id, DateTime currentUtc)
             {
                 UserName = userName;
                 Id = id;
+                CurrentUtc = currentUtc;
             }
         }
 
         public class Result
         {
-            public string Slug { get; private set; }
-            public int PlayerId { get; private set; }
-            public int CashgameId { get; private set; }
-            public string LocationName { get; private set; }
-            public int LocationId { get; private set; }
-            public IList<RunningCashgamePlayerItem> PlayerItems { get; private set; }
-            public int DefaultBuyin { get; private set; }
-            public string CurrencyFormat { get; private set; }
-            public string ThousandSeparator { get; private set; }
-            public bool IsManager { get; private set; }
-            public bool IsRunning { get; private set; }
+            public string Slug { get; }
+            public int PlayerId { get; }
+            public int CashgameId { get; }
+            public DateTime StartTime { get; }
+            public DateTime? EndTime { get; }
+            public string LocationName { get; }
+            public int LocationId { get; }
+            public IList<RunningCashgamePlayerItem> PlayerItems { get; }
+            public int DefaultBuyin { get; }
+            public string CurrencyFormat { get; }
+            public string ThousandSeparator { get; }
+            public bool IsManager { get; }
+            public bool IsRunning { get; }
 
             public Result(
                 string slug,
                 int playerId,
                 int cashgameId,
+                DateTime startTime,
+                DateTime? endTime,
                 string locationName,
                 int locationId,
                 IList<RunningCashgamePlayerItem> playerItems,
@@ -132,6 +157,8 @@ namespace Core.UseCases
                 Slug = slug;
                 PlayerId = playerId;
                 CashgameId = cashgameId;
+                StartTime = startTime;
+                EndTime = endTime;
                 LocationName = locationName;
                 LocationId = locationId;
                 PlayerItems = playerItems;

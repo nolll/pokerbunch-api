@@ -89,7 +89,7 @@ namespace Api.Models
         [DataMember(Name = "isRunning")]
         public bool IsRunning { get; set; }
         [DataMember(Name = "startTime")]
-        public DateTime? StartTime { get; set; }
+        public DateTime StartTime { get; set; }
         [DataMember(Name = "endTime")]
         public DateTime? EndTime { get; set; }
         [DataMember(Name = "players")]
@@ -100,6 +100,8 @@ namespace Api.Models
             Id = details.CashgameId.ToString();
             Location = details.LocationName;
             IsRunning = details.IsRunning;
+            StartTime = details.StartTime;
+            EndTime = details.EndTime;
             Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
         }
 
