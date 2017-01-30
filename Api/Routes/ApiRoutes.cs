@@ -35,6 +35,6 @@ namespace Api.Routes
         public const string Report = "cashgame/report/{slug}";
         public const string Cashout = "cashgame/cashout/{slug}";
 
-        public const string CashgameGet = "cashgame/{id}";
+        public const string CashgameGet = "cashgames/{id}";
     }
 }
