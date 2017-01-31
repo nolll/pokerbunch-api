@@ -39,7 +39,7 @@ namespace Core.UseCases
             RequireRole.Player(user, player);
             var players = _playerRepository.Get(GetPlayerIds(cashgame));
 
-            var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
+            var role = user.IsAdmin ? Role.Manager : player.Role;
             
             var location = _locationRepository.Get(cashgame.LocationId);
 
@@ -47,10 +47,13 @@ namespace Core.UseCases
             
             var defaultBuyin = bunch.DefaultBuyin;
             var currencyFormat = bunch.Currency.Format;
+            var currencySymbol = bunch.Currency.Symbol;
+            var currencyLayout = bunch.Currency.Layout;
             var thousandSeparator = bunch.Currency.ThousandSeparator;
+            var culture = bunch.Currency.Culture.Name;
 
             var startTime = GetStartTime(playerItems, request.CurrentUtc);
-            var endTime = GetEndTime(playerItems, cashgame.Status);
+            var updatedTime = GetUpdatedTime(playerItems, cashgame.Status, request.CurrentUtc);
 
             return new Result(
                 bunch.Slug,
@@ -58,14 +61,17 @@ namespace Core.UseCases
                 player.Id,
                 cashgame.Id,
                 startTime,
-                endTime,
+                updatedTime,
                 location.Name,
                 location.Id,
                 playerItems,
                 defaultBuyin,
                 currencyFormat,
+                currencySymbol,
+                currencyLayout,
                 thousandSeparator,
-                isManager,
+                culture,
+                role,
                 cashgame.Status == GameStatus.Running);
         }
 
@@ -76,11 +82,11 @@ namespace Core.UseCases
             return currentUtc;
         }
 
-        private DateTime? GetEndTime(IList<RunningCashgamePlayerItem> playerItems, GameStatus status)
+        private DateTime GetUpdatedTime(IList<RunningCashgamePlayerItem> playerItems, GameStatus status, DateTime currentUtc)
         {
             if (status == GameStatus.Finished && playerItems.Any())
-                return playerItems.Max(o => o.LastActionTime);
-            return null;
+                return playerItems.Max(o => o.UpdatedTime);
+            return currentUtc;
         }
 
         private static IList<int> GetPlayerIds(Cashgame cashgame)
@@ -131,14 +137,17 @@ namespace Core.UseCases
             public int PlayerId { get; }
             public int CashgameId { get; }
             public DateTime StartTime { get; }
-            public DateTime? EndTime { get; }
+            public DateTime UpdatedTime { get; }
             public string LocationName { get; }
             public int LocationId { get; }
             public IList<RunningCashgamePlayerItem> PlayerItems { get; }
             public int DefaultBuyin { get; }
             public string CurrencyFormat { get; }
+            public string CurrencySymbol { get; }
+            public string CurrencyLayout { get; }
             public string ThousandSeparator { get; }
-            public bool IsManager { get; }
+            public string Culture { get; }
+            public Role Role { get; }
             public bool IsRunning { get; }
 
             public Result(
@@ -147,14 +156,17 @@ namespace Core.UseCases
                 int playerId,
                 int cashgameId,
                 DateTime startTime,
-                DateTime? endTime,
+                DateTime updatedTime,
                 string locationName,
                 int locationId,
                 IList<RunningCashgamePlayerItem> playerItems,
                 int defaultBuyin,
                 string currencyFormat,
+                string currencySymbol,
+                string currencyLayout,
                 string thousandSeparator,
-                bool isManager,
+                string culture,
+                Role role,
                 bool isRunning)
             {
                 Slug = slug;
@@ -162,26 +174,29 @@ namespace Core.UseCases
                 PlayerId = playerId;
                 CashgameId = cashgameId;
                 StartTime = startTime;
-                EndTime = endTime;
+                UpdatedTime = updatedTime;
                 LocationName = locationName;
                 LocationId = locationId;
                 PlayerItems = playerItems;
                 DefaultBuyin = defaultBuyin;
                 CurrencyFormat = currencyFormat;
+                CurrencySymbol = currencySymbol;
+                CurrencyLayout = currencyLayout;
                 ThousandSeparator = thousandSeparator;
-                IsManager = isManager;
+                Culture = culture;
+                Role = role;
                 IsRunning = isRunning;
             }
         }
 
-        public class RunningCashgameCheckpointItem
+        public class RunningCashgameActionItem
         {
-            public CheckpointType Type { get; private set; }
-            public DateTime Time { get; private set; }
-            public int Stack { get; private set; }
-            public int AddedMoney { get; private set; }
+            public CheckpointType Type { get; }
+            public DateTime Time { get; }
+            public int Stack { get; }
+            public int AddedMoney { get; }
 
-            public RunningCashgameCheckpointItem(Checkpoint checkpoint)
+            public RunningCashgameActionItem(Checkpoint checkpoint)
             {
                 Type = checkpoint.Type;
                 Time = checkpoint.Timestamp;
@@ -192,17 +207,17 @@ namespace Core.UseCases
 
         public class RunningCashgamePlayerItem
         {
-            public int PlayerId { get; private set; }
-            public string Name { get; private set; }
-            public string Color { get; private set; }
-            public int CashgameId { get; private set; }
-            public bool HasCashedOut { get; private set; }
+            public int PlayerId { get; }
+            public string Name { get; }
+            public string Color { get; }
+            public int CashgameId { get; }
+            public bool HasCashedOut { get; }
             public int Buyin { get; }
             public int Stack { get; }
-            public int Winnings { get; private set; }
-            public DateTime BuyinTime { get; set; }
-            public DateTime LastActionTime { get; set; }
-            public IList<RunningCashgameCheckpointItem> Checkpoints { get; private set; }
+            public int Winnings { get; }
+            public DateTime BuyinTime { get; }
+            public DateTime UpdatedTime { get; }
+            public IList<RunningCashgameActionItem> Checkpoints { get; }
 
             public RunningCashgamePlayerItem(int playerId, string name, string color, int cashgameId, bool hasCashedOut, IList<Checkpoint> checkpoints)
             {
@@ -213,12 +228,12 @@ namespace Core.UseCases
                 HasCashedOut = hasCashedOut;
                 var list = checkpoints.ToList();
                 var lastCheckpoint = list.Last();
-                Checkpoints = list.Select(o => new RunningCashgameCheckpointItem(o)).ToList();
+                Checkpoints = list.Select(o => new RunningCashgameActionItem(o)).ToList();
                 Buyin = list.Sum(o => o.Amount);
                 Stack = lastCheckpoint.Stack;
                 Winnings = Stack - Buyin;
                 BuyinTime = checkpoints.First().Timestamp;
-                LastActionTime = lastCheckpoint.Timestamp;
+                UpdatedTime = lastCheckpoint.Timestamp;
             }
         }
     }

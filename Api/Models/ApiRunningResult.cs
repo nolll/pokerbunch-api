@@ -26,7 +26,7 @@ namespace Api.Models
             Buyin = playerItem.Buyin;
             Stack = playerItem.Stack;
             Winnings = playerItem.Winnings;
-            LastUpdate = playerItem.LastActionTime;
+            LastUpdate = playerItem.UpdatedTime;
         }
     }
 

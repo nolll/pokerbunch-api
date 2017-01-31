@@ -152,6 +152,13 @@
     <Compile Include="Extensions\HttpNotFoundAwareControllerActionSelector.cs" />
     <Compile Include="Extensions\HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="Models\AppListModel.cs" />
+    <Compile Include="Models\CashgameDetailsBunchModel.cs" />
+    <Compile Include="Models\CashgameDetailsActionModel.cs" />
+    <Compile Include="Models\CashgameDetailsLocationModel.cs" />
+    <Compile Include="Models\CashgameDetailsModel.cs" />
+    <Compile Include="Models\CashgameDetailsPlayerModel.cs" />
+    <Compile Include="Models\CashgameListItemModel.cs" />
+    <Compile Include="Models\CashgameListItemPlayerModel.cs" />
     <Compile Include="Models\CashgameListModel.cs" />
     <Compile Include="Models\LocationListModel.cs" />
     <Compile Include="Models\LocationModel.cs" />

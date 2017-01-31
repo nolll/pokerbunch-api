@@ -1,4 +1,5 @@
 using System;
+using Core.Entities;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -27,7 +28,7 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(TestData.PlayerIdA, result.PlayerId);
             Assert.AreEqual(TestData.LocationNameC, result.LocationName);
             Assert.AreEqual(100, result.DefaultBuyin);
-            Assert.IsFalse(result.IsManager);
+            Assert.AreEqual(Role.Player, result.Role);
         }
 
         [Test]
