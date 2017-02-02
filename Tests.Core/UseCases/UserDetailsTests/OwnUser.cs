@@ -9,13 +9,15 @@ namespace Tests.Core.UseCases.UserDetailsTests
         [Test]
         public void CanEditIsTrue()
         {
-            Assert.IsTrue(Result.CanEdit);
+            var result = Sut.Execute(Request);
+            Assert.IsTrue(result.CanEdit);
         }
 
         [Test]
         public void CanChangePasswordIsTrue()
         {
-            Assert.IsTrue(Result.CanChangePassword);
+            var result = Sut.Execute(Request);
+            Assert.IsTrue(result.CanChangePassword);
         }
     }
 }

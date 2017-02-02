@@ -10,25 +10,29 @@ namespace Tests.Core.UseCases.GetBunchTests
         [Test]
         public void BunchNameIsSet()
         {
-            Assert.AreEqual(DisplayName, Execute().Name);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(DisplayName, result.Name);
         }
 
         [Test]
         public void DescriptionIsSet()
         {
-            Assert.AreEqual(Description, Execute().Description);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(Description, result.Description);
         }
 
         [Test]
         public void HouseRulesIsSet()
         {
-            Assert.AreEqual(HouseRules, Execute().HouseRules);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(HouseRules, result.HouseRules);
         }
 
         [Test]
         public void CanEditIsFalse()
         {
-            Assert.AreEqual(Role.Player, Execute().Role);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(Role.Player, result.Role);
         }
     }
 }

@@ -10,7 +10,8 @@ namespace Tests.Core.UseCases.GetBunchTests
         [Test]
         public void RoleIsManager()
         {
-            Assert.AreEqual(Role.Manager, Execute().Role);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(Role.Manager, result.Role);
         }
     }
 }

@@ -12,7 +12,8 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests
         [Test]
         public void ReturnsListOfGames()
         {
-            var games = Execute().Games;
+            var result = Sut.Execute(Request);
+            var games = result.Games;
             Assert.AreEqual(1, games.Count);
             var game = games.First();
             Assert.AreEqual(Slug, game.Slug);

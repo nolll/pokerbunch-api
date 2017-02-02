@@ -7,43 +7,50 @@ namespace Tests.Core.UseCases.UserDetailsTests
         [Test]
         public void UserNameIsSet()
         {
-            Assert.AreEqual(ViewUserName, Result.UserName);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(ViewUserName, result.UserName);
         }
 
         [Test]
         public void DisplayNameIsSet()
         {
-            Assert.AreEqual(DisplayName, Result.DisplayName);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(DisplayName, result.DisplayName);
         }
 
         [Test]
         public void RealNameIsSet()
         {
-            Assert.AreEqual(RealName, Result.RealName);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(RealName, result.RealName);
         }
 
         [Test]
         public void EmailIsSet()
         {
-            Assert.AreEqual(Email, Result.Email);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(Email, result.Email);
         }
 
         [Test]
         public void CanEditIsFalse()
         {
-            Assert.IsFalse(Result.CanEdit);
+            var result = Sut.Execute(Request);
+            Assert.IsFalse(result.CanEdit);
         }
 
         [Test]
         public void CanChangePasswordIsFalse()
         {
-            Assert.IsFalse(Result.CanChangePassword);
+            var result = Sut.Execute(Request);
+            Assert.IsFalse(result.CanChangePassword);
         }
 
         [Test]
         public void AvatarUrlIsSet()
         {
-            Assert.AreEqual("http://www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=100", Result.AvatarUrl);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual("http://www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=100", result.AvatarUrl);
         }
     }
 }

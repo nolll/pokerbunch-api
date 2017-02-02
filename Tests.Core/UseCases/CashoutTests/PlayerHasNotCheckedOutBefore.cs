@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Core.Entities.Checkpoints;
-using Core.UseCases;
 using NUnit.Framework;
 
 namespace Tests.Core.UseCases.CashoutTests
@@ -10,7 +9,7 @@ namespace Tests.Core.UseCases.CashoutTests
         [Test]
         public void AddsCheckpoint()
         {
-            Sut.Execute(new Cashout.Request(UserName, Slug, PlayerId, CashoutStack, CashoutTime));
+            Sut.Execute(Request);
 
             Assert.AreEqual(CheckpointCountBeforeCashout + 1, UpdatedCashgame.Checkpoints.Count);
             Assert.IsTrue(UpdatedCashgame.Checkpoints.First(o => o.Type == CheckpointType.Cashout).Stack == CashoutStack);

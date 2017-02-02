@@ -1,6 +1,5 @@
 ﻿using Core.Entities;
 using Core.Repositories;
-using Core.Services;
 using Core.UseCases;
 using Moq;
 using NUnit.Framework;
@@ -18,8 +17,7 @@ namespace Tests.Core.UseCases.GetBunchTests
         protected const string Description = "description";
         protected const string HouseRules = "houserules";
         protected virtual Role Role => Role.None;
-        private GetBunch.Request _request;
-        private GetBunch _sut;
+        protected GetBunch Sut;
 
         [SetUp]
         public void Setup()
@@ -33,13 +31,9 @@ namespace Tests.Core.UseCases.GetBunchTests
             var urm = new Mock<IUserRepository>();
             urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
 
-            _sut = new GetBunch(bsm.Object, urm.Object, prm.Object);
+            Sut = new GetBunch(bsm.Object, urm.Object, prm.Object);
         }
 
-        protected BunchResult Execute()
-        {
-            _request = new GetBunch.Request(UserName, Slug);
-            return _sut.Execute(_request);
-        }
+        protected GetBunch.Request Request => new GetBunch.Request(UserName, Slug);
     }
 }

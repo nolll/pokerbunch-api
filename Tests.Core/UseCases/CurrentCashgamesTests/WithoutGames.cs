@@ -10,7 +10,8 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests
         [Test]
         public void ReturnsEmptyList()
         {
-            Assert.AreEqual(0, Execute().Games.Count);
+            var result = Sut.Execute(Request);
+            Assert.AreEqual(0, result.Games.Count);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests
         [Test]
         public void ReturnsListOfGames()
         {
-            Assert.Throws<AccessDeniedException>(() => Execute());
+            Assert.Throws<AccessDeniedException>(() => Sut.Execute(Request));
         }
     }
 }

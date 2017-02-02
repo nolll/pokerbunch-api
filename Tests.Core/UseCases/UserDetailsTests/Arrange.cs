@@ -3,7 +3,6 @@ using Core.Repositories;
 using Core.UseCases;
 using Moq;
 using NUnit.Framework;
-using Tests.Common;
 
 namespace Tests.Core.UseCases.UserDetailsTests
 {
@@ -18,7 +17,7 @@ namespace Tests.Core.UseCases.UserDetailsTests
         protected const string Email = "email";
         protected virtual Role Role => Role.Player;
         protected virtual bool ViewingOwnUser => false; 
-        protected UserDetails.Result Result;
+        protected UserDetails Sut;
 
         [SetUp]
         public void Setup()
@@ -35,8 +34,9 @@ namespace Tests.Core.UseCases.UserDetailsTests
                 urm.Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
             }
 
-            var sut = new UserDetails(urm.Object);
-            Result = sut.Execute(new UserDetails.Request(_currentUserName, ViewUserName));
+            Sut = new UserDetails(urm.Object);
         }
+
+        protected UserDetails.Request Request => new UserDetails.Request(_currentUserName, ViewUserName);
     }
 }

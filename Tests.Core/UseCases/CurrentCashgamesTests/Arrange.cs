@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests
 {
     public abstract class Arrange
     {
-        private CurrentCashgames _sut;
+        protected CurrentCashgames Sut;
 
         private const string UserName = "default-current-user";
         private const int UserId = 1;
@@ -35,13 +35,9 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests
             var prm = new Mock<IPlayerRepository>();
             prm.Setup(s => s.Get(BunchId, UserId)).Returns(new PlayerInTest(role: Role));
             
-            _sut = new CurrentCashgames(urm.Object, bsm.Object, crm.Object, prm.Object);
+            Sut = new CurrentCashgames(urm.Object, bsm.Object, crm.Object, prm.Object);
         }
 
-        protected CurrentCashgames.Result Execute()
-        {
-            var request = new CurrentCashgames.Request(UserName, Slug);
-            return _sut.Execute(request);
-        }
+        protected CurrentCashgames.Request Request => new CurrentCashgames.Request(UserName, Slug);
     }
 }

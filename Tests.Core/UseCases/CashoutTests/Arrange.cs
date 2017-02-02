@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Core.Repositories;
-using Core.Services;
 using Core.UseCases;
 using Moq;
 using NUnit.Framework;
-using Tests.Common;
 
 namespace Tests.Core.UseCases.CashoutTests
 {
@@ -51,6 +49,8 @@ namespace Tests.Core.UseCases.CashoutTests
             
             Sut = new Cashout(bsm.Object, crm.Object, prm.Object, urm.Object);
         }
+
+        protected Cashout.Request Request => new Cashout.Request(UserName, Slug, PlayerId, CashoutStack, CashoutTime);
 
         private Cashgame CreateCashgame()
         {

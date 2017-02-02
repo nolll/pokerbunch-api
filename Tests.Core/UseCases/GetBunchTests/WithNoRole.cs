@@ -8,7 +8,7 @@ namespace Tests.Core.UseCases.GetBunchTests
         [Test]
         public void AccessDenied()
         {
-            Assert.Throws<AccessDeniedException>(() => Execute());
+            Assert.Throws<AccessDeniedException>(() => Sut.Execute(Request));
         }
     }
 }

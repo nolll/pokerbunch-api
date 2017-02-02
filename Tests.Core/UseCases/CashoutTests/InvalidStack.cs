@@ -1,5 +1,4 @@
 ﻿using Core.Exceptions;
-using Core.UseCases;
 using NUnit.Framework;
 
 namespace Tests.Core.UseCases.CashoutTests
@@ -11,9 +10,7 @@ namespace Tests.Core.UseCases.CashoutTests
         [Test]
         public void ThrowsValidationException()
         {
-            var request = new Cashout.Request(UserName, Slug, PlayerId, CashoutStack, CashoutTime);
-
-            Assert.Throws<ValidationException>(() => Sut.Execute(request));
+            Assert.Throws<ValidationException>(() => Sut.Execute(Request));
         }
     }
 }
