@@ -191,6 +191,7 @@ namespace Core.UseCases
 
         public class RunningCashgameActionItem
         {
+            public string Id { get; }
             public CheckpointType Type { get; }
             public DateTime Time { get; }
             public int Stack { get; }
@@ -198,6 +199,7 @@ namespace Core.UseCases
 
             public RunningCashgameActionItem(Checkpoint checkpoint)
             {
+                Id = checkpoint.Id.ToString();
                 Type = checkpoint.Type;
                 Time = checkpoint.Timestamp;
                 Stack = checkpoint.Stack;

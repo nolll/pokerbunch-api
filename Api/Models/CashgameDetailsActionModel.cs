@@ -8,6 +8,8 @@ namespace Api.Models
     [DataContract(Namespace = "", Name = "actions")]
     public class CashgameDetailsActionModel
     {
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
         [DataMember(Name = "type")]
         public string Type { get; set; }
         [DataMember(Name = "time")]
@@ -19,6 +21,7 @@ namespace Api.Models
 
         public CashgameDetailsActionModel(CashgameDetails.RunningCashgameActionItem item)
         {
+            Id = item.Id;
             Type = item.Type.ToString().ToLower();
             Time = item.Time;
             Stack = item.Stack;
