@@ -16,13 +16,11 @@ namespace Tests.Core.UseCases
         }
 
         [Test]
-        public void EditCashgame_ValidLocation_ReturnUrlIsSet()
+        public void EditCashgame_ValidLocation_NoException()
         {
             var request = new EditCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA, TestData.ChangedLocationId, 0);
 
-            var result = Sut.Execute(request);
-
-            Assert.AreEqual(1, result.CashgameId);
+            Sut.Execute(request);
         }
 
         [Test]

@@ -45,9 +45,29 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameDetailsModel Get(int id)
         {
-            var listRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
-            var listResult = UseCase.CashgameDetails.Execute(listRequest);
-            return new CashgameDetailsModel(listResult);
+            var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
+            return new CashgameDetailsModel(detailsResult);
+        }
+
+        [Route(ApiRoutes.CashgameGet)]
+        [HttpPut]
+        [ApiAuthorize]
+        public CashgameDetailsModel Update(int id, [FromBody] UpdateCashgameObject c)
+        {
+            var listRequest = new EditCashgame.Request(CurrentUserName, id, c.locationid, c.eventid);
+            UseCase.EditCashgame.Execute(listRequest);
+            var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
+            return new CashgameDetailsModel(detailsResult);
+        }
+
+        public class UpdateCashgameObject
+        {
+            // ReSharper disable once InconsistentNaming
+            public int locationid { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public int eventid { get; [UsedImplicitly] set; }
         }
 
         [Route(ApiRoutes.Buyin)]

@@ -23,7 +23,7 @@ namespace Core.UseCases
             _eventRepository = eventRepository;
         }
 
-        public Result Execute(Request request)
+        public void Execute(Request request)
         {
             var validator = new Validator(request);
             if(!validator.IsValid)
@@ -41,8 +41,6 @@ namespace Core.UseCases
             {
                 _eventRepository.AddCashgame(request.EventId, cashgame.Id);
             }
-            
-            return new Result(cashgame.Id);
         }
 
         public class Request
@@ -59,15 +57,6 @@ namespace Core.UseCases
                 Id = id;
                 LocationId = locationId;
                 EventId = eventId;
-            }
-        }
-        public class Result
-        {
-            public int CashgameId { get; private set; }
-
-            public Result(int cashgameId)
-            {
-                CashgameId = cashgameId;
             }
         }
     }
