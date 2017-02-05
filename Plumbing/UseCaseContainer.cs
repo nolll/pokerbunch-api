@@ -28,6 +28,7 @@ namespace Plumbing
         public EditBunch EditBunch => new EditBunch(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository);
 
         // Events
+        public EventList GetEventList => new EventList(_deps.BunchRepository, _deps.EventRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository);
 
         // Locations
         public GetLocationList GetLocationList => new GetLocationList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository);

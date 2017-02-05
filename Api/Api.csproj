@@ -130,6 +130,7 @@
     <Compile Include="Auth\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
+    <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\HttpVerb.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\BunchController.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Extensions\HttpNotFoundAwareControllerActionSelector.cs" />
     <Compile Include="Extensions\HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="Models\AppListModel.cs" />
+    <Compile Include="Models\AppModel.cs" />
     <Compile Include="Models\CashgameDetailsBunchModel.cs" />
     <Compile Include="Models\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameDetailsLocationModel.cs" />
@@ -160,6 +162,8 @@
     <Compile Include="Models\CashgameListItemModel.cs" />
     <Compile Include="Models\CashgameListItemPlayerModel.cs" />
     <Compile Include="Models\CashgameListModel.cs" />
+    <Compile Include="Models\EventListModel.cs" />
+    <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\LocationListModel.cs" />
     <Compile Include="Models\LocationModel.cs" />
     <Compile Include="Models\BunchModel.cs" />

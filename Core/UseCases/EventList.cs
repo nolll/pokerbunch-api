@@ -38,13 +38,13 @@ namespace Core.UseCases
             return new Result(eventItems);
         }
 
-        private static Item CreateEventItem(Event e, IList<Location> locations)
+        private static Event CreateEventItem(Entities.Event e, IList<Location> locations)
         {
             var location = locations.FirstOrDefault(o => o.Id == e.LocationId);
             var locationName = location != null ? location.Name : "";
             if(e.HasGames)
-                return new Item(e.Id, e.Name, locationName, e.StartDate, e.EndDate);
-            return new Item(e.Id, e.Name);
+                return new Event(e.Id, e.Name, locationName, e.StartDate, e.EndDate);
+            return new Event(e.Id, e.Name);
         }
 
         public class Request
@@ -61,15 +61,15 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<Item> Events { get; private set; }
+            public IList<Event> Events { get; private set; }
 
-            public Result(IList<Item> events)
+            public Result(IList<Event> events)
             {
                 Events = events;
             }
         }
 
-        public class Item
+        public class Event
         {
             public int EventId { get; private set; }
             public string Name { get; private set; }
@@ -78,14 +78,14 @@ namespace Core.UseCases
             public Date EndDate { get; private set; }
             public bool HasGames { get; private set; }
 
-            public Item(int id, string name)
+            public Event(int id, string name)
             {
                 EventId = id;
                 Name = name;
                 HasGames = false;
             }
             
-            public Item(int id, string name, string location, Date startDate, Date endDate)
+            public Event(int id, string name, string location, Date startDate, Date endDate)
                 : this(id, name)
             {
                 Location = location;
