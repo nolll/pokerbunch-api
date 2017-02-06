@@ -62,7 +62,7 @@ namespace Tests.Core.UseCases.CashoutTests
                     Checkpoint.Create(CashgameId, PlayerId, _startTime.AddMinutes(1), CheckpointType.Cashout, 200, 0, 3)
                 };
 
-                return new Cashgame(BunchId, LocationId, GameStatus.Running, CashgameId, checkpoints1);
+                return new Cashgame(BunchId, LocationId, 0, GameStatus.Running, CashgameId, checkpoints1);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace Tests.Core.UseCases.CashoutTests
                     Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, 1)
                 };
 
-                return new Cashgame(BunchId, LocationId, GameStatus.Running, CashgameId, checkpoints1);
+                return new Cashgame(BunchId, LocationId, 0, GameStatus.Running, CashgameId, checkpoints1);
             }
         }
     }

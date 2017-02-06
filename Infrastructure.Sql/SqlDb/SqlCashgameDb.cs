@@ -10,7 +10,7 @@ namespace Infrastructure.Sql.SqlDb
 {
     public class SqlCashgameDb
     {
-        private const string DataSql = "SELECT g.GameID, g.HomegameID, g.LocationId, g.Status, g.Date FROM game g ";
+        private const string DataSql = "SELECT g.GameID, g.HomegameID, g.LocationId, ecg.EventId, g.Status, g.Date FROM game g LEFT JOIN EventCashgame ecg ON ecg.GameId = g.GameId ";
         private const string SearchSql = "SELECT g.GameID FROM game g ";
         private const string SearchByCheckpointSql = "SELECT cp.GameID FROM CashgameCheckpoint cp ";
         
@@ -107,10 +107,11 @@ namespace Infrastructure.Sql.SqlDb
             var id = reader.GetIntValue("GameID");
             var bunchId = reader.GetIntValue("HomegameID");
             var locationId = reader.GetIntValue("LocationId");
+            var eventId = reader.GetIntValue("EventId");
             var status = reader.GetIntValue("Status");
             var date = TimeZoneInfo.ConvertTimeToUtc(reader.GetDateTimeValue("Date"));
 
-            return new RawCashgame(id, bunchId, locationId, status, date);
+            return new RawCashgame(id, bunchId, locationId, eventId, status, date);
         }
 
         public IList<int> GetYears(int bunchId)
@@ -200,12 +201,12 @@ namespace Infrastructure.Sql.SqlDb
 	        var rawStatus = status.HasValue ? (int) status.Value : (int) cashgame.Status;
 	        var date = cashgame.StartTime.HasValue ? cashgame.StartTime.Value : DateTime.UtcNow;
             
-            return new RawCashgame(cashgame.Id, cashgame.BunchId, cashgame.LocationId, rawStatus, date);
+            return new RawCashgame(cashgame.Id, cashgame.BunchId, cashgame.LocationId, cashgame.EventId, rawStatus, date);
         }
 
 	    private static Cashgame CreateCashgame(RawCashgame rawGame)
 	    {
-            return new Cashgame(rawGame.BunchId, rawGame.LocationId, (GameStatus)rawGame.Status, rawGame.Id);
+            return new Cashgame(rawGame.BunchId, rawGame.LocationId, rawGame.EventId, (GameStatus)rawGame.Status, rawGame.Id);
         }
 
         private static IList<Checkpoint> CreateCheckpoints(IEnumerable<RawCheckpoint> checkpoints)

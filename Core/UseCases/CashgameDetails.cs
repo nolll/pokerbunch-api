@@ -16,14 +16,16 @@ namespace Core.UseCases
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILocationRepository _locationRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public CashgameDetails(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository)
+        public CashgameDetails(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
         {
             _bunchRepository = bunchRepository;
             _cashgameRepository = cashgameRepository;
             _playerRepository = playerRepository;
             _userRepository = userRepository;
             _locationRepository = locationRepository;
+            _eventRepository = eventRepository;
         }
 
         public Result Execute(Request request)
@@ -42,6 +44,9 @@ namespace Core.UseCases
             var role = user.IsAdmin ? Role.Manager : player.Role;
             
             var location = _locationRepository.Get(cashgame.LocationId);
+            var @event = cashgame.EventId != 0 ? _eventRepository.Get(cashgame.EventId) : null;
+            var eventName = @event?.Name;
+            var eventId = @event?.Id ?? 0;
 
             var playerItems = GetPlayerItems(cashgame, players);
             
@@ -64,6 +69,8 @@ namespace Core.UseCases
                 updatedTime,
                 location.Name,
                 location.Id,
+                eventName,
+                eventId,
                 playerItems,
                 defaultBuyin,
                 currencyFormat,
@@ -140,6 +147,8 @@ namespace Core.UseCases
             public DateTime UpdatedTime { get; }
             public string LocationName { get; }
             public int LocationId { get; }
+            public string EventName { get; set; }
+            public int EventId { get; set; }
             public IList<RunningCashgamePlayerItem> PlayerItems { get; }
             public int DefaultBuyin { get; }
             public string CurrencyFormat { get; }
@@ -159,6 +168,8 @@ namespace Core.UseCases
                 DateTime updatedTime,
                 string locationName,
                 int locationId,
+                string eventName,
+                int eventId,
                 IList<RunningCashgamePlayerItem> playerItems,
                 int defaultBuyin,
                 string currencyFormat,
@@ -177,6 +188,8 @@ namespace Core.UseCases
                 UpdatedTime = updatedTime;
                 LocationName = locationName;
                 LocationId = locationId;
+                EventName = eventName;
+                EventId = eventId;
                 PlayerItems = playerItems;
                 DefaultBuyin = defaultBuyin;
                 CurrencyFormat = currencyFormat;

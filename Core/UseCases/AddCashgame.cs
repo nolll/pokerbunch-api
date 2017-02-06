@@ -37,7 +37,9 @@ namespace Core.UseCases
             var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var location = _locationRepository.Get(request.LocationId);
-            var cashgame = new Cashgame(bunch.Id, location.Id, GameStatus.Running);
+            var @event = request.EventId != 0 ? _eventRepository.Get(request.EventId) : null;
+            var eventId = @event?.Id ?? 0;
+            var cashgame = new Cashgame(bunch.Id, location.Id, eventId, GameStatus.Running);
             var cashgameId = _cashgameRepository.Add(bunch, cashgame);
 
             if (request.EventId > 0)

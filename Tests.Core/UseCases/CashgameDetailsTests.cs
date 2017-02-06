@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.Design;
 using Core.Entities;
 using Core.Exceptions;
 using Core.UseCases;
@@ -70,6 +71,7 @@ namespace Tests.Core.UseCases
             Deps.Cashgame,
             Deps.Player,
             Deps.User,
-            Deps.Location);
+            Deps.Location,
+            Deps.Event);
     }
 }

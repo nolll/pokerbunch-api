@@ -15,6 +15,7 @@ namespace Core.Entities
         public int Id { get; }
         public int BunchId { get; private set; }
         public int LocationId { get; private set; }
+        public int EventId { get; private set; }
         public GameStatus Status { get; private set; }
         public DateTime? StartTime { get; private set; }
         public DateTime? EndTime { get; private set; }
@@ -24,11 +25,12 @@ namespace Core.Entities
         public int AverageBuyin { get; private set; }
         public string DateString { get; private set; }
         
-        public Cashgame(int bunchId, int locationId, GameStatus status, int? id = null, IList<Checkpoint> checkpoints = null)
+        public Cashgame(int bunchId, int locationId, int eventId, GameStatus status, int? id = null, IList<Checkpoint> checkpoints = null)
         {
             Id = id ?? 0;
             BunchId = bunchId;
             LocationId = locationId;
+            EventId = eventId;
             Status = status;
             AddCheckpoints(checkpoints);
             AddedCheckpoints = new List<Checkpoint>();

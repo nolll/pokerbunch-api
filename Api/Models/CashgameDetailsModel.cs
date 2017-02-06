@@ -21,6 +21,8 @@ namespace Api.Models
         public CashgameDetailsBunchModel Bunch { get; set; }
         [DataMember(Name = "location")]
         public CashgameDetailsLocationModel Location { get; set; }
+        [DataMember(Name = "event")]
+        public CashgameDetailsEventModel Event { get; set; }
         [DataMember(Name = "players")]
         public IList<CashgameDetailsPlayerModel> Players { get; set; }
 
@@ -32,6 +34,7 @@ namespace Api.Models
             UpdatedTime = details.UpdatedTime;
             Bunch = new CashgameDetailsBunchModel(details);
             Location = new CashgameDetailsLocationModel(details);
+            Event = details.EventId != 0 ? new CashgameDetailsEventModel(details) : null;
             Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
         }
 
