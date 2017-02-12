@@ -154,6 +154,7 @@
     <Compile Include="Extensions\HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="Models\AppListModel.cs" />
     <Compile Include="Models\AppModel.cs" />
+    <Compile Include="Models\CashgameDeletedModel.cs" />
     <Compile Include="Models\CashgameDetailsBunchModel.cs" />
     <Compile Include="Models\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameDetailsEventModel.cs" />

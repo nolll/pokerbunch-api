@@ -62,6 +62,16 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
+        [Route(ApiRoutes.CashgameGet)]
+        [HttpDelete]
+        [ApiAuthorize]
+        public CashgameDeletedModel Delete(int id)
+        {
+            var deleteRequest = new DeleteCashgame.Request(CurrentUserName, id);
+            UseCase.DeleteCashgame.Execute(deleteRequest);
+            return new CashgameDeletedModel(id);
+        }
+
         public class UpdateCashgameObject
         {
             // ReSharper disable once InconsistentNaming
