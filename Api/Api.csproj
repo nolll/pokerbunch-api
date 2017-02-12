@@ -155,10 +155,10 @@
     <Compile Include="Models\AppListModel.cs" />
     <Compile Include="Models\AppModel.cs" />
     <Compile Include="Models\CashgameDeletedModel.cs" />
-    <Compile Include="Models\CashgameDetailsBunchModel.cs" />
+    <Compile Include="Models\CashgameBunchModel.cs" />
     <Compile Include="Models\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameDetailsEventModel.cs" />
-    <Compile Include="Models\CashgameDetailsLocationModel.cs" />
+    <Compile Include="Models\CashgameLocationModel.cs" />
     <Compile Include="Models\CashgameDetailsModel.cs" />
     <Compile Include="Models\CashgameDetailsPlayerModel.cs" />
     <Compile Include="Models\CashgameListItemModel.cs" />

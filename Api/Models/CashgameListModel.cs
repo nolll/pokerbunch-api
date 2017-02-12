@@ -5,12 +5,18 @@ using Core.UseCases;
 
 namespace Api.Models
 {
-    [CollectionDataContract(Namespace = "", Name = "cashgames", ItemName = "cashgame")]
-    public class CashgameListModel : List<CashgameListItemModel>
+    [DataContract(Namespace = "", Name = "cashgamelist")]
+    public class CashgameListModel
     {
+        [DataMember(Name = "bunch")]
+        public CashgameBunchModel Bunch { get; set; }
+        [DataMember(Name = "cashgames")]
+        public IList<CashgameListItemModel> Cashgames { get; set; } 
+
         public CashgameListModel(CashgameList.Result listResult)
         {
-            AddRange(listResult.Items.Select(o => new CashgameListItemModel(o)));
+            Bunch = new CashgameBunchModel(listResult);
+            Cashgames = listResult.Items.Select(o => new CashgameListItemModel(o)).ToList();
         }
 
         public CashgameListModel()

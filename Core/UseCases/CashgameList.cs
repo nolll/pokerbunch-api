@@ -34,8 +34,20 @@ namespace Core.UseCases
             cashgames = SortItems(cashgames, request.SortOrder).ToList();
             var locations = _locationRepository.List(bunch.Id);
             var items = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations)));
+            var role = user.IsAdmin ? Role.Manager : player.Role;
 
-            return new Result(request.Slug, items.ToList(), request.SortOrder, request.Year, bunch.Currency.Format, bunch.Currency.ThousandSeparator);
+            return new Result(
+                request.Slug,
+                items.ToList(),
+                request.SortOrder,
+                request.Year,
+                bunch.Currency.Format,
+                bunch.Currency.Symbol,
+                bunch.Currency.Layout,
+                bunch.Currency.ThousandSeparator,
+                bunch.Timezone.Id,
+                bunch.Currency.Culture.Name,
+                role);
         }
 
         private Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations)
@@ -78,15 +90,20 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<Item> Items { get; private set; }
-            public SortOrder SortOrder { get; private set; }
-            public string Slug { get; private set; }
-            public int? Year { get; private set; }
-            public bool ShowYear { get; private set; }
-            public string CurrencyFormat { get; private set; }
-            public string ThousandSeparator { get; private set; }
+            public IList<Item> Items { get; }
+            public SortOrder SortOrder { get; }
+            public string Slug { get; }
+            public int? Year { get; }
+            public bool ShowYear { get; }
+            public string CurrencyFormat { get; }
+            public string CurrencySymbol { get; }
+            public string CurrencyLayout { get; }
+            public string ThousandSeparator { get; }
+            public string Timezone { get; }
+            public string Culture { get; }
+            public Role Role { get; }
 
-            public Result(string slug, IList<Item> items, SortOrder sortOrder, int? year, string currencyFormat, string thousandSeparator)
+            public Result(string slug, IList<Item> items, SortOrder sortOrder, int? year, string currencyFormat, string currencySymbol, string currencyLayout, string thousandSeparator, string timezone, string culture, Role role)
             {
                 Slug = slug;
                 Items = items;
@@ -94,21 +111,26 @@ namespace Core.UseCases
                 Year = year;
                 ShowYear = year.HasValue;
                 CurrencyFormat = currencyFormat;
+                CurrencySymbol = currencySymbol;
+                CurrencyLayout = currencyLayout;
                 ThousandSeparator = thousandSeparator;
+                Timezone = timezone;
+                Culture = culture;
+                Role = role;
             }
         }
 
         public class Item
         {
-            public string Location { get; private set; }
-            public int CashgameId { get; private set; }
-            public Time Duration { get; private set; }
-            public Date Date { get; private set; }
+            public string Location { get; }
+            public int CashgameId { get; }
+            public Time Duration { get; }
+            public Date Date { get; }
             public DateTime StartTime { get; }
             public DateTime EndTime { get; }
-            public Money Turnover { get; private set; }
-            public Money AverageBuyin { get; private set; }
-            public int PlayerCount { get; private set; }
+            public Money Turnover { get; }
+            public Money AverageBuyin { get; }
+            public int PlayerCount { get; }
             public IList<ItemPlayer> Players { get; }
 
         public Item(Bunch bunch, Cashgame cashgame, Location location)
