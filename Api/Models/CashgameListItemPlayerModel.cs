@@ -9,22 +9,22 @@ namespace Api.Models
     {
         [DataMember(Name = "id")]
         public string Id { get; set; }
-        [DataMember(Name = "buyinTime")]
-        public DateTime BuyinTime { get; set; }
+        [DataMember(Name = "startTime")]
+        public DateTime StartTime { get; set; }
         [DataMember(Name = "updatedTime")]
         public DateTime UpdatedTime { get; set; }
         [DataMember(Name = "buyin")]
         public int Buyin { get; set; }
-        [DataMember(Name = "cashout")]
-        public int Cashout { get; set; }
+        [DataMember(Name = "stack")]
+        public int Stack { get; set; }
 
         public CashgameListItemPlayerModel(CashgameList.ItemPlayer item)
         {
             Id = item.Id.ToString();
-            BuyinTime = item.BuyinTime;
+            StartTime = item.BuyinTime;
             UpdatedTime = item.UpdatedTime;
             Buyin = item.Buyin;
-            Cashout = item.Cashout;
+            Stack = item.Stack;
         }
 
         public CashgameListItemPlayerModel()

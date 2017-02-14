@@ -13,8 +13,8 @@ namespace Api.Models
         public string Id { get; set; }
         [DataMember(Name = "startTime")]
         public DateTime StartTime { get; set; }
-        [DataMember(Name = "endTime")]
-        public DateTime EndTime { get; set; }
+        [DataMember(Name = "updatedTime")]
+        public DateTime UpdatedTime { get; set; }
         [DataMember(Name = "location")]
         public CashgameLocationModel Location { get; set; }
         [DataMember(Name = "players")]
@@ -24,7 +24,7 @@ namespace Api.Models
         {
             Id = item.CashgameId.ToString();
             StartTime = item.StartTime;
-            EndTime = item.EndTime;
+            UpdatedTime = item.EndTime;
             Location = new CashgameLocationModel(item);
             Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
         }

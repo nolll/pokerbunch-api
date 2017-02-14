@@ -156,7 +156,7 @@ namespace Core.UseCases
             public DateTime BuyinTime { get; }
             public DateTime UpdatedTime { get; }
             public int Buyin { get; }
-            public int Cashout { get; }
+            public int Stack { get; }
 
             public ItemPlayer(CashgameResult result)
             {
@@ -164,7 +164,7 @@ namespace Core.UseCases
                 BuyinTime = result.BuyinTime ?? DateTime.MinValue;
                 UpdatedTime = result.LastReportTime;
                 Buyin = result.Buyin;
-                Cashout = result.Stack;
+                Stack = result.Stack;
             }
         }
 
