@@ -122,7 +122,8 @@ namespace Core.UseCases
 
         public class Item
         {
-            public string Location { get; }
+            public int LocationId { get; }
+            public string LocationName { get; }
             public int CashgameId { get; }
             public Time Duration { get; }
             public Date Date { get; }
@@ -133,9 +134,10 @@ namespace Core.UseCases
             public int PlayerCount { get; }
             public IList<ItemPlayer> Players { get; }
 
-        public Item(Bunch bunch, Cashgame cashgame, Location location)
+            public Item(Bunch bunch, Cashgame cashgame, Location location)
             {
-                Location = location.Name;
+                LocationId = location.Id;
+                LocationName = location.Name;
                 CashgameId = cashgame.Id;
                 Duration = Time.FromMinutes(cashgame.Duration);
                 Date = cashgame.StartTime.HasValue ? new Date(cashgame.StartTime.Value) : new Date(DateTime.MinValue);

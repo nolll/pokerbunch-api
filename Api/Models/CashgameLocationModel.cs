@@ -12,9 +12,24 @@ namespace Api.Models
         public string Name { get; set; }
 
         public CashgameLocationModel(CashgameDetails.Result details)
+            : this(details.LocationId, details.LocationName)
         {
-            Id = details.LocationId.ToString();
-            Name = details.LocationName;
+        }
+
+        public CashgameLocationModel(CashgameList.Item item)
+            : this(item.LocationId, item.LocationName)
+        {
+        }
+
+        public CashgameLocationModel(int id, string name)
+            : this(id.ToString(), name)
+        {
+        }
+
+        public CashgameLocationModel(string id, string name)
+        {
+            Id = id;
+            Name = name;
         }
 
         public CashgameLocationModel()

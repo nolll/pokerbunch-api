@@ -15,6 +15,8 @@ namespace Api.Models
         public DateTime StartTime { get; set; }
         [DataMember(Name = "endTime")]
         public DateTime EndTime { get; set; }
+        [DataMember(Name = "location")]
+        public CashgameLocationModel Location { get; set; }
         [DataMember(Name = "players")]
         public IList<CashgameListItemPlayerModel> Players { get; set; }
 
@@ -23,6 +25,7 @@ namespace Api.Models
             Id = item.CashgameId.ToString();
             StartTime = item.StartTime;
             EndTime = item.EndTime;
+            Location = new CashgameLocationModel(item);
             Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
         }
 
