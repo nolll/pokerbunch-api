@@ -164,6 +164,7 @@
     <Compile Include="Models\CashgameListItemModel.cs" />
     <Compile Include="Models\CashgameListItemPlayerModel.cs" />
     <Compile Include="Models\CashgameListModel.cs" />
+    <Compile Include="Models\CurrentCashgameListModel.cs" />
     <Compile Include="Models\EventListModel.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\LocationListModel.cs" />

@@ -33,11 +33,14 @@ namespace Api.Models
     [DataContract(Namespace = "", Name = "game")]
     public class ApiCurrentGame
     {
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
         [DataMember(Name = "url")]
         public string Url { get; set; }
 
         public ApiCurrentGame(CurrentCashgames.Game game)
         {
+            Id = game.Id.ToString();
             Url = new ApiCashgameUrl(game.Id).GetAbsolute();
         }
     }

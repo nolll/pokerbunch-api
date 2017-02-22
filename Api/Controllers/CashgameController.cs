@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Web.Http;
 using Api.Auth;
 using Api.Models;
@@ -24,11 +23,10 @@ namespace Api.Controllers
         [Route(ApiRoutes.CurrentGames)]
         [HttpGet]
         [ApiAuthorize]
-        public IHttpActionResult Current(string slug)
+        public CurrentCashgameListModel Current(string slug)
         {
             var currentGamesResult = UseCase.CurrentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, slug));
-            var items = currentGamesResult.Games.Select(o => new ApiCurrentGame(o)).ToList();
-            return Ok(items);
+            return new CurrentCashgameListModel(currentGamesResult);
         }
 
         [Route(ApiRoutes.CashgameList)]
