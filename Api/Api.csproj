@@ -158,7 +158,7 @@
     <Compile Include="Models\CashgameBunchModel.cs" />
     <Compile Include="Models\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameDetailsEventModel.cs" />
-    <Compile Include="Models\CashgameLocationModel.cs" />
+    <Compile Include="Models\SmallLocationModel.cs" />
     <Compile Include="Models\CashgameDetailsModel.cs" />
     <Compile Include="Models\CashgameDetailsPlayerModel.cs" />
     <Compile Include="Models\CashgameListItemModel.cs" />

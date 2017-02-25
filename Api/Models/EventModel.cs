@@ -8,28 +8,19 @@ namespace Api.Models
     {
         [DataMember(Name = "id")]
         public int Id { get; set; }
+        [DataMember(Name = "bunchId")]
+        public string BunchId { get; set; }
         [DataMember(Name = "name")]
         public string Name { get; set; }
+        [DataMember(Name = "location")]
+        public SmallLocationModel Location { get; set; }
 
         public EventModel(EventList.Event e)
-            : this(e.EventId, e.Name)
         {
-        }
-
-        //public EventModel(GetLocation.Result location)
-        //    : this(location.Id, location.Name, location.Slug)
-        //{
-        //}
-
-        //public EventModel(AddLocation.Result location)
-        //    : this(location.Id, location.Name, location.Slug)
-        //{
-        //}
-
-        private EventModel(int id, string name)
-        {
-            Id = id;
-            Name = name;
+            Id = e.EventId;
+            BunchId = e.BunchId;
+            Name = e.Name;
+            Location = new SmallLocationModel(e);
         }
 
         public EventModel()

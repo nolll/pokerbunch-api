@@ -20,7 +20,7 @@ namespace Api.Models
         [DataMember(Name = "bunch")]
         public CashgameBunchModel Bunch { get; set; }
         [DataMember(Name = "location")]
-        public CashgameLocationModel Location { get; set; }
+        public SmallLocationModel Location { get; set; }
         [DataMember(Name = "event")]
         public CashgameDetailsEventModel Event { get; set; }
         [DataMember(Name = "players")]
@@ -33,7 +33,7 @@ namespace Api.Models
             StartTime = details.StartTime;
             UpdatedTime = details.UpdatedTime;
             Bunch = new CashgameBunchModel(details);
-            Location = new CashgameLocationModel(details);
+            Location = new SmallLocationModel(details);
             Event = details.EventId != 0 ? new CashgameDetailsEventModel(details) : null;
             Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
         }

@@ -33,18 +33,19 @@ namespace Core.UseCases
             var locationIds = events.Select(o => o.LocationId).Distinct().ToList();
             var locations = _locationRepository.List(locationIds);
 
-            var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations)).ToList();
+            var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
 
             return new Result(eventItems);
         }
 
-        private static Event CreateEventItem(Entities.Event e, IList<Location> locations)
+        private static Event CreateEventItem(Entities.Event e, IList<Location> locations, string slug)
         {
             var location = locations.FirstOrDefault(o => o.Id == e.LocationId);
             var locationName = location != null ? location.Name : "";
+            var locationId = location?.Id ?? 0;
             if(e.HasGames)
-                return new Event(e.Id, e.Name, locationName, e.StartDate, e.EndDate);
-            return new Event(e.Id, e.Name);
+                return new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate, e.EndDate);
+            return new Event(e.Id, slug, e.Name);
         }
 
         public class Request
@@ -71,24 +72,28 @@ namespace Core.UseCases
 
         public class Event
         {
-            public int EventId { get; private set; }
-            public string Name { get; private set; }
-            public string Location { get; private set; }
-            public Date StartDate { get; private set; }
-            public Date EndDate { get; private set; }
-            public bool HasGames { get; private set; }
+            public int EventId { get; }
+            public string BunchId { get; }
+            public string Name { get; }
+            public int LocationId { get; }
+            public string LocationName { get; }
+            public Date StartDate { get; }
+            public Date EndDate { get; }
+            public bool HasGames { get; }
 
-            public Event(int id, string name)
+            public Event(int id, string bunchId, string name)
             {
                 EventId = id;
+                BunchId = bunchId;
                 Name = name;
                 HasGames = false;
             }
             
-            public Event(int id, string name, string location, Date startDate, Date endDate)
-                : this(id, name)
+            public Event(int id, string bunchId, string name, int locationId, string locationName, Date startDate, Date endDate)
+                : this(id, bunchId, name)
             {
-                Location = location;
+                LocationId = locationId;
+                LocationName = locationName;
                 StartDate = startDate;
                 EndDate = endDate;
                 HasGames = true;
