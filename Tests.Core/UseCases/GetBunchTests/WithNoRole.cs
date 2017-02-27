@@ -5,10 +5,12 @@ namespace Tests.Core.UseCases.GetBunchTests
 {
     public class WithNoRole : Arrange
     {
+        protected override bool ExecuteAutomatically => false;
+
         [Test]
         public void AccessDenied()
         {
-            Assert.Throws<AccessDeniedException>(() => Sut.Execute(Request));
+            Assert.Throws<AccessDeniedException>(Execute);
         }
     }
 }

@@ -5,11 +5,10 @@ using Core.Entities.Checkpoints;
 using Core.Repositories;
 using Core.UseCases;
 using Moq;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.CashoutTests
 {
-    public abstract class Arrange
+    public abstract class Arrange : UseCaseTest<Cashout>
     {
         private const int BunchId = 1;
         private const int CashgameId = 2;
@@ -26,31 +25,28 @@ namespace Tests.Core.UseCases.CashoutTests
 
         protected int CheckpointCountBeforeCashout;
         protected Cashgame UpdatedCashgame;
-        protected Cashout Sut;
 
-        [SetUp]
-        public void Setup()
+        protected override void Setup()
         {
+            var bunch = new Bunch(BunchId, Slug);
             var cashgame = CreateCashgame();
+            var player = new Player(BunchId, PlayerId, UserId);
+            var user = new User(UserId, UserName);
+
             CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
+            UpdatedCashgame = null;
 
-            var bsm = new Mock<IBunchRepository>();
-            bsm.Setup(s => s.GetBySlug(Slug)).Returns(new Bunch(BunchId, Slug));
-
-            var crm = new Mock<ICashgameRepository>();
-            crm.Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
-            crm.Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
-
-            var prm = new Mock<IPlayerRepository>();
-            prm.Setup(s => s.Get(BunchId, UserId)).Returns(new Player(BunchId, PlayerId, UserId));
-
-            var urm = new Mock<IUserRepository>();
-            urm.Setup(s => s.Get(UserName)).Returns(new User(UserId, UserName));
-            
-            Sut = new Cashout(bsm.Object, crm.Object, prm.Object, urm.Object);
+            Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(bunch);
+            Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
+            Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
+            Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
+            Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(user);
         }
 
-        protected Cashout.Request Request => new Cashout.Request(UserName, Slug, PlayerId, CashoutStack, CashoutTime);
+        protected override void Execute()
+        {
+            Sut.Execute(new Cashout.Request(UserName, Slug, PlayerId, CashoutStack, CashoutTime));
+        }
 
         private Cashgame CreateCashgame()
         {

@@ -1,15 +1,13 @@
 ﻿using Core.Entities;
 using Core.Repositories;
 using Core.UseCases;
-using Moq;
-using NUnit.Framework;
 using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.CurrentCashgamesTests
 {
-    public abstract class Arrange
+    public abstract class Arrange : UseCaseTest<CurrentCashgames>
     {
-        protected CurrentCashgames Sut;
+        protected CurrentCashgames.Result Result;
 
         private const string UserName = "default-current-user";
         private const int UserId = 1;
@@ -19,25 +17,22 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests
         protected virtual Role Role => Role.Guest;
         protected virtual int GameCount => 0;
 
-        [SetUp]
-        public void Setup()
+        protected override void Setup()
         {
-            var urm = new Mock<IUserRepository>();
-            urm.Setup(s => s.Get(UserName)).Returns(new UserInTest(id: UserId));
+            var user = new UserInTest(id: UserId);
+            var bunch = new BunchInTest(id: BunchId, slug: Slug);
+            var player = new PlayerInTest(role: Role);
+            var cashgame = GameCount > 0 ? new CashgameInTest(id: CashgameId) : null;
 
-            var bsm = new Mock<IBunchRepository>();
-            bsm.Setup(s => s.GetBySlug(Slug)).Returns(new BunchInTest(id: BunchId, slug: Slug));
-
-            var crm = new Mock<ICashgameRepository>();
-            if(GameCount > 0)
-                crm.Setup(s => s.GetRunning(BunchId)).Returns(new CashgameInTest(id: CashgameId));
-
-            var prm = new Mock<IPlayerRepository>();
-            prm.Setup(s => s.Get(BunchId, UserId)).Returns(new PlayerInTest(role: Role));
-            
-            Sut = new CurrentCashgames(urm.Object, bsm.Object, crm.Object, prm.Object);
+            Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(user);
+            Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(bunch);
+            Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
+            Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(cashgame);
         }
 
-        protected CurrentCashgames.Request Request => new CurrentCashgames.Request(UserName, Slug);
+        protected override void Execute()
+        {
+            Result = Sut.Execute(new CurrentCashgames.Request(UserName, Slug));
+        }
     }
 }

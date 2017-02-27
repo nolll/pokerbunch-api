@@ -8,31 +8,15 @@ namespace Tests.Core.UseCases.GetBunchTests
         protected override Role Role => Role.Player;
 
         [Test]
-        public void BunchNameIsSet()
-        {
-            var result = Sut.Execute(Request);
-            Assert.AreEqual(DisplayName, result.Name);
-        }
+        public void BunchNameIsSet() => Assert.AreEqual(DisplayName, Result.Name);
 
         [Test]
-        public void DescriptionIsSet()
-        {
-            var result = Sut.Execute(Request);
-            Assert.AreEqual(Description, result.Description);
-        }
+        public void DescriptionIsSet() => Assert.AreEqual(Description, Result.Description);
 
         [Test]
-        public void HouseRulesIsSet()
-        {
-            var result = Sut.Execute(Request);
-            Assert.AreEqual(HouseRules, result.HouseRules);
-        }
+        public void HouseRulesIsSet() => Assert.AreEqual(HouseRules, Result.HouseRules);
 
         [Test]
-        public void CanEditIsFalse()
-        {
-            var result = Sut.Execute(Request);
-            Assert.AreEqual(Role.Player, result.Role);
-        }
+        public void CanEditIsFalse() => Assert.AreEqual(Role.Player, Result.Role);
     }
 }

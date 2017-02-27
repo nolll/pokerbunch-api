@@ -1,13 +1,13 @@
 ﻿using Core.Entities;
 using Core.Repositories;
 using Core.UseCases;
-using Moq;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.UserDetailsTests
 {
-    public class Arrange
+    public abstract class Arrange : UseCaseTest<UserDetails>
     {
+        protected UserDetails.Result Result;
+
         private const int CurrentUserId = 1;
         private const int ViewUserId = 2;
         private string _currentUserName = "currentusername";
@@ -17,26 +17,24 @@ namespace Tests.Core.UseCases.UserDetailsTests
         protected const string Email = "email";
         protected virtual Role Role => Role.Player;
         protected virtual bool ViewingOwnUser => false; 
-        protected UserDetails Sut;
-
-        [SetUp]
-        public void Setup()
+        
+        protected override void Setup()
         {
-            var urm = new Mock<IUserRepository>();
             if (ViewingOwnUser)
             {
-                urm.Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+                Mock<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
                 _currentUserName = ViewUserName;
             }
             else
             {
-                urm.Setup(s => s.Get(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
-                urm.Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+                Mock<IUserRepository>().Setup(s => s.Get(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
+                Mock<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
             }
-
-            Sut = new UserDetails(urm.Object);
         }
 
-        protected UserDetails.Request Request => new UserDetails.Request(_currentUserName, ViewUserName);
+        protected override void Execute()
+        {
+            Result = Sut.Execute(new UserDetails.Request(_currentUserName, ViewUserName));
+        }
     }
 }

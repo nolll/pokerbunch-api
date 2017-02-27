@@ -8,10 +8,6 @@ namespace Tests.Core.UseCases.UserDetailsTests
         protected override Role Role => Role.Admin;
 
         [Test]
-        public void CanEditIsTrue()
-        {
-            var result = Sut.Execute(Request);
-            Assert.IsTrue(result.CanEdit);
-        }
+        public void CanEditIsTrue() => Assert.IsTrue(Result.CanEdit);
     }
 }

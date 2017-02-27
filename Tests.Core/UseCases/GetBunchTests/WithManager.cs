@@ -8,10 +8,6 @@ namespace Tests.Core.UseCases.GetBunchTests
         protected override Role Role => Role.Manager;
 
         [Test]
-        public void RoleIsManager()
-        {
-            var result = Sut.Execute(Request);
-            Assert.AreEqual(Role.Manager, result.Role);
-        }
+        public void RoleIsManager() => Assert.AreEqual(Role.Manager, Result.Role);
     }
 }
