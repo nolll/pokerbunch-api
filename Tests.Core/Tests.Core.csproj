@@ -46,6 +46,9 @@
   <ItemGroup>
     <Compile Include="..\GlobalAssemblyInfo.cs" />
     <Compile Include="Mocker.cs" />
+    <Compile Include="UseCases\TestEmailTests\WithAdmin.cs" />
+    <Compile Include="UseCases\TestEmailTests\Arrange.cs" />
+    <Compile Include="UseCases\TestEmailTests\WithPlayer.cs" />
     <Compile Include="UseCaseTest.cs" />
     <Compile Include="DateTests.cs" />
     <Compile Include="Entities\MoneyTests\Arrange.cs" />
@@ -113,7 +116,6 @@
     <Compile Include="UseCases\PlayerFactsTests.cs" />
     <Compile Include="UseCases\PlayerListTests.cs" />
     <Compile Include="UseCases\CashgameDetailsTests.cs" />
-    <Compile Include="UseCases\TestEmailTests.cs" />
     <Compile Include="UseCases\TopListTests.cs" />
     <Compile Include="UseCases\UserDetailsTests\Arrange.cs" />
     <Compile Include="UseCases\UserDetailsTests\OtherUserAsAdmin.cs" />
