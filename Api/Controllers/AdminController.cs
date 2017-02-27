@@ -19,7 +19,7 @@ namespace Api.Controllers
         [Route(WebRoutes.Admin.ClearCache)]
         public CacheClearedModel ClearCache()
         {
-            var result = UseCase.ClearCache.Execute();
+            var result = UseCase.ClearCache.Execute(new ClearCache.Request(CurrentUserName));
             return new CacheClearedModel(result.ClearCount);
         }
     }

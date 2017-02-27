@@ -18,7 +18,7 @@ namespace Plumbing
 
         // Admin
         public TestEmail TestEmail => new TestEmail(_deps.MessageSender, _deps.UserRepository);
-        public ClearCache ClearCache => new ClearCache(_deps.Cache);
+        public ClearCache ClearCache => new ClearCache(_deps.Cache, _deps.UserRepository);
 
         // User
         public UserDetails UserDetails => new UserDetails(_deps.UserRepository);
