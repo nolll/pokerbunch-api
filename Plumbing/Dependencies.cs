@@ -12,7 +12,7 @@ namespace Plumbing
     {
         private readonly string _connectionString;
 
-        private ICacheContainer _cacheContainer;
+        private ICacheContainer _cache;
         private SqlServerStorageProvider _db;
 
         private IAppRepository _appRepository;
@@ -31,7 +31,7 @@ namespace Plumbing
         }
 
         private SqlServerStorageProvider Db => _db ?? (_db = new SqlServerStorageProvider(_connectionString));
-        private ICacheContainer Cache => _cacheContainer ?? (_cacheContainer = new CacheContainer(new AspNetCacheProvider()));
+        public ICacheContainer Cache => _cache ?? (_cache = new CacheContainer(new AspNetCacheProvider()));
 
         public IAppRepository AppRepository => _appRepository ?? (_appRepository = new AppRepository(Db, Cache));
         public IBunchRepository BunchRepository => _bunchRepository ?? (_bunchRepository = new BunchRepository(Db, Cache));

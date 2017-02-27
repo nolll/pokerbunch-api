@@ -128,6 +128,7 @@
     </Compile>
     <Compile Include="Auth\ApiAuthorizeAttribute.cs" />
     <Compile Include="Auth\SimpleAuthorizationServerProvider.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\EventController.cs" />
@@ -154,10 +155,12 @@
     <Compile Include="Extensions\HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="Models\AppListModel.cs" />
     <Compile Include="Models\AppModel.cs" />
+    <Compile Include="Models\CacheClearedModel.cs" />
     <Compile Include="Models\CashgameDeletedModel.cs" />
     <Compile Include="Models\CashgameBunchModel.cs" />
     <Compile Include="Models\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameDetailsEventModel.cs" />
+    <Compile Include="Models\EmailSentModel.cs" />
     <Compile Include="Models\SmallLocationModel.cs" />
     <Compile Include="Models\CashgameDetailsModel.cs" />
     <Compile Include="Models\CashgameDetailsPlayerModel.cs" />

@@ -1,6 +1,7 @@
 packages
 *.ncrunchproject
 *.ncrunchsolution.user
+**/NcrunchTemp/
 _NCrunch_*/
 .vs/
 *.suo
