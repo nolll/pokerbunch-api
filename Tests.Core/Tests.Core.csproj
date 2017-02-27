@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\GlobalAssemblyInfo.cs" />
-    <Compile Include="DependencyMocker.cs" />
+    <Compile Include="Mocker.cs" />
     <Compile Include="UseCaseTest.cs" />
     <Compile Include="DateTests.cs" />
     <Compile Include="Entities\MoneyTests\Arrange.cs" />

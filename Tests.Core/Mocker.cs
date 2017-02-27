@@ -6,7 +6,7 @@ using Moq;
 
 namespace Tests.Core
 {
-    public class DependencyMocker
+    public class Mocker
     {
         readonly Dictionary<Type, Mock> _mocks = new Dictionary<Type, Mock>();
 
