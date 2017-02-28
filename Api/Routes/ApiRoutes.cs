@@ -37,5 +37,11 @@ namespace Api.Routes
         public const string Cashout = "cashgame/cashout/{slug}";
 
         public const string CashgameGet = "cashgames/{id}";
+
+        public static class Admin
+        {
+            public const string SendEmail = "admin/sendemail";
+            public const string ClearCache = "admin/clearcache";
+        }
     }
 }

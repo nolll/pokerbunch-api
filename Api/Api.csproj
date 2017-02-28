@@ -226,7 +226,6 @@
     <Compile Include="Urls\SiteUrls\ChangePasswordConfirmationUrl.cs" />
     <Compile Include="Urls\SiteUrls\ChangePasswordUrl.cs" />
     <Compile Include="Urls\SiteUrls\ChartUrl.cs" />
-    <Compile Include="Urls\SiteUrls\ClearCacheUrl.cs" />
     <Compile Include="Urls\SiteUrls\DashboardCashgameUrl.cs" />
     <Compile Include="Urls\SiteUrls\DeleteCashgameUrl.cs" />
     <Compile Include="Urls\SiteUrls\DeleteCheckpointUrl.cs" />
@@ -263,7 +262,6 @@
     <Compile Include="Urls\SiteUrls\RunningCashgameUrl.cs" />
     <Compile Include="Urls\SiteUrls\SiteUrl.cs" />
     <Compile Include="Urls\SiteUrls\SlugUrl.cs" />
-    <Compile Include="Urls\SiteUrls\TestEmailUrl.cs" />
     <Compile Include="Urls\SiteUrls\TopListUrl.cs" />
     <Compile Include="Urls\SiteUrls\UserAppsUrl.cs" />
     <Compile Include="Urls\SiteUrls\UserDetailsUrl.cs" />

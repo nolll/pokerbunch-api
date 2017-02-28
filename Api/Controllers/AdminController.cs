@@ -8,7 +8,7 @@ namespace Api.Controllers
     public class AdminController : BaseApiController
     {
         [Authorize]
-        [Route(WebRoutes.Admin.SendEmail)]
+        [Route(ApiRoutes.Admin.SendEmail)]
         public EmailSentModel SendEmail()
         {
             var result = UseCase.TestEmail.Execute(new TestEmail.Request(CurrentUserName));
@@ -16,7 +16,7 @@ namespace Api.Controllers
         }
 
         [Authorize]
-        [Route(WebRoutes.Admin.ClearCache)]
+        [Route(ApiRoutes.Admin.ClearCache)]
         public CacheClearedModel ClearCache()
         {
             var result = UseCase.ClearCache.Execute(new ClearCache.Request(CurrentUserName));

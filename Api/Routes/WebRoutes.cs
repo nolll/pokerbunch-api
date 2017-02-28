@@ -107,19 +107,5 @@ namespace Api.Routes
             public const string Add = "apps/add";
             public const string AddConfirmation = "apps/added";
         }
-
-        public static class Admin
-        {
-            public const string SendEmail = "admin/sendemail";
-            public const string ClearCache = "admin/clearcache";
-        }
-
-        public static class Error
-        {
-            public const string NotFound = "error/notfound";
-            public const string Unauthorized = "error/unauthorized";
-            public const string Forbidden = "error/forbidden";
-            public const string Other = "error/servererror";
-        }
     }
 }
