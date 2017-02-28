@@ -10,7 +10,7 @@ namespace Api.Controllers
     [UsedImplicitly]
     public abstract class BaseApiController : ApiController
     {
-        private readonly Bootstrapper _bootstrapper = new Bootstrapper(Settings.ConnectionString);
+        private readonly Bootstrapper _bootstrapper = new Bootstrapper(Settings.ConnectionString, Settings.SmtpHost, Settings.SmtpUserName, Settings.SmtpPassword);
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;
 
         protected string CurrentUserName

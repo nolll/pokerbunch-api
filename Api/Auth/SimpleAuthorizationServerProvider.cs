@@ -53,6 +53,6 @@ namespace Api.Auth
             }
         }
 
-        private UseCaseContainer UseCase => new Bootstrapper(Settings.ConnectionString).UseCases;
+        private UseCaseContainer UseCase => new Bootstrapper(Settings.ConnectionString, Settings.SmtpHost, Settings.SmtpUserName, Settings.SmtpPassword).UseCases;
     }
 }

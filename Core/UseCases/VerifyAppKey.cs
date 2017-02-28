@@ -42,18 +42,12 @@ namespace Core.UseCases
 
         private class ValidResult : Result
         {
-            public override bool IsValid
-            {
-                get { return true; }
-            }
+            public override bool IsValid => true;
         }
 
         private class InvalidResult : Result
         {
-            public override bool IsValid
-            {
-                get { return false; }
-            }
+            public override bool IsValid => false;
         }
     }
 }

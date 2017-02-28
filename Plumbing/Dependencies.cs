@@ -11,6 +11,9 @@ namespace Plumbing
     public class Dependencies
     {
         private readonly string _connectionString;
+        private readonly string _smtpHost;
+        private readonly string _smtpUserName;
+        private readonly string _smtpPassword;
 
         private ICacheContainer _cache;
         private SqlServerStorageProvider _db;
@@ -25,9 +28,12 @@ namespace Plumbing
         private IRandomizer _randomizer;
         private IMessageSender _messageSender;
                 
-        public Dependencies(string connectionString)
+        public Dependencies(string connectionString, string smtpHost, string smtpUserName, string smtpPassword)
         {
             _connectionString = connectionString;
+            _smtpHost = smtpHost;
+            _smtpUserName = smtpUserName;
+            _smtpPassword = smtpPassword;
         }
 
         private SqlServerStorageProvider Db => _db ?? (_db = new SqlServerStorageProvider(_connectionString));
@@ -41,6 +47,6 @@ namespace Plumbing
         public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(Db, Cache));
         public IUserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(Db, Cache));
         public IRandomizer Randomizer => _randomizer ?? (_randomizer = new Randomizer());
-        public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender());
+        public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender(_smtpHost, _smtpUserName, _smtpPassword));
     }
 }
