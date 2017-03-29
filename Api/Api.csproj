@@ -132,7 +132,6 @@
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\EventController.cs" />
-    <Compile Include="Controllers\HttpVerb.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\BunchController.cs" />
     <Compile Include="Controllers\CashgameController.cs" />
@@ -174,7 +173,6 @@
     <Compile Include="Models\LocationModel.cs" />
     <Compile Include="Models\BunchModel.cs" />
     <Compile Include="Models\BunchListModel.cs" />
-    <Compile Include="Models\ApiCashgameTopList.cs" />
     <Compile Include="Models\ApiCashgameTopListItem.cs" />
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\PlayerListModel.cs" />

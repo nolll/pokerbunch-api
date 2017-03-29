@@ -111,7 +111,6 @@
     <Compile Include="UseCases\PlayerDetailsTests.cs" />
     <Compile Include="UseCases\PlayerListTests.cs" />
     <Compile Include="UseCases\CashgameDetailsTests.cs" />
-    <Compile Include="UseCases\TopListTests.cs" />
     <Compile Include="UseCases\UserDetailsTests\Arrange.cs" />
     <Compile Include="UseCases\UserDetailsTests\OtherUserAsAdmin.cs" />
     <Compile Include="UseCases\UserDetailsTests\OtherUser.cs" />

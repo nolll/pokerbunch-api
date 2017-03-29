@@ -38,7 +38,6 @@ namespace Plumbing
         public AddLocation AddLocation => new AddLocation(_deps.BunchRepository, _deps.PlayerRepository, _deps.UserRepository, _deps.LocationRepository);
 
         // Cashgame
-        public TopList TopList => new TopList(_deps.BunchRepository, _deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository);
         public CashgameList CashgameList => new CashgameList(_deps.BunchRepository, _deps.CashgameRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository);
         public CurrentCashgames CurrentCashgames => new CurrentCashgames(_deps.UserRepository, _deps.BunchRepository, _deps.CashgameRepository, _deps.PlayerRepository);
         public CashgameDetails CashgameDetails => new CashgameDetails(_deps.BunchRepository, _deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository, _deps.LocationRepository, _deps.EventRepository);

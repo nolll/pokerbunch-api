@@ -11,15 +11,6 @@ namespace Api.Controllers
 {
     public class CashgameController : BaseApiController
     {
-        [Route("cashgame/toplist/{slug}/{year?}")]
-        [HttpGet]
-        [ApiAuthorize]
-        public ApiCashgameTopList TopListAction(string slug, int? year = null)
-        {
-            var topListResult = UseCase.TopList.Execute(new TopList.Request(CurrentUserName, slug, year));
-            return new ApiCashgameTopList(topListResult);
-        }
-
         [Route(ApiRoutes.CurrentGames)]
         [HttpGet]
         [ApiAuthorize]
@@ -29,7 +20,7 @@ namespace Api.Controllers
             return new CurrentCashgameListModel(currentGamesResult);
         }
 
-        [Route(ApiRoutes.CashgameList)]
+        [Route(ApiRoutes.Cashgames)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug, int? year = null)
@@ -38,7 +29,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiRoutes.CashgameGet)]
+        [Route(ApiRoutes.CashgameItem)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameDetailsModel Get(int id)
@@ -48,7 +39,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiRoutes.CashgameGet)]
+        [Route(ApiRoutes.CashgameItem)]
         [HttpPut]
         [ApiAuthorize]
         public CashgameDetailsModel Update(int id, [FromBody] UpdateCashgameObject c)
@@ -60,7 +51,19 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiRoutes.CashgameGet)]
+        [Route(ApiRoutes.Cashgames)]
+        [HttpPost]
+        [ApiAuthorize]
+        public CashgameDetailsModel Add(int id, [FromBody] UpdateCashgameObject c)
+        {
+            var listRequest = new EditCashgame.Request(CurrentUserName, id, c.locationid, c.eventid);
+            UseCase.EditCashgame.Execute(listRequest);
+            var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
+            return new CashgameDetailsModel(detailsResult);
+        }
+
+        [Route(ApiRoutes.CashgameItem)]
         [HttpDelete]
         [ApiAuthorize]
         public CashgameDeletedModel Delete(int id)
@@ -68,14 +71,6 @@ namespace Api.Controllers
             var deleteRequest = new DeleteCashgame.Request(CurrentUserName, id);
             UseCase.DeleteCashgame.Execute(deleteRequest);
             return new CashgameDeletedModel(id);
-        }
-
-        public class UpdateCashgameObject
-        {
-            // ReSharper disable once InconsistentNaming
-            public int locationid { get; [UsedImplicitly] set; }
-            // ReSharper disable once InconsistentNaming
-            public int eventid { get; [UsedImplicitly] set; }
         }
 
         [Route(ApiRoutes.Buyin)]
@@ -94,16 +89,6 @@ namespace Api.Controllers
             }
         }
 
-        public class BuyinObject
-        {
-            // ReSharper disable once InconsistentNaming
-            public int playerid { get; [UsedImplicitly] set; }
-            // ReSharper disable once InconsistentNaming
-            public int amount { get; [UsedImplicitly] set; }
-            // ReSharper disable once InconsistentNaming
-            public int stack { get; [UsedImplicitly] set; }
-        }
-
         [Route(ApiRoutes.Report)]
         [HttpPost]
         [ApiAuthorize]
@@ -120,14 +105,6 @@ namespace Api.Controllers
             }
         }
 
-        public class ReportObject
-        {
-            // ReSharper disable once InconsistentNaming
-            public int playerid { get; [UsedImplicitly] set; }
-            // ReSharper disable once InconsistentNaming
-            public int stack { get; [UsedImplicitly] set; }
-        }
-
         [Route(ApiRoutes.Cashout)]
         [HttpPost]
         [ApiAuthorize]
@@ -142,6 +119,40 @@ namespace Api.Controllers
             {
                 return InternalServerError();
             }
+        }
+
+        public class UpdateCashgameObject
+        {
+            // ReSharper disable once InconsistentNaming
+            public int locationid { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public int eventid { get; [UsedImplicitly] set; }
+        }
+
+        public class AddCashgameObject
+        {
+            // ReSharper disable once InconsistentNaming
+            public int locationid { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public int eventid { get; [UsedImplicitly] set; }
+        }
+
+        public class BuyinObject
+        {
+            // ReSharper disable once InconsistentNaming
+            public int playerid { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public int amount { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public int stack { get; [UsedImplicitly] set; }
+        }
+
+        public class ReportObject
+        {
+            // ReSharper disable once InconsistentNaming
+            public int playerid { get; [UsedImplicitly] set; }
+            // ReSharper disable once InconsistentNaming
+            public int stack { get; [UsedImplicitly] set; }
         }
 
         public class CashoutObject

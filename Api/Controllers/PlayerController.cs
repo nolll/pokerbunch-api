@@ -11,21 +11,19 @@ namespace Api.Controllers
         [Route(ApiRoutes.PlayerList)]
         [HttpGet]
         [ApiAuthorize]
-        public IHttpActionResult GetList(string slug)
+        public PlayerListModel GetList(string slug)
         {
             var playerListResult = UseCase.GetPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, slug));
-            var model = new PlayerListModel(playerListResult);
-            return Ok(model);
+            return new PlayerListModel(playerListResult);
         }
 
         [Route(ApiRoutes.PlayerGet)]
         [HttpGet]
         [ApiAuthorize]
-        public IHttpActionResult Get(int id)
+        public PlayerModel Get(int id)
         {
             var getPlayerResult = UseCase.GetPlayer.Execute(new GetPlayer.Request(CurrentUserName, id));
-            var bunchModel = new PlayerModel(getPlayerResult);
-            return Ok(bunchModel);
+            return new PlayerModel(getPlayerResult);
         }
     }
 }

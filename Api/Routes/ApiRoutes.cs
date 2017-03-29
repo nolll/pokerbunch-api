@@ -16,7 +16,6 @@ namespace Api.Routes
         public const string LocationList = "bunches/{slug}/locations";
         public const string EventList = "bunches/{slug}/events";
         public const string PlayerList = "bunches/{slug}/players";
-        public const string CashgameList = "bunches/{slug}/cashgames/{year:int?}";
         public const string CurrentGames = "bunches/{slug}/cashgames/current";
 
         public const string PlayerGet = "players/{id}";
@@ -36,7 +35,8 @@ namespace Api.Routes
         public const string Report = "cashgame/report/{slug}";
         public const string Cashout = "cashgame/cashout/{slug}";
 
-        public const string CashgameGet = "cashgames/{id}";
+        public const string Cashgames = "bunches/{slug}/cashgames/{year:int?}";
+        public const string CashgameItem = "cashgames/{id}";
 
         public static class Admin
         {
