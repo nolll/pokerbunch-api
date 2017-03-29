@@ -62,7 +62,6 @@
     <Compile Include="TestClasses\CashgameInTest.cs" />
     <Compile Include="TestClasses\PlayerInTest.cs" />
     <Compile Include="TestClasses\UserInTest.cs" />
-    <Compile Include="UseCases\ActionsChartTests.cs" />
     <Compile Include="UseCases\ActionsTests.cs" />
     <Compile Include="UseCases\AddAppTests.cs" />
     <Compile Include="UseCases\AddBunchTests.cs" />
@@ -86,11 +85,6 @@
     <Compile Include="UseCases\GetBunchTests\Arrange.cs" />
     <Compile Include="UseCases\BunchListTests.cs" />
     <Compile Include="UseCases\BuyinTests.cs" />
-    <Compile Include="UseCases\CashgameChartTests.cs" />
-    <Compile Include="UseCases\CashgameContextTests.cs" />
-    <Compile Include="UseCases\CashgameDetailsChartTests.cs" />
-    <Compile Include="UseCases\CashgameDetailsOldTests.cs" />
-    <Compile Include="UseCases\CashgameFactsTests.cs" />
     <Compile Include="UseCases\CashgameListTests.cs" />
     <Compile Include="UseCases\CashoutTests\Arrange.cs" />
     <Compile Include="UseCases\CashoutTests\PlayerHasNotCheckedOutBefore.cs" />
@@ -114,9 +108,7 @@
     <Compile Include="UseCases\JoinBunchTests.cs" />
     <Compile Include="UseCases\LoginTests.cs" />
     <Compile Include="UseCases\MatrixTests.cs" />
-    <Compile Include="UseCases\PlayerBadgesTests.cs" />
     <Compile Include="UseCases\PlayerDetailsTests.cs" />
-    <Compile Include="UseCases\PlayerFactsTests.cs" />
     <Compile Include="UseCases\PlayerListTests.cs" />
     <Compile Include="UseCases\CashgameDetailsTests.cs" />
     <Compile Include="UseCases\TopListTests.cs" />
