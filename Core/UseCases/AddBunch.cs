@@ -47,9 +47,10 @@ namespace Core.UseCases
             var id = _bunchRepository.Add(bunch);
             var user = _userRepository.Get(request.UserName);
             var player = Player.New(id, user.Id, Role.Manager);
-            _playerRepository.Add(player);
+            var playerId = _playerRepository.Add(player);
+            var createdPlayer = _playerRepository.Get(playerId);
 
-            return new BunchResult(bunch, Role.Manager);
+            return new BunchResult(bunch, createdPlayer);
         }
 
         private static Bunch CreateBunch(Request request)

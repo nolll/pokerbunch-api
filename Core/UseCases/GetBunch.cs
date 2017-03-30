@@ -24,10 +24,8 @@ namespace Core.UseCases
             var user = _userRepository.Get(request.UserName);
             var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
-
-            var role = player.Role;
-
-            return new BunchResult(bunch, role);
+            
+            return new BunchResult(bunch, player);
         }
 
         public class Request
@@ -52,9 +50,9 @@ namespace Core.UseCases
         public TimeZoneInfo Timezone { get; }
         public Currency Currency { get; }
         public int DefaultBuyin { get; }
-        public Role Role { get; }
+        public BunchPlayerResult Player { get; }
 
-        public BunchResult(Bunch b, Role r)
+        public BunchResult(Bunch b, Player p)
         {
             Slug = b.Slug;
             Name = b.DisplayName;
@@ -63,7 +61,21 @@ namespace Core.UseCases
             Timezone = b.Timezone;
             Currency = b.Currency;
             DefaultBuyin = b.DefaultBuyin;
-            Role = r;
+            Player = new BunchPlayerResult(p.Id, p.DisplayName, p.Role);
+        }
+    }
+
+    public class BunchPlayerResult
+    {
+        public int Id { get; }
+        public string Name { get; }
+        public Role Role { get; }
+
+        public BunchPlayerResult(int id, string name, Role role)
+        {
+            Id = id;
+            Name = name;
+            Role = role;
         }
     }
 }

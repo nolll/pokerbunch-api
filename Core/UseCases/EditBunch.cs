@@ -33,7 +33,7 @@ namespace Core.UseCases
             var postedHomegame = CreateBunch(bunch, request);
             _bunchRepository.Update(postedHomegame);
 
-            return new BunchResult(bunch, player.Role);
+            return new BunchResult(bunch, player);
         }
 
         private static Bunch CreateBunch(Bunch bunch, Request request)

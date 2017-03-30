@@ -17,6 +17,6 @@ namespace Tests.Core.UseCases.GetBunchTests
         public void HouseRulesIsSet() => Assert.AreEqual(HouseRules, Result.HouseRules);
 
         [Test]
-        public void CanEditIsFalse() => Assert.AreEqual(Role.Player, Result.Role);
+        public void CanEditIsFalse() => Assert.AreEqual(Role.Player, Result.Player.Role);
     }
 }

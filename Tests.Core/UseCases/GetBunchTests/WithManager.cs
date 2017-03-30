@@ -8,6 +8,6 @@ namespace Tests.Core.UseCases.GetBunchTests
         protected override Role Role => Role.Manager;
 
         [Test]
-        public void RoleIsManager() => Assert.AreEqual(Role.Manager, Result.Role);
+        public void RoleIsManager() => Assert.AreEqual(Role.Manager, Result.Player.Role);
     }
 }
