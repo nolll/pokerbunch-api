@@ -25,7 +25,6 @@ namespace Api.Auth
 
                 if (result.IsValid)
                 {
-                    context.Options.AccessTokenExpireTimeSpan = Expiration;
                     context.Validated(clientId);
                     return;
                 }
@@ -45,8 +44,8 @@ namespace Api.Auth
                 var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                 identity.AddClaim(new Claim(ClaimTypes.Name, loginResult.UserName));
 
-                context.Options.AccessTokenExpireTimeSpan = Expiration;
                 context.Validated(identity);
+                context.Ticket.Properties.ExpiresUtc = DateTime.UtcNow.Add(Expiration);
             }
             catch (LoginException e)
             {

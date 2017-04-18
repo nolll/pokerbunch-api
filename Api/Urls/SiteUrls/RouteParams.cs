@@ -5,7 +5,7 @@ namespace Api.Urls.SiteUrls
     public static class RouteParams
     {
         private const string Slug = "{slug}";
-        private const string Year = "{year?}";
+        private const string Year = "{year}";
         private const string PlayerId = "{playerId}";
         private const string CashgameId = "{cashgameId}";
         private const string Id = "{id}";
@@ -16,7 +16,7 @@ namespace Api.Urls.SiteUrls
             return Replace(format, Slug, slug);
         }
 
-        public static string ReplaceOptionalYear(string format, int year)
+        public static string ReplaceYear(string format, int year)
         {
             return Replace(format, Year, year);
         }
@@ -32,6 +32,11 @@ namespace Api.Urls.SiteUrls
         }
 
         public static string ReplaceId(string format, int id)
+        {
+            return Replace(format, Id, id);
+        }
+
+        public static string ReplaceId(string format, string id)
         {
             return Replace(format, Id, id);
         }

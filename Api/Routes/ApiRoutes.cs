@@ -35,7 +35,9 @@ namespace Api.Routes
         public const string Report = "cashgame/report/{slug}";
         public const string Cashout = "cashgame/cashout/{slug}";
 
-        public const string Cashgames = "bunches/{slug}/cashgames/{year:int?}";
+        public const string CashgameList = "bunches/{id}/cashgames";
+        public const string CashgameListWithYear = "bunches/{id}/cashgames/{year}";
+        public const string CashgameYears = "bunches/{id}/cashgames/years";
         public const string CashgameItem = "cashgames/{id}";
 
         public static class Admin

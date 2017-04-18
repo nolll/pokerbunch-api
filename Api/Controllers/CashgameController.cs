@@ -20,7 +20,8 @@ namespace Api.Controllers
             return new CurrentCashgameListModel(currentGamesResult);
         }
 
-        [Route(ApiRoutes.Cashgames)]
+        [Route(ApiRoutes.CashgameList)]
+        [Route(ApiRoutes.CashgameListWithYear)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug, int? year = null)
@@ -51,7 +52,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiRoutes.Cashgames)]
+        [Route(ApiRoutes.CashgameList)]
         [HttpPost]
         [ApiAuthorize]
         public CashgameDetailsModel Add(int id, [FromBody] UpdateCashgameObject c)
@@ -119,6 +120,15 @@ namespace Api.Controllers
             {
                 return InternalServerError();
             }
+        }
+
+        [Route(ApiRoutes.CashgameYears)]
+        [HttpGet]
+        [ApiAuthorize]
+        public CashgameYearListModel Years(string id)
+        {
+            var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, id));
+            return new CashgameYearListModel(listResult);
         }
 
         public class UpdateCashgameObject

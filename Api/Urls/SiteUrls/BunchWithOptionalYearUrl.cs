@@ -12,7 +12,7 @@ namespace Api.Urls.SiteUrls
             if (!year.HasValue)
                 return RouteParams.ReplaceSlug(format, slug);
             var url = RouteParams.ReplaceSlug(formatWithYear, slug);
-            return RouteParams.ReplaceOptionalYear(url, year.Value);
+            return RouteParams.ReplaceYear(url, year.Value);
         }
     }
 }

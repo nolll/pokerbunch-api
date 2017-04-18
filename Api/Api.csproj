@@ -159,6 +159,7 @@
     <Compile Include="Models\CashgameBunchModel.cs" />
     <Compile Include="Models\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameDetailsEventModel.cs" />
+    <Compile Include="Models\CashgameYearListModel.cs" />
     <Compile Include="Models\EmailSentModel.cs" />
     <Compile Include="Models\SmallLocationModel.cs" />
     <Compile Include="Models\CashgameDetailsModel.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Urls\ApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiBunchListUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiBuyinUrl.cs" />
+    <Compile Include="Urls\ApiUrls\ApiCashgameListUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiCashgameUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiCashoutUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiReportUrl.cs" />
