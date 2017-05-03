@@ -1,4 +1,5 @@
-﻿using Core.Exceptions;
+﻿using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -27,10 +28,11 @@ namespace Core.UseCases
             var realName = displayUser.RealName;
             var email = displayUser.Email;
             var avatarUrl = GravatarService.GetAvatarUrl(displayUser.Email);
+            var role = displayUser.GlobalRole;
             var canEdit = currentUser.IsAdmin || isViewingCurrentUser;
             var canChangePassword = isViewingCurrentUser;
 
-            return new Result(userName, displayName, realName, email, avatarUrl, canEdit, canChangePassword);
+            return new Result(userName, displayName, realName, email, avatarUrl, role, canEdit, canChangePassword);
         }
 
         public class Request
@@ -47,21 +49,23 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string UserName { get; private set; }
-            public string DisplayName { get; private set; }
-            public string RealName { get; private set; }
-            public string Email { get; private set; }
-            public string AvatarUrl { get; private set; }
-            public bool CanEdit { get; private set; }
-            public bool CanChangePassword { get; private set; }
+            public string UserName { get; }
+            public string DisplayName { get; }
+            public string RealName { get; }
+            public string Email { get; }
+            public string AvatarUrl { get; }
+            public Role Role { get; }
+            public bool CanEdit { get; }
+            public bool CanChangePassword { get; }
 
-            public Result(string userName, string displayName, string realName, string email, string avatarUrl, bool canEdit, bool canChangePassword)
+            public Result(string userName, string displayName, string realName, string email, string avatarUrl, Role role, bool canEdit, bool canChangePassword)
             {
                 UserName = userName;
                 DisplayName = displayName;
                 RealName = realName;
                 Email = email;
                 AvatarUrl = avatarUrl;
+                Role = role;
                 CanEdit = canEdit;
                 CanChangePassword = canChangePassword;
             }
