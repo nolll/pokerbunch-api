@@ -178,6 +178,7 @@
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\PlayerListModel.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
+    <Compile Include="Models\UserItemModel.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Routes\ApiRoutes.cs" />

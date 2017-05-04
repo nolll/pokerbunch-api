@@ -22,6 +22,7 @@ namespace Plumbing
 
         // User
         public UserDetails UserDetails => new UserDetails(_deps.UserRepository);
+        public UserList UserList => new UserList(_deps.UserRepository);
 
         // Bunch
         public GetBunchList GetBunchList => new GetBunchList(_deps.BunchRepository, _deps.UserRepository);

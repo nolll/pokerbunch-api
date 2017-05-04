@@ -26,6 +26,15 @@ namespace Api.Controllers
             return new UserModel(getUserResult);
         }
 
+        [Route(ApiRoutes.UserList)]
+        [HttpGet]
+        [ApiAuthorize]
+        public UserListModel List()
+        {
+            var userListResult = UseCase.UserList.Execute(new UserList.Request(CurrentUserName));
+            return new UserListModel(userListResult);
+        }
+
         [Route(ApiRoutes.UserBunchList)]
         [HttpGet]
         [ApiAuthorize]
@@ -34,7 +43,7 @@ namespace Api.Controllers
             var bunchListResult = UseCase.GetBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
             return new BunchListModel(bunchListResult);
         }
-
+        
         [Route(ApiRoutes.UserAppList)]
         [HttpGet]
         [ApiAuthorize]
