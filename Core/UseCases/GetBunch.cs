@@ -51,6 +51,7 @@ namespace Core.UseCases
         public Currency Currency { get; }
         public int DefaultBuyin { get; }
         public BunchPlayerResult Player { get; }
+        public Role Role { get; }
 
         public BunchResult(Bunch b, Player p)
         {
@@ -61,21 +62,20 @@ namespace Core.UseCases
             Timezone = b.Timezone;
             Currency = b.Currency;
             DefaultBuyin = b.DefaultBuyin;
-            Player = new BunchPlayerResult(p.Id, p.DisplayName, p.Role);
+            Player = p != null ? new BunchPlayerResult(p.Id, p.DisplayName) : null;
+            Role = p?.Role ?? Role.Admin;
         }
     }
 
     public class BunchPlayerResult
     {
-        public int Id { get; }
+        public int? Id { get; }
         public string Name { get; }
-        public Role Role { get; }
 
-        public BunchPlayerResult(int id, string name, Role role)
+        public BunchPlayerResult(int? id, string name)
         {
             Id = id;
             Name = name;
-            Role = role;
         }
     }
 }

@@ -24,6 +24,8 @@ namespace Api.Models
         public int DefaultBuyin { get; set; }
         [DataMember(Name = "player")]
         public BunchPlayerModel Player { get; set; }
+        [DataMember(Name = "role")]
+        public string Role { get; set; }
 
         public BunchModel(BunchResult r)
             : this(r.Slug, r.Name, r.Description)
@@ -33,9 +35,8 @@ namespace Api.Models
             CurrencySymbol = r.Currency.Symbol;
             CurrencyLayout = r.Currency.Layout;
             DefaultBuyin = r.DefaultBuyin;
-            var playerId = r.Player.Id.ToString();
-            var role = r.Player.Role.ToString().ToLower();;
-            Player = new BunchPlayerModel(playerId, r.Player.Name, role);
+            Player = r.Player != null ? new BunchPlayerModel(r.Player?.Id.ToString(), r.Player?.Name) : null;
+            Role = r.Role.ToString().ToLower();
         }
 
         public BunchModel(GetBunchList.ResultItem r)
@@ -60,14 +61,11 @@ namespace Api.Models
             public string Id { get; }
             [DataMember(Name = "name")]
             public string Name { get; }
-            [DataMember(Name = "role")]
-            public string Role { get; }
 
-            public BunchPlayerModel(string id, string name, string role)
+            public BunchPlayerModel(string id, string name)
             {
                 Id = id;
                 Name = name;
-                Role = role;
             }
         }
     }
