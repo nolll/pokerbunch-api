@@ -17,17 +17,4 @@ namespace Api.Models
         {
         }
     }
-
-    [CollectionDataContract(Namespace = "", Name = "users", ItemName = "user")]
-    public class UserListModel : List<UserItemModel>
-    {
-        public UserListModel(UserList.Result userList)
-        {
-            AddRange(userList.Users.Select(o => new UserItemModel(o)));
-        }
-
-        public UserListModel()
-        {
-        }
-    }
 }

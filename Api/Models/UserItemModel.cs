@@ -1,4 +1,7 @@
 ﻿using System.Runtime.Serialization;
+using Api.Extensions;
+using Api.Urls.ApiUrls;
+using Api.Urls.SiteUrls;
 using Core.UseCases;
 
 namespace Api.Models
@@ -12,6 +15,9 @@ namespace Api.Models
         [DataMember(Name = "displayName")]
         public string DisplayName { get; set; }
 
+        [DataMember(Name = "url")]
+        public string Url { get; set; }
+
         public UserItemModel(UserList.UserListItem r)
             : this(r.UserName, r.DisplayName)
         {
@@ -21,6 +27,7 @@ namespace Api.Models
         {
             UserName = userName;
             DisplayName = displayName;
+            Url = new ApiUserUrl(userName).GetAbsolute();
         }
 
         public UserItemModel()

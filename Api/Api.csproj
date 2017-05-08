@@ -179,6 +179,7 @@
     <Compile Include="Models\PlayerListModel.cs" />
     <Compile Include="Models\ApiRunningResult.cs" />
     <Compile Include="Models\UserItemModel.cs" />
+    <Compile Include="Models\UserListModel.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Routes\ApiRoutes.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="Urls\ApiUrls\ApiCashoutUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiReportUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiRunningGameUrl.cs" />
+    <Compile Include="Urls\ApiUrls\ApiUserUrl.cs" />
     <Compile Include="Urls\ApiUrls\IdApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\SlugApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\TokenUrl.cs" />

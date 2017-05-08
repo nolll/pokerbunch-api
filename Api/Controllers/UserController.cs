@@ -11,9 +11,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.UserGet)]
         [HttpGet]
         [ApiAuthorize]
-        public UserModel GetUser(string name)
+        public UserModel GetUser(string userName)
         {
-            var getUserResult = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName, name));
+            var getUserResult = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
             return new UserModel(getUserResult);
         }
 
