@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Api.Urls.SiteUrls
+namespace Api.Urls
 {
     public static class RouteParams
     {

@@ -5,21 +5,22 @@ namespace Api.Urls.ApiUrls
 {
     public class ApiCashgameListUrl : ApiUrl
     {
-        public ApiCashgameListUrl(int id)
-            : base(RouteParams.ReplaceId(ApiRoutes.CashgameList, id))
-        {
-        }
+        private readonly string _id;
+        private readonly int? _year;
 
         public ApiCashgameListUrl(string id, int? year)
-            : base(Replace(id, year))
         {
+            _id = id;
+            _year = year;
         }
 
-        private static string Replace(string id, int? year)
+        protected override string Input
         {
-            if (year.HasValue)
-                return RouteParams.ReplaceYear(RouteParams.ReplaceId(ApiRoutes.CashgameListWithYear, id), year.Value);
-            return RouteParams.ReplaceId(ApiRoutes.CashgameList, id);
+            get {
+                if (_year.HasValue)
+                    return RouteParams.ReplaceYear(RouteParams.ReplaceId(ApiRoutes.CashgameListWithYear, _id), _year.Value);
+                return RouteParams.ReplaceId(ApiRoutes.CashgameList, _id);
+            }
         }
     }
 }

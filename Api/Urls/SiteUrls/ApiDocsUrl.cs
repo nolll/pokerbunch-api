@@ -4,9 +4,6 @@ namespace Api.Urls.SiteUrls
 {
     public class ApiDocsUrl : SiteUrl
     {
-        public ApiDocsUrl()
-            : base(WebRoutes.Api.Docs)
-        {
-        }
+        protected override string Input => WebRoutes.Api.Docs;
     }
 }
