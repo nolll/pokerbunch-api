@@ -17,12 +17,9 @@ namespace Tests.Core.UseCases.UserDetailsTests
         public void EmailIsSet() => Assert.AreEqual(Email, Result.Email);
 
         [Test]
-        public void CanEditIsFalse() => Assert.IsFalse(Result.CanEdit);
+        public void CanViewAllIsFalse() => Assert.IsFalse(Result.CanViewAll);
 
         [Test]
-        public void CanChangePasswordIsFalse() => Assert.IsFalse(Result.CanChangePassword);
-
-        [Test]
-        public void AvatarUrlIsSet() => Assert.AreEqual("http://www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=100", Result.AvatarUrl);
+        public void AvatarUrlIsSet() => Assert.AreEqual("https://www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=100", Result.AvatarUrl);
     }
 }

@@ -13,8 +13,8 @@ namespace Api.Controllers
         [ApiAuthorize]
         public UserModel GetUser(string userName)
         {
-            var getUserResult = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
-            return new UserModel(getUserResult);
+            var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
+            return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
         }
 
         [Route(ApiRoutes.UserProfile)]
@@ -22,8 +22,8 @@ namespace Api.Controllers
         [ApiAuthorize]
         public UserModel Profile()
         {
-            var getUserResult = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName));
-            return new UserModel(getUserResult);
+            var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName));
+            return new FullUserModel(userDetails);
         }
 
         [Route(ApiRoutes.UserList)]

@@ -13,23 +13,38 @@ namespace Api.Models
         [DataMember(Name = "displayName")]
         public string DisplayName { get; set; }
 
-        [DataMember(Name = "role")]
-        public string Role { get; set; }
+        [DataMember(Name = "avatar")]
+        public string Avatar { get; set; }
 
         public UserModel(UserDetails.Result r)
-            : this(r.UserName, r.DisplayName, r.Role)
         {
-        }
-
-        private UserModel(string userName, string displayName, Role role)
-        {
-            UserName = userName;
-            DisplayName = displayName;
-            Role = role.ToString();
+            UserName = r.UserName;
+            DisplayName = r.DisplayName;
+            Avatar = r.AvatarUrl;
         }
 
         public UserModel()
         {
+        }
+    }
+
+    public class FullUserModel : UserModel
+    {
+        [DataMember(Name = "role")]
+        public string Role { get; set; }
+
+        [DataMember(Name = "fullName")]
+        public string RealName { get; set; }
+
+        [DataMember(Name = "email")]
+        public string Email { get; set; }
+
+        public FullUserModel(UserDetails.Result r)
+            : base(r)
+        {
+            Role = r.Role.ToString();
+            RealName = r.RealName;
+            Email = r.Email;
         }
     }
 }

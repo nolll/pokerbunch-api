@@ -35,7 +35,7 @@ namespace Tests.Core.UseCases
         {
             var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-            const string expected = "http://www.gravatar.com/avatar/0796c9df772de3f82c0c89377330471b?s=100";
+            const string expected = "https://www.gravatar.com/avatar/0796c9df772de3f82c0c89377330471b?s=100";
             Assert.AreEqual(expected, result.AvatarUrl);
         }
 

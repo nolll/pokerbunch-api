@@ -7,9 +7,6 @@ namespace Tests.Core.UseCases.UserDetailsTests
         protected override bool ViewingOwnUser => true;
 
         [Test]
-        public void CanEditIsTrue() => Assert.IsTrue(Result.CanEdit);
-
-        [Test]
-        public void CanChangePasswordIsTrue() => Assert.IsTrue(Result.CanChangePassword);
+        public void CanViewAllIsTrue() => Assert.IsTrue(Result.CanViewAll);
     }
 }
