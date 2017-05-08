@@ -27,7 +27,7 @@ namespace Api.Models
         {
             UserName = userName;
             DisplayName = displayName;
-            Url = new ApiUserUrl(userName).GetAbsolute();
+            Url = new ApiUserUrl(userName).Absolute;
         }
 
         public UserItemModel()

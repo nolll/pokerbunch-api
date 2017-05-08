@@ -1,5 +1,4 @@
 ﻿using System.Web.Http;
-using Api.Extensions;
 using Api.Routes;
 using Api.Urls.SiteUrls;
 
@@ -11,7 +10,7 @@ namespace Api.Controllers
         [HttpGet]
         public IHttpActionResult Home()
         {
-            return Redirect(new ApiDocsUrl().GetAbsolute());
+            return Redirect(new ApiDocsUrl().Absolute);
         }
     }
 }
