@@ -13,7 +13,7 @@ namespace Api.Urls
 
         protected Url(string url)
         {
-            Relative = url != null ? string.Concat("/", url) : string.Empty;
+            Relative = url != null ? string.Concat("/", url).ToLower() : string.Empty;
         }
         
         public override string ToString()
