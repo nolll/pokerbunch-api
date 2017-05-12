@@ -25,7 +25,7 @@ namespace Core.UseCases
 
             _userRepository.Update(userToSave);
 
-            return new Result(userToSave.UserName, userToSave.Id);
+            return new Result(userToSave.UserName);
         }
 
         private static User GetUser(User user, Request request)
@@ -62,13 +62,11 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string UserName { get; private set; }
-            public int UserId { get; private set; }
+            public string UserName { get; }
 
-            public Result(string userName, int userId)
+            public Result(string userName)
             {
                 UserName = userName;
-                UserId = userId;
             }
         }
     }

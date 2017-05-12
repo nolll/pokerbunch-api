@@ -11,6 +11,7 @@ namespace Api.Routes
 
         public const string UserList = "users";
         public const string UserGet = "users/{userName}";
+        public const string UserSave = UserGet;
 
         public const string BunchList = "bunches";
         public const string BunchGet = "bunches/{slug}";

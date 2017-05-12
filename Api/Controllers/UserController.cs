@@ -53,5 +53,15 @@ namespace Api.Controllers
             var appListResult = UseCase.GetAppList.Execute(request);
             return new AppListModel(appListResult);
         }
+
+        [Route(ApiRoutes.UserSave)]
+        [HttpPost]
+        [ApiAuthorize]
+        public UserModel Save(string userName, [FromBody] EditUserPostModel u)
+        {
+            var request = new EditUser.Request(CurrentUserName, u.DisplayName, u.RealName, u.Email);
+            var editUserResult = UseCase.EditUser.Execute(request);
+            return GetUser(editUserResult.UserName);
+        }
     }
 }
