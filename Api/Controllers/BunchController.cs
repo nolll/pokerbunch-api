@@ -31,17 +31,17 @@ namespace Api.Controllers
         [Route(ApiRoutes.BunchList)]
         [HttpPost]
         [ApiAuthorize]
-        public BunchModel Add([FromBody] BunchModel b)
+        public BunchModel Add([FromBody] AddBunchPostModel b)
         {
             var request = new AddBunch.Request(CurrentUserName, b.Name, b.Description, b.CurrencySymbol, b.CurrencyLayout, b.Timezone);
             var bunchResult = UseCase.AddBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
 
-        [Route(ApiRoutes.BunchGet)]
+        [Route(ApiRoutes.BunchUpdate)]
         [HttpPost]
         [ApiAuthorize]
-        public BunchModel Save(string slug, [FromBody] BunchModel b)
+        public BunchModel Update(string slug, [FromBody] UpdateBunchPostModel b)
         {
             var request = new EditBunch.Request(CurrentUserName, slug, b.Description, b.CurrencySymbol, b.CurrencyLayout, b.Timezone, b.HouseRules, b.DefaultBuyin);
             var bunchResult = UseCase.EditBunch.Execute(request);

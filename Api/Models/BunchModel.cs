@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using Core.UseCases;
+using JetBrains.Annotations;
 
 namespace Api.Models
 {
@@ -68,5 +69,24 @@ namespace Api.Models
                 Name = name;
             }
         }
+    }
+
+    public class AddBunchPostModel
+    {
+        public string Name { get; [UsedImplicitly] set; }
+        public string Description { get; [UsedImplicitly] set; }
+        public string Timezone { get; [UsedImplicitly] set; }
+        public string CurrencySymbol { get; [UsedImplicitly] set; }
+        public string CurrencyLayout { get; [UsedImplicitly] set; }
+    }
+
+    public class UpdateBunchPostModel
+    {
+        public string Description { get; [UsedImplicitly] set; }
+        public string HouseRules { get; [UsedImplicitly] set; }
+        public string Timezone { get; [UsedImplicitly] set; }
+        public string CurrencySymbol { get; [UsedImplicitly] set; }
+        public string CurrencyLayout { get; [UsedImplicitly] set; }
+        public int DefaultBuyin { get; [UsedImplicitly] set; }
     }
 }

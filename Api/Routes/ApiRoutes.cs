@@ -11,10 +11,11 @@ namespace Api.Routes
 
         public const string UserList = "users";
         public const string UserGet = "users/{userName}";
-        public const string UserSave = UserGet;
+        public const string UserUpdate = UserGet;
 
         public const string BunchList = "bunches";
         public const string BunchGet = "bunches/{slug}";
+        public const string BunchUpdate = BunchGet;
         public const string LocationList = "bunches/{slug}/locations";
         public const string EventList = "bunches/{slug}/events";
         public const string PlayerList = "bunches/{slug}/players";

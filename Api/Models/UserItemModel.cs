@@ -1,7 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Api.Extensions;
 using Api.Urls.ApiUrls;
-using Api.Urls.SiteUrls;
 using Core.UseCases;
 
 namespace Api.Models

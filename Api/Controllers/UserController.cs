@@ -54,10 +54,10 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiRoutes.UserSave)]
+        [Route(ApiRoutes.UserUpdate)]
         [HttpPost]
         [ApiAuthorize]
-        public UserModel Save(string userName, [FromBody] EditUserPostModel u)
+        public UserModel Update(string userName, [FromBody] UpdateUserPostModel u)
         {
             var request = new EditUser.Request(CurrentUserName, u.DisplayName, u.RealName, u.Email);
             var editUserResult = UseCase.EditUser.Execute(request);
