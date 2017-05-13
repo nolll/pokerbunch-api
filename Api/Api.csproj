@@ -157,8 +157,11 @@
     <Compile Include="Models\AppModels\AppModel.cs" />
     <Compile Include="Models\BunchModels\BunchListModel.cs" />
     <Compile Include="Models\BunchModels\BunchModel.cs" />
+    <Compile Include="Models\CashgameModels\AddCashgamePostModel.cs" />
     <Compile Include="Models\CashgameModels\ApiRunningResult.cs" />
     <Compile Include="Models\CashgameModels\CashgameBunchModel.cs" />
+    <Compile Include="Models\CashgameModels\CashgameBuyinPostModel.cs" />
+    <Compile Include="Models\CashgameModels\CashgameCashoutPostModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDeletedModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDetailsEventModel.cs" />
@@ -167,10 +170,13 @@
     <Compile Include="Models\CashgameModels\CashgameListItemModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListItemPlayerModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListModel.cs" />
+    <Compile Include="Models\CashgameModels\CashgameReportPostModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListModel.cs" />
     <Compile Include="Models\CashgameModels\CurrentCashgameListModel.cs" />
+    <Compile Include="Models\CashgameModels\UpdateCashgamePostModel.cs" />
     <Compile Include="Models\EventModels\EventListModel.cs" />
     <Compile Include="Models\EventModels\EventModel.cs" />
+    <Compile Include="Models\LocationModels\LocationAddPostModel.cs" />
     <Compile Include="Models\LocationModels\LocationListModel.cs" />
     <Compile Include="Models\LocationModels\LocationModel.cs" />
     <Compile Include="Models\LocationModels\SmallLocationModel.cs" />

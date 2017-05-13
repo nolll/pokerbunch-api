@@ -19,6 +19,7 @@ namespace Tests.Core.UseCases
             Deps.Event,
             Deps.User,
             Deps.Player,
-            Deps.Bunch);
+            Deps.Bunch,
+            Deps.Location);
     }
 }

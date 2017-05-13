@@ -17,7 +17,6 @@ namespace Api.Routes
         public const string BunchAdd = BunchList;
         public const string BunchGet = "bunches/{slug}";
         public const string BunchUpdate = BunchGet;
-        public const string LocationList = "bunches/{slug}/locations";
         public const string EventList = "bunches/{slug}/events";
         public const string PlayerList = "bunches/{slug}/players";
         public const string CurrentGames = "bunches/{slug}/cashgames/current";
@@ -25,9 +24,12 @@ namespace Api.Routes
         public const string PlayerGet = "players/{id}";
 
         public const string LocationGet = "locations/{id}";
-        public const string LocationAdd = "locations";
-        public const string LocationSave = "locations/{id}";
-        public const string LocationDelete = "locations/{id}";
+        public const string LocationList = "bunches/{slug}/locations";
+        public const string LocationAdd = LocationList;
+        public const string LocationSave = LocationGet;
+        public const string LocationDelete = LocationGet;
+
+        public const string EventGet = "events/{id}";
 
         public const string AppList = "apps";
         public const string AppAdd = AppList;

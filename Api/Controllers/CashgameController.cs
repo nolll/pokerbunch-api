@@ -6,7 +6,6 @@ using Api.Models.CashgameModels;
 using Api.Routes;
 using Core.Exceptions;
 using Core.UseCases;
-using JetBrains.Annotations;
 
 namespace Api.Controllers
 {
@@ -44,12 +43,6 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        public class AddCashgamePostModel
-        {
-            public int LocationId { get; [UsedImplicitly] set; }
-            public int EventId { get; [UsedImplicitly] set; }
-        }
-
         [Route(ApiRoutes.CashgameUpdate)]
         [HttpPut]
         [ApiAuthorize]
@@ -60,12 +53,6 @@ namespace Api.Controllers
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
-        }
-
-        public class UpdateCashgamePostModel
-        {
-            public int LocationId { get; [UsedImplicitly] set; }
-            public int EventId { get; [UsedImplicitly] set; }
         }
 
         [Route(ApiRoutes.CashgameDelete)]
@@ -103,13 +90,6 @@ namespace Api.Controllers
             }
         }
 
-        public class CashgameBuyinPostModel
-        {
-            public int PlayerId { get; [UsedImplicitly] set; }
-            public int Amount { get; [UsedImplicitly] set; }
-            public int Stack { get; [UsedImplicitly] set; }
-        }
-
         [Route(ApiRoutes.Report)]
         [HttpPost]
         [ApiAuthorize]
@@ -126,12 +106,6 @@ namespace Api.Controllers
             }
         }
 
-        public class CashgameReportPostModel
-        {
-            public int PlayerId { get; [UsedImplicitly] set; }
-            public int Stack { get; [UsedImplicitly] set; }
-        }
-
         [Route(ApiRoutes.Cashout)]
         [HttpPost]
         [ApiAuthorize]
@@ -146,12 +120,6 @@ namespace Api.Controllers
             {
                 return InternalServerError();
             }
-        }
-
-        public class CashgameCashoutPostModel
-        {
-            public int PlayerId { get; [UsedImplicitly] set; }
-            public int Stack { get; [UsedImplicitly] set; }
         }
 
         [Route(ApiRoutes.CashgameYears)]

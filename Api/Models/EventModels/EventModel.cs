@@ -24,6 +24,14 @@ namespace Api.Models.EventModels
             Location = new SmallLocationModel(e);
         }
 
+        public EventModel(EventDetails.Result e)
+        {
+            Id = e.Id;
+            BunchId = e.BunchId;
+            Name = e.Name;
+            Location = new SmallLocationModel(e);
+        }
+
         public EventModel()
         {
         }

@@ -1,6 +1,5 @@
 using System.Web.Http;
 using Api.Auth;
-using Api.Models;
 using Api.Models.LocationModels;
 using Api.Routes;
 using Core.UseCases;
@@ -30,9 +29,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.LocationAdd)]
         [HttpPost]
         [ApiAuthorize]
-        public LocationModel Add([FromBody] LocationModel location)
+        public LocationModel Add(string slug, [FromBody] LocationAddPostModel location)
         {
-            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, location.Bunch, location.Name));
+            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, slug, location.Name));
             return new LocationModel(result);
         }
     }

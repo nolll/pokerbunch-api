@@ -26,6 +26,11 @@ namespace Api.Models.LocationModels
         {
         }
 
+        public SmallLocationModel(EventDetails.Result e)
+            : this(e.LocationId, e.LocationName)
+        {
+        }
+
         public SmallLocationModel(int id, string name)
             : this(id.ToString(), name)
         {
