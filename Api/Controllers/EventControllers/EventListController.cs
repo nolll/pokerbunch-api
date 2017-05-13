@@ -4,14 +4,14 @@ using Api.Models;
 using Api.Routes;
 using Core.UseCases;
 
-namespace Api.Controllers
+namespace Api.Controllers.EventControllers
 {
-    public class EventController : BaseApiController
+    public class EventListController : BaseController
     {
         [Route(ApiRoutes.EventList)]
         [HttpGet]
         [ApiAuthorize]
-        public EventListModel GetList(string slug)
+        public EventListModel List(string slug)
         {
             var eventListResult = UseCase.GetEventList.Execute(new EventList.Request(CurrentUserName, slug));
             return new EventListModel(eventListResult);

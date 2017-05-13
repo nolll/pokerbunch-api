@@ -2,7 +2,7 @@ using System.Net;
 using System.Web.Http;
 using System.Web.Http.Results;
 
-namespace Api.Controllers
+namespace Api.Extensions
 {
     public class NoContentResult<T> : NegotiatedContentResult<T>
     {

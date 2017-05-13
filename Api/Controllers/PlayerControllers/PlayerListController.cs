@@ -4,9 +4,9 @@ using Api.Models;
 using Api.Routes;
 using Core.UseCases;
 
-namespace Api.Controllers
+namespace Api.Controllers.PlayerControllers
 {
-    public class PlayerController : BaseApiController
+    public class PlayerListController : BaseController
     {
         [Route(ApiRoutes.PlayerList)]
         [HttpGet]
@@ -15,15 +15,6 @@ namespace Api.Controllers
         {
             var playerListResult = UseCase.GetPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, slug));
             return new PlayerListModel(playerListResult);
-        }
-
-        [Route(ApiRoutes.PlayerGet)]
-        [HttpGet]
-        [ApiAuthorize]
-        public PlayerModel Get(int id)
-        {
-            var getPlayerResult = UseCase.GetPlayer.Execute(new GetPlayer.Request(CurrentUserName, id));
-            return new PlayerModel(getPlayerResult);
         }
     }
 }

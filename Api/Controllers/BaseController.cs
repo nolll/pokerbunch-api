@@ -8,7 +8,7 @@ namespace Api.Controllers
 {
     [EnsureHttps]
     [UsedImplicitly]
-    public abstract class BaseApiController : ApiController
+    public abstract class BaseController : ApiController
     {
         private readonly Bootstrapper _bootstrapper = new Bootstrapper(Settings.ConnectionString, Settings.SmtpHost, Settings.SmtpUserName, Settings.SmtpPassword);
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;

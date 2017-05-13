@@ -4,7 +4,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Controllers
 {
-    public class HomeController : BaseApiController
+    public class RootController : BaseController
     {
         [Route(ApiRoutes.Home)]
         [HttpGet]

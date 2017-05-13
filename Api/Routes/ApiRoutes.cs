@@ -14,6 +14,7 @@ namespace Api.Routes
         public const string UserUpdate = UserGet;
 
         public const string BunchList = "bunches";
+        public const string BunchAdd = BunchList;
         public const string BunchGet = "bunches/{slug}";
         public const string BunchUpdate = BunchGet;
         public const string LocationList = "bunches/{slug}/locations";
@@ -29,8 +30,8 @@ namespace Api.Routes
         public const string LocationDelete = "locations/{id}";
 
         public const string AppList = "apps";
+        public const string AppAdd = AppList;
         public const string AppGet = "apps/{id}";
-        public const string AppAdd = "apps";
         public const string AppSave = "apps/{id}";
         public const string AppDelete = "apps/{id}";
 
@@ -39,9 +40,12 @@ namespace Api.Routes
         public const string Cashout = "cashgame/cashout/{slug}";
 
         public const string CashgameList = "bunches/{id}/cashgames";
+        public const string CashgameAdd = CashgameList;
         public const string CashgameListWithYear = "bunches/{id}/cashgames/{year}";
         public const string CashgameYears = "bunches/{id}/cashgames/years";
-        public const string CashgameItem = "cashgames/{id}";
+        public const string CashgameGet = "cashgames/{id}";
+        public const string CashgameUpdate = CashgameGet;
+        public const string CashgameDelete = CashgameGet;
 
         public static class Admin
         {

@@ -1,22 +1,13 @@
-﻿using System.Web.Http;
+using System.Web.Http;
 using Api.Auth;
 using Api.Models;
 using Api.Routes;
 using Core.UseCases;
 
-namespace Api.Controllers
+namespace Api.Controllers.AdminControllers
 {
-    public class AdminController : BaseApiController
+    public class ClearCacheController : BaseController
     {
-        [Route(ApiRoutes.Admin.SendEmail)]
-        [HttpPost]
-        [ApiAuthorize]
-        public EmailSentModel SendEmail()
-        {
-            var result = UseCase.TestEmail.Execute(new TestEmail.Request(CurrentUserName));
-            return new EmailSentModel(result);
-        }
-
         [Route(ApiRoutes.Admin.ClearCache)]
         [HttpPost]
         [ApiAuthorize]
