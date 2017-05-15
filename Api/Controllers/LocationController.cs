@@ -29,9 +29,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.LocationAdd)]
         [HttpPost]
         [ApiAuthorize]
-        public LocationModel Add(string slug, [FromBody] LocationAddPostModel location)
+        public LocationModel Add(string slug, [FromBody] LocationAddPostModel post)
         {
-            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, slug, location.Name));
+            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, slug, post.Name));
             return new LocationModel(result);
         }
     }

@@ -12,9 +12,5 @@ namespace Api.Models.UserModels
         {
             AddRange(userList.Users.Select(o => new UserItemModel(o)));
         }
-
-        public UserListModel()
-        {
-        }
     }
 }

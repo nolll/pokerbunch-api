@@ -32,9 +32,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.BunchAdd)]
         [HttpPost]
         [ApiAuthorize]
-        public BunchModel Add([FromBody] AddBunchPostModel b)
+        public BunchModel Add([FromBody] AddBunchPostModel post)
         {
-            var request = new AddBunch.Request(CurrentUserName, b.Name, b.Description, b.CurrencySymbol, b.CurrencyLayout, b.Timezone);
+            var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
             var bunchResult = UseCase.AddBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
@@ -42,9 +42,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.BunchUpdate)]
         [HttpPost]
         [ApiAuthorize]
-        public BunchModel Update(string slug, [FromBody] UpdateBunchPostModel b)
+        public BunchModel Update(string slug, [FromBody] UpdateBunchPostModel post)
         {
-            var request = new EditBunch.Request(CurrentUserName, slug, b.Description, b.CurrencySymbol, b.CurrencyLayout, b.Timezone, b.HouseRules, b.DefaultBuyin);
+            var request = new EditBunch.Request(CurrentUserName, slug, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
             var bunchResult = UseCase.EditBunch.Execute(request);
             return new BunchModel(bunchResult);
         }

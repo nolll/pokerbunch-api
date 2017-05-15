@@ -7,9 +7,9 @@ namespace Api.Models.LocationModels
     public class SmallLocationModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
 
         public SmallLocationModel(CashgameDetails.Result details)
             : this(details.LocationId, details.LocationName)
@@ -40,10 +40,6 @@ namespace Api.Models.LocationModels
         {
             Id = id;
             Name = name;
-        }
-
-        public SmallLocationModel()
-        {
         }
     }
 }

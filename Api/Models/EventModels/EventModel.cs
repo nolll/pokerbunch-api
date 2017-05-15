@@ -8,13 +8,13 @@ namespace Api.Models.EventModels
     public class EventModel
     {
         [DataMember(Name = "id")]
-        public int Id { get; set; }
+        public int Id { get; }
         [DataMember(Name = "bunchId")]
-        public string BunchId { get; set; }
+        public string BunchId { get; }
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
         [DataMember(Name = "location")]
-        public SmallLocationModel Location { get; set; }
+        public SmallLocationModel Location { get; }
 
         public EventModel(EventList.Event e)
         {
@@ -30,10 +30,6 @@ namespace Api.Models.EventModels
             BunchId = e.BunchId;
             Name = e.Name;
             Location = new SmallLocationModel(e);
-        }
-
-        public EventModel()
-        {
         }
     }
 }

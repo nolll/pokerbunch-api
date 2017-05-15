@@ -9,15 +9,15 @@ namespace Api.Models.CashgameModels
     public class CashgameDetailsActionModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "type")]
-        public string Type { get; set; }
+        public string Type { get; }
         [DataMember(Name = "time")]
-        public DateTime Time { get; set; }
+        public DateTime Time { get; }
         [DataMember(Name = "stack")]
-        public int Stack { get; set; }
+        public int Stack { get; }
         [DataMember(Name = "added")]
-        public int? Added { get; set; }
+        public int? Added { get; }
 
         public CashgameDetailsActionModel(CashgameDetails.RunningCashgameActionItem item)
         {
@@ -30,10 +30,6 @@ namespace Api.Models.CashgameModels
             {
                 Added = item.AddedMoney;
             }
-        }
-
-        public CashgameDetailsActionModel()
-        {
         }
     }
 }

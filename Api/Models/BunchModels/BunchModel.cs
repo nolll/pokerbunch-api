@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Core.UseCases;
-using JetBrains.Annotations;
 
 namespace Api.Models.BunchModels
 {
@@ -8,25 +7,25 @@ namespace Api.Models.BunchModels
     public class BunchModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
         [DataMember(Name = "Description")]
-        public string Description { get; set; }
+        public string Description { get; }
         [DataMember(Name = "houseRules")]
-        public string HouseRules { get; set; }
+        public string HouseRules { get; }
         [DataMember(Name = "timezone")]
-        public string Timezone { get; set; }
+        public string Timezone { get; }
         [DataMember(Name = "currencySymbol")]
-        public string CurrencySymbol { get; set; }
+        public string CurrencySymbol { get; }
         [DataMember(Name = "currencyLayout")]
-        public string CurrencyLayout { get; set; }
+        public string CurrencyLayout { get; }
         [DataMember(Name = "defaultBuyin")]
-        public int DefaultBuyin { get; set; }
+        public int DefaultBuyin { get; }
         [DataMember(Name = "player")]
-        public BunchPlayerModel Player { get; set; }
+        public BunchPlayerModel Player { get; }
         [DataMember(Name = "role")]
-        public string Role { get; set; }
+        public string Role { get; }
 
         public BunchModel(BunchResult r)
             : this(r.Slug, r.Name, r.Description)
@@ -52,10 +51,6 @@ namespace Api.Models.BunchModels
             Description = description;
         }
 
-        public BunchModel()
-        {
-        }
-
         public class BunchPlayerModel
         {
             [DataMember(Name = "id")]
@@ -69,24 +64,5 @@ namespace Api.Models.BunchModels
                 Name = name;
             }
         }
-    }
-
-    public class AddBunchPostModel
-    {
-        public string Name { get; [UsedImplicitly] set; }
-        public string Description { get; [UsedImplicitly] set; }
-        public string Timezone { get; [UsedImplicitly] set; }
-        public string CurrencySymbol { get; [UsedImplicitly] set; }
-        public string CurrencyLayout { get; [UsedImplicitly] set; }
-    }
-
-    public class UpdateBunchPostModel
-    {
-        public string Description { get; [UsedImplicitly] set; }
-        public string HouseRules { get; [UsedImplicitly] set; }
-        public string Timezone { get; [UsedImplicitly] set; }
-        public string CurrencySymbol { get; [UsedImplicitly] set; }
-        public string CurrencyLayout { get; [UsedImplicitly] set; }
-        public int DefaultBuyin { get; [UsedImplicitly] set; }
     }
 }

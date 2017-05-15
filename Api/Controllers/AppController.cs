@@ -30,9 +30,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.AppAdd)]
         [HttpGet]
         [ApiAuthorize]
-        public AppModel Add([FromBody] AppModel app)
+        public AppModel Add([FromBody] AddAppPostModel post)
         {
-            var result = UseCase.AddApp.Execute(new AddApp.Request(CurrentUserName, app.Name));
+            var result = UseCase.AddApp.Execute(new AddApp.Request(CurrentUserName, post.Name));
             return new AppModel(result);
         }
     }

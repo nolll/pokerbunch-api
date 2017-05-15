@@ -12,9 +12,5 @@ namespace Api.Models.EventModels
         {
             AddRange(eventListResult.Events.Select(o => new EventModel(o)));
         }
-
-        public EventListModel()
-        {
-        }
     }
 }

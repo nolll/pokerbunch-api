@@ -10,21 +10,21 @@ namespace Api.Models.CashgameModels
     public class CashgameDetailsPlayerModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
         [DataMember(Name = "color")]
-        public string Color { get; set; }
+        public string Color { get; }
         [DataMember(Name = "startTime")]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; }
         [DataMember(Name = "updatedTime")]
-        public DateTime UpdatedTime { get; set; }
+        public DateTime UpdatedTime { get; }
         [DataMember(Name = "buyin")]
-        public int Buyin { get; set; }
+        public int Buyin { get; }
         [DataMember(Name = "stack")]
-        public int Stack { get; set; }
+        public int Stack { get; }
         [DataMember(Name = "actions")]
-        public IList<CashgameDetailsActionModel> Actions { get; set; }
+        public IList<CashgameDetailsActionModel> Actions { get; }
 
         public CashgameDetailsPlayerModel(CashgameDetails.RunningCashgamePlayerItem item)
         {
@@ -36,10 +36,6 @@ namespace Api.Models.CashgameModels
             Buyin = item.Buyin;
             Stack = item.Stack;
             Actions = item.Checkpoints.Select(o => new CashgameDetailsActionModel(o)).ToList();
-        }
-
-        public CashgameDetailsPlayerModel()
-        {
         }
     }
 }

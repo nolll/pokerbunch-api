@@ -7,10 +7,10 @@ namespace Api.Models.PlayerModels
     public class PlayerModel
     {
         [DataMember(Name = "id")]
-        public int Id { get; set; }
+        public int Id { get; }
 
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
 
         //[DataMember(Name = "canDelete")]
         //public bool CanDelete { get; }
@@ -47,10 +47,6 @@ namespace Api.Models.PlayerModels
             Id = id;
             Name = name;
             Color = color;
-        }
-
-        public PlayerModel()
-        {
         }
     }
 }

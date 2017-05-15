@@ -9,15 +9,15 @@ namespace Api.Models.CashgameModels
     public class ApiRunningResult
     {
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
         [DataMember(Name = "buyin")]
-        public int Buyin { get; set; }
+        public int Buyin { get; }
         [DataMember(Name = "stack")]
-        public int Stack { get; set; }
+        public int Stack { get; }
         [DataMember(Name = "winnings")]
-        public int Winnings { get; set; }
+        public int Winnings { get; }
         [DataMember(Name = "lastupdate")]
-        public DateTime LastUpdate { get; set; }
+        public DateTime LastUpdate { get; }
 
         public ApiRunningResult(CashgameDetails.RunningCashgamePlayerItem playerItem)
         {
@@ -33,9 +33,9 @@ namespace Api.Models.CashgameModels
     public class ApiCurrentGame
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "url")]
-        public string Url { get; set; }
+        public string Url { get; }
 
         public ApiCurrentGame(CurrentCashgames.Game game)
         {

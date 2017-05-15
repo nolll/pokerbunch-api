@@ -12,9 +12,5 @@ namespace Api.Models.LocationModels
         {
             AddRange(locationListResult.Locations.Select(o => new LocationModel(o)));
         }
-
-        public LocationListModel()
-        {
-        }
     }
 }

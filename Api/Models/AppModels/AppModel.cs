@@ -7,11 +7,11 @@ namespace Api.Models.AppModels
     public class AppModel
     {
         [DataMember(Name = "id")]
-        public int Id { get; set; }
+        public int Id { get; }
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
         [DataMember(Name = "key")]
-        public string Key { get; set; }
+        public string Key { get; }
 
         public AppModel(AppResult app)
             : this(app.AppId, app.AppName, app.AppKey)
@@ -23,10 +23,6 @@ namespace Api.Models.AppModels
             Id = id;
             Name = name;
             Key = key;
-        }
-
-        public AppModel()
-        {
         }
     }
 }

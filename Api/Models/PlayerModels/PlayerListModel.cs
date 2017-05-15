@@ -12,9 +12,5 @@ namespace Api.Models.PlayerModels
         {
             AddRange(playerListResult.Players.Select(o => new PlayerModel(o)));
         }
-
-        public PlayerListModel()
-        {
-        }
     }
 }

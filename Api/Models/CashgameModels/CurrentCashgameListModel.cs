@@ -12,9 +12,5 @@ namespace Api.Models.CashgameModels
         {
             AddRange(listResult.Games.Select(o => new ApiCurrentGame(o)).ToList());
         }
-
-        public CurrentCashgameListModel()
-        {
-        }
     }
 }

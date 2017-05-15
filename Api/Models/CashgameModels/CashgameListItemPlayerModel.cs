@@ -8,15 +8,15 @@ namespace Api.Models.CashgameModels
     public class CashgameListItemPlayerModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "startTime")]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; }
         [DataMember(Name = "updatedTime")]
-        public DateTime UpdatedTime { get; set; }
+        public DateTime UpdatedTime { get; }
         [DataMember(Name = "buyin")]
-        public int Buyin { get; set; }
+        public int Buyin { get; }
         [DataMember(Name = "stack")]
-        public int Stack { get; set; }
+        public int Stack { get; }
 
         public CashgameListItemPlayerModel(CashgameList.ItemPlayer item)
         {
@@ -25,10 +25,6 @@ namespace Api.Models.CashgameModels
             UpdatedTime = item.UpdatedTime;
             Buyin = item.Buyin;
             Stack = item.Stack;
-        }
-
-        public CashgameListItemPlayerModel()
-        {
         }
     }
 }

@@ -12,9 +12,5 @@ namespace Api.Models.CashgameModels
         {
             AddRange(listResult.Years.Select(o => new CashgameYearListItemModel(listResult.Slug, o)).ToList());
         }
-
-        public CashgameYearListModel()
-        {
-        }
     }
 }

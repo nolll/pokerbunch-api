@@ -7,18 +7,14 @@ namespace Api.Models.CashgameModels
     public class CashgameDetailsEventModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; }
 
         public CashgameDetailsEventModel(CashgameDetails.Result details)
         {
             Id = details.EventId.ToString();
             Name = details.EventName;
-        }
-
-        public CashgameDetailsEventModel()
-        {
         }
     }
 }

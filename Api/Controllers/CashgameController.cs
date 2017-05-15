@@ -33,9 +33,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.CashgameAdd)]
         [HttpPost]
         [ApiAuthorize]
-        public CashgameDetailsModel Add(int id, [FromBody] AddCashgamePostModel c)
+        public CashgameDetailsModel Add(int id, [FromBody] AddCashgamePostModel post)
         {
-            var listRequest = new EditCashgame.Request(CurrentUserName, id, c.LocationId, c.EventId);
+            var listRequest = new EditCashgame.Request(CurrentUserName, id, post.LocationId, post.EventId);
             UseCase.EditCashgame.Execute(listRequest);
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
@@ -45,9 +45,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.CashgameUpdate)]
         [HttpPut]
         [ApiAuthorize]
-        public CashgameDetailsModel Update(int id, [FromBody] UpdateCashgamePostModel c)
+        public CashgameDetailsModel Update(int id, [FromBody] UpdateCashgamePostModel post)
         {
-            var listRequest = new EditCashgame.Request(CurrentUserName, id, c.LocationId, c.EventId);
+            var listRequest = new EditCashgame.Request(CurrentUserName, id, post.LocationId, post.EventId);
             UseCase.EditCashgame.Execute(listRequest);
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
@@ -76,9 +76,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.Buyin)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Buyin(string slug, [FromBody] CashgameBuyinPostModel postModel)
+        public OkModel Buyin(string slug, [FromBody] CashgameBuyinPostModel post)
         {
-            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, slug, postModel.PlayerId, postModel.Amount, postModel.Stack, DateTime.UtcNow));
+            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, slug, post.PlayerId, post.Amount, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
@@ -94,9 +94,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.Cashout)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Cashout(string slug, [FromBody] CashgameCashoutPostModel postModel)
+        public OkModel Cashout(string slug, [FromBody] CashgameCashoutPostModel post)
         {
-            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, slug, postModel.PlayerId, postModel.Stack, DateTime.UtcNow));
+            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, slug, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 

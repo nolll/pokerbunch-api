@@ -12,9 +12,5 @@ namespace Api.Models.BunchModels
         {
             AddRange(bunchListResult.Bunches.Select(o => new BunchModel(o)));
         }
-
-        public BunchListModel()
-        {
-        }
     }
 }

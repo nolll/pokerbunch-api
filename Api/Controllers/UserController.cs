@@ -32,9 +32,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.UserUpdate)]
         [HttpPost]
         [ApiAuthorize]
-        public UserModel Update(string userName, [FromBody] UpdateUserPostModel u)
+        public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
         {
-            var request = new EditUser.Request(CurrentUserName, u.DisplayName, u.RealName, u.Email);
+            var request = new EditUser.Request(CurrentUserName, post.DisplayName, post.RealName, post.Email);
             var editUserResult = UseCase.EditUser.Execute(request);
             var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(editUserResult.UserName));
             return new FullUserModel(userDetails);

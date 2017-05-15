@@ -12,9 +12,5 @@ namespace Api.Models.AppModels
         {
             AddRange(appListResult.Items.Select(o => new AppModel(o)));
         }
-
-        public AppListModel()
-        {
-        }
     }
 }

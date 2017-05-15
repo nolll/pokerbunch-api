@@ -11,21 +11,21 @@ namespace Api.Models.CashgameModels
     public class CashgameDetailsModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "isRunning")]
-        public bool IsRunning { get; set; }
+        public bool IsRunning { get; }
         [DataMember(Name = "startTime")]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; }
         [DataMember(Name = "updatedTime")]
-        public DateTime UpdatedTime { get; set; }
+        public DateTime UpdatedTime { get; }
         [DataMember(Name = "bunch")]
-        public CashgameBunchModel Bunch { get; set; }
+        public CashgameBunchModel Bunch { get; }
         [DataMember(Name = "location")]
-        public SmallLocationModel Location { get; set; }
+        public SmallLocationModel Location { get; }
         [DataMember(Name = "event")]
-        public CashgameDetailsEventModel Event { get; set; }
+        public CashgameDetailsEventModel Event { get; }
         [DataMember(Name = "players")]
-        public IList<CashgameDetailsPlayerModel> Players { get; set; }
+        public IList<CashgameDetailsPlayerModel> Players { get; }
 
         public CashgameDetailsModel(CashgameDetails.Result details)
         {
@@ -37,10 +37,6 @@ namespace Api.Models.CashgameModels
             Location = new SmallLocationModel(details);
             Event = details.EventId != 0 ? new CashgameDetailsEventModel(details) : null;
             Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
-        }
-
-        public CashgameDetailsModel()
-        {
         }
     }
 }

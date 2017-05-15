@@ -7,21 +7,21 @@ namespace Api.Models.CashgameModels
     public class CashgameBunchModel
     {
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         [DataMember(Name = "timezone")]
-        public string Timezone { get; set; }
+        public string Timezone { get; }
         [DataMember(Name = "currencyFormat")]
-        public string CurrencyFormat { get; set; }
+        public string CurrencyFormat { get; }
         [DataMember(Name = "currencySymbol")]
-        public string CurrencySymbol { get; set; }
+        public string CurrencySymbol { get; }
         [DataMember(Name = "currencyLayout")]
-        public string CurrencyLayout { get; set; }
+        public string CurrencyLayout { get; }
         [DataMember(Name = "thousandSeparator")]
-        public string ThousandSeparator { get; set; }
+        public string ThousandSeparator { get; }
         [DataMember(Name = "culture")]
-        public string Culture { get; set; }
+        public string Culture { get; }
         [DataMember(Name = "role")]
-        public string Role { get; set; }
+        public string Role { get; }
 
         public CashgameBunchModel(CashgameDetails.Result detailsResult)
         {
@@ -45,10 +45,6 @@ namespace Api.Models.CashgameModels
             ThousandSeparator = listResult.ThousandSeparator;
             Culture = listResult.Culture;
             Role = listResult.Role.ToString().ToLower();
-        }
-
-        public CashgameBunchModel()
-        {
         }
     }
 }

@@ -8,13 +8,13 @@ namespace Api.Models.UserModels
     public class UserItemModel
     {
         [DataMember(Name = "userName")]
-        public string UserName { get; set; }
+        public string UserName { get; }
 
         [DataMember(Name = "displayName")]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; }
 
         [DataMember(Name = "url")]
-        public string Url { get; set; }
+        public string Url { get; }
 
         public UserItemModel(UserList.UserListItem r)
             : this(r.UserName, r.DisplayName)
@@ -26,10 +26,6 @@ namespace Api.Models.UserModels
             UserName = userName;
             DisplayName = displayName;
             Url = new ApiUserUrl(userName).Absolute;
-        }
-
-        public UserItemModel()
-        {
         }
     }
 }

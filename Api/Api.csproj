@@ -153,10 +153,13 @@
     <Compile Include="Extensions\NoContentResult.cs" />
     <Compile Include="Models\AdminModels\ClearCacheModel.cs" />
     <Compile Include="Models\AdminModels\SendEmailModel.cs" />
+    <Compile Include="Models\AppModels\AddAppPostModel.cs" />
     <Compile Include="Models\AppModels\AppListModel.cs" />
     <Compile Include="Models\AppModels\AppModel.cs" />
+    <Compile Include="Models\BunchModels\AddBunchPostModel.cs" />
     <Compile Include="Models\BunchModels\BunchListModel.cs" />
     <Compile Include="Models\BunchModels\BunchModel.cs" />
+    <Compile Include="Models\BunchModels\UpdateBunchPostModel.cs" />
     <Compile Include="Models\CashgameModels\AddCashgamePostModel.cs" />
     <Compile Include="Models\CashgameModels\ApiRunningResult.cs" />
     <Compile Include="Models\CashgameModels\CashgameBunchModel.cs" />
@@ -171,6 +174,7 @@
     <Compile Include="Models\CashgameModels\CashgameListItemPlayerModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameReportPostModel.cs" />
+    <Compile Include="Models\CashgameModels\CashgameYearListItemModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListModel.cs" />
     <Compile Include="Models\CashgameModels\CurrentCashgameListModel.cs" />
     <Compile Include="Models\CashgameModels\UpdateCashgamePostModel.cs" />
@@ -185,6 +189,7 @@
     <Compile Include="Models\LocationModels\SmallLocationModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerListModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerModel.cs" />
+    <Compile Include="Models\UserModels\FullUserModel.cs" />
     <Compile Include="Models\UserModels\UpdateUserPostModel.cs" />
     <Compile Include="Models\UserModels\UserItemModel.cs" />
     <Compile Include="Models\UserModels\UserListModel.cs" />
