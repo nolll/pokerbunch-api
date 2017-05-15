@@ -1,22 +1,19 @@
 using System.Runtime.Serialization;
+using Api.Models.CommonModels;
 using Core.UseCases;
 
 namespace Api.Models.AdminModels
 {
     [DataContract(Namespace = "", Name = "emailsent")]
-    public class SendEmailModel
+    public class SendEmailModel : MessageModel
     {
-        [DataMember(Name = "message")]
-        public string Message { get; set; }
+        private readonly string _email;
+
+        public override string Message => $"An email was sent to {_email}";
 
         public SendEmailModel(TestEmail.Result result)
         {
-            var email = result.Email;
-            Message = $"An email was sent to {email}";
-        }
-
-        public SendEmailModel()
-        {
+            _email = result.Email;
         }
     }
 }
