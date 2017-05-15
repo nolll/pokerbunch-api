@@ -1,10 +1,9 @@
 using System;
 using System.Web.Http;
 using Api.Auth;
-using Api.Models;
 using Api.Models.CashgameModels;
+using Api.Models.CommonModels;
 using Api.Routes;
-using Core.Exceptions;
 using Core.UseCases;
 
 namespace Api.Controllers
@@ -58,11 +57,11 @@ namespace Api.Controllers
         [Route(ApiRoutes.CashgameDelete)]
         [HttpDelete]
         [ApiAuthorize]
-        public CashgameDeletedModel Delete(int id)
+        public CashgameDeleteModel Delete(int id)
         {
             var deleteRequest = new DeleteCashgame.Request(CurrentUserName, id);
             UseCase.DeleteCashgame.Execute(deleteRequest);
-            return new CashgameDeletedModel(id);
+            return new CashgameDeleteModel(id);
         }
 
         [Route(ApiRoutes.CurrentGames)]
@@ -77,49 +76,28 @@ namespace Api.Controllers
         [Route(ApiRoutes.Buyin)]
         [HttpPost]
         [ApiAuthorize]
-        public IHttpActionResult Buyin(string slug, [FromBody] CashgameBuyinPostModel postModel)
+        public OkModel Buyin(string slug, [FromBody] CashgameBuyinPostModel postModel)
         {
-            try
-            {
-                UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, slug, postModel.PlayerId, postModel.Amount, postModel.Stack, DateTime.UtcNow));
-                return Ok();
-            }
-            catch (CashgameNotRunningException)
-            {
-                return InternalServerError();
-            }
+            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, slug, postModel.PlayerId, postModel.Amount, postModel.Stack, DateTime.UtcNow));
+            return new OkModel();
         }
 
         [Route(ApiRoutes.Report)]
         [HttpPost]
         [ApiAuthorize]
-        public IHttpActionResult Report(string slug, [FromBody] CashgameReportPostModel post)
+        public OkModel Report(string slug, [FromBody] CashgameReportPostModel post)
         {
-            try
-            {
-                UseCase.Report.Execute(new Report.Request(CurrentUserName, slug, post.PlayerId, post.Stack, DateTime.UtcNow));
-                return Ok();
-            }
-            catch (CashgameNotRunningException)
-            {
-                return InternalServerError();
-            }
+            UseCase.Report.Execute(new Report.Request(CurrentUserName, slug, post.PlayerId, post.Stack, DateTime.UtcNow));
+            return new OkModel();
         }
 
         [Route(ApiRoutes.Cashout)]
         [HttpPost]
         [ApiAuthorize]
-        public IHttpActionResult Cashout(string slug, [FromBody] CashgameCashoutPostModel postModel)
+        public OkModel Cashout(string slug, [FromBody] CashgameCashoutPostModel postModel)
         {
-            try
-            {
-                UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, slug, postModel.PlayerId, postModel.Stack, DateTime.UtcNow));
-                return Ok();
-            }
-            catch (CashgameNotRunningException)
-            {
-                return InternalServerError();
-            }
+            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, slug, postModel.PlayerId, postModel.Stack, DateTime.UtcNow));
+            return new OkModel();
         }
 
         [Route(ApiRoutes.CashgameYears)]

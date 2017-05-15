@@ -1,6 +1,5 @@
 using System.Web.Http;
 using Api.Auth;
-using Api.Models;
 using Api.Models.AppModels;
 using Api.Routes;
 using Core.UseCases;
