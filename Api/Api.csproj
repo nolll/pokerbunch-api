@@ -198,6 +198,7 @@
     <Compile Include="Urls\ApiUrls\ApiCashgameListUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiCashgameUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiUrl.cs" />
+    <Compile Include="Urls\ApiUrls\ApiUserProfileUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiUserUrl.cs" />
     <Compile Include="Urls\ApiUrls\TokenUrl.cs" />
     <Compile Include="Urls\RouteParams.cs" />

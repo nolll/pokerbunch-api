@@ -1,6 +1,7 @@
-﻿using System.Web.Http;
+﻿using System.Runtime.Serialization;
+using System.Web.Http;
 using Api.Routes;
-using Api.Urls.SiteUrls;
+using Api.Urls.ApiUrls;
 
 namespace Api.Controllers
 {
@@ -8,9 +9,16 @@ namespace Api.Controllers
     {
         [Route(ApiRoutes.Home)]
         [HttpGet]
-        public IHttpActionResult Home()
+        public HomeModel Home()
         {
-            return Redirect(new ApiDocsUrl().Absolute);
+            return new HomeModel();
         }
+    }
+
+    [DataContract(Namespace = "", Name = "user")]
+    public class HomeModel
+    {
+        [DataMember(Name = "userProfileUrl")]
+        public string UserProfileUrl => new ApiUserProfileUrl().Absolute;
     }
 }
