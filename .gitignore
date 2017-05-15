@@ -5,6 +5,7 @@ packages
 _NCrunch_*/
 .vs/
 *.suo
+*.jfm
 **/obj/
 **/bin/
 **/*proj.user

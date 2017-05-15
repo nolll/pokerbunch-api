@@ -4,18 +4,18 @@ using Core.UseCases;
 namespace Api.Models.AdminModels
 {
     [DataContract(Namespace = "", Name = "emailsent")]
-    public class EmailSentModel
+    public class SendEmailModel
     {
         [DataMember(Name = "message")]
         public string Message { get; set; }
 
-        public EmailSentModel(TestEmail.Result result)
+        public SendEmailModel(TestEmail.Result result)
         {
             var email = result.Email;
             Message = $"An email was sent to {email}";
         }
 
-        public EmailSentModel()
+        public SendEmailModel()
         {
         }
     }

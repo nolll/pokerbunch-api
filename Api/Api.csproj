@@ -151,8 +151,8 @@
     <Compile Include="Extensions\HttpNotFoundAwareControllerActionSelector.cs" />
     <Compile Include="Extensions\HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="Extensions\NoContentResult.cs" />
-    <Compile Include="Models\AdminModels\CacheClearedModel.cs" />
-    <Compile Include="Models\AdminModels\EmailSentModel.cs" />
+    <Compile Include="Models\AdminModels\ClearCacheModel.cs" />
+    <Compile Include="Models\AdminModels\SendEmailModel.cs" />
     <Compile Include="Models\AppModels\AppListModel.cs" />
     <Compile Include="Models\AppModels\AppModel.cs" />
     <Compile Include="Models\BunchModels\BunchListModel.cs" />

@@ -3,17 +3,17 @@ using System.Runtime.Serialization;
 namespace Api.Models.AdminModels
 {
     [DataContract(Namespace = "", Name = "cachecleared")]
-    public class CacheClearedModel
+    public class ClearCacheModel
     {
         [DataMember(Name = "message")]
         public string Message { get; set; }
 
-        public CacheClearedModel(int objectCount)
+        public ClearCacheModel(int objectCount)
         {
             Message = GetMessage(objectCount);
         }
 
-        public CacheClearedModel()
+        public ClearCacheModel()
         {
         }
 
