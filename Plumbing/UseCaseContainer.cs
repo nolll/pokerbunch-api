@@ -34,6 +34,7 @@ namespace Plumbing
         // Events
         public EventDetails GetEvent => new EventDetails(_deps.EventRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.BunchRepository, _deps.LocationRepository);
         public EventList GetEventList => new EventList(_deps.BunchRepository, _deps.EventRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository);
+        public AddEvent AddEvent => new AddEvent(_deps.BunchRepository, _deps.PlayerRepository, _deps.UserRepository, _deps.EventRepository);
 
         // Locations
         public GetLocationList GetLocationList => new GetLocationList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository);

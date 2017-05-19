@@ -25,5 +25,14 @@ namespace Api.Controllers
             var eventListResult = UseCase.GetEventList.Execute(new EventList.Request(CurrentUserName, slug));
             return new EventListModel(eventListResult);
         }
+
+        [Route(ApiRoutes.EventAdd)]
+        [HttpPost]
+        [ApiAuthorize]
+        public EventModel Add(string slug, [FromBody] EventAddPostModel post)
+        {
+            var result = UseCase.AddEvent.Execute(new AddEvent.Request(CurrentUserName, slug, post.Name));
+            return Get(result.Id);
+        }
     }
 }

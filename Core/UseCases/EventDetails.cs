@@ -23,13 +23,16 @@ namespace Core.UseCases
         public Result Execute(Request request)
         {
             var e = _eventRepository.Get(request.EventId);
-            var location = _locationRepository.Get(e.LocationId);
+            var location = e.LocationId > 0 ? _locationRepository.Get(e.LocationId) : null;
             var bunch = _bunchRepository.Get(e.BunchId);
             var user = _userRepository.Get(request.UserName);
             var player = _playerRepository.Get(e.BunchId, user.Id);
             RequireRole.Player(user, player);
+
+            var locationId = location?.Id ?? 0;
+            var locationName = location?.Name;
             
-            return new Result(e.Id, e.Name, bunch.Slug, location.Id, location.Name);
+            return new Result(e.Id, e.Name, bunch.Slug, locationId, locationName);
         }
 
         public class Request

@@ -21,15 +21,15 @@ namespace Api.Models.EventModels
             Id = e.EventId;
             BunchId = e.BunchId;
             Name = e.Name;
-            Location = new SmallLocationModel(e);
+            Location = e.LocationId > 0 ? new SmallLocationModel(e) : null;
         }
 
-        public EventModel(EventDetails.Result e)
+        public EventModel(EventDetails.Result r)
         {
-            Id = e.Id;
-            BunchId = e.BunchId;
-            Name = e.Name;
-            Location = new SmallLocationModel(e);
+            Id = r.Id;
+            BunchId = r.BunchId;
+            Name = r.Name;
+            Location = r.LocationId > 0 ? new SmallLocationModel(r) : null;
         }
     }
 }

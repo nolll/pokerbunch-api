@@ -34,9 +34,9 @@ namespace Core.UseCases
             RequireRole.Player(currentUser, currentPlayer);
 
             var e = new Event(0, bunch.Id, request.Name);
-            _eventRepository.Add(e);
+            var id = _eventRepository.Add(e);
 
-            return new Result(bunch.Slug);
+            return new Result(bunch.Slug, id);
         }
 
         public class Request
@@ -56,11 +56,13 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string Slug { get; private set; }
+            public string BunchId { get; }
+            public int Id { get; }
 
-            public Result(string slug)
+            public Result(string bunchId, int id)
             {
-                Slug = slug;
+                BunchId = bunchId;
+                Id = id;
             }
         }
     }

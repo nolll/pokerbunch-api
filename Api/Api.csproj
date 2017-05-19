@@ -180,6 +180,7 @@
     <Compile Include="Models\CashgameModels\UpdateCashgamePostModel.cs" />
     <Compile Include="Models\CommonModels\MessageModel.cs" />
     <Compile Include="Models\CommonModels\OkModel.cs" />
+    <Compile Include="Models\EventModels\EventAddPostModel.cs" />
     <Compile Include="Models\EventModels\EventListModel.cs" />
     <Compile Include="Models\EventModels\EventModel.cs" />
     <Compile Include="Models\HomeModels\HomeModel.cs" />

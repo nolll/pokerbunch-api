@@ -18,6 +18,7 @@ namespace Api.Routes
         public const string BunchGet = "bunches/{slug}";
         public const string BunchUpdate = BunchGet;
         public const string EventList = "bunches/{slug}/events";
+        public const string EventAdd = EventList;
         public const string PlayerList = "bunches/{slug}/players";
         public const string CurrentGames = "bunches/{slug}/cashgames/current";
 
