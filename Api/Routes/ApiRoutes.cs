@@ -42,10 +42,10 @@ namespace Api.Routes
         public const string Report = "cashgame/report/{slug}";
         public const string Cashout = "cashgame/cashout/{slug}";
 
-        public const string CashgameList = "bunches/{id}/cashgames";
+        public const string CashgameList = "bunches/{slug}/cashgames";
         public const string CashgameAdd = CashgameList;
-        public const string CashgameListWithYear = "bunches/{id}/cashgames/{year}";
-        public const string CashgameYears = "bunches/{id}/cashgames/years";
+        public const string CashgameListWithYear = "bunches/{slug}/cashgames/{year}";
+        public const string CashgameYears = "bunches/{slug}/cashgames/years";
         public const string CashgameGet = "cashgames/{id}";
         public const string CashgameUpdate = CashgameGet;
         public const string CashgameDelete = CashgameGet;

@@ -21,10 +21,18 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.CashgameList)]
+        [HttpGet]
+        [ApiAuthorize]
+        public CashgameListModel List(string slug)
+        {
+            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, null));
+            return new CashgameListModel(listResult);
+        }
+
         [Route(ApiRoutes.CashgameListWithYear)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameListModel List(string slug, int? year = null)
+        public CashgameListModel List(string slug, int year)
         {
             var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, year));
             return new CashgameListModel(listResult);
