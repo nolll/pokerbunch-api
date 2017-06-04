@@ -38,9 +38,9 @@ namespace Api.Routes
         public const string AppSave = "apps/{id}";
         public const string AppDelete = "apps/{id}";
 
-        public const string Buyin = "cashgame/{id}/buyin";
-        public const string Report = "cashgame/{id}/report";
-        public const string Cashout = "cashgame/{id}/cashout";
+        public const string Buyin = "cashgames/{id}/buyin";
+        public const string Report = "cashgames/{id}/report";
+        public const string Cashout = "cashgames/{id}/cashout";
 
         public const string CashgameList = "bunches/{slug}/cashgames";
         public const string CashgameAdd = CashgameList;

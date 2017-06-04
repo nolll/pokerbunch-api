@@ -28,10 +28,10 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchRepository.GetBySlug(request.Slug);
-            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
+            //var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var cashgame = _cashgameRepository.Get(request.CashgameId);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
 
             var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
@@ -42,16 +42,16 @@ namespace Core.UseCases
         public class Request
         {
             public string UserName { get; }
-            public string Slug { get; }
+            public int CashgameId { get; }
             public int PlayerId { get; }
             [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
             public int Stack { get; }
             public DateTime CurrentTime { get; }
 
-            public Request(string userName, string slug, int playerId, int stack, DateTime currentTime)
+            public Request(string userName, int cashgameId, int playerId, int stack, DateTime currentTime)
             {
                 UserName = userName;
-                Slug = slug;
+                CashgameId = cashgameId;
                 PlayerId = playerId;
                 Stack = stack;
                 CurrentTime = currentTime;

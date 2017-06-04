@@ -93,9 +93,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.Report)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Report(string slug, [FromBody] CashgameReportPostModel post)
+        public OkModel Report(int id, [FromBody] CashgameReportPostModel post)
         {
-            UseCase.Report.Execute(new Report.Request(CurrentUserName, slug, post.PlayerId, post.Stack, DateTime.UtcNow));
+            UseCase.Report.Execute(new Report.Request(CurrentUserName, id, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 

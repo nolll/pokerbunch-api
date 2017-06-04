@@ -14,7 +14,7 @@ namespace Tests.Core.UseCases
         {
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new Report.Request(TestData.UserNameA, TestData.SlugA, TestData.PlayerIdA, -1, DateTime.Now);
+            var request = new Report.Request(TestData.UserNameA, TestData.CashgameIdA, TestData.PlayerIdA, -1, DateTime.Now);
 
             Assert.Throws<ValidationException>(() => Sut.Execute(request));
         }
@@ -25,7 +25,7 @@ namespace Tests.Core.UseCases
         {
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new Report.Request(TestData.UserNameA, TestData.SlugA, TestData.PlayerIdA, stack, DateTime.Now);
+            var request = new Report.Request(TestData.UserNameA, TestData.CashgameIdA, TestData.PlayerIdA, stack, DateTime.Now);
             Sut.Execute(request);
 
             var result = Deps.Cashgame.Updated.AddedCheckpoints.First();
