@@ -49,6 +49,9 @@
     <Compile Include="UseCases\ClearCacheTests\Arrange.cs" />
     <Compile Include="UseCases\ClearCacheTests\WithAdmin.cs" />
     <Compile Include="UseCases\ClearCacheTests\WithPlayer.cs" />
+    <Compile Include="UseCases\ReportTests\ReportTests.cs" />
+    <Compile Include="UseCases\ReportTests\WithInvalidStack.cs" />
+    <Compile Include="UseCases\ReportTests\WithValidStack.cs" />
     <Compile Include="UseCases\TestEmailTests\WithAdmin.cs" />
     <Compile Include="UseCases\TestEmailTests\Arrange.cs" />
     <Compile Include="UseCases\TestEmailTests\WithPlayer.cs" />
@@ -99,7 +102,6 @@
     <Compile Include="UseCases\EditUserTests.cs" />
     <Compile Include="UseCases\EndCashgameTests.cs" />
     <Compile Include="UseCases\LocationDetailsTests.cs" />
-    <Compile Include="UseCases\ReportTests.cs" />
     <Compile Include="UseCases\DeletePlayerTests.cs" />
     <Compile Include="UseCases\EventDetailsTests.cs" />
     <Compile Include="UseCases\EventListTests.cs" />
