@@ -9,14 +9,12 @@ namespace Core.UseCases
 {
     public class Report
     {
-        private readonly IBunchRepository _bunchRepository;
         private readonly ICashgameRepository _cashgameRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public Report(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
+        public Report(ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
-            _bunchRepository = bunchRepository;
             _cashgameRepository = cashgameRepository;
             _playerRepository = playerRepository;
             _userRepository = userRepository;
