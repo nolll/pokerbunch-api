@@ -46,9 +46,9 @@ namespace Plumbing
         public CashgameYearList CashgameYearList => new CashgameYearList(_deps.BunchRepository, _deps.CashgameRepository, _deps.UserRepository, _deps.PlayerRepository);
         public CurrentCashgames CurrentCashgames => new CurrentCashgames(_deps.UserRepository, _deps.BunchRepository, _deps.CashgameRepository, _deps.PlayerRepository);
         public CashgameDetails CashgameDetails => new CashgameDetails(_deps.BunchRepository, _deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository, _deps.LocationRepository, _deps.EventRepository);
-        public Buyin Buyin => new Buyin(_deps.BunchRepository, _deps.PlayerRepository, _deps.CashgameRepository, _deps.UserRepository);
+        public Buyin Buyin => new Buyin(_deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository);
         public Report Report => new Report(_deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository);
-        public Cashout Cashout => new Cashout(_deps.BunchRepository, _deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository);
+        public Cashout Cashout => new Cashout(_deps.CashgameRepository, _deps.PlayerRepository, _deps.UserRepository);
         public EditCashgame EditCashgame => new EditCashgame(_deps.CashgameRepository, _deps.UserRepository, _deps.PlayerRepository, _deps.LocationRepository, _deps.EventRepository);
         public DeleteCashgame DeleteCashgame => new DeleteCashgame(_deps.CashgameRepository, _deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository);
 

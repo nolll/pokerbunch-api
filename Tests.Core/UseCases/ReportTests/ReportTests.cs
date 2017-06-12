@@ -9,13 +9,13 @@ namespace Tests.Core.UseCases.ReportTests
 {
     public class Arrange : UseCaseTest<Report>
     {
-        private string Username = "username";
-        private int UserId = 1;
-        private int CashgameId = 2;
-        private int PlayerId = 3;
-        private int BunchId = 4;
+        private const string Username = "username";
+        private const int UserId = 1;
+        private const int CashgameId = 2;
+        private const int PlayerId = 3;
+        private const int BunchId = 4;
         protected virtual int Stack => 5;
-        private DateTime CurrentTime = DateTime.MinValue;
+        private static DateTime CurrentTime => DateTime.MinValue;
         protected Cashgame UpdatedCashgame;
 
         protected override void Setup()

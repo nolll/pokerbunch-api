@@ -84,9 +84,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.Buyin)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Buyin(string slug, [FromBody] CashgameBuyinPostModel post)
+        public OkModel Buyin(int id, [FromBody] CashgameBuyinPostModel post)
         {
-            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, slug, post.PlayerId, post.Amount, post.Stack, DateTime.UtcNow));
+            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, id, post.PlayerId, post.Amount, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
@@ -102,9 +102,9 @@ namespace Api.Controllers
         [Route(ApiRoutes.Cashout)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Cashout(string slug, [FromBody] CashgameCashoutPostModel post)
+        public OkModel Cashout(int id, [FromBody] CashgameCashoutPostModel post)
         {
-            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, slug, post.PlayerId, post.Stack, DateTime.UtcNow));
+            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, id, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 

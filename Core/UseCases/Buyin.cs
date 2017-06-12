@@ -9,16 +9,14 @@ namespace Core.UseCases
 {
     public class Buyin
     {
-        private readonly IBunchRepository _bunchRepository;
-        private readonly IPlayerRepository _playerRepository;
         private readonly ICashgameRepository _cashgameRepository;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
 
-        public Buyin(IBunchRepository bunchRepository, IPlayerRepository playerRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository)
+        public Buyin(ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
-            _bunchRepository = bunchRepository;
-            _playerRepository = playerRepository;
             _cashgameRepository = cashgameRepository;
+            _playerRepository = playerRepository;
             _userRepository = userRepository;
         }
 
@@ -29,11 +27,11 @@ namespace Core.UseCases
             if (!validator.IsValid)
                 throw new ValidationException(validator);
 
-            var bunch = _bunchRepository.GetBySlug(request.Slug);
+            var cashgame = _cashgameRepository.GetRunning(request.CashgameId);
             var currentUser = _userRepository.Get(request.UserName);
-            var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+            var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
-            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
+            
 
             var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
             var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
@@ -44,7 +42,7 @@ namespace Core.UseCases
         public class Request
         {
             public string UserName { get; }
-            public string Slug { get; }
+            public int CashgameId { get; }
             public int PlayerId { get; }
             [Range(1, int.MaxValue, ErrorMessage = "Amount needs to be positive")]
             public int BuyinAmount { get; }
@@ -52,10 +50,10 @@ namespace Core.UseCases
             public int StackAmount { get; }
             public DateTime CurrentTime { get; }
 
-            public Request(string userName, string slug, int playerId, int buyinAmount, int stackAmount, DateTime currentTime)
+            public Request(string userName, int cashgameId, int playerId, int buyinAmount, int stackAmount, DateTime currentTime)
             {
                 UserName = userName;
-                Slug = slug;
+                CashgameId = cashgameId;
                 PlayerId = playerId;
                 BuyinAmount = buyinAmount;
                 StackAmount = stackAmount;

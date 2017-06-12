@@ -28,7 +28,6 @@ namespace Tests.Core.UseCases.CashoutTests
 
         protected override void Setup()
         {
-            var bunch = new Bunch(BunchId, Slug);
             var cashgame = CreateCashgame();
             var player = new Player(BunchId, PlayerId, UserId);
             var user = new User(UserId, UserName);
@@ -36,8 +35,7 @@ namespace Tests.Core.UseCases.CashoutTests
             CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
             UpdatedCashgame = null;
 
-            Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(bunch);
-            Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(CreateCashgame());
+            Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(CreateCashgame());
             Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
             Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
             Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(user);
@@ -45,7 +43,7 @@ namespace Tests.Core.UseCases.CashoutTests
 
         protected override void Execute()
         {
-            Sut.Execute(new Cashout.Request(UserName, Slug, PlayerId, CashoutStack, CashoutTime));
+            Sut.Execute(new Cashout.Request(UserName, CashgameId, PlayerId, CashoutStack, CashoutTime));
         }
 
         private Cashgame CreateCashgame()

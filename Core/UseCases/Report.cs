@@ -26,7 +26,6 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            //var bunch = _bunchRepository.GetBySlug(request.Slug);
             var cashgame = _cashgameRepository.Get(request.CashgameId);
             var currentUser = _userRepository.Get(request.UserName);
             var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);

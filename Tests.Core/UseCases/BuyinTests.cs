@@ -18,7 +18,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Buyin_InvalidBuyin_ReturnsError()
         {
-            var request = new Buyin.Request(TestData.UserNameA, TestData.SlugA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
+            var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
 
             var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
             Assert.AreEqual(1, ex.Messages.Count());
@@ -27,7 +27,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void Buyin_InvalidStackSize_ReturnsError()
         {
-            var request = new Buyin.Request(TestData.UserNameA, TestData.SlugA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
+            var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
 
             var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
             Assert.AreEqual(1, ex.Messages.Count());
@@ -43,7 +43,7 @@ namespace Tests.Core.UseCases
 
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new Buyin.Request(TestData.UserNameA, TestData.SlugA, PlayerId, buyin, stack, timestamp);
+            var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, buyin, stack, timestamp);
             Sut.Execute(request);
 
             var result = Deps.Cashgame.Updated.AddedCheckpoints.First();
@@ -54,9 +54,8 @@ namespace Tests.Core.UseCases
         }
 
         private Buyin Sut => new Buyin(
-            Deps.Bunch,
-            Deps.Player,
             Deps.Cashgame,
+            Deps.Player,
             Deps.User);
     }
 }
