@@ -41,6 +41,7 @@ namespace Api.Routes
         public const string Buyin = "cashgames/{id}/buyin";
         public const string Report = "cashgames/{id}/report";
         public const string Cashout = "cashgames/{id}/cashout";
+        public const string EndCashgame = "cashgames/{id}/end";
 
         public const string CashgameList = "bunches/{slug}/cashgames";
         public const string CashgameAdd = CashgameList;

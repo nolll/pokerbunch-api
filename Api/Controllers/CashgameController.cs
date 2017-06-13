@@ -86,7 +86,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public OkModel Buyin(int id, [FromBody] CashgameBuyinPostModel post)
         {
-            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, id, post.PlayerId, post.Amount, post.Stack, DateTime.UtcNow));
+            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, id, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
@@ -108,12 +108,21 @@ namespace Api.Controllers
             return new OkModel();
         }
 
+        [Route(ApiRoutes.EndCashgame)]
+        [HttpPost]
+        [ApiAuthorize]
+        public OkModel End(int id)
+        {
+            UseCase.EndCashgame.Execute(new EndCashgame.Request(CurrentUserName, id));
+            return new OkModel();
+        }
+
         [Route(ApiRoutes.CashgameYears)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameYearListModel Years(string id)
+        public CashgameYearListModel Years(string slug)
         {
-            var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, id));
+            var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, slug));
             return new CashgameYearListModel(listResult);
         }
     }

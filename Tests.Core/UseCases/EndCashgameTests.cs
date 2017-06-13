@@ -10,7 +10,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void EndGame_WithoutRunningGame_DoesNotEndGame()
         {
-            var request = new EndCashgame.Request(TestData.UserNameA, TestData.SlugA);
+            var request = new EndCashgame.Request(TestData.UserNameA, TestData.CashgameIdC);
             Sut.Execute(request);
 
             Assert.IsNull(Deps.Cashgame.Updated);
@@ -21,7 +21,7 @@ namespace Tests.Core.UseCases
         {
             Deps.Cashgame.SetupRunningGame();
 
-            var request = new EndCashgame.Request(TestData.UserNameA, TestData.SlugA);
+            var request = new EndCashgame.Request(TestData.UserNameA, TestData.CashgameIdC);
             Sut.Execute(request);
 
             Assert.AreEqual(TestData.CashgameIdC, Deps.Cashgame.Updated.Id);
@@ -29,9 +29,8 @@ namespace Tests.Core.UseCases
         }
 
         private EndCashgame Sut => new EndCashgame(
-            Deps.Bunch,
             Deps.Cashgame,
-            Deps.User,
-            Deps.Player);
+            Deps.Player,
+            Deps.User);
     }
 }

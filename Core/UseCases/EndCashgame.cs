@@ -6,29 +6,26 @@ namespace Core.UseCases
 {
     public class EndCashgame
     {
-        private readonly IBunchRepository _bunchRepository;
         private readonly ICashgameRepository _cashgameRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
 
-        public EndCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
+        public EndCashgame(ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
         {
-            _bunchRepository = bunchRepository;
             _cashgameRepository = cashgameRepository;
-            _userRepository = userRepository;
             _playerRepository = playerRepository;
+            _userRepository = userRepository;
         }
 
         public void Execute(Request request)
         {
-            var bunch = _bunchRepository.GetBySlug(request.Slug);
-            var user = _userRepository.Get(request.UserName);
-            var player = _playerRepository.Get(bunch.Id, user.Id);
-            RequireRole.Player(user, player);
-            var cashgame = _cashgameRepository.GetRunning(bunch.Id);
-
+            var cashgame = _cashgameRepository.Get(request.CashgameId);
             if (cashgame != null)
             {
+                var user = _userRepository.Get(request.UserName);
+                var player = _playerRepository.Get(cashgame.BunchId, user.Id);
+                RequireRole.Player(user, player);
+            
                 cashgame.ChangeStatus(GameStatus.Finished);
                 _cashgameRepository.Update(cashgame);
             }
@@ -37,12 +34,12 @@ namespace Core.UseCases
         public class Request
         {
             public string UserName { get; }
-            public string Slug { get; }
+            public int CashgameId { get; }
 
-            public Request(string userName, string slug)
+            public Request(string userName, int cashgameId)
             {
                 UserName = userName;
-                Slug = slug;
+                CashgameId = cashgameId;
             }
         }
     }
