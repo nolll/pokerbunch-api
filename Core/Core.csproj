@@ -103,6 +103,7 @@
     <Compile Include="UseCases\AddLocation.cs" />
     <Compile Include="UseCases\AddPlayer.cs" />
     <Compile Include="UseCases\AddUser.cs" />
+    <Compile Include="UseCases\CashgameYearList.cs" />
     <Compile Include="UseCases\ClearCache.cs" />
     <Compile Include="UseCases\CoreContext.cs" />
     <Compile Include="UseCases\CurrentCashgames.cs" />

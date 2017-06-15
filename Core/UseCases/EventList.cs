@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
@@ -44,7 +45,7 @@ namespace Core.UseCases
             var locationName = location != null ? location.Name : "";
             var locationId = location?.Id ?? 0;
             if(e.HasGames)
-                return new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate, e.EndDate);
+                return new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate);
             return new Event(e.Id, slug, e.Name);
         }
 
@@ -78,25 +79,20 @@ namespace Core.UseCases
             public int LocationId { get; }
             public string LocationName { get; }
             public Date StartDate { get; }
-            public Date EndDate { get; }
-            public bool HasGames { get; }
 
             public Event(int id, string bunchId, string name)
             {
                 EventId = id;
                 BunchId = bunchId;
                 Name = name;
-                HasGames = false;
             }
             
-            public Event(int id, string bunchId, string name, int locationId, string locationName, Date startDate, Date endDate)
+            public Event(int id, string bunchId, string name, int locationId, string locationName, Date startDate)
                 : this(id, bunchId, name)
             {
                 LocationId = locationId;
                 LocationName = locationName;
                 StartDate = startDate;
-                EndDate = endDate;
-                HasGames = true;
             }
         }
     }

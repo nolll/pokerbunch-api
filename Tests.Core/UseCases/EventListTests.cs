@@ -25,21 +25,12 @@ namespace Tests.Core.UseCases
         }
 
         [Test]
-        public void EventList_EachItem_StartDateIsSet()
+        public void EventList_EachItem_StartTimeIsSet()
         {
             var result = Sut.Execute(CreateInput());
 
             Assert.AreEqual(new Date(2002, 2, 2), result.Events[0].StartDate);
             Assert.AreEqual(new Date(2001, 1, 1), result.Events[1].StartDate);
-        }
-
-        [Test]
-        public void EventList_EachItem_EndDateIsSet()
-        {
-            var result = Sut.Execute(CreateInput());
-
-            Assert.AreEqual(new Date(2002, 2, 3), result.Events[0].EndDate);
-            Assert.AreEqual(new Date(2001, 1, 2), result.Events[1].EndDate);
         }
 
         [Test]

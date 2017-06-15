@@ -1,3 +1,5 @@
+using System;
+using Core.Entities;
 using Core.Repositories;
 using Core.Services;
 
@@ -32,7 +34,7 @@ namespace Core.UseCases
             var locationId = location?.Id ?? 0;
             var locationName = location?.Name;
             
-            return new Result(e.Id, e.Name, bunch.Slug, locationId, locationName);
+            return new Result(e.Id, e.Name, bunch.Slug, locationId, locationName, e.StartDate);
         }
 
         public class Request
@@ -54,14 +56,16 @@ namespace Core.UseCases
             public string BunchId { get; }
             public int LocationId { get; }
             public string LocationName { get; }
+            public Date StartDate { get; }
 
-            public Result(int id, string name, string bunchId, int locationId, string locationName)
+            public Result(int id, string name, string bunchId, int locationId, string locationName, Date startDate)
             {
                 Id = id;
                 Name = name;
                 BunchId = bunchId;
                 LocationId = locationId;
                 LocationName = locationName;
+                StartDate = startDate;
             }
         }
     }
