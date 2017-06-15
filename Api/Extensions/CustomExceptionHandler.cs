@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
+using Api.Services;
 using Core.Exceptions;
 
 namespace Api.Extensions
@@ -11,7 +12,9 @@ namespace Api.Extensions
     {
         public override void Handle(ExceptionHandlerContext context)
         {
-            context.Result = new ResponseMessageResult(CreateResponse(context));
+            var isFriendlyErrorMessagesEnabled = !Environment.IsDevMode(context.Request.RequestUri.Host);
+            if (isFriendlyErrorMessagesEnabled)
+                context.Result = new ResponseMessageResult(CreateResponse(context));
         }
 
         private HttpResponseMessage CreateResponse(ExceptionHandlerContext context)

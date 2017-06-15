@@ -2,17 +2,17 @@ namespace Api.Services
 {
     public static class Environment
     {
-        public static bool IsNoAuth(string hostName)
+        public static bool IsDevMode(string hostName)
         {
-            return IsNoAuthAdmin(hostName) || IsNoAuthPlayer(hostName);
+            return IsDevModeAdmin(hostName) || IsDevModePlayer(hostName);
         }
 
-        public static bool IsNoAuthAdmin(string hostName)
+        public static bool IsDevModeAdmin(string hostName)
         {
             return IsLocal(hostName) && hostName.Contains("api-admin");
         }
 
-        public static bool IsNoAuthPlayer(string hostName)
+        public static bool IsDevModePlayer(string hostName)
         {
             return IsLocal(hostName) && hostName.Contains("api-player");
         }

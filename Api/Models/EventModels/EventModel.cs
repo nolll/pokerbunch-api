@@ -24,7 +24,7 @@ namespace Api.Models.EventModels
             Id = e.EventId;
             BunchId = e.BunchId;
             Name = e.Name;
-            StartDate = e.StartDate?.IsoString;
+            StartDate = e.StartDate.IsoString;
             Location = e.LocationId > 0 ? new SmallLocationModel(e) : null;
         }
 
@@ -33,7 +33,7 @@ namespace Api.Models.EventModels
             Id = r.Id;
             BunchId = r.BunchId;
             Name = r.Name;
-            StartDate = r.StartDate?.IsoString;
+            StartDate = r.StartDate.IsoString;
             Location = r.LocationId > 0 ? new SmallLocationModel(r) : null;
         }
     }
