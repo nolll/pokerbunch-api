@@ -28,7 +28,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.AppAdd)]
-        [HttpGet]
+        [HttpPost]
         [ApiAuthorize]
         public AppModel Add([FromBody] AddAppPostModel post)
         {
