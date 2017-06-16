@@ -109,7 +109,6 @@
     <Compile Include="UseCases\InvitePlayerTests.cs" />
     <Compile Include="UseCases\JoinBunchTests.cs" />
     <Compile Include="UseCases\LoginTests.cs" />
-    <Compile Include="UseCases\MatrixTests.cs" />
     <Compile Include="UseCases\PlayerDetailsTests.cs" />
     <Compile Include="UseCases\PlayerListTests.cs" />
     <Compile Include="UseCases\CashgameDetailsTests.cs" />

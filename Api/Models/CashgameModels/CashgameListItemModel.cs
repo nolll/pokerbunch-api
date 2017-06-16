@@ -29,5 +29,14 @@ namespace Api.Models.CashgameModels
             Location = new SmallLocationModel(item);
             Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
         }
+
+        public CashgameListItemModel(EventCashgameList.Item item)
+        {
+            Id = item.CashgameId.ToString();
+            StartTime = item.StartTime;
+            UpdatedTime = item.EndTime;
+            Location = new SmallLocationModel(item);
+            Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
+        }
     }
 }

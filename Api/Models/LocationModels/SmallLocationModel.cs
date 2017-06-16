@@ -21,6 +21,11 @@ namespace Api.Models.LocationModels
         {
         }
 
+        public SmallLocationModel(EventCashgameList.Item item)
+            : this(item.LocationId, item.LocationName)
+        {
+        }
+
         public SmallLocationModel(EventList.Event item)
             : this(item.LocationId, item.LocationName)
         {

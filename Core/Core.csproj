@@ -103,6 +103,7 @@
     <Compile Include="UseCases\AddLocation.cs" />
     <Compile Include="UseCases\AddPlayer.cs" />
     <Compile Include="UseCases\AddUser.cs" />
+    <Compile Include="UseCases\EventCashgameList.cs" />
     <Compile Include="UseCases\CashgameYearList.cs" />
     <Compile Include="UseCases\ClearCache.cs" />
     <Compile Include="UseCases\CoreContext.cs" />
@@ -135,7 +136,6 @@
     <Compile Include="UseCases\InvitePlayer.cs" />
     <Compile Include="UseCases\JoinBunch.cs" />
     <Compile Include="UseCases\Login.cs" />
-    <Compile Include="UseCases\Matrix.cs" />
     <Compile Include="UseCases\GetPlayer.cs" />
     <Compile Include="UseCases\GetPlayerList.cs" />
     <Compile Include="UseCases\Report.cs" />

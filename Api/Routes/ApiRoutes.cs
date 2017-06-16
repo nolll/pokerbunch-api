@@ -31,6 +31,7 @@ namespace Api.Routes
         public const string LocationDelete = LocationGet;
 
         public const string EventGet = "events/{id}";
+        public const string EventCashgameList = "events/{id}/cashgames";
 
         public const string AppList = "apps";
         public const string AppAdd = AppList;

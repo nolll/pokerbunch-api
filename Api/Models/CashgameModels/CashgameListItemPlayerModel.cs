@@ -26,5 +26,14 @@ namespace Api.Models.CashgameModels
             Buyin = item.Buyin;
             Stack = item.Stack;
         }
+
+        public CashgameListItemPlayerModel(EventCashgameList.ItemPlayer item)
+        {
+            Id = item.Id.ToString();
+            StartTime = item.BuyinTime;
+            UpdatedTime = item.UpdatedTime;
+            Buyin = item.Buyin;
+            Stack = item.Stack;
+        }
     }
 }
