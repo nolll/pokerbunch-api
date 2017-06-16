@@ -4,7 +4,7 @@ using Core.UseCases;
 namespace Api.Models.PlayerModels
 {
     [DataContract(Namespace = "", Name = "player")]
-    public class PlayerModel
+    public class PlayerListItemModel
     {
         [DataMember(Name = "id")]
         public int Id { get; }
@@ -18,29 +18,19 @@ namespace Api.Models.PlayerModels
         //[DataMember(Name = "isUser")]
         //public bool IsUser { get; }
 
-        [DataMember(Name = "userId")]
-        public string UserId { get; }
+        //[DataMember(Name = "userName")]
+        //public string UserName { get; }
 
-        [DataMember(Name = "userName")]
-        public string UserName { get; }
-
-        [DataMember(Name = "avatarUrl")]
-        public string AvatarUrl { get; }
-
-        [DataMember(Name = "bunchId")]
-        public string Slug { get; }
+        //[DataMember(Name = "avatarUrl")]
+        //public string AvatarUrl { get; }
 
         [DataMember(Name = "color")]
         public string Color { get; }
 
-        public PlayerModel(GetPlayer.Result r)
+        public PlayerListItemModel(GetPlayerList.ResultItem r)
         {
-            Id = r.PlayerId;
-            Name = r.DisplayName;
-            Slug = r.Slug;
-            UserId = r.UserId.ToString();
-            UserName = r.UserName;
-            AvatarUrl = r.AvatarUrl;
+            Id = r.Id;
+            Name = r.Name;
             Color = r.Color;
         }
     }

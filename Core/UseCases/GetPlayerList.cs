@@ -60,8 +60,8 @@ namespace Core.UseCases
         public class ResultItem
         {
             public string Name { get; }
-            public int Id { get; private set; }
-            public string Color { get; set; }
+            public int Id { get; }
+            public string Color { get; }
 
             public ResultItem(Player player)
             {

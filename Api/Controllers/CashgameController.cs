@@ -47,6 +47,15 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
+        [Route(ApiRoutes.PlayerCashgameList)]
+        [HttpGet]
+        [ApiAuthorize]
+        public CashgameListModel PlayerCashgameList(int id)
+        {
+            var listResult = UseCase.PlayerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, id));
+            return new CashgameListModel(listResult);
+        }
+
         [Route(ApiRoutes.CashgameAdd)]
         [HttpPost]
         [ApiAuthorize]

@@ -50,14 +50,15 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string DisplayName { get; private set; }
-            public int PlayerId { get; private set; }
-            public bool CanDelete { get; private set; }
-            public bool IsUser { get; private set; }
-            public string UserName { get; private set; }
-            public string AvatarUrl { get; private set; }
-            public string Slug { get; private set; }
-            public string Color { get; private set; }
+            public string DisplayName { get; }
+            public int PlayerId { get; }
+            public bool CanDelete { get; }
+            public bool IsUser { get; }
+            public int? UserId { get; }
+            public string UserName { get; }
+            public string AvatarUrl { get; }
+            public string Slug { get; }
+            public string Color { get; }
 
             public Result(Bunch bunch, Player player, User user, bool isManager, bool hasPlayed, string avatarUrl)
             {
@@ -67,6 +68,7 @@ namespace Core.UseCases
                 PlayerId = player.Id;
                 CanDelete = isManager && !hasPlayed;
                 IsUser = isUser;
+                UserId = user?.Id;
                 UserName = isUser ? user.UserName : string.Empty;
                 AvatarUrl = avatarUrl;
                 Color = player.Color;
