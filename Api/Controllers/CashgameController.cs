@@ -90,7 +90,7 @@ namespace Api.Controllers
             return new CashgameDeleteModel(id);
         }
 
-        [Route(ApiRoutes.CurrentGames)]
+        [Route(ApiRoutes.BunchCurrentGames)]
         [HttpGet]
         [ApiAuthorize]
         public CurrentCashgameListModel Current(string slug)

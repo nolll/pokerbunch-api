@@ -17,13 +17,22 @@ namespace Api.Controllers
             return new PlayerModel(getPlayerResult);
         }
 
-        [Route(ApiRoutes.PlayerList)]
+        [Route(ApiRoutes.BunchPlayerList)]
         [HttpGet]
         [ApiAuthorize]
         public PlayerListModel GetList(string slug)
         {
             var playerListResult = UseCase.GetPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, slug));
             return new PlayerListModel(playerListResult);
+        }
+
+        [Route(ApiRoutes.BunchPlayerAdd)]
+        [HttpPost]
+        [ApiAuthorize]
+        public PlayerModel Add(string slug, [FromBody] PlayerAddPostModel post)
+        {
+            var result = UseCase.AddPlayer.Execute(new AddPlayer.Request(CurrentUserName, slug, post.Name));
+            return Get(result.Id);
         }
     }
 }

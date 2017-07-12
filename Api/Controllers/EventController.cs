@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new EventModel(result);
         }
 
-        [Route(ApiRoutes.EventList)]
+        [Route(ApiRoutes.BunchEventList)]
         [HttpGet]
         [ApiAuthorize]
         public EventListModel List(string slug)
@@ -26,7 +26,7 @@ namespace Api.Controllers
             return new EventListModel(eventListResult);
         }
 
-        [Route(ApiRoutes.EventAdd)]
+        [Route(ApiRoutes.BunchEventAdd)]
         [HttpPost]
         [ApiAuthorize]
         public EventModel Add(string slug, [FromBody] EventAddPostModel post)

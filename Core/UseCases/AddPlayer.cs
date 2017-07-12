@@ -39,9 +39,9 @@ namespace Core.UseCases
                 throw new PlayerExistsException();
 
             player = Player.New(bunch.Id, request.Name);
-            _playerRepository.Add(player);
+            var id = _playerRepository.Add(player);
 
-            return new Result(bunch.Slug);
+            return new Result(id);
         }
 
         public class Request
@@ -61,11 +61,11 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string Slug { get; private set; }
+            public int Id { get; private set; }
 
-            public Result(string slug)
+            public Result(int id)
             {
-                Slug = slug;
+                Id = id;
             }
         }
     }

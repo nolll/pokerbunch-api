@@ -18,7 +18,7 @@ namespace Tests.Core.UseCases
             var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
             var result = Sut.Execute(request);
 
-            Assert.AreEqual("bunch-a", result.Slug);
+            Assert.AreEqual(1, result.Id);
         }
 
         [Test]
