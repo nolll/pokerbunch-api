@@ -189,6 +189,7 @@
     <Compile Include="Models\LocationModels\LocationModel.cs" />
     <Compile Include="Models\LocationModels\SmallLocationModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerAddPostModel.cs" />
+    <Compile Include="Models\PlayerModels\PlayerDeleteModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerListItemModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerListModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerModel.cs" />

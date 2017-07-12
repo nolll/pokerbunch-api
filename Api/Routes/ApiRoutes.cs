@@ -24,6 +24,7 @@ namespace Api.Routes
         public const string BunchCurrentGames = "bunches/{slug}/cashgames/current";
 
         public const string PlayerGet = "players/{id}";
+        public const string PlayerDelete = PlayerGet;
         public const string PlayerCashgameList = "players/{id}/cashgames";
 
         public const string LocationGet = "locations/{id}";

@@ -1,4 +1,5 @@
 using System.Linq;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -28,14 +29,13 @@ namespace Core.UseCases
             RequireRole.Manager(currentUser, currentPlayer);
             var cashgames = _cashgameRepository.GetByPlayer(player.Id);
             var hasPlayed = cashgames.Any();
-            var canDelete = !hasPlayed;
 
-            if (canDelete)
-            {
-                _playerRepository.Delete(request.PlayerId);
-            }
+            if (hasPlayed)
+                throw new PlayerHasGamesException();
+            
+            _playerRepository.Delete(request.PlayerId);
 
-            return new Result(canDelete, bunch.Slug, request.PlayerId);
+            return new Result(bunch.Slug, request.PlayerId);
         }
 
         public class Request
@@ -52,13 +52,11 @@ namespace Core.UseCases
 
         public class Result
         {
-            public bool Deleted { get; private set; }
             public string Slug { get; private set; }
             public int PlayerId { get; private set; }
 
-            public Result(bool deleted, string slug, int playerId)
+            public Result(string slug, int playerId)
             {
-                Deleted = deleted;
                 Slug = slug;
                 PlayerId = playerId;
             }

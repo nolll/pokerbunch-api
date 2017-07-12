@@ -59,6 +59,7 @@ namespace Plumbing
         public GetPlayer GetPlayer => new GetPlayer(_deps.BunchRepository, _deps.PlayerRepository, _deps.CashgameRepository, _deps.UserRepository);
         public GetPlayerList GetPlayerList => new GetPlayerList(_deps.BunchRepository, _deps.UserRepository, _deps.PlayerRepository);
         public AddPlayer AddPlayer => new AddPlayer(_deps.BunchRepository, _deps.PlayerRepository, _deps.UserRepository);
+        public DeletePlayer DeletePlayer => new DeletePlayer(_deps.PlayerRepository, _deps.CashgameRepository, _deps.UserRepository, _deps.BunchRepository);
 
         // Apps
         public VerifyAppKey VerifyAppKey => new VerifyAppKey(_deps.AppRepository);

@@ -34,5 +34,16 @@ namespace Api.Controllers
             var result = UseCase.AddPlayer.Execute(new AddPlayer.Request(CurrentUserName, slug, post.Name));
             return Get(result.Id);
         }
+
+        [Route(ApiRoutes.PlayerDelete)]
+        [HttpDelete]
+        [ApiAuthorize]
+        public PlayerDeleteModel Delete(int id)
+        {
+            var deleteRequest = new DeletePlayer.Request(CurrentUserName, id);
+            UseCase.DeletePlayer.Execute(deleteRequest);
+            return new PlayerDeleteModel(id);
+        }
+
     }
 }
