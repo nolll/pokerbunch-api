@@ -11,6 +11,6 @@ namespace Api.Urls.ApiUrls
             _userName = userName;
         }
 
-        protected override string Input => RouteParams.ReplaceUserName(ApiRoutes.UserGet, _userName);
+        protected override string Input => RouteParams.Replace(ApiRoutes.UserGet, RouteParam.UserName(_userName));
     }
 }

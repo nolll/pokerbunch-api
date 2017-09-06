@@ -12,6 +12,6 @@ namespace Api.Urls.ApiUrls
             _id = id;
         }
 
-        protected override string Input => RouteParams.ReplaceId(ApiRoutes.CashgameGet, _id);
+        protected override string Input => RouteParams.Replace(ApiRoutes.CashgameGet, RouteParam.Id(_id));
     }
 }

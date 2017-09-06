@@ -1,59 +1,41 @@
-using System.Globalization;
-
 namespace Api.Urls
 {
+    public class RouteParam
+    {
+        public string Pattern { get; }
+        public string Value { get; }
+
+        private RouteParam(string pattern, string value)
+        {
+            Pattern = pattern;
+            Value = value;
+        }
+
+        public static RouteParam Slug(string slug) => new RouteParam("slug", slug);
+        public static RouteParam Year(int year) => new RouteParam("year?", year.ToString());
+        public static RouteParam PlayerId(string playerId) => new RouteParam("playerId", playerId);
+        public static RouteParam CashgameId(string cashgameId) => new RouteParam("cashgameId", cashgameId);
+        public static RouteParam Id(int id) => new RouteParam("id", id.ToString());
+        public static RouteParam Id(string id) => new RouteParam("id", id);
+        public static RouteParam UserName(string userName) => new RouteParam("userName", userName);
+        public static RouteParam Code(string code) => new RouteParam("code", code);
+    }
+
     public static class RouteParams
     {
-        private const string Slug = "{slug}";
-        private const string Year = "{year}";
-        private const string PlayerId = "{playerId}";
-        private const string CashgameId = "{cashgameId}";
-        private const string Id = "{id}";
-        private const string UserName = "{userName}";
-
-        public static string ReplaceSlug(string format, string slug)
+        public static string Replace(string format, params RouteParam[] routeParams)
         {
-            return Replace(format, Slug, slug);
-        }
-
-        public static string ReplaceYear(string format, int year)
-        {
-            return Replace(format, Year, year);
-        }
-
-        public static string ReplacePlayerId(string format, int playerId)
-        {
-            return Replace(format, PlayerId, playerId);
-        }
-
-        public static string ReplaceCashgameId(string format, int cashgameId)
-        {
-            return Replace(format, CashgameId, cashgameId);
-        }
-
-        public static string ReplaceId(string format, int id)
-        {
-            return Replace(format, Id, id);
-        }
-
-        public static string ReplaceId(string format, string id)
-        {
-            return Replace(format, Id, id);
-        }
-
-        public static string ReplaceUserName(string format, string userName)
-        {
-            return Replace(format, UserName, userName);
+            var result = format;
+            foreach (var rp in routeParams)
+            {
+                result = Replace(result, $"{{{rp.Pattern}}}", rp.Value);
+            }
+            return result;
         }
 
         private static string Replace(string format, string key, string value)
         {
             return format.Replace(key, value);
-        }
-
-        private static string Replace(string format, string key, int value)
-        {
-            return format.Replace(key, value.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

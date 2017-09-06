@@ -2,6 +2,7 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Models.PlayerModels;
 using Api.Routes;
+using Api.Urls.SiteUrls;
 using Core.UseCases;
 
 namespace Api.Controllers
@@ -45,5 +46,17 @@ namespace Api.Controllers
             return new PlayerDeleteModel(id);
         }
 
+        [Route(ApiRoutes.PlayerInvite)]
+        [HttpPost]
+        [ApiAuthorize]
+        public PlayerDeleteModel Invite(int id, [FromBody] PlayerInvitePostModel post)
+        {
+            var registerUrl = new AddUserUrl().Absolute;
+            var joinBunchUrlFormat = new JoinBunchUrl("{0}").Absolute;
+            var joinBunchWithCodeUrlFormat = new JoinBunchUrl("{0}", "{1}").Absolute;
+            var deleteRequest = new InvitePlayer.Request(CurrentUserName, id, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
+            UseCase.InvitePlayer.Execute(deleteRequest);
+            return new PlayerDeleteModel(id);
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace Api.Routes
         public const string PlayerGet = "players/{id}";
         public const string PlayerDelete = PlayerGet;
         public const string PlayerCashgameList = "players/{id}/cashgames";
+        public const string PlayerInvite = "players/{id}/invite";
 
         public const string LocationGet = "locations/{id}";
         public const string LocationList = "bunches/{slug}/locations";

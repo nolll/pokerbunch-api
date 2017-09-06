@@ -1,5 +1,4 @@
 using Api.Routes;
-using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls
 {
@@ -18,8 +17,8 @@ namespace Api.Urls.ApiUrls
         {
             get {
                 if (_year.HasValue)
-                    return RouteParams.ReplaceYear(RouteParams.ReplaceId(ApiRoutes.CashgameListWithYear, _id), _year.Value);
-                return RouteParams.ReplaceId(ApiRoutes.CashgameList, _id);
+                    return RouteParams.Replace(ApiRoutes.CashgameListWithYear, RouteParam.Slug(_id), RouteParam.Year(_year.Value));
+                return RouteParams.Replace(ApiRoutes.CashgameList, RouteParam.Slug(_id));
             }
         }
     }
