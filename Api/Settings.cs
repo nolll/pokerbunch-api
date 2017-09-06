@@ -4,8 +4,8 @@ namespace Api
 {
     public class Settings
     {
-        public static string SiteHost => Get("SiteHost");
-        public static string ApiHost => Get("ApiHost");
+        public static string SiteHost => Get("SiteHost") ?? "pokerbunch.com";
+        public static string ApiHost => Get("ApiHost") ?? "api.pokerbunch.com";
         public static string ConnectionString => Get("SqlConnectionString");
         public static string SmtpHost => Get("SmtpHost");
         public static string SmtpUserName => Get("SmtpUserName");
