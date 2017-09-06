@@ -218,7 +218,6 @@
     <Compile Include="Urls\SiteUrls\JoinBunchUrl.cs" />
     <Compile Include="Urls\SiteUrls\SiteUrl.cs" />
     <Compile Include="Urls\Url.cs" />
-    <Compile Include="Urls\UrlType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

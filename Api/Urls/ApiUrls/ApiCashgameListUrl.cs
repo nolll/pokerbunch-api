@@ -17,8 +17,8 @@ namespace Api.Urls.ApiUrls
         {
             get {
                 if (_year.HasValue)
-                    return RouteParams.Replace(ApiRoutes.CashgameListWithYear, RouteParam.Slug(_id), RouteParam.Year(_year.Value));
-                return RouteParams.Replace(ApiRoutes.CashgameList, RouteParam.Slug(_id));
+                    return RouteParams.Replace(ApiRoutes.CashgameListWithYear, RouteReplace.Slug(_id), RouteReplace.Year(_year.Value));
+                return RouteParams.Replace(ApiRoutes.CashgameList, RouteReplace.Slug(_id));
             }
         }
     }

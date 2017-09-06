@@ -19,7 +19,7 @@ namespace Api.Urls.SiteUrls
         }
 
         protected override string Input => _code != null ? InputWithCode : InputWithoutCode;
-        private string InputWithCode => RouteParams.Replace(WebRoutes.Bunch.JoinWithCode, RouteParam.Slug(_slug), RouteParam.Code(_code));
-        private string InputWithoutCode => RouteParams.Replace(WebRoutes.Bunch.Join, RouteParam.Slug(_slug));
+        private string InputWithCode => RouteParams.Replace(WebRoutes.Bunch.JoinWithCode, RouteReplace.Slug(_slug), RouteReplace.Code(_code));
+        private string InputWithoutCode => RouteParams.Replace(WebRoutes.Bunch.Join, RouteReplace.Slug(_slug));
     }
 }
