@@ -52,15 +52,15 @@ namespace Core.UseCases
 
         public class Request
         {
-            public string Slug { get; }
             public string UserName { get; }
+            public string Slug { get; }
             [Required(ErrorMessage = "Code can't be empty")]
             public string Code { get; }
 
-            public Request(string slug, string userName, string code)
+            public Request(string userName, string slug, string code)
             {
-                Slug = slug;
                 UserName = userName;
+                Slug = slug;
                 Code = code;
             }
         }

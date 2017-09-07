@@ -159,6 +159,7 @@
     <Compile Include="Models\BunchModels\AddBunchPostModel.cs" />
     <Compile Include="Models\BunchModels\BunchListModel.cs" />
     <Compile Include="Models\BunchModels\BunchModel.cs" />
+    <Compile Include="Models\BunchModels\JoinBunchPostModel.cs" />
     <Compile Include="Models\BunchModels\UpdateBunchPostModel.cs" />
     <Compile Include="Models\CashgameModels\AddCashgamePostModel.cs" />
     <Compile Include="Models\CashgameModels\ApiRunningResult.cs" />
@@ -190,7 +191,9 @@
     <Compile Include="Models\LocationModels\SmallLocationModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerAddPostModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerDeleteModel.cs" />
+    <Compile Include="Models\PlayerModels\PlayerInvitedModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerInvitePostModel.cs" />
+    <Compile Include="Models\PlayerModels\PlayerJoinedModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerListItemModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerListModel.cs" />
     <Compile Include="Models\PlayerModels\PlayerModel.cs" />

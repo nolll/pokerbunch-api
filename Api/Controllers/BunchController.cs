@@ -1,7 +1,7 @@
 using System.Web.Http;
 using Api.Auth;
-using Api.Models;
 using Api.Models.BunchModels;
+using Api.Models.PlayerModels;
 using Api.Routes;
 using Core.UseCases;
 
@@ -47,6 +47,16 @@ namespace Api.Controllers
             var request = new EditBunch.Request(CurrentUserName, slug, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
             var bunchResult = UseCase.EditBunch.Execute(request);
             return new BunchModel(bunchResult);
+        }
+
+        [Route(ApiRoutes.BunchJoin)]
+        [HttpPost]
+        [ApiAuthorize]
+        public PlayerJoinedModel Join(string slug, [FromBody] JoinBunchPostModel post)
+        {
+            var request = new JoinBunch.Request(CurrentUserName, slug, post.Code);
+            var result = UseCase.JoinBunch.Execute(request);
+            return new PlayerJoinedModel(result.PlayerId);
         }
     }
 }

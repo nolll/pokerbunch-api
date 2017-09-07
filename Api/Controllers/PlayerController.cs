@@ -49,14 +49,14 @@ namespace Api.Controllers
         [Route(ApiRoutes.PlayerInvite)]
         [HttpPost]
         [ApiAuthorize]
-        public PlayerDeleteModel Invite(int id, [FromBody] PlayerInvitePostModel post)
+        public PlayerInvitedModel Invite(int id, [FromBody] PlayerInvitePostModel post)
         {
             var registerUrl = new AddUserUrl().Absolute;
             var joinBunchUrlFormat = new JoinBunchUrl("{0}").Absolute;
             var joinBunchWithCodeUrlFormat = new JoinBunchUrl("{0}", "{1}").Absolute;
             var deleteRequest = new InvitePlayer.Request(CurrentUserName, id, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
             UseCase.InvitePlayer.Execute(deleteRequest);
-            return new PlayerDeleteModel(id);
+            return new PlayerInvitedModel(id);
         }
     }
 }
