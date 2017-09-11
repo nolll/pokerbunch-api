@@ -22,7 +22,7 @@ namespace Tests.Core.UseCases
         public void JoinBunch_InvalidCode_InvalidJoinCodeException()
         {
             const string code = "abc";
-            var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, code);
+            var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, code);
 
             Assert.Throws<InvalidJoinCodeException>(() => Sut.Execute(request));
         }
@@ -30,7 +30,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void JoinBunch_ValidCode_JoinsBunch()
         {
-            var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, ValidCode);
+            var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
             var result = Sut.Execute(request);
             Assert.AreEqual("bunch-a", result.Slug);
@@ -39,7 +39,7 @@ namespace Tests.Core.UseCases
         [Test]
         public void JoinBunch_ValidCode_ReturnsConfirmationUrl()
         {
-            var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, ValidCode);
+            var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
             Sut.Execute(request);
             Assert.AreEqual(TestData.PlayerA.Id, Deps.Player.Joined.PlayerId);
