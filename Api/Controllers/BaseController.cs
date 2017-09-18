@@ -21,9 +21,10 @@ namespace Api.Controllers
                     return null;
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
-                if (Settings.AllowAuthOverride && Environment.IsDevModeAdmin(Request.RequestUri.Host))
+                var env = new Environment(Request.RequestUri.Host);
+                if (Settings.AllowAuthOverride && env.IsDevModeAdmin)
                     return Settings.NoAuthAdminUserName;
-                if (Settings.AllowAuthOverride && Environment.IsDevModePlayer(Request.RequestUri.Host))
+                if (Settings.AllowAuthOverride && env.IsDevModePlayer)
                     return Settings.NoAuthPlayerUserName;
                 return null;
             }

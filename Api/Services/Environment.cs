@@ -1,40 +1,23 @@
 namespace Api.Services
 {
-    public static class Environment
+    public class Environment
     {
-        public static bool IsDevMode(string hostName)
+        private readonly string _hostName;
+
+        public Environment(string hostName)
         {
-            return IsDevModeAdmin(hostName) || IsDevModePlayer(hostName);
+            _hostName = hostName;
         }
 
-        public static bool IsDevModeAdmin(string hostName)
-        {
-            return IsLocal(hostName) && hostName.Contains("api-admin");
-        }
-
-        public static bool IsDevModePlayer(string hostName)
-        {
-            return IsLocal(hostName) && hostName.Contains("api-player");
-        }
-
-        private static bool IsLocal(string hostName)
-        {
-            return hostName.EndsWith(".lan");
-        }
-
-        public static bool IsDev(string hostName)
-        {
-            return hostName.EndsWith("pokerbunch.lan");
-        }
-
-        public static bool IsTest(string hostName)
-        {
-            return hostName.EndsWith("homeip.net");
-        }
-
-        public static bool IsStage(string hostName)
-        {
-            return hostName.EndsWith("staging.pokerbunch.com");
-        }
+        public bool IsDevMode => IsDevModeAdmin || IsDevModePlayer;
+        public bool IsDevModeAdmin => IsLocal && Contains("api-admin");
+        public bool IsDevModePlayer => IsLocal && Contains("api-player");
+        public bool IsDev => EndsWith("pokerbunch.lan");
+        public bool IsTest => EndsWith("homeip.net");
+        public bool IsStage => EndsWith("staging.pokerbunch.com");
+        public bool IsAnyTest => IsDev || IsTest || IsStage;
+        private bool IsLocal => EndsWith(".lan");
+        private bool EndsWith(string s) => _hostName.EndsWith(s);
+        private bool Contains(string s) => _hostName.Contains(s);
     }
 }

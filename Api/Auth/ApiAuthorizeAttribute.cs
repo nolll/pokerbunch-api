@@ -8,7 +8,7 @@ namespace Api.Auth
     {
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
-            if (Environment.IsDevMode(actionContext.Request.RequestUri.Host))
+            if (new Environment(actionContext.Request.RequestUri.Host).IsDevMode)
                 return true;
             return base.IsAuthorized(actionContext);
         }

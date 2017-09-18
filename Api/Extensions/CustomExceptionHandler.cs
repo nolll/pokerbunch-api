@@ -12,7 +12,7 @@ namespace Api.Extensions
     {
         public override void Handle(ExceptionHandlerContext context)
         {
-            var isFriendlyErrorMessagesEnabled = !Environment.IsDevMode(context.Request.RequestUri.Host);
+            var isFriendlyErrorMessagesEnabled = !new Environment(context.Request.RequestUri.Host).IsDevMode;
             if (isFriendlyErrorMessagesEnabled)
                 context.Result = new ResponseMessageResult(CreateResponse(context));
         }

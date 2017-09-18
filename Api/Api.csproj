@@ -21,6 +21,7 @@
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -207,7 +208,6 @@
     <Compile Include="Routes\WebRoutes.cs" />
     <Compile Include="Services\Environment.cs" />
     <Compile Include="Services\JsonHelper.cs" />
-    <Compile Include="Services\RequestEvaluator.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Urls\ApiUrls\ApiCashgameListUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiCashgameUrl.cs" />

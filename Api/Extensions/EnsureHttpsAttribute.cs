@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using Api.Services;
 
 namespace Api.Extensions
 {
@@ -14,7 +13,8 @@ namespace Api.Extensions
         {
             var request = actionContext.Request;
 
-            if (RequestEvaluator.IsTestEnvironment(request))
+            var env = new Services.Environment(request.RequestUri.Host);
+            if (env.IsAnyTest)
                 return;
 
             if (request.RequestUri.Scheme == Uri.UriSchemeHttps)
