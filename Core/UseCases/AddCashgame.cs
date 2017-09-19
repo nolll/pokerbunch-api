@@ -69,8 +69,8 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string Slug { get; private set; }
-            public int CashgameId { get; private set; }
+            public string Slug { get; }
+            public int CashgameId { get; }
 
             public Result(string slug, int cashgameId)
             {

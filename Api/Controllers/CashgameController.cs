@@ -59,11 +59,11 @@ namespace Api.Controllers
         [Route(ApiRoutes.CashgameAdd)]
         [HttpPost]
         [ApiAuthorize]
-        public CashgameDetailsModel Add(int id, [FromBody] AddCashgamePostModel post)
+        public CashgameDetailsModel Add(string slug, [FromBody] AddCashgamePostModel post)
         {
-            var listRequest = new EditCashgame.Request(CurrentUserName, id, post.LocationId, post.EventId);
-            UseCase.EditCashgame.Execute(listRequest);
-            var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var addRequest = new AddCashgame.Request(CurrentUserName, slug, post.LocationId, post.EventId);
+            var result = UseCase.AddCashgame.Execute(addRequest);
+            var detailsRequest = new CashgameDetails.Request(CurrentUserName, result.CashgameId, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
         }
