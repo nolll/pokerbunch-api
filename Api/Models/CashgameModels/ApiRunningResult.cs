@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.Serialization;
-using Api.Urls.ApiUrls;
+using Api.Extensions;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Models.CashgameModels
 {
@@ -40,7 +41,7 @@ namespace Api.Models.CashgameModels
         public ApiCurrentGame(CurrentCashgames.Game game)
         {
             Id = game.Id.ToString();
-            Url = new ApiCashgameUrl(game.Id).Absolute;
+            Url = new ApiCashgameUrl(game.Id).Absolute();
         }
     }
 }

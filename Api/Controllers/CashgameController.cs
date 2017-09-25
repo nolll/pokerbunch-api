@@ -5,12 +5,13 @@ using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
 using Api.Routes;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Controllers
 {
     public class CashgameController : BaseController
     {
-        [Route(ApiRoutes.CashgameGet)]
+        [Route(ApiCashgameUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameDetailsModel Get(int id)
@@ -20,7 +21,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiRoutes.CashgameList)]
+        [Route(ApiCashgameListUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug)
@@ -29,7 +30,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiRoutes.CashgameListWithYear)]
+        [Route(ApiCashgameListWithYearUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug, int year)
@@ -56,7 +57,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiRoutes.CashgameAdd)]
+        [Route(ApiCashgameListUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public CashgameDetailsModel Add(string slug, [FromBody] AddCashgamePostModel post)
@@ -68,7 +69,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiRoutes.CashgameUpdate)]
+        [Route(ApiCashgameUrl.Route)]
         [HttpPut]
         [ApiAuthorize]
         public CashgameDetailsModel Update(int id, [FromBody] UpdateCashgamePostModel post)
@@ -80,7 +81,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiRoutes.CashgameDelete)]
+        [Route(ApiCashgameUrl.Route)]
         [HttpDelete]
         [ApiAuthorize]
         public CashgameDeleteModel Delete(int id)

@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Api.Extensions;
-using Api.Urls.ApiUrls;
 using Core.UseCases;
 using PokerBunch.Common.Urls.ApiUrls;
 

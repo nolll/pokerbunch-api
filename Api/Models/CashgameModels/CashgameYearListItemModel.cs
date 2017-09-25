@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
-using Api.Urls.ApiUrls;
+using Api.Extensions;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Models.CashgameModels
 {
@@ -14,7 +15,7 @@ namespace Api.Models.CashgameModels
         public CashgameYearListItemModel(string bunchId, int year)
         {
             Id = year.ToString();
-            Url = new ApiCashgameListUrl(bunchId, year).Absolute;
+            Url = new ApiCashgameListWithYearUrl(bunchId, year).Absolute();
         }
     }
 }

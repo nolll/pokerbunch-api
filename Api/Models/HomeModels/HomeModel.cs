@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
-using Api.Urls.ApiUrls;
+using Api.Extensions;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Models.HomeModels
 {
@@ -7,6 +8,6 @@ namespace Api.Models.HomeModels
     public class HomeModel
     {
         [DataMember(Name = "userProfileUrl")]
-        public string UserProfileUrl => new ApiUserProfileUrl().Absolute;
+        public string UserProfileUrl => new ApiUserProfileUrl().Absolute();
     }
 }

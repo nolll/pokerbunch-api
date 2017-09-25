@@ -40,7 +40,7 @@ namespace Api.Controllers
             return new FullUserModel(userDetails);
         }
 
-        [Route(ApiRoutes.UserProfile)]
+        [Route(ApiUserProfileUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public UserModel Profile()

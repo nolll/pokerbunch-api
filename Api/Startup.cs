@@ -9,7 +9,6 @@ using Api;
 using Api.Auth;
 using Api.Extensions;
 using Api.Extensions.Compression;
-using Api.Urls.ApiUrls;
 using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;

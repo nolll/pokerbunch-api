@@ -6,7 +6,6 @@ namespace Api.Routes
 
         public const string UserBunchList = "user/bunches";
         public const string UserAppList = "user/apps";
-        public const string UserProfile = "user";
 
         public const string UserList = "users";
 
@@ -46,13 +45,7 @@ namespace Api.Routes
         public const string Cashout = "cashgames/{id}/cashout";
         public const string EndCashgame = "cashgames/{id}/end";
 
-        public const string CashgameList = "bunches/{slug}/cashgames";
-        public const string CashgameAdd = CashgameList;
-        public const string CashgameListWithYear = "bunches/{slug}/cashgames/{year}";
         public const string CashgameYears = "bunches/{slug}/cashgames/years";
-        public const string CashgameGet = "cashgames/{id}";
-        public const string CashgameUpdate = CashgameGet;
-        public const string CashgameDelete = CashgameGet;
 
         public static class Admin
         {
