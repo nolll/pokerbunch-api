@@ -1,4 +1,5 @@
 ﻿using System.Web.Http.ExceptionHandling;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Extensions
 {
@@ -8,6 +9,14 @@ namespace Api.Extensions
         {
             var exception = context.Exception;
             // Write your custom logging code here
+        }
+    }
+
+    public static class UrlExtensions
+    {
+        public static string Absolute(this ApiUrl url)
+        {
+            return url.Absolute(Settings.ApiHost);
         }
     }
 }

@@ -83,6 +83,9 @@
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="PokerBunch.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PokerBunch.Common.1.0.28\lib\PokerBunch.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -213,8 +216,6 @@
     <Compile Include="Urls\ApiUrls\ApiCashgameUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiUrl.cs" />
     <Compile Include="Urls\ApiUrls\ApiUserProfileUrl.cs" />
-    <Compile Include="Urls\ApiUrls\ApiUserUrl.cs" />
-    <Compile Include="Urls\ApiUrls\TokenUrl.cs" />
     <Compile Include="Urls\RouteParams.cs" />
     <Compile Include="Urls\SiteUrls\AddUserUrl.cs" />
     <Compile Include="Urls\SiteUrls\ApiDocsUrl.cs" />

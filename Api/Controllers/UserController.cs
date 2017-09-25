@@ -1,17 +1,17 @@
 using System.Web.Http;
 using Api.Auth;
-using Api.Models;
 using Api.Models.AppModels;
 using Api.Models.BunchModels;
 using Api.Models.UserModels;
 using Api.Routes;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Controllers
 {
     public class UserController : BaseController
     {
-        [Route(ApiRoutes.UserGet)]
+        [Route(ApiUserUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public UserModel GetUser(string userName)
@@ -29,7 +29,7 @@ namespace Api.Controllers
             return new UserListModel(userListResult);
         }
 
-        [Route(ApiRoutes.UserUpdate)]
+        [Route(ApiUserUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)

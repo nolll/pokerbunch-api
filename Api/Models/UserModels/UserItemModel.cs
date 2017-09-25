@@ -1,6 +1,8 @@
 ﻿using System.Runtime.Serialization;
+using Api.Extensions;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Models.UserModels
 {
@@ -25,7 +27,7 @@ namespace Api.Models.UserModels
         {
             UserName = userName;
             DisplayName = displayName;
-            Url = new ApiUserUrl(userName).Absolute;
+            Url = new ApiUserUrl(userName).Absolute();
         }
     }
 }

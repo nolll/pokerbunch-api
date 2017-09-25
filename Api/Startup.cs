@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
+using PokerBunch.Common.Urls.ApiUrls;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace Api
@@ -42,7 +43,7 @@ namespace Api
             var oAuthServerOptions = new OAuthAuthorizationServerOptions
             {
                 AllowInsecureHttp = true,
-                TokenEndpointPath = new PathString(new TokenUrl().Relative),
+                TokenEndpointPath = new PathString(new ApiTokenUrl().Relative),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(365),
                 Provider = new SimpleAuthorizationServerProvider()
             };

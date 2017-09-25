@@ -3,15 +3,12 @@ namespace Api.Routes
     public static class ApiRoutes
     {
         public const string Home = "";
-        public const string Token = "token";
 
         public const string UserBunchList = "user/bunches";
         public const string UserAppList = "user/apps";
         public const string UserProfile = "user";
 
         public const string UserList = "users";
-        public const string UserGet = "users/{userName}";
-        public const string UserUpdate = UserGet;
 
         public const string BunchList = "bunches";
         public const string BunchAdd = BunchList;
