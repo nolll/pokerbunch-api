@@ -39,7 +39,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiRoutes.EventCashgameList)]
+        [Route(ApiEventCashgamesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel EventCashgameList(int id)
@@ -48,7 +48,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiRoutes.PlayerCashgameList)]
+        [Route(ApiPlayerCashgamesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel PlayerCashgameList(int id)
@@ -91,7 +91,7 @@ namespace Api.Controllers
             return new CashgameDeleteModel(id);
         }
 
-        [Route(ApiRoutes.BunchCurrentGames)]
+        [Route(ApiBunchCashgamesCurrentUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CurrentCashgameListModel Current(string slug)
@@ -100,7 +100,7 @@ namespace Api.Controllers
             return new CurrentCashgameListModel(currentGamesResult);
         }
 
-        [Route(ApiRoutes.Buyin)]
+        [Route(ApiCashgameBuyinUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel Buyin(int id, [FromBody] CashgameBuyinPostModel post)
@@ -109,7 +109,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiRoutes.Report)]
+        [Route(ApiCashgameReportUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel Report(int id, [FromBody] CashgameReportPostModel post)
@@ -118,7 +118,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiRoutes.Cashout)]
+        [Route(ApiCashgameCashoutUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel Cashout(int id, [FromBody] CashgameCashoutPostModel post)
@@ -127,7 +127,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiRoutes.EndCashgame)]
+        [Route(ApiCashgameEndUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel End(int id)
@@ -136,7 +136,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiRoutes.CashgameYears)]
+        [Route(ApiBunchCashgameYearsUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameYearListModel Years(string slug)

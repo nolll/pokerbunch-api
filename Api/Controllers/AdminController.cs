@@ -8,7 +8,7 @@ namespace Api.Controllers
 {
     public class AdminController : BaseController
     {
-        [Route(ApiRoutes.Admin.ClearCache)]
+        [Route(ApiAdminClearCacheUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public ClearCacheModel ClearCache()
@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new ClearCacheModel(result.ClearCount);
         }
 
-        [Route(ApiRoutes.Admin.SendEmail)]
+        [Route(ApiAdminSendEmailUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public SendEmailModel SendEmail()

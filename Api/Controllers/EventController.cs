@@ -8,7 +8,7 @@ namespace Api.Controllers
 {
     public class EventController : BaseController
     {
-        [Route(ApiRoutes.EventGet)]
+        [Route(ApiEventUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public EventModel Get(int id)

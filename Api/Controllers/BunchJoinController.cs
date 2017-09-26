@@ -7,7 +7,7 @@ using Core.UseCases;
 
 namespace Api.Controllers
 {
-    [Route(ApiRoutes.BunchJoin)]
+    [Route(ApiBunchJoinUrl.Route)]
     [ApiAuthorize]
     public class BunchJoinController : BaseController
     {

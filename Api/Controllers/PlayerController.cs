@@ -10,7 +10,7 @@ namespace Api.Controllers
 {
     public class PlayerController : BaseController
     {
-        [Route(ApiRoutes.PlayerGet)]
+        [Route(ApiPlayerUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public PlayerModel Get(int id)
@@ -19,7 +19,7 @@ namespace Api.Controllers
             return new PlayerModel(getPlayerResult);
         }
 
-        [Route(ApiRoutes.BunchPlayerList)]
+        [Route(ApiBunchPlayersUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public PlayerListModel GetList(string slug)
@@ -28,7 +28,7 @@ namespace Api.Controllers
             return new PlayerListModel(playerListResult);
         }
 
-        [Route(ApiRoutes.BunchPlayerAdd)]
+        [Route(ApiBunchPlayersUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public PlayerModel Add(string slug, [FromBody] PlayerAddPostModel post)
@@ -37,7 +37,7 @@ namespace Api.Controllers
             return Get(result.Id);
         }
 
-        [Route(ApiRoutes.PlayerDelete)]
+        [Route(ApiPlayerUrl.Route)]
         [HttpDelete]
         [ApiAuthorize]
         public PlayerDeleteModel Delete(int id)
@@ -47,7 +47,7 @@ namespace Api.Controllers
             return new PlayerDeleteModel(id);
         }
 
-        [Route(ApiRoutes.PlayerInvite)]
+        [Route(ApiPlayerInviteUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public PlayerInvitedModel Invite(int id, [FromBody] PlayerInvitePostModel post)

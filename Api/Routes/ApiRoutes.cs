@@ -59,44 +59,229 @@ namespace Api.Routes
         public const string Route = "bunches/{slug}/events";
     }
 
-    public static class ApiRoutes
+    public class ApiBunchJoinUrl : ApiUrl
     {
-        public const string BunchJoin = "bunches/{slug}/join";
-        public const string BunchPlayerList = "bunches/{slug}/players";
-        public const string BunchPlayerAdd = BunchPlayerList;
-        public const string BunchCurrentGames = "bunches/{slug}/cashgames/current";
+        private readonly string _slug;
 
-        public const string PlayerGet = "players/{id}";
-        public const string PlayerDelete = PlayerGet;
-        public const string PlayerCashgameList = "players/{id}/cashgames";
-        public const string PlayerInvite = "players/{id}/invite";
-
-        public const string LocationGet = "locations/{id}";
-        public const string LocationList = "bunches/{slug}/locations";
-        public const string LocationAdd = LocationList;
-        public const string LocationSave = LocationGet;
-        public const string LocationDelete = LocationGet;
-
-        public const string EventGet = "events/{id}";
-        public const string EventCashgameList = "events/{id}/cashgames";
-
-        public const string AppList = "apps";
-        public const string AppAdd = AppList;
-        public const string AppGet = "apps/{id}";
-        public const string AppSave = "apps/{id}";
-        public const string AppDelete = "apps/{id}";
-
-        public const string Buyin = "cashgames/{id}/buyin";
-        public const string Report = "cashgames/{id}/report";
-        public const string Cashout = "cashgames/{id}/cashout";
-        public const string EndCashgame = "cashgames/{id}/end";
-
-        public const string CashgameYears = "bunches/{slug}/cashgames/years";
-
-        public static class Admin
+        public ApiBunchJoinUrl(string slug)
         {
-            public const string SendEmail = "admin/sendemail";
-            public const string ClearCache = "admin/clearcache";
+            _slug = slug;
         }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}/join";
+    }
+
+    public class ApiBunchPlayersUrl : ApiUrl
+    {
+        private readonly string _slug;
+
+        public ApiBunchPlayersUrl(string slug)
+        {
+            _slug = slug;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}/players";
+    }
+
+    public class ApiPlayerUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiPlayerUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "players/{id}";
+    }
+
+    public class ApiBunchCashgamesCurrentUrl : ApiUrl
+    {
+        private readonly string _slug;
+
+        public ApiBunchCashgamesCurrentUrl(string slug)
+        {
+            _slug = slug;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}/cashgames/current";
+    }
+
+    public class ApiPlayerInviteUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiPlayerInviteUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "players/{id}/invite";
+    }
+
+    public class ApiPlayerCashgamesUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiPlayerCashgamesUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "players/{id}/cashgames";
+    }
+
+    public class ApiBunchCashgameYearsUrl : ApiUrl
+    {
+        private readonly string _slug;
+
+        public ApiBunchCashgameYearsUrl(string slug)
+        {
+            _slug = slug;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}/cashgames/years";
+    }
+
+    public class ApiLocationUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiLocationUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "locations/{id}";
+    }
+
+    public class ApiBunchLocationsUrl : ApiUrl
+    {
+        private readonly string _slug;
+
+        public ApiBunchLocationsUrl(string slug)
+        {
+            _slug = slug;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}/locations";
+    }
+
+    public class ApiEventUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiEventUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "events/{id}";
+    }
+
+    public class ApiEventCashgamesUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiEventCashgamesUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "events/{id}/cashgames";
+    }
+
+    public class ApiAppUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiAppUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "apps/{id}";
+    }
+
+    public class ApiAppsUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "apps";
+    }
+
+    public class ApiAdminSendEmailUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "admin/sendemail";
+    }
+
+    public class ApiAdminClearCacheUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "admin/clearcache";
+    }
+
+    public class ApiCashgameBuyinUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiCashgameBuyinUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "cashgames/{id}/buyin";
+    }
+
+    public class ApiCashgameReportUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiCashgameReportUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "cashgames/{id}/report";
+    }
+
+    public class ApiCashgameCashoutUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiCashgameCashoutUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "cashgames/{id}/cashout";
+    }
+
+    public class ApiCashgameEndUrl : ApiUrl
+    {
+        private readonly string _id;
+
+        public ApiCashgameEndUrl(string id)
+        {
+            _id = id;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Id(_id));
+        public const string Route = "cashgames/{id}/end";
     }
 }

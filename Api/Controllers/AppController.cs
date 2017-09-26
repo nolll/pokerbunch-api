@@ -8,7 +8,7 @@ namespace Api.Controllers
 {
     public class AppController : BaseController
     {
-        [Route(ApiRoutes.AppGet)]
+        [Route(ApiAppUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public AppModel Get(int id)
@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new AppModel(result);
         }
 
-        [Route(ApiRoutes.AppList)]
+        [Route(ApiAppsUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public AppListModel GetList()
@@ -27,7 +27,7 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiRoutes.AppAdd)]
+        [Route(ApiAppsUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public AppModel Add([FromBody] AddAppPostModel post)
