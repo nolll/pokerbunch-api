@@ -1,20 +1,66 @@
+using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Urls.SiteUrls;
+
 namespace Api.Routes
 {
+    public class ApiRootUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "";
+    }
+
+    public class ApiUserBunchesUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "user/bunches";
+    }
+
+    public class ApiUserAppsUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "user/apps";
+    }
+
+    public class ApiUsersUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "users";
+    }
+
+    public class ApiBunchesUrl : ApiUrl
+    {
+        protected override string Input => Route;
+        public const string Route = "bunches";
+    }
+
+    public class ApiBunchUrl : ApiUrl
+    {
+        private readonly string _slug;
+
+        public ApiBunchUrl(string slug)
+        {
+            _slug = slug;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}";
+    }
+
+    public class ApiBunchEventsUrl : ApiUrl
+    {
+        private readonly string _slug;
+
+        public ApiBunchEventsUrl(string slug)
+        {
+            _slug = slug;
+        }
+
+        protected override string Input => RouteParams.Replace(Route, RouteReplace.Slug(_slug));
+        public const string Route = "bunches/{slug}/events";
+    }
+
     public static class ApiRoutes
     {
-        public const string Home = "";
-
-        public const string UserBunchList = "user/bunches";
-        public const string UserAppList = "user/apps";
-
-        public const string UserList = "users";
-
-        public const string BunchList = "bunches";
-        public const string BunchAdd = BunchList;
-        public const string BunchGet = "bunches/{slug}";
-        public const string BunchUpdate = BunchGet;
-        public const string BunchEventList = "bunches/{slug}/events";
-        public const string BunchEventAdd = BunchEventList;
         public const string BunchJoin = "bunches/{slug}/join";
         public const string BunchPlayerList = "bunches/{slug}/players";
         public const string BunchPlayerAdd = BunchPlayerList;

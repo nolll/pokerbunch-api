@@ -136,6 +136,8 @@
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BunchController.cs" />
+    <Compile Include="Controllers\BunchesController.cs" />
+    <Compile Include="Controllers\BunchJoinController.cs" />
     <Compile Include="Controllers\CashgameController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
@@ -209,7 +211,6 @@
     <Compile Include="Models\UserModels\UserModel.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Routes\ApiRoutes.cs" />
-    <Compile Include="Routes\WebRoutes.cs" />
     <Compile Include="Services\Environment.cs" />
     <Compile Include="Services\JsonHelper.cs" />
     <Compile Include="Startup.cs" />

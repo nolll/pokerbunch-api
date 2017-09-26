@@ -6,7 +6,7 @@ namespace Api.Controllers
 {
     public class RootController : BaseController
     {
-        [Route(ApiRoutes.Home)]
+        [Route(ApiRootUrl.Route)]
         [HttpGet]
         public HomeModel Home()
         {

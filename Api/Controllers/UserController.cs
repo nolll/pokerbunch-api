@@ -20,7 +20,7 @@ namespace Api.Controllers
             return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
         }
 
-        [Route(ApiRoutes.UserList)]
+        [Route(ApiUsersUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public UserListModel List()
@@ -49,7 +49,7 @@ namespace Api.Controllers
             return new FullUserModel(userDetails);
         }
 
-        [Route(ApiRoutes.UserAppList)]
+        [Route(ApiUserAppsUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public AppListModel Apps()
@@ -59,7 +59,7 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiRoutes.UserBunchList)]
+        [Route(ApiUserBunchesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public BunchListModel Bunches()
