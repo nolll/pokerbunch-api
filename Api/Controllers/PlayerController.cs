@@ -54,7 +54,7 @@ namespace Api.Controllers
         {
             var registerUrl = new AddUserUrl().Absolute();
             var joinBunchUrlFormat = new JoinBunchUrl("{0}").Absolute();
-            var joinBunchWithCodeUrlFormat = new JoinBunchWithCodeUrl("{0}", "{1}").Absolute();
+            var joinBunchWithCodeUrlFormat = new JoinBunchUrl("{0}", "{1}").Absolute();
             var deleteRequest = new InvitePlayer.Request(CurrentUserName, id, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
             UseCase.InvitePlayer.Execute(deleteRequest);
             return new PlayerInvitedModel(id);
