@@ -213,12 +213,6 @@
     <Compile Include="Services\Environment.cs" />
     <Compile Include="Services\JsonHelper.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Urls\RouteParams.cs" />
-    <Compile Include="Urls\SiteUrls\AddUserUrl.cs" />
-    <Compile Include="Urls\SiteUrls\ApiDocsUrl.cs" />
-    <Compile Include="Urls\SiteUrls\JoinBunchUrl.cs" />
-    <Compile Include="Urls\SiteUrls\SiteUrl.cs" />
-    <Compile Include="Urls\Url.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

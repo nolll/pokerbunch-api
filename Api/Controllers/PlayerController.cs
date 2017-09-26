@@ -1,9 +1,10 @@
 using System.Web.Http;
 using Api.Auth;
+using Api.Extensions;
 using Api.Models.PlayerModels;
 using Api.Routes;
-using Api.Urls.SiteUrls;
 using Core.UseCases;
+using PokerBunch.Common.Urls.SiteUrls;
 
 namespace Api.Controllers
 {
@@ -51,9 +52,9 @@ namespace Api.Controllers
         [ApiAuthorize]
         public PlayerInvitedModel Invite(int id, [FromBody] PlayerInvitePostModel post)
         {
-            var registerUrl = new AddUserUrl().Absolute;
-            var joinBunchUrlFormat = new JoinBunchUrl("{0}").Absolute;
-            var joinBunchWithCodeUrlFormat = new JoinBunchUrl("{0}", "{1}").Absolute;
+            var registerUrl = new AddUserUrl().Absolute();
+            var joinBunchUrlFormat = new JoinBunchUrl("{0}").Absolute();
+            var joinBunchWithCodeUrlFormat = new JoinBunchWithCodeUrl("{0}", "{1}").Absolute();
             var deleteRequest = new InvitePlayer.Request(CurrentUserName, id, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
             UseCase.InvitePlayer.Execute(deleteRequest);
             return new PlayerInvitedModel(id);
