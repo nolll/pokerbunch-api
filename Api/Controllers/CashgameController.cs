@@ -29,7 +29,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiBunchCashgamesWithYearUrl.Route)]
+        [Route(ApiBunchCashgamesUrl.RouteWithYear)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug, int year)
