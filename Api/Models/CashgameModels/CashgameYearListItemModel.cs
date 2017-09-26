@@ -15,7 +15,7 @@ namespace Api.Models.CashgameModels
         public CashgameYearListItemModel(string bunchId, int year)
         {
             Id = year.ToString();
-            Url = new ApiCashgameListWithYearUrl(bunchId, year).Absolute();
+            Url = new ApiBunchCashgamesWithYearUrl(bunchId, year).Absolute();
         }
     }
 }

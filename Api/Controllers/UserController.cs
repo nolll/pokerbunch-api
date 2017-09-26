@@ -3,7 +3,6 @@ using Api.Auth;
 using Api.Models.AppModels;
 using Api.Models.BunchModels;
 using Api.Models.UserModels;
-using Api.Routes;
 using Core.UseCases;
 using PokerBunch.Common.Urls.ApiUrls;
 

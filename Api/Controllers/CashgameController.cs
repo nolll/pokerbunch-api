@@ -3,7 +3,6 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
-using Api.Routes;
 using Core.UseCases;
 using PokerBunch.Common.Urls.ApiUrls;
 
@@ -21,7 +20,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiCashgameListUrl.Route)]
+        [Route(ApiBunchCashgamesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug)
@@ -30,7 +29,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiCashgameListWithYearUrl.Route)]
+        [Route(ApiBunchCashgamesWithYearUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string slug, int year)
@@ -57,7 +56,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiCashgameListUrl.Route)]
+        [Route(ApiBunchCashgamesUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
         public CashgameDetailsModel Add(string slug, [FromBody] AddCashgamePostModel post)

@@ -2,8 +2,8 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.PlayerModels;
-using Api.Routes;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 using PokerBunch.Common.Urls.SiteUrls;
 
 namespace Api.Controllers

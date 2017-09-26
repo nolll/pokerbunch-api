@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 using Api.Models.HomeModels;
-using Api.Routes;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Controllers
 {

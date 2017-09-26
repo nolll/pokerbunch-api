@@ -1,8 +1,8 @@
 using System.Web.Http;
 using Api.Auth;
 using Api.Models.LocationModels;
-using Api.Routes;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Controllers
 {
