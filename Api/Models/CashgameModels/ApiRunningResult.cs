@@ -41,7 +41,7 @@ namespace Api.Models.CashgameModels
         public ApiCurrentGame(CurrentCashgames.Game game)
         {
             Id = game.Id.ToString();
-            Url = new ApiCashgameUrl(game.Id).Absolute();
+            Url = new ApiCashgameUrl(game.Id.ToString()).Absolute();
         }
     }
 }
