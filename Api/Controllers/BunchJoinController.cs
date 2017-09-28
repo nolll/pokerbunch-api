@@ -12,9 +12,9 @@ namespace Api.Controllers
     public class BunchJoinController : BaseController
     {
         [HttpPost]
-        public PlayerJoinedModel Join(string slug, [FromBody] JoinBunchPostModel post)
+        public PlayerJoinedModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
         {
-            var request = new JoinBunch.Request(CurrentUserName, slug, post.Code);
+            var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
             var result = UseCase.JoinBunch.Execute(request);
             return new PlayerJoinedModel(result.PlayerId);
         }

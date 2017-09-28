@@ -23,18 +23,18 @@ namespace Api.Controllers
         [Route(ApiBunchCashgamesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameListModel List(string slug)
+        public CashgameListModel List(string bunchId)
         {
-            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, null));
+            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
             return new CashgameListModel(listResult);
         }
 
         [Route(ApiBunchCashgamesUrl.RouteWithYear)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameListModel List(string slug, int year)
+        public CashgameListModel List(string bunchId, int year)
         {
-            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, slug, CashgameList.SortOrder.Date, year));
+            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
             return new CashgameListModel(listResult);
         }
 
@@ -59,9 +59,9 @@ namespace Api.Controllers
         [Route(ApiBunchCashgamesUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public CashgameDetailsModel Add(string slug, [FromBody] AddCashgamePostModel post)
+        public CashgameDetailsModel Add(string bunchId, [FromBody] AddCashgamePostModel post)
         {
-            var addRequest = new AddCashgame.Request(CurrentUserName, slug, post.LocationId, post.EventId);
+            var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId, post.EventId);
             var result = UseCase.AddCashgame.Execute(addRequest);
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, result.CashgameId, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
@@ -93,9 +93,9 @@ namespace Api.Controllers
         [Route(ApiBunchCashgamesCurrentUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public CurrentCashgameListModel Current(string slug)
+        public CurrentCashgameListModel Current(string bunchId)
         {
-            var currentGamesResult = UseCase.CurrentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, slug));
+            var currentGamesResult = UseCase.CurrentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
             return new CurrentCashgameListModel(currentGamesResult);
         }
 
@@ -138,9 +138,9 @@ namespace Api.Controllers
         [Route(ApiBunchCashgameYearsUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameYearListModel Years(string slug)
+        public CashgameYearListModel Years(string bunchId)
         {
-            var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, slug));
+            var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
             return new CashgameYearListModel(listResult);
         }
     }

@@ -20,18 +20,18 @@ namespace Api.Controllers
         [Route(ApiBunchLocationsUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public LocationListModel GetList(string slug)
+        public LocationListModel GetList(string bunchId)
         {
-            var locationListResult = UseCase.GetLocationList.Execute(new GetLocationList.Request(CurrentUserName, slug));
+            var locationListResult = UseCase.GetLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
             return new LocationListModel(locationListResult);
         }
 
         [Route(ApiBunchLocationsUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public LocationModel Add(string slug, [FromBody] LocationAddPostModel post)
+        public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)
         {
-            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, slug, post.Name));
+            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
             return new LocationModel(result);
         }
     }

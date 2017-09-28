@@ -11,17 +11,17 @@ namespace Api.Controllers
     public class BunchController : BaseController
     {
         [HttpGet]
-        public BunchModel Get(string slug)
+        public BunchModel Get(string bunchId)
         {
-            var request = new GetBunch.Request(CurrentUserName, slug);
+            var request = new GetBunch.Request(CurrentUserName, bunchId);
             var bunchResult = UseCase.GetBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
 
         [HttpPost]
-        public BunchModel Update(string slug, [FromBody] UpdateBunchPostModel post)
+        public BunchModel Update(string bunchId, [FromBody] UpdateBunchPostModel post)
         {
-            var request = new EditBunch.Request(CurrentUserName, slug, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
+            var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
             var bunchResult = UseCase.EditBunch.Execute(request);
             return new BunchModel(bunchResult);
         }

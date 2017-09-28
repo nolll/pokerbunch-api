@@ -22,18 +22,18 @@ namespace Api.Controllers
         [Route(ApiBunchPlayersUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public PlayerListModel GetList(string slug)
+        public PlayerListModel GetList(string bunchId)
         {
-            var playerListResult = UseCase.GetPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, slug));
+            var playerListResult = UseCase.GetPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
             return new PlayerListModel(playerListResult);
         }
 
         [Route(ApiBunchPlayersUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public PlayerModel Add(string slug, [FromBody] PlayerAddPostModel post)
+        public PlayerModel Add(string bunchId, [FromBody] PlayerAddPostModel post)
         {
-            var result = UseCase.AddPlayer.Execute(new AddPlayer.Request(CurrentUserName, slug, post.Name));
+            var result = UseCase.AddPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
             return Get(result.Id);
         }
 

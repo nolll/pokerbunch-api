@@ -20,18 +20,18 @@ namespace Api.Controllers
         [Route(ApiBunchEventsUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public EventListModel List(string slug)
+        public EventListModel List(string bunchId)
         {
-            var eventListResult = UseCase.GetEventList.Execute(new EventList.Request(CurrentUserName, slug));
+            var eventListResult = UseCase.GetEventList.Execute(new EventList.Request(CurrentUserName, bunchId));
             return new EventListModel(eventListResult);
         }
 
         [Route(ApiBunchEventsUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public EventModel Add(string slug, [FromBody] EventAddPostModel post)
+        public EventModel Add(string bunchId, [FromBody] EventAddPostModel post)
         {
-            var result = UseCase.AddEvent.Execute(new AddEvent.Request(CurrentUserName, slug, post.Name));
+            var result = UseCase.AddEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
             return Get(result.Id);
         }
     }
