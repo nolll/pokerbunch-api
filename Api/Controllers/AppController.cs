@@ -11,9 +11,9 @@ namespace Api.Controllers
         [Route(ApiAppUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public AppModel Get(int id)
+        public AppModel Get(int appId)
         {
-            var result = UseCase.GetApp.Execute(new GetApp.Request(CurrentUserName, id));
+            var result = UseCase.GetApp.Execute(new GetApp.Request(CurrentUserName, appId));
             return new AppModel(result);
         }
 

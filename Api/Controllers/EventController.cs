@@ -11,9 +11,9 @@ namespace Api.Controllers
         [Route(ApiEventUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public EventModel Get(int id)
+        public EventModel Get(int eventId)
         {
-            var result = UseCase.GetEvent.Execute(new EventDetails.Request(CurrentUserName, id));
+            var result = UseCase.GetEvent.Execute(new EventDetails.Request(CurrentUserName, eventId));
             return new EventModel(result);
         }
 

@@ -13,9 +13,9 @@ namespace Api.Controllers
         [Route(ApiCashgameUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameDetailsModel Get(int id)
+        public CashgameDetailsModel Get(int cashgameId)
         {
-            var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
         }
@@ -41,18 +41,18 @@ namespace Api.Controllers
         [Route(ApiEventCashgamesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameListModel EventCashgameList(int id)
+        public CashgameListModel EventCashgameList(int eventId)
         {
-            var listResult = UseCase.EventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, id));
+            var listResult = UseCase.EventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
             return new CashgameListModel(listResult);
         }
 
         [Route(ApiPlayerCashgamesUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public CashgameListModel PlayerCashgameList(int id)
+        public CashgameListModel PlayerCashgameList(int playerId)
         {
-            var listResult = UseCase.PlayerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, id));
+            var listResult = UseCase.PlayerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
             return new CashgameListModel(listResult);
         }
 
@@ -71,11 +71,11 @@ namespace Api.Controllers
         [Route(ApiCashgameUrl.Route)]
         [HttpPut]
         [ApiAuthorize]
-        public CashgameDetailsModel Update(int id, [FromBody] UpdateCashgamePostModel post)
+        public CashgameDetailsModel Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
         {
-            var listRequest = new EditCashgame.Request(CurrentUserName, id, post.LocationId, post.EventId);
+            var listRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
             UseCase.EditCashgame.Execute(listRequest);
-            var detailsRequest = new CashgameDetails.Request(CurrentUserName, id, DateTime.UtcNow);
+            var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
         }
@@ -83,11 +83,11 @@ namespace Api.Controllers
         [Route(ApiCashgameUrl.Route)]
         [HttpDelete]
         [ApiAuthorize]
-        public CashgameDeleteModel Delete(int id)
+        public CashgameDeleteModel Delete(int cashgameId)
         {
-            var deleteRequest = new DeleteCashgame.Request(CurrentUserName, id);
+            var deleteRequest = new DeleteCashgame.Request(CurrentUserName, cashgameId);
             UseCase.DeleteCashgame.Execute(deleteRequest);
-            return new CashgameDeleteModel(id);
+            return new CashgameDeleteModel(cashgameId);
         }
 
         [Route(ApiBunchCashgamesCurrentUrl.Route)]
@@ -102,36 +102,36 @@ namespace Api.Controllers
         [Route(ApiCashgameBuyinUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Buyin(int id, [FromBody] CashgameBuyinPostModel post)
+        public OkModel Buyin(int cashgameId, [FromBody] CashgameBuyinPostModel post)
         {
-            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, id, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
         [Route(ApiCashgameReportUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Report(int id, [FromBody] CashgameReportPostModel post)
+        public OkModel Report(int cashgameId, [FromBody] CashgameReportPostModel post)
         {
-            UseCase.Report.Execute(new Report.Request(CurrentUserName, id, post.PlayerId, post.Stack, DateTime.UtcNow));
+            UseCase.Report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
         [Route(ApiCashgameCashoutUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Cashout(int id, [FromBody] CashgameCashoutPostModel post)
+        public OkModel Cashout(int cashgameId, [FromBody] CashgameCashoutPostModel post)
         {
-            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, id, post.PlayerId, post.Stack, DateTime.UtcNow));
+            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
         [Route(ApiCashgameEndUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel End(int id)
+        public OkModel End(int cashgameId)
         {
-            UseCase.EndCashgame.Execute(new EndCashgame.Request(CurrentUserName, id));
+            UseCase.EndCashgame.Execute(new EndCashgame.Request(CurrentUserName, cashgameId));
             return new OkModel();
         }
 

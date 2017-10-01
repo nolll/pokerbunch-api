@@ -11,9 +11,9 @@ namespace Api.Controllers
         [Route(ApiLocationUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public LocationModel Get(int id)
+        public LocationModel Get(int locationId)
         {
-            var result = UseCase.GetLocation.Execute(new GetLocation.Request(CurrentUserName, id));
+            var result = UseCase.GetLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
             return new LocationModel(result);
         }
 

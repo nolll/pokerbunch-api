@@ -13,9 +13,9 @@ namespace Api.Controllers
         [Route(ApiPlayerUrl.Route)]
         [HttpGet]
         [ApiAuthorize]
-        public PlayerModel Get(int id)
+        public PlayerModel Get(int playerId)
         {
-            var getPlayerResult = UseCase.GetPlayer.Execute(new GetPlayer.Request(CurrentUserName, id));
+            var getPlayerResult = UseCase.GetPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
             return new PlayerModel(getPlayerResult);
         }
 
@@ -40,24 +40,24 @@ namespace Api.Controllers
         [Route(ApiPlayerUrl.Route)]
         [HttpDelete]
         [ApiAuthorize]
-        public PlayerDeleteModel Delete(int id)
+        public PlayerDeleteModel Delete(int playerId)
         {
-            var deleteRequest = new DeletePlayer.Request(CurrentUserName, id);
+            var deleteRequest = new DeletePlayer.Request(CurrentUserName, playerId);
             UseCase.DeletePlayer.Execute(deleteRequest);
-            return new PlayerDeleteModel(id);
+            return new PlayerDeleteModel(playerId);
         }
 
         [Route(ApiPlayerInviteUrl.Route)]
         [HttpPost]
         [ApiAuthorize]
-        public PlayerInvitedModel Invite(int id, [FromBody] PlayerInvitePostModel post)
+        public PlayerInvitedModel Invite(int playerId, [FromBody] PlayerInvitePostModel post)
         {
             var registerUrl = new AddUserUrl().Absolute();
             var joinBunchUrlFormat = new JoinBunchUrl("{0}").Absolute();
             var joinBunchWithCodeUrlFormat = new JoinBunchUrl("{0}", "{1}").Absolute();
-            var deleteRequest = new InvitePlayer.Request(CurrentUserName, id, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
+            var deleteRequest = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
             UseCase.InvitePlayer.Execute(deleteRequest);
-            return new PlayerInvitedModel(id);
+            return new PlayerInvitedModel(playerId);
         }
     }
 }

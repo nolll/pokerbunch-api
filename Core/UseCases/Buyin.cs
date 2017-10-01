@@ -32,7 +32,6 @@ namespace Core.UseCases
             var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
             RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
             
-
             var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
             var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
             cashgame.AddCheckpoint(checkpoint);
