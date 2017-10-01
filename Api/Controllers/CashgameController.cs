@@ -143,5 +143,14 @@ namespace Api.Controllers
             var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
             return new CashgameYearListModel(listResult);
         }
+
+        [Route(ApiCashgameActionUrl.Route)]
+        [HttpPut]
+        [ApiAuthorize]
+        public OkModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
+        {
+            UseCase.EditCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
+            return new OkModel();
+        }
     }
 }

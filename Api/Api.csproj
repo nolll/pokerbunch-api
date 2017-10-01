@@ -84,7 +84,7 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="PokerBunch.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PokerBunch.Common.1.0.41\lib\PokerBunch.Common.dll</HintPath>
+      <HintPath>..\packages\PokerBunch.Common.1.0.44\lib\PokerBunch.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
@@ -185,6 +185,7 @@
     <Compile Include="Models\CashgameModels\CashgameYearListItemModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListModel.cs" />
     <Compile Include="Models\CashgameModels\CurrentCashgameListModel.cs" />
+    <Compile Include="Models\CashgameModels\UpdateActionPostModel.cs" />
     <Compile Include="Models\CashgameModels\UpdateCashgamePostModel.cs" />
     <Compile Include="Models\CommonModels\MessageModel.cs" />
     <Compile Include="Models\CommonModels\OkModel.cs" />

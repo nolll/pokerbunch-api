@@ -12,7 +12,7 @@ namespace Api.Extensions
             {
                 return base.SelectAction(controllerContext);
             }
-            catch (HttpResponseException)
+            catch (HttpResponseException e)
             {
                 throw new NotFoundException("Not found");
             }
