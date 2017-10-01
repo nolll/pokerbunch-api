@@ -152,5 +152,14 @@ namespace Api.Controllers
             UseCase.EditCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
             return new OkModel();
         }
+
+        [Route(ApiCashgameActionUrl.Route)]
+        [HttpDelete]
+        [ApiAuthorize]
+        public OkModel DeleteAction(int cashgameId, int actionId)
+        {
+            UseCase.DeleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+            return new OkModel();
+        }
     }
 }
