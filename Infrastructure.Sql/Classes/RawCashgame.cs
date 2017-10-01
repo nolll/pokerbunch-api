@@ -4,12 +4,12 @@ namespace Infrastructure.Sql.Classes
 {
 	public class RawCashgame
     {
-	    public int Id { get; private set; }
-        public int BunchId { get; private set; }
-	    public int LocationId { get; private set; }
-	    public int EventId { get; private set; }
-	    public int Status { get; private set; }
-	    public DateTime Date { get; private set; }
+	    public int Id { get; }
+        public int BunchId { get; }
+	    public int LocationId { get; }
+	    public int EventId { get; }
+	    public int Status { get; }
+	    public DateTime Date { get; }
 
 	    public RawCashgame(int id, int bunchId, int locationId, int eventId, int status, DateTime date)
 	    {

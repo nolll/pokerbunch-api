@@ -13,9 +13,9 @@ namespace Core.Entities
         public IList<Checkpoint> UpdatedCheckpoints { get; }
         public IList<Checkpoint> DeletedCheckpoints { get; }
         public int Id { get; }
-        public int BunchId { get; private set; }
-        public int LocationId { get; private set; }
-        public int EventId { get; private set; }
+        public int BunchId { get; }
+        public int LocationId { get; }
+        public int EventId { get; }
         public GameStatus Status { get; private set; }
         public DateTime? StartTime { get; private set; }
         public DateTime? EndTime { get; private set; }

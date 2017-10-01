@@ -37,15 +37,8 @@ namespace Core.UseCases
             var player = _playerRepository.Get(bunch.Id, user.Id);
             RequireRole.Player(user, player);
             var location = _locationRepository.Get(request.LocationId);
-            var @event = request.EventId != 0 ? _eventRepository.Get(request.EventId) : null;
-            var eventId = @event?.Id ?? 0;
-            var cashgame = new Cashgame(bunch.Id, location.Id, eventId, GameStatus.Running);
+            var cashgame = new Cashgame(bunch.Id, location.Id, 0, GameStatus.Running);
             var cashgameId = _cashgameRepository.Add(bunch, cashgame);
-
-            if (request.EventId > 0)
-            {
-                _eventRepository.AddCashgame(request.EventId, cashgameId);
-            }
 
             return new Result(request.Slug, cashgameId);
         }
@@ -56,14 +49,12 @@ namespace Core.UseCases
             public string Slug { get; }
             [Range(1, int.MaxValue, ErrorMessage = "Please select a location")]
             public int LocationId { get; }
-            public int EventId { get; }
 
-            public Request(string userName, string slug, int locationId, int eventId)
+            public Request(string userName, string slug, int locationId)
             {
                 UserName = userName;
                 Slug = slug;
                 LocationId = locationId;
-                EventId = eventId;
             }
         }
 

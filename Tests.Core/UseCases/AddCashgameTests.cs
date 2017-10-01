@@ -27,15 +27,6 @@ namespace Tests.Core.UseCases
         }
 
         [Test]
-        public void AddCashgame_WithEventId_GameIsAddedToEvent()
-        {
-            var request = CreateRequest(TestData.LocationIdA, 2);
-            Sut.Execute(request);
-
-            Assert.AreEqual(1, Deps.Event.AddedCashgameId);
-        }
-
-        [Test]
         public void AddCashgame_WithoutLocation_ThrowsValidationException()
         {
             var request = CreateRequest();
@@ -44,9 +35,9 @@ namespace Tests.Core.UseCases
             Assert.AreEqual(1, ex.Messages.Count());
         }
 
-        private static AddCashgame.Request CreateRequest(int locationId = 0, int eventId = 0)
+        private static AddCashgame.Request CreateRequest(int locationId = 0)
         {
-            return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId, eventId);
+            return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId);
         }
 
         private AddCashgame Sut => new AddCashgame(

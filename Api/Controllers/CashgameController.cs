@@ -61,7 +61,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameDetailsModel Add(string bunchId, [FromBody] AddCashgamePostModel post)
         {
-            var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId, post.EventId);
+            var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
             var result = UseCase.AddCashgame.Execute(addRequest);
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, result.CashgameId, DateTime.UtcNow);
             var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
