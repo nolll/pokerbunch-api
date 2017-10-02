@@ -10,6 +10,6 @@ namespace Core.Repositories
         IList<App> List();
         IList<App> List(int userId);
         int Add(App app);
-        void Update(App app);
+        void Delete(int id);
     }
 }

@@ -78,9 +78,14 @@ namespace Infrastructure.Sql.SqlDb
             return _db.ExecuteInsert(sql, parameters);
         }
 
-        public void Update(App app)
+        public void Delete(int appId)
         {
-            throw new System.NotImplementedException();
+            const string sql = @"DELETE FROM app WHERE ID = @appId";
+            var parameters = new List<SimpleSqlParameter>
+            {
+                new SimpleSqlParameter("@appId", appId)
+            };
+            _db.Execute(sql, parameters);
         }
 
         private IList<int> GetAppIdList(int userId)

@@ -1,6 +1,7 @@
 using System.Web.Http;
 using Api.Auth;
 using Api.Models.AppModels;
+using Api.Models.CommonModels;
 using Core.UseCases;
 using PokerBunch.Common.Urls.ApiUrls;
 
@@ -34,6 +35,15 @@ namespace Api.Controllers
         {
             var result = UseCase.AddApp.Execute(new AddApp.Request(CurrentUserName, post.Name));
             return new AppModel(result);
+        }
+
+        [Route(ApiAppUrl.Route)]
+        [HttpDelete]
+        [ApiAuthorize]
+        public OkModel Delete(int appId)
+        {
+            UseCase.DeleteApp.Execute(new DeleteApp.Request(CurrentUserName, appId));
+            return new OkModel();
         }
     }
 }

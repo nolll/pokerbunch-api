@@ -47,7 +47,7 @@ namespace Tests.Common.FakeRepositories
             return id;
         }
 
-        public void Update(App app)
+        public void Delete(int id)
         {
             throw new System.NotImplementedException();
         }

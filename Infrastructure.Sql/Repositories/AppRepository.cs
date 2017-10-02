@@ -50,10 +50,9 @@ namespace Infrastructure.Sql.Repositories
             return _appDb.Add(app);
         }
 
-        public void Update(App app)
+        public void Delete(int id)
         {
-            _appDb.Update(app);
-            _cacheContainer.Remove<App>(app.Id);
+            _appDb.Delete(id);
         }
 
         private App GetAndCache(int id)
