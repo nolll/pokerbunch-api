@@ -1,5 +1,7 @@
 ﻿using System.Runtime.Serialization;
+using Api.Extensions;
 using Core.UseCases;
+using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Models.AppModels
 {
@@ -12,6 +14,8 @@ namespace Api.Models.AppModels
         public string Name { get; }
         [DataMember(Name = "key")]
         public string Key { get; }
+        [DataMember(Name = "url")]
+        public string Url { get; }
 
         public AppModel(AppResult app)
             : this(app.AppId, app.AppName, app.AppKey)
@@ -23,6 +27,7 @@ namespace Api.Models.AppModels
             Id = id;
             Name = name;
             Key = key;
+            Url = new ApiAppUrl(id.ToString()).Absolute();
         }
     }
 }
