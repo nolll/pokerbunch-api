@@ -15,6 +15,7 @@ namespace Plumbing
 
         private ICacheContainer Cache => _deps.Cache;
         private IMessageSender MessageSender => _deps.MessageSender;
+        private IRandomizer Randomizer => _deps.Randomizer;
         private IAppRepository AppRepository => _deps.AppRepository;
         private IBunchRepository BunchRepository => _deps.BunchRepository;
         private ICashgameRepository CashgameRepository => _deps.CashgameRepository;
@@ -34,6 +35,7 @@ namespace Plumbing
         public UserDetails UserDetails => new UserDetails(UserRepository);
         public UserList UserList => new UserList(UserRepository);
         public EditUser EditUser => new EditUser(UserRepository);
+        public AddUser AddUser => new AddUser(UserRepository, Randomizer, MessageSender);
 
         // Bunch
         public GetBunchList GetBunchList => new GetBunchList(BunchRepository, UserRepository);

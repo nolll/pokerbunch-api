@@ -1,10 +1,13 @@
 using System.Web.Http;
 using Api.Auth;
+using Api.Extensions;
 using Api.Models.AppModels;
 using Api.Models.BunchModels;
+using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Core.UseCases;
 using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Urls.SiteUrls;
 
 namespace Api.Controllers
 {
@@ -37,6 +40,14 @@ namespace Api.Controllers
             var editUserResult = UseCase.EditUser.Execute(request);
             var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(editUserResult.UserName));
             return new FullUserModel(userDetails);
+        }
+
+        [Route(ApiUsersUrl.Route)]
+        [HttpPost]
+        public OkModel Add([FromBody] AddUserPostModel post)
+        {
+            UseCase.AddUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, new LoginUrl().Absolute()));
+            return new OkModel();
         }
 
         [Route(ApiUserProfileUrl.Route)]
