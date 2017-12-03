@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
 using PokerBunch.Common.Urls.ApiUrls;
+using Swashbuckle.Application;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace Api
@@ -27,6 +28,7 @@ namespace Api
         {
             var config = new HttpConfiguration();
             ConfigureOAuth(app);
+            ConfigureSwagger(config);
             ConfigRoutes(config);
             ConfigFormatters(config);
             ConfigureErrorHandler(config);
@@ -49,6 +51,13 @@ namespace Api
 
             app.UseOAuthAuthorizationServer(oAuthServerOptions);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+        }
+
+        private static void ConfigureSwagger(HttpConfiguration config)
+        {
+            config
+                .EnableSwagger(c => c.SingleApiVersion("v1", "Poker Bunch Api"))
+                .EnableSwaggerUi();
         }
 
         private static void ConfigRoutes(HttpConfiguration config)
