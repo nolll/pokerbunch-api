@@ -9,7 +9,7 @@ namespace Api.Controllers
 {
     public class AppController : BaseController
     {
-        [Route(ApiRoutes.App)]
+        [Route(ApiRoutes.App.Get)]
         [HttpGet]
         [ApiAuthorize]
         public AppModel Get(int appId)
@@ -18,7 +18,7 @@ namespace Api.Controllers
             return new AppModel(result);
         }
 
-        [Route(ApiRoutes.Apps)]
+        [Route(ApiRoutes.App.List)]
         [HttpGet]
         [ApiAuthorize]
         public AppListModel GetList()
@@ -28,7 +28,7 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiRoutes.AppsByUser)]
+        [Route(ApiRoutes.App.ListForCurrentUser)]
         [HttpGet]
         [ApiAuthorize]
         public AppListModel Apps()
@@ -38,7 +38,7 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiRoutes.Apps)]
+        [Route(ApiRoutes.App.List)]
         [HttpPost]
         [ApiAuthorize]
         public AppModel Add([FromBody] AddAppPostModel post)
@@ -47,7 +47,7 @@ namespace Api.Controllers
             return new AppModel(result);
         }
 
-        [Route(ApiRoutes.App)]
+        [Route(ApiRoutes.App.Get)]
         [HttpDelete]
         [ApiAuthorize]
         public OkModel Delete(int appId)

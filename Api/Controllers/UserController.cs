@@ -13,7 +13,7 @@ namespace Api.Controllers
 {
     public class UserController : BaseController
     {
-        [Route(ApiRoutes.User)]
+        [Route(ApiRoutes.User.Get)]
         [HttpGet]
         [ApiAuthorize]
         public UserModel GetUser(string userName)
@@ -22,7 +22,7 @@ namespace Api.Controllers
             return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
         }
 
-        [Route(ApiRoutes.Users)]
+        [Route(ApiRoutes.User.List)]
         [HttpGet]
         [ApiAuthorize]
         public UserListModel List()
@@ -31,7 +31,7 @@ namespace Api.Controllers
             return new UserListModel(userListResult);
         }
 
-        [Route(ApiRoutes.User)]
+        [Route(ApiRoutes.User.List)]
         [HttpPost]
         [ApiAuthorize]
         public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
@@ -42,7 +42,7 @@ namespace Api.Controllers
             return new FullUserModel(userDetails);
         }
 
-        [Route(ApiRoutes.User)]
+        [Route(ApiRoutes.User.List)]
         [HttpPost]
         public OkModel Add([FromBody] AddUserPostModel post)
         {
@@ -50,7 +50,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiRoutes.Profile)]
+        [Route(ApiRoutes.Profile.Get)]
         [HttpGet]
         [ApiAuthorize]
         public UserModel Profile()

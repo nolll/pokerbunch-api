@@ -8,7 +8,7 @@ namespace Api.Controllers
 {
     public class EventController : BaseController
     {
-        [Route(ApiRoutes.Event)]
+        [Route(ApiRoutes.Event.Get)]
         [HttpGet]
         [ApiAuthorize]
         public EventModel Get(int eventId)
@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new EventModel(result);
         }
 
-        [Route(ApiRoutes.EventsByBunch)]
+        [Route(ApiRoutes.Event.ListByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public EventListModel List(string bunchId)
@@ -26,7 +26,7 @@ namespace Api.Controllers
             return new EventListModel(eventListResult);
         }
 
-        [Route(ApiRoutes.EventsByBunch)]
+        [Route(ApiRoutes.Event.ListByBunch)]
         [HttpPost]
         [ApiAuthorize]
         public EventModel Add(string bunchId, [FromBody] EventAddPostModel post)

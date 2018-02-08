@@ -8,7 +8,7 @@ namespace Api.Controllers
 {
     public class LocationController : BaseController
     {
-        [Route(ApiRoutes.Location)]
+        [Route(ApiRoutes.Location.Get)]
         [HttpGet]
         [ApiAuthorize]
         public LocationModel Get(int locationId)
@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new LocationModel(result);
         }
 
-        [Route(ApiRoutes.LocationsByBunch)]
+        [Route(ApiRoutes.Location.ListByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public LocationListModel GetList(string bunchId)
@@ -26,7 +26,7 @@ namespace Api.Controllers
             return new LocationListModel(locationListResult);
         }
 
-        [Route(ApiRoutes.LocationsByBunch)]
+        [Route(ApiRoutes.Location.ListByBunch)]
         [HttpPost]
         [ApiAuthorize]
         public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)

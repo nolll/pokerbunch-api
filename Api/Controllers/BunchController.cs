@@ -1,6 +1,7 @@
 using System.Web.Http;
 using Api.Auth;
 using Api.Models.BunchModels;
+using Api.Models.PlayerModels;
 using Core.UseCases;
 using PokerBunch.Common.Routes;
 
@@ -8,7 +9,7 @@ namespace Api.Controllers
 {
     public class BunchController : BaseController
     {
-        [Route(ApiRoutes.Bunch)]
+        [Route(ApiRoutes.Bunch.Get)]
         [HttpGet]
         [ApiAuthorize]
         public BunchModel Get(string bunchId)
@@ -18,7 +19,7 @@ namespace Api.Controllers
             return new BunchModel(bunchResult);
         }
 
-        [Route(ApiRoutes.Bunch)]
+        [Route(ApiRoutes.Bunch.Get)]
         [HttpPost]
         [ApiAuthorize]
         public BunchModel Update(string bunchId, [FromBody] UpdateBunchPostModel post)
@@ -28,7 +29,7 @@ namespace Api.Controllers
             return new BunchModel(bunchResult);
         }
 
-        [Route(ApiRoutes.Bunches)]
+        [Route(ApiRoutes.Bunch.List)]
         [HttpGet]
         [ApiAuthorize]
         public BunchListModel List()
@@ -38,7 +39,7 @@ namespace Api.Controllers
             return new BunchListModel(bunchListResult);
         }
 
-        [Route(ApiRoutes.BunchesByUser)]
+        [Route(ApiRoutes.Bunch.ListForCurrentUser)]
         [HttpGet]
         [ApiAuthorize]
         public BunchListModel Bunches()
@@ -47,7 +48,7 @@ namespace Api.Controllers
             return new BunchListModel(bunchListResult);
         }
 
-        [Route(ApiRoutes.Bunches)]
+        [Route(ApiRoutes.Bunch.List)]
         [HttpPost]
         [ApiAuthorize]
         public BunchModel Add([FromBody] AddBunchPostModel post)
@@ -55,6 +56,16 @@ namespace Api.Controllers
             var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
             var bunchResult = UseCase.AddBunch.Execute(request);
             return new BunchModel(bunchResult);
+        }
+
+        [Route(ApiRoutes.Bunch.Join)]
+        [HttpPost]
+        [ApiAuthorize]
+        public PlayerJoinedModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
+        {
+            var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
+            var result = UseCase.JoinBunch.Execute(request);
+            return new PlayerJoinedModel(result.PlayerId);
         }
     }
 }
