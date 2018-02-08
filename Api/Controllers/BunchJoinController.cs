@@ -7,11 +7,11 @@ using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
-    [Route(ApiRoutes.BunchJoin)]
-    [ApiAuthorize]
     public class BunchJoinController : BaseController
     {
+        [Route(ApiRoutes.BunchJoin)]
         [HttpPost]
+        [ApiAuthorize]
         public PlayerJoinedModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
         {
             var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);

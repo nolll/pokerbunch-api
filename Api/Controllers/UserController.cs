@@ -7,7 +7,6 @@ using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Core.UseCases;
 using PokerBunch.Common.Routes;
-using PokerBunch.Common.Urls.ApiUrls;
 using PokerBunch.Common.Urls.SiteUrls;
 
 namespace Api.Controllers
@@ -58,25 +57,6 @@ namespace Api.Controllers
         {
             var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName));
             return new FullUserModel(userDetails);
-        }
-
-        [Route(ApiRoutes.Apps)]
-        [HttpGet]
-        [ApiAuthorize]
-        public AppListModel Apps()
-        {
-            var request = new AppList.UserAppsRequest(CurrentUserName);
-            var appListResult = UseCase.GetAppList.Execute(request);
-            return new AppListModel(appListResult);
-        }
-
-        [Route(ApiRoutes.Bunches)]
-        [HttpGet]
-        [ApiAuthorize]
-        public BunchListModel Bunches()
-        {
-            var bunchListResult = UseCase.GetBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
-            return new BunchListModel(bunchListResult);
         }
     }
 }

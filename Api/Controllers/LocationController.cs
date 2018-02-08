@@ -3,7 +3,6 @@ using Api.Auth;
 using Api.Models.LocationModels;
 using Core.UseCases;
 using PokerBunch.Common.Routes;
-using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Controllers
 {

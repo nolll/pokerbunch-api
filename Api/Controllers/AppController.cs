@@ -28,6 +28,16 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
+        [Route(ApiRoutes.AppsByUser)]
+        [HttpGet]
+        [ApiAuthorize]
+        public AppListModel Apps()
+        {
+            var request = new AppList.UserAppsRequest(CurrentUserName);
+            var appListResult = UseCase.GetAppList.Execute(request);
+            return new AppListModel(appListResult);
+        }
+
         [Route(ApiRoutes.Apps)]
         [HttpPost]
         [ApiAuthorize]

@@ -4,7 +4,6 @@ using Api.Extensions;
 using Api.Models.PlayerModels;
 using Core.UseCases;
 using PokerBunch.Common.Routes;
-using PokerBunch.Common.Urls.ApiUrls;
 using PokerBunch.Common.Urls.SiteUrls;
 
 namespace Api.Controllers

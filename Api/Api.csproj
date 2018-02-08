@@ -136,7 +136,6 @@
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BunchController.cs" />
-    <Compile Include="Controllers\BunchesController.cs" />
     <Compile Include="Controllers\BunchJoinController.cs" />
     <Compile Include="Controllers\CashgameController.cs" />
     <Compile Include="Controllers\EventController.cs" />
