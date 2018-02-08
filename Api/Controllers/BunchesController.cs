@@ -2,11 +2,11 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Models.BunchModels;
 using Core.UseCases;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
-    [Route(ApiBunchesUrl.Route)]
+    [Route(ApiRoutes.Bunches)]
     [ApiAuthorize]
     public class BunchesController : BaseController
     {

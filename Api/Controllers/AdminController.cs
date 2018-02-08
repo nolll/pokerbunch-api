@@ -2,13 +2,13 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Models.AdminModels;
 using Core.UseCases;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
     public class AdminController : BaseController
     {
-        [Route(ApiAdminClearCacheUrl.Route)]
+        [Route(ApiRoutes.AdminClearCache)]
         [HttpPost]
         [ApiAuthorize]
         public ClearCacheModel ClearCache()
@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new ClearCacheModel(result.ClearCount);
         }
 
-        [Route(ApiAdminSendEmailUrl.Route)]
+        [Route(ApiRoutes.AdminSendEmail)]
         [HttpPost]
         [ApiAuthorize]
         public SendEmailModel SendEmail()

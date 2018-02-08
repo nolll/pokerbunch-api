@@ -2,13 +2,14 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Models.LocationModels;
 using Core.UseCases;
+using PokerBunch.Common.Routes;
 using PokerBunch.Common.Urls.ApiUrls;
 
 namespace Api.Controllers
 {
     public class LocationController : BaseController
     {
-        [Route(ApiLocationUrl.Route)]
+        [Route(ApiRoutes.Location)]
         [HttpGet]
         [ApiAuthorize]
         public LocationModel Get(int locationId)
@@ -17,7 +18,7 @@ namespace Api.Controllers
             return new LocationModel(result);
         }
 
-        [Route(ApiBunchLocationsUrl.Route)]
+        [Route(ApiRoutes.LocationsByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public LocationListModel GetList(string bunchId)
@@ -26,7 +27,7 @@ namespace Api.Controllers
             return new LocationListModel(locationListResult);
         }
 
-        [Route(ApiBunchLocationsUrl.Route)]
+        [Route(ApiRoutes.LocationsByBunch)]
         [HttpPost]
         [ApiAuthorize]
         public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)

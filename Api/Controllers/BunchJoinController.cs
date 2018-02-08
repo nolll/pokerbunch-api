@@ -3,11 +3,11 @@ using Api.Auth;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Core.UseCases;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
-    [Route(ApiBunchJoinUrl.Route)]
+    [Route(ApiRoutes.BunchJoin)]
     [ApiAuthorize]
     public class BunchJoinController : BaseController
     {

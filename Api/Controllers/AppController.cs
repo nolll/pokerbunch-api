@@ -3,13 +3,13 @@ using Api.Auth;
 using Api.Models.AppModels;
 using Api.Models.CommonModels;
 using Core.UseCases;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
     public class AppController : BaseController
     {
-        [Route(ApiAppUrl.Route)]
+        [Route(ApiRoutes.App)]
         [HttpGet]
         [ApiAuthorize]
         public AppModel Get(int appId)
@@ -18,7 +18,7 @@ namespace Api.Controllers
             return new AppModel(result);
         }
 
-        [Route(ApiAppsUrl.Route)]
+        [Route(ApiRoutes.Apps)]
         [HttpGet]
         [ApiAuthorize]
         public AppListModel GetList()
@@ -28,7 +28,7 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiAppsUrl.Route)]
+        [Route(ApiRoutes.Apps)]
         [HttpPost]
         [ApiAuthorize]
         public AppModel Add([FromBody] AddAppPostModel post)
@@ -37,7 +37,7 @@ namespace Api.Controllers
             return new AppModel(result);
         }
 
-        [Route(ApiAppUrl.Route)]
+        [Route(ApiRoutes.App)]
         [HttpDelete]
         [ApiAuthorize]
         public OkModel Delete(int appId)

@@ -3,6 +3,7 @@ using Api.Auth;
 using Api.Extensions;
 using Api.Models.PlayerModels;
 using Core.UseCases;
+using PokerBunch.Common.Routes;
 using PokerBunch.Common.Urls.ApiUrls;
 using PokerBunch.Common.Urls.SiteUrls;
 
@@ -10,7 +11,7 @@ namespace Api.Controllers
 {
     public class PlayerController : BaseController
     {
-        [Route(ApiPlayerUrl.Route)]
+        [Route(ApiRoutes.Player)]
         [HttpGet]
         [ApiAuthorize]
         public PlayerModel Get(int playerId)
@@ -19,7 +20,7 @@ namespace Api.Controllers
             return new PlayerModel(getPlayerResult);
         }
 
-        [Route(ApiBunchPlayersUrl.Route)]
+        [Route(ApiRoutes.PlayersByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public PlayerListModel GetList(string bunchId)
@@ -28,7 +29,7 @@ namespace Api.Controllers
             return new PlayerListModel(playerListResult);
         }
 
-        [Route(ApiBunchPlayersUrl.Route)]
+        [Route(ApiRoutes.PlayersByBunch)]
         [HttpPost]
         [ApiAuthorize]
         public PlayerModel Add(string bunchId, [FromBody] PlayerAddPostModel post)
@@ -37,7 +38,7 @@ namespace Api.Controllers
             return Get(result.Id);
         }
 
-        [Route(ApiPlayerUrl.Route)]
+        [Route(ApiRoutes.Player)]
         [HttpDelete]
         [ApiAuthorize]
         public PlayerDeleteModel Delete(int playerId)
@@ -47,7 +48,7 @@ namespace Api.Controllers
             return new PlayerDeleteModel(playerId);
         }
 
-        [Route(ApiPlayerInviteUrl.Route)]
+        [Route(ApiRoutes.PlayerInvite)]
         [HttpPost]
         [ApiAuthorize]
         public PlayerInvitedModel Invite(int playerId, [FromBody] PlayerInvitePostModel post)

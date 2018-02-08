@@ -1,12 +1,12 @@
 ﻿using System.Web.Http;
 using Api.Models.HomeModels;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
     public class RootController : BaseController
     {
-        [Route(ApiRootUrl.Route)]
+        [Route(ApiRoutes.Root)]
         [HttpGet]
         public HomeModel Home()
         {

@@ -2,13 +2,13 @@
 using Api.Auth;
 using Api.Models.EventModels;
 using Core.UseCases;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
     public class EventController : BaseController
     {
-        [Route(ApiEventUrl.Route)]
+        [Route(ApiRoutes.Event)]
         [HttpGet]
         [ApiAuthorize]
         public EventModel Get(int eventId)
@@ -17,7 +17,7 @@ namespace Api.Controllers
             return new EventModel(result);
         }
 
-        [Route(ApiBunchEventsUrl.Route)]
+        [Route(ApiRoutes.EventsByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public EventListModel List(string bunchId)
@@ -26,7 +26,7 @@ namespace Api.Controllers
             return new EventListModel(eventListResult);
         }
 
-        [Route(ApiBunchEventsUrl.Route)]
+        [Route(ApiRoutes.EventsByBunch)]
         [HttpPost]
         [ApiAuthorize]
         public EventModel Add(string bunchId, [FromBody] EventAddPostModel post)

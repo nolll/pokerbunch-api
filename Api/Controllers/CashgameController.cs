@@ -4,13 +4,13 @@ using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
 using Core.UseCases;
-using PokerBunch.Common.Urls.ApiUrls;
+using PokerBunch.Common.Routes;
 
 namespace Api.Controllers
 {
     public class CashgameController : BaseController
     {
-        [Route(ApiCashgameUrl.Route)]
+        [Route(ApiRoutes.Cashgame)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameDetailsModel Get(int cashgameId)
@@ -20,7 +20,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiBunchCashgamesUrl.Route)]
+        [Route(ApiRoutes.CashgamesByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string bunchId)
@@ -29,7 +29,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiBunchCashgamesUrl.RouteWithYear)]
+        [Route(ApiRoutes.CashgamesByBunchAndYear)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel List(string bunchId, int year)
@@ -38,7 +38,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiEventCashgamesUrl.Route)]
+        [Route(ApiRoutes.CashgamesByEvent)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel EventCashgameList(int eventId)
@@ -47,7 +47,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiPlayerCashgamesUrl.Route)]
+        [Route(ApiRoutes.CashgamesByPlayer)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameListModel PlayerCashgameList(int playerId)
@@ -56,7 +56,7 @@ namespace Api.Controllers
             return new CashgameListModel(listResult);
         }
 
-        [Route(ApiBunchCashgamesUrl.Route)]
+        [Route(ApiRoutes.CashgamesByBunch)]
         [HttpPost]
         [ApiAuthorize]
         public CashgameDetailsModel Add(string bunchId, [FromBody] AddCashgamePostModel post)
@@ -68,7 +68,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiCashgameUrl.Route)]
+        [Route(ApiRoutes.Cashgame)]
         [HttpPut]
         [ApiAuthorize]
         public CashgameDetailsModel Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
@@ -80,7 +80,7 @@ namespace Api.Controllers
             return new CashgameDetailsModel(detailsResult);
         }
 
-        [Route(ApiCashgameUrl.Route)]
+        [Route(ApiRoutes.Cashgame)]
         [HttpDelete]
         [ApiAuthorize]
         public CashgameDeleteModel Delete(int cashgameId)
@@ -90,7 +90,7 @@ namespace Api.Controllers
             return new CashgameDeleteModel(cashgameId);
         }
 
-        [Route(ApiBunchCashgamesCurrentUrl.Route)]
+        [Route(ApiRoutes.CashgamesCurrentByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public CurrentCashgameListModel Current(string bunchId)
@@ -99,7 +99,7 @@ namespace Api.Controllers
             return new CurrentCashgameListModel(currentGamesResult);
         }
 
-        [Route(ApiCashgameBuyinUrl.Route)]
+        [Route(ApiRoutes.ActionBuyin)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel Buyin(int cashgameId, [FromBody] CashgameBuyinPostModel post)
@@ -108,7 +108,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiCashgameReportUrl.Route)]
+        [Route(ApiRoutes.ActionReport)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel Report(int cashgameId, [FromBody] CashgameReportPostModel post)
@@ -117,7 +117,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiCashgameCashoutUrl.Route)]
+        [Route(ApiRoutes.ActionCashout)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel Cashout(int cashgameId, [FromBody] CashgameCashoutPostModel post)
@@ -126,7 +126,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiCashgameEndUrl.Route)]
+        [Route(ApiRoutes.ActionEnd)]
         [HttpPost]
         [ApiAuthorize]
         public OkModel End(int cashgameId)
@@ -135,7 +135,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiBunchCashgameYearsUrl.Route)]
+        [Route(ApiRoutes.CashgameYearsByBunch)]
         [HttpGet]
         [ApiAuthorize]
         public CashgameYearListModel Years(string bunchId)
@@ -144,7 +144,7 @@ namespace Api.Controllers
             return new CashgameYearListModel(listResult);
         }
 
-        [Route(ApiCashgameActionUrl.Route)]
+        [Route(ApiRoutes.Action)]
         [HttpPut]
         [ApiAuthorize]
         public OkModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
@@ -153,7 +153,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiCashgameActionUrl.Route)]
+        [Route(ApiRoutes.Action)]
         [HttpDelete]
         [ApiAuthorize]
         public OkModel DeleteAction(int cashgameId, int actionId)

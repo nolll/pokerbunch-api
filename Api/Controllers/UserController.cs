@@ -6,6 +6,7 @@ using Api.Models.BunchModels;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Core.UseCases;
+using PokerBunch.Common.Routes;
 using PokerBunch.Common.Urls.ApiUrls;
 using PokerBunch.Common.Urls.SiteUrls;
 
@@ -13,7 +14,7 @@ namespace Api.Controllers
 {
     public class UserController : BaseController
     {
-        [Route(ApiUserUrl.Route)]
+        [Route(ApiRoutes.User)]
         [HttpGet]
         [ApiAuthorize]
         public UserModel GetUser(string userName)
@@ -22,7 +23,7 @@ namespace Api.Controllers
             return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
         }
 
-        [Route(ApiUsersUrl.Route)]
+        [Route(ApiRoutes.Users)]
         [HttpGet]
         [ApiAuthorize]
         public UserListModel List()
@@ -31,7 +32,7 @@ namespace Api.Controllers
             return new UserListModel(userListResult);
         }
 
-        [Route(ApiUserUrl.Route)]
+        [Route(ApiRoutes.User)]
         [HttpPost]
         [ApiAuthorize]
         public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
@@ -42,7 +43,7 @@ namespace Api.Controllers
             return new FullUserModel(userDetails);
         }
 
-        [Route(ApiUsersUrl.Route)]
+        [Route(ApiRoutes.User)]
         [HttpPost]
         public OkModel Add([FromBody] AddUserPostModel post)
         {
@@ -50,7 +51,7 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiUserProfileUrl.Route)]
+        [Route(ApiRoutes.Profile)]
         [HttpGet]
         [ApiAuthorize]
         public UserModel Profile()
@@ -59,7 +60,7 @@ namespace Api.Controllers
             return new FullUserModel(userDetails);
         }
 
-        [Route(ApiUserAppsUrl.Route)]
+        [Route(ApiRoutes.Apps)]
         [HttpGet]
         [ApiAuthorize]
         public AppListModel Apps()
@@ -69,7 +70,7 @@ namespace Api.Controllers
             return new AppListModel(appListResult);
         }
 
-        [Route(ApiUserBunchesUrl.Route)]
+        [Route(ApiRoutes.Bunches)]
         [HttpGet]
         [ApiAuthorize]
         public BunchListModel Bunches()
