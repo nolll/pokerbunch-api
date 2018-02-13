@@ -3,6 +3,7 @@ using System.Web.Http;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
+using Core.Exceptions;
 using Core.UseCases;
 using PokerBunch.Common.Routes;
 
@@ -10,28 +11,34 @@ namespace Api.Controllers
 {
     public class ActionController : BaseController
     {
-        [Route(ApiRoutes.Action.Buyin)]
+        [Route(ApiRoutes.Action.List)]
         [HttpPost]
         [ApiAuthorize]
-        public OkModel Buyin(int cashgameId, [FromBody] CashgameBuyinPostModel post)
+        public OkModel Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
+        {
+            if(post.Type == ActionType.Buyin)
+                return Buyin(cashgameId, post);
+            if (post.Type == ActionType.Report)
+                return Report(cashgameId, post);
+            if(post.Type == ActionType.Cashout)
+                return Cashout(cashgameId, post);
+
+            throw new NotFoundException($"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]");
+        }
+
+        private OkModel Buyin(int cashgameId, AddCashgameActionPostModel post)
         {
             UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
-        [Route(ApiRoutes.Action.Report)]
-        [HttpPost]
-        [ApiAuthorize]
-        public OkModel Report(int cashgameId, [FromBody] CashgameReportPostModel post)
+        private OkModel Report(int cashgameId, AddCashgameActionPostModel post)
         {
             UseCase.Report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
-        [Route(ApiRoutes.Action.Cashout)]
-        [HttpPost]
-        [ApiAuthorize]
-        public OkModel Cashout(int cashgameId, [FromBody] CashgameCashoutPostModel post)
+        private OkModel Cashout(int cashgameId, AddCashgameActionPostModel post)
         {
             UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
@@ -62,6 +69,13 @@ namespace Api.Controllers
         {
             UseCase.DeleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
             return new OkModel();
+        }
+
+        private static class ActionType
+        {
+            public const string Buyin = "buyin";
+            public const string Report = "report";
+            public const string Cashout = "cashout";
         }
     }
 }

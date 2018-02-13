@@ -1,8 +1,6 @@
 using System.Web.Http;
 using Api.Auth;
 using Api.Extensions;
-using Api.Models.AppModels;
-using Api.Models.BunchModels;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Core.UseCases;

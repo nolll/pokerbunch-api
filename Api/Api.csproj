@@ -84,7 +84,7 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="PokerBunch.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PokerBunch.Common.1.0.47\lib\PokerBunch.Common.dll</HintPath>
+      <HintPath>..\packages\PokerBunch.Common.1.0.48\lib\PokerBunch.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
@@ -167,11 +167,10 @@
     <Compile Include="Models\BunchModels\BunchModel.cs" />
     <Compile Include="Models\BunchModels\JoinBunchPostModel.cs" />
     <Compile Include="Models\BunchModels\UpdateBunchPostModel.cs" />
+    <Compile Include="Models\CashgameModels\AddCashgameActionPostModel.cs" />
     <Compile Include="Models\CashgameModels\AddCashgamePostModel.cs" />
     <Compile Include="Models\CashgameModels\ApiRunningResult.cs" />
     <Compile Include="Models\CashgameModels\CashgameBunchModel.cs" />
-    <Compile Include="Models\CashgameModels\CashgameBuyinPostModel.cs" />
-    <Compile Include="Models\CashgameModels\CashgameCashoutPostModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDeleteModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDetailsActionModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDetailsEventModel.cs" />
@@ -180,7 +179,6 @@
     <Compile Include="Models\CashgameModels\CashgameListItemModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListItemPlayerModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListModel.cs" />
-    <Compile Include="Models\CashgameModels\CashgameReportPostModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListItemModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListModel.cs" />
     <Compile Include="Models\CashgameModels\CurrentCashgameListModel.cs" />
