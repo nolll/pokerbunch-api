@@ -32,9 +32,7 @@ namespace Infrastructure.Sql.SqlDb
             var rawGame = reader.ReadOne(CreateRawCashgame);
             var rawCheckpoints = GetCheckpoints(cashgameId);
             var checkpoints = CreateCheckpoints(rawCheckpoints);
-            var cashgame = CreateCashgame(rawGame);
-            cashgame.AddCheckpoints(checkpoints);
-            return cashgame;
+            return CreateCashgame(rawGame, checkpoints);
         }
         
         public IList<Cashgame> Get(IList<int> ids)
@@ -204,9 +202,9 @@ namespace Infrastructure.Sql.SqlDb
             return new RawCashgame(cashgame.Id, cashgame.BunchId, cashgame.LocationId, cashgame.EventId, rawStatus, date);
         }
 
-	    private static Cashgame CreateCashgame(RawCashgame rawGame)
+	    private static Cashgame CreateCashgame(RawCashgame rawGame, IList<Checkpoint> checkpoints)
 	    {
-            return new Cashgame(rawGame.BunchId, rawGame.LocationId, rawGame.EventId, (GameStatus)rawGame.Status, rawGame.Id);
+            return new Cashgame(rawGame.BunchId, rawGame.LocationId, rawGame.EventId, (GameStatus)rawGame.Status, rawGame.Id, checkpoints);
         }
 
         private static IList<Checkpoint> CreateCheckpoints(IEnumerable<RawCheckpoint> checkpoints)
@@ -227,8 +225,7 @@ namespace Infrastructure.Sql.SqlDb
                     gameCheckpoints = new List<RawCheckpoint>();
                 }
                 var checkpoints = CreateCheckpoints(gameCheckpoints);
-                var cashgame = CreateCashgame(rawGame);
-                cashgame.AddCheckpoints(checkpoints);
+                var cashgame = CreateCashgame(rawGame, checkpoints);
                 cashgames.Add(cashgame);
             }
             return cashgames;

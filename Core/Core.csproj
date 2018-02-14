@@ -132,7 +132,6 @@
     <Compile Include="UseCases\EditCashgame.cs" />
     <Compile Include="UseCases\EditCheckpoint.cs" />
     <Compile Include="UseCases\EditUser.cs" />
-    <Compile Include="UseCases\EndCashgame.cs" />
     <Compile Include="UseCases\EventDetails.cs" />
     <Compile Include="UseCases\EventList.cs" />
     <Compile Include="UseCases\ForgotPassword.cs" />

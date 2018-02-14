@@ -8,7 +8,7 @@ namespace Core.Entities
 {
     public class Cashgame : IEntity
     {
-        public IList<Checkpoint> Checkpoints { get; private set; }
+        public IList<Checkpoint> Checkpoints { get; }
         public IList<Checkpoint> AddedCheckpoints { get; }
         public IList<Checkpoint> UpdatedCheckpoints { get; }
         public IList<Checkpoint> DeletedCheckpoints { get; }
@@ -32,7 +32,8 @@ namespace Core.Entities
             LocationId = locationId;
             EventId = eventId;
             Status = status;
-            AddCheckpoints(checkpoints);
+            Checkpoints = checkpoints ?? new List<Checkpoint>();
+            CheckpointsUpdated();
             AddedCheckpoints = new List<Checkpoint>();
             UpdatedCheckpoints = new List<Checkpoint>();
             DeletedCheckpoints = new List<Checkpoint>();
@@ -43,9 +44,16 @@ namespace Core.Entities
             Status = status;
         }
 
-        public void AddCheckpoints(IList<Checkpoint> checkpoints)
+        public bool IsReadyToEnd
         {
-            Checkpoints = checkpoints ?? new List<Checkpoint>();
+            get
+            {
+                return Checkpoints.Count > 0 && Results.Count(o => !o.HasCachedOut) == 0;
+            }
+        }
+
+        private void CheckpointsUpdated()
+        {
             Results = CreateResults(Checkpoints);
             StartTime = GetStartTime(Results);
             EndTime = GetEndTime(Results);
@@ -126,6 +134,7 @@ namespace Core.Entities
         {
             Checkpoints.Add(checkpoint);
             AddedCheckpoints.Add(checkpoint);
+            CheckpointsUpdated();
         }
 
         public void UpdateCheckpoint(Checkpoint checkpoint)
@@ -133,12 +142,14 @@ namespace Core.Entities
             var oldCheckpoint = Checkpoints.First(o => o.Id == checkpoint.Id);
             Checkpoints[Checkpoints.IndexOf(oldCheckpoint)] = checkpoint;
             UpdatedCheckpoints.Add(checkpoint);
+            CheckpointsUpdated();
         }
 
         public void DeleteCheckpoint(Checkpoint checkpoint)
         {
             Checkpoints.Remove(checkpoint);
             DeletedCheckpoints.Add(checkpoint);
+            CheckpointsUpdated();
         }
         
         public int Duration

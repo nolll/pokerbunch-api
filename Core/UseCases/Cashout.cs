@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Core.Entities;
 using Core.Entities.Checkpoints;
 using Core.Repositories;
 using Core.Services;
@@ -40,12 +41,16 @@ namespace Core.UseCases
                 CheckpointType.Cashout,
                 request.Stack,
                 0,
-                existingCashoutCheckpoint != null ? existingCashoutCheckpoint.Id : 0);
+                existingCashoutCheckpoint?.Id ?? 0);
 
             if (existingCashoutCheckpoint != null)
                 cashgame.UpdateCheckpoint(postedCheckpoint);
             else
                 cashgame.AddCheckpoint(postedCheckpoint);
+
+            if (cashgame.IsReadyToEnd)
+                cashgame.ChangeStatus(GameStatus.Finished);
+
             _cashgameRepository.Update(cashgame);
 
             return new Result(cashgame.Id);

@@ -44,15 +44,6 @@ namespace Api.Controllers
             return new OkModel();
         }
 
-        [Route(ApiRoutes.Action.End)]
-        [HttpPost]
-        [ApiAuthorize]
-        public OkModel End(int cashgameId)
-        {
-            UseCase.EndCashgame.Execute(new EndCashgame.Request(CurrentUserName, cashgameId));
-            return new OkModel();
-        }
-
         [Route(ApiRoutes.Action.Get)]
         [HttpPut]
         [ApiAuthorize]

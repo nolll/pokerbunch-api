@@ -100,7 +100,6 @@
     <Compile Include="UseCases\EditCashgameTests.cs" />
     <Compile Include="UseCases\EditCheckpointTests.cs" />
     <Compile Include="UseCases\EditUserTests.cs" />
-    <Compile Include="UseCases\EndCashgameTests.cs" />
     <Compile Include="UseCases\LocationDetailsTests.cs" />
     <Compile Include="UseCases\DeletePlayerTests.cs" />
     <Compile Include="UseCases\EventDetailsTests.cs" />

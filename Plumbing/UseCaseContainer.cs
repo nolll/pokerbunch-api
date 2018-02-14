@@ -63,7 +63,6 @@ namespace Plumbing
         public Buyin Buyin => new Buyin(CashgameRepository, PlayerRepository, UserRepository);
         public Report Report => new Report(CashgameRepository, PlayerRepository, UserRepository);
         public Cashout Cashout => new Cashout(CashgameRepository, PlayerRepository, UserRepository);
-        public EndCashgame EndCashgame => new EndCashgame(CashgameRepository, PlayerRepository, UserRepository);
         public AddCashgame AddCashgame => new AddCashgame(BunchRepository, CashgameRepository, UserRepository, PlayerRepository, LocationRepository, EventRepository);
         public EditCashgame EditCashgame => new EditCashgame(CashgameRepository, UserRepository, PlayerRepository, LocationRepository, EventRepository);
         public DeleteCashgame DeleteCashgame => new DeleteCashgame(CashgameRepository, BunchRepository, UserRepository, PlayerRepository);
