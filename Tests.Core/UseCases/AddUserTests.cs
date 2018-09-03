@@ -100,14 +100,14 @@ Please sign in here: /loginUrl";
             var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/loginUrl");
             Sut.Execute(request);
 
-            Assert.AreEqual(ValidEmail, Deps.MessageSender.To);
-            Assert.AreEqual(subject, Deps.MessageSender.Message.Subject);
-            Assert.AreEqual(body, Deps.MessageSender.Message.Body);
+            Assert.AreEqual(ValidEmail, Deps.EmailSender.To);
+            Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);
+            Assert.AreEqual(body, Deps.EmailSender.Message.Body);
         }
 
         private AddUser Sut => new AddUser(
             Deps.User,
             Deps.Randomizer,
-            Deps.MessageSender);
+            Deps.EmailSender);
     }
 }

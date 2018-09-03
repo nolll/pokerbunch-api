@@ -37,9 +37,9 @@ aaaaaaaa
 Please sign in here: loginUrl";
             Sut.Execute(CreateRequest());
 
-            Assert.AreEqual(ValidEmail, Deps.MessageSender.To);
-            Assert.AreEqual(subject, Deps.MessageSender.Message.Subject);
-            Assert.AreEqual(body, Deps.MessageSender.Message.Body);
+            Assert.AreEqual(ValidEmail, Deps.EmailSender.To);
+            Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);
+            Assert.AreEqual(body, Deps.EmailSender.Message.Body);
         }
 
         [Test]
@@ -59,7 +59,7 @@ Please sign in here: loginUrl";
 
         private ForgotPassword Sut => new ForgotPassword(
             Deps.User,
-            Deps.MessageSender,
+            Deps.EmailSender,
             Deps.Randomizer);
     }
 }

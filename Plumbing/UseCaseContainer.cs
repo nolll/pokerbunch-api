@@ -14,7 +14,7 @@ namespace Plumbing
         }
 
         private ICacheContainer Cache => _deps.Cache;
-        private IMessageSender MessageSender => _deps.MessageSender;
+        private IEmailSender EmailSender => _deps.EmailSender;
         private IRandomizer Randomizer => _deps.Randomizer;
         private IAppRepository AppRepository => _deps.AppRepository;
         private IBunchRepository BunchRepository => _deps.BunchRepository;
@@ -28,14 +28,14 @@ namespace Plumbing
         public Login Login => new Login(UserRepository);
 
         // Admin
-        public TestEmail TestEmail => new TestEmail(MessageSender, UserRepository);
+        public TestEmail TestEmail => new TestEmail(EmailSender, UserRepository);
         public ClearCache ClearCache => new ClearCache(Cache, UserRepository);
 
         // User
         public UserDetails UserDetails => new UserDetails(UserRepository);
         public UserList UserList => new UserList(UserRepository);
         public EditUser EditUser => new EditUser(UserRepository);
-        public AddUser AddUser => new AddUser(UserRepository, Randomizer, MessageSender);
+        public AddUser AddUser => new AddUser(UserRepository, Randomizer, EmailSender);
 
         // Bunch
         public GetBunchList GetBunchList => new GetBunchList(BunchRepository, UserRepository);
@@ -74,7 +74,7 @@ namespace Plumbing
         public GetPlayerList GetPlayerList => new GetPlayerList(BunchRepository, UserRepository, PlayerRepository);
         public AddPlayer AddPlayer => new AddPlayer(BunchRepository, PlayerRepository, UserRepository);
         public DeletePlayer DeletePlayer => new DeletePlayer(PlayerRepository, CashgameRepository, UserRepository, BunchRepository);
-        public InvitePlayer InvitePlayer => new InvitePlayer(BunchRepository, PlayerRepository, MessageSender, UserRepository);
+        public InvitePlayer InvitePlayer => new InvitePlayer(BunchRepository, PlayerRepository, EmailSender, UserRepository);
         public JoinBunch JoinBunch => new JoinBunch(BunchRepository, PlayerRepository, UserRepository);
 
         // Apps

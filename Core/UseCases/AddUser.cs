@@ -11,16 +11,16 @@ namespace Core.UseCases
     {
         private readonly IUserRepository _userRepository;
         private readonly IRandomizer _randomizer;
-        private readonly IMessageSender _messageSender;
+        private readonly IEmailSender _emailSender;
 
         public AddUser(
             IUserRepository userRepository,
             IRandomizer randomizer,
-            IMessageSender messageSender)
+            IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _randomizer = randomizer;
-            _messageSender = messageSender;
+            _emailSender = emailSender;
         }
 
         public void Execute(Request request)
@@ -43,7 +43,7 @@ namespace Core.UseCases
             _userRepository.Add(user);
             
             var message = new RegistrationMessage(request.LoginUrl);
-            _messageSender.Send(request.Email, message);
+            _emailSender.Send(request.Email, message);
         }
 
         private static User CreateUser(Request request, string encryptedPassword, string salt)

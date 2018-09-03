@@ -9,14 +9,14 @@ namespace Core.UseCases
     {
         private readonly IBunchRepository _bunchRepository;
         private readonly IPlayerRepository _playerRepository;
-        private readonly IMessageSender _messageSender;
+        private readonly IEmailSender _emailSender;
         private readonly IUserRepository _userRepository;
 
-        public InvitePlayer(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IMessageSender messageSender, IUserRepository userRepository)
+        public InvitePlayer(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IEmailSender emailSender, IUserRepository userRepository)
         {
             _bunchRepository = bunchRepository;
             _playerRepository = playerRepository;
-            _messageSender = messageSender;
+            _emailSender = emailSender;
             _userRepository = userRepository;
         }
 
@@ -37,7 +37,7 @@ namespace Core.UseCases
             var joinUrl = string.Format(request.JoinUrlFormat, bunch.Slug);
             var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, bunch.Slug, invitationCode);
             var message = new InvitationMessage(bunch.DisplayName, invitationCode, request.RegisterUrl, joinUrl, joinWithCodeUrl);
-            _messageSender.Send(request.Email, message);
+            _emailSender.Send(request.Email, message);
 
             return new Result(player.Id);
         }

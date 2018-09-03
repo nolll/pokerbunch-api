@@ -3,7 +3,7 @@ using Core.Services;
 
 namespace Tests.Common.FakeServices
 {
-    public class FakeMessageSender : IMessageSender
+    public class FakeEmailSender : IEmailSender
     {
         public string To { get; private set; }
         public IMessage Message { get; private set; }

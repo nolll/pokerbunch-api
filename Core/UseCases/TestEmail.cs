@@ -5,12 +5,12 @@ namespace Core.UseCases
 {
     public class TestEmail
     {
-        private readonly IMessageSender _messageSender;
+        private readonly IEmailSender _emailSender;
         private readonly IUserRepository _userRepository;
 
-        public TestEmail(IMessageSender messageSender, IUserRepository userRepository)
+        public TestEmail(IEmailSender emailSender, IUserRepository userRepository)
         {
-            _messageSender = messageSender;
+            _emailSender = emailSender;
             _userRepository = userRepository;
         }
 
@@ -20,7 +20,7 @@ namespace Core.UseCases
             RequireRole.Admin(user);
             const string email = "henriks@gmail.com";
             var message = new TestMessage();
-            _messageSender.Send(email, message);
+            _emailSender.Send(email, message);
 
             return new Result(email);
         }

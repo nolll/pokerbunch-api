@@ -52,7 +52,7 @@
     <Compile Include="FakeRepositories\FakeEventRepository.cs" />
     <Compile Include="FakeRepositories\FakePlayerRepository.cs" />
     <Compile Include="FakeRepositories\FakeUserRepository.cs" />
-    <Compile Include="FakeServices\FakeMessageSender.cs" />
+    <Compile Include="FakeServices\FakeEmailSender.cs" />
     <Compile Include="FakeServices\FakeRandomizer.cs" />
     <Compile Include="TestDependencies.cs" />
     <Compile Include="TestBase.cs" />

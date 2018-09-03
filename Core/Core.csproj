@@ -83,7 +83,7 @@
     <Compile Include="Services\GravatarService.cs" />
     <Compile Include="Services\Interfaces\ICacheContainer.cs" />
     <Compile Include="Services\Interfaces\ICacheProvider.cs" />
-    <Compile Include="Services\Interfaces\IMessageSender.cs" />
+    <Compile Include="Services\Interfaces\IEmailSender.cs" />
     <Compile Include="Services\Interfaces\IRandomizer.cs" />
     <Compile Include="Services\InvitationCodeCreator.cs" />
     <Compile Include="Services\InvitationMessage.cs" />

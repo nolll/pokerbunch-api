@@ -13,7 +13,7 @@ namespace Tests.Common
         public FakeLocationRepository Location { get; }
         public FakeAppRepository App { get; }
 
-        public FakeMessageSender MessageSender { get; }
+        public FakeEmailSender EmailSender { get; }
         public FakeRandomizer Randomizer { get; }
 
         public TestDependencies()
@@ -26,13 +26,13 @@ namespace Tests.Common
             Location = new FakeLocationRepository();
             App = new FakeAppRepository();
 
-            MessageSender = new FakeMessageSender();
+            EmailSender = new FakeEmailSender();
             Randomizer = new FakeRandomizer();
         }
 
         public void Clear()
         {
-            MessageSender.Reset();
+            EmailSender.Reset();
         }
     }
 }

@@ -9,13 +9,13 @@ namespace Core.UseCases
     public class ForgotPassword
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMessageSender _messageSender;
+        private readonly IEmailSender _emailSender;
         private readonly IRandomizer _randomizer;
 
-        public ForgotPassword(IUserRepository userRepository, IMessageSender messageSender, IRandomizer randomizer)
+        public ForgotPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
         {
             _userRepository = userRepository;
-            _messageSender = messageSender;
+            _emailSender = emailSender;
             _randomizer = randomizer;
         }
 
@@ -39,7 +39,7 @@ namespace Core.UseCases
             _userRepository.Update(user);
             
             var message = new ForgotPasswordMessage(password, request.LoginUrl);
-            _messageSender.Send(request.Email, message);
+            _emailSender.Send(request.Email, message);
         }
 
         public class Request

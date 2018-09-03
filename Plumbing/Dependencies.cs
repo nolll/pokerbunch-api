@@ -12,8 +12,8 @@ namespace Plumbing
     {
         private readonly string _connectionString;
         private readonly string _smtpHost;
-        private readonly string _smtpUserName;
-        private readonly string _smtpPassword;
+        private readonly bool _useSendGrid;
+        private readonly string _sendGridApiKey;
 
         private ICacheContainer _cache;
         private SqlServerStorageProvider _db;
@@ -26,14 +26,14 @@ namespace Plumbing
         private ILocationRepository _locationRepository;
         private IUserRepository _userRepository;
         private IRandomizer _randomizer;
-        private IMessageSender _messageSender;
+        private IEmailSender _emailSender;
                 
-        public Dependencies(string connectionString, string smtpHost, string smtpUserName, string smtpPassword)
+        public Dependencies(string connectionString, string smtpHost, bool useSendGrid, string sendGridApiKey)
         {
             _connectionString = connectionString;
             _smtpHost = smtpHost;
-            _smtpUserName = smtpUserName;
-            _smtpPassword = smtpPassword;
+            _useSendGrid = useSendGrid;
+            _sendGridApiKey = sendGridApiKey;
         }
 
         private SqlServerStorageProvider Db => _db ?? (_db = new SqlServerStorageProvider(_connectionString));
@@ -46,6 +46,13 @@ namespace Plumbing
         public ILocationRepository LocationRepository => _locationRepository ?? (_locationRepository = new LocationRepository(Db, Cache));
         public IUserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(Db, Cache));
         public IRandomizer Randomizer => _randomizer ?? (_randomizer = new Randomizer());
-        public IMessageSender MessageSender => _messageSender ?? (_messageSender = new EmailMessageSender(_smtpHost, _smtpUserName, _smtpPassword));
+        public IEmailSender EmailSender => _emailSender ?? (_emailSender = CreateEmailSender());
+
+        private IEmailSender CreateEmailSender()
+        {
+            if (_useSendGrid)
+                return new SendGridEmailSender(_sendGridApiKey);
+            return new SmtpEmailSender(_smtpHost);
+        }
     }
 }

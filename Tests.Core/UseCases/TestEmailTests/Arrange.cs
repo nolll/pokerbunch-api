@@ -30,7 +30,7 @@ namespace Tests.Core.UseCases.TestEmailTests
             var user = new UserInTest(globalRole: Role);
 
             Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
-            Mock<IMessageSender>().Setup(o => o.Send(It.IsAny<string>(), It.IsAny<IMessage>()))
+            Mock<IEmailSender>().Setup(o => o.Send(It.IsAny<string>(), It.IsAny<IMessage>()))
                 .Callback((string to, IMessage message) => { To = to; Subject = message.Subject; Body = message.Body; });
         }
 
