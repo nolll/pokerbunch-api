@@ -17,7 +17,7 @@ namespace Infrastructure.Email
         {
             var client = new SendGridClient(_apiKey);
             var fromAddress = new EmailAddress(FromEmail, FromName);
-            var toAddress = new EmailAddress("test@example.com", "Example User");
+            var toAddress = new EmailAddress(to);
             var msg = MailHelper.CreateSingleEmail(fromAddress, toAddress, message.Subject, message.Body, message.Body);
             var response = client.SendEmailAsync(msg).Result;
         }
