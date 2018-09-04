@@ -19,7 +19,7 @@ namespace Infrastructure.Email
             var fromAddress = new EmailAddress(FromEmail, FromName);
             var toAddress = new EmailAddress("test@example.com", "Example User");
             var msg = MailHelper.CreateSingleEmail(fromAddress, toAddress, message.Subject, message.Body, message.Body);
-            var response = client.SendEmailAsync(msg);
+            var response = client.SendEmailAsync(msg).Result;
         }
     }
 }
