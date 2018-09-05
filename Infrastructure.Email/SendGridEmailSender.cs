@@ -1,6 +1,6 @@
 using Core;
-//using SendGrid;
-//using SendGrid.Helpers.Mail;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Infrastructure.Email
 {
@@ -15,11 +15,11 @@ namespace Infrastructure.Email
 
         public override void Send(string to, IMessage message)
         {
-            //var client = new SendGridClient(_apiKey);
-            //var fromAddress = new EmailAddress(FromEmail, FromName);
-            //var toAddress = new EmailAddress(to);
-            //var msg = MailHelper.CreateSingleEmail(fromAddress, toAddress, message.Subject, message.Body, message.Body);
-            //var response = client.SendEmailAsync(msg).Result;
+            var client = new SendGridClient(_apiKey);
+            var fromAddress = new EmailAddress(FromEmail, FromName);
+            var toAddress = new EmailAddress(to);
+            var msg = MailHelper.CreateSingleEmail(fromAddress, toAddress, message.Subject, message.Body, message.Body);
+            var response = client.SendEmailAsync(msg).Result;
         }
     }
 }
