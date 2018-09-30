@@ -19,7 +19,7 @@ namespace Api.Models.CashgameModels
         [DataMember(Name = "location")]
         public SmallLocationModel Location { get; }
         [DataMember(Name = "players")]
-        public IList<CashgameListItemPlayerModel> Players { get; }
+        public IList<CashgameListItemResultModel> Results { get; }
 
         public CashgameListItemModel(CashgameList.Item item)
         {
@@ -27,7 +27,7 @@ namespace Api.Models.CashgameModels
             StartTime = item.StartTime;
             UpdatedTime = item.EndTime;
             Location = new SmallLocationModel(item);
-            Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
+            Results = item.Results.Select(o => new CashgameListItemResultModel(o)).ToList();
         }
 
         public CashgameListItemModel(EventCashgameList.Item item)
@@ -36,7 +36,7 @@ namespace Api.Models.CashgameModels
             StartTime = item.StartTime;
             UpdatedTime = item.EndTime;
             Location = new SmallLocationModel(item);
-            Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
+            Results = item.Results.Select(o => new CashgameListItemResultModel(o)).ToList();
         }
 
         public CashgameListItemModel(PlayerCashgameList.Item item)
@@ -45,7 +45,7 @@ namespace Api.Models.CashgameModels
             StartTime = item.StartTime;
             UpdatedTime = item.EndTime;
             Location = new SmallLocationModel(item);
-            Players = item.Players.Select(o => new CashgameListItemPlayerModel(o)).ToList();
+            Results = item.Players.Select(o => new CashgameListItemResultModel(o)).ToList();
         }
     }
 }

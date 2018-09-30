@@ -18,15 +18,6 @@ namespace Tests.Core.UseCases
         }
 
         [Test]
-        public void CashgameList_WithoutYear_YearIsNull()
-        {
-            var result = Sut.Execute(CreateRequest());
-
-            Assert.IsFalse(result.ShowYear);
-            Assert.IsNull(result.Year);
-        }
-
-        [Test]
         public void CashgameList_WithoutGames_HasEmptyListOfGames()
         {
             Deps.Cashgame.ClearList();
@@ -34,15 +25,6 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest());
 
             Assert.AreEqual(0, result.Items.Count);
-        }
-
-        [Test]
-        public void CashgameList_WithYear_YearIsSet()
-        {
-            var result = Sut.Execute(CreateRequest(year: Year));
-
-            Assert.IsTrue(result.ShowYear);
-            Assert.AreEqual(Year, result.Year);
         }
 
         [Test]
@@ -100,66 +82,6 @@ namespace Tests.Core.UseCases
             var result = Sut.Execute(CreateRequest());
 
             Assert.AreEqual(300, result.Items[0].AverageBuyin.Amount);
-        }
-
-        [Test]
-        public void TopList_SortByWinnings_HighestWinningsIsFirst()
-        {
-            var result = Sut.Execute(CreateRequest());
-
-            Assert.AreEqual(CashgameList.SortOrder.Date, result.SortOrder);
-            Assert.AreEqual(new Date(2002, 2, 2), result.Items[0].Date);
-            Assert.AreEqual(new Date(2001, 1, 1), result.Items[1].Date);
-        }
-
-        [Test]
-        public void TopList_SortByPlayerCount_HighestPlayerCountIsFirst()
-        {
-            var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.PlayerCount));
-
-            Assert.AreEqual(CashgameList.SortOrder.PlayerCount, result.SortOrder);
-            Assert.AreEqual(2, result.Items[0].PlayerCount);
-            Assert.AreEqual(2, result.Items[1].PlayerCount);
-        }
-
-        [Test]
-        public void TopList_SortByLocation_HighestLocationIsFirst()
-        {
-            var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.Location));
-
-            Assert.AreEqual(CashgameList.SortOrder.Location, result.SortOrder);
-            Assert.AreEqual(TestData.LocationNameB, result.Items[0].LocationName);
-            Assert.AreEqual(TestData.LocationNameA, result.Items[1].LocationName);
-        }
-
-        [Test]
-        public void TopList_SortByDuration_HighestDurationIsFirst()
-        {
-            var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.Duration));
-
-            Assert.AreEqual(CashgameList.SortOrder.Duration, result.SortOrder);
-            Assert.AreEqual(92, result.Items[0].Duration.Minutes);
-            Assert.AreEqual(62, result.Items[1].Duration.Minutes);
-        }
-
-        [Test]
-        public void TopList_SortByTurnover_HighestTurnoverIsFirst()
-        {
-            var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.Turnover));
-
-            Assert.AreEqual(CashgameList.SortOrder.Turnover, result.SortOrder);
-            Assert.AreEqual(600, result.Items[0].Turnover.Amount);
-            Assert.AreEqual(400, result.Items[1].Turnover.Amount);
-        }
-
-        [Test]
-        public void TopList_SortByAverageBuyin_HighestAverageBuyinIsFirst()
-        {
-            var result = Sut.Execute(CreateRequest(CashgameList.SortOrder.AverageBuyin));
-
-            Assert.AreEqual(CashgameList.SortOrder.AverageBuyin, result.SortOrder);
-            Assert.AreEqual(300, result.Items[0].AverageBuyin.Amount);
-            Assert.AreEqual(200, result.Items[1].AverageBuyin.Amount);
         }
 
         private CashgameList.Request CreateRequest(CashgameList.SortOrder orderBy = CashgameList.SortOrder.Date, int? year = null)

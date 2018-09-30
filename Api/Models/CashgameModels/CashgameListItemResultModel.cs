@@ -5,10 +5,12 @@ using Core.UseCases;
 namespace Api.Models.CashgameModels
 {
     [DataContract(Namespace = "", Name = "player")]
-    public class CashgameListItemPlayerModel
+    public class CashgameListItemResultModel
     {
         [DataMember(Name = "id")]
         public string Id { get; }
+        [DataMember(Name = "name")]
+        public string Name { get; }
         [DataMember(Name = "startTime")]
         public DateTime StartTime { get; }
         [DataMember(Name = "updatedTime")]
@@ -18,27 +20,30 @@ namespace Api.Models.CashgameModels
         [DataMember(Name = "stack")]
         public int Stack { get; }
 
-        public CashgameListItemPlayerModel(CashgameList.ItemPlayer item)
+        public CashgameListItemResultModel(CashgameList.ItemResult item)
         {
-            Id = item.Id.ToString();
+            Id = item.Player.Id.ToString();
+            Name = item.Player.Name;
             StartTime = item.BuyinTime;
             UpdatedTime = item.UpdatedTime;
             Buyin = item.Buyin;
             Stack = item.Stack;
         }
 
-        public CashgameListItemPlayerModel(EventCashgameList.ItemPlayer item)
+        public CashgameListItemResultModel(EventCashgameList.ItemResult item)
         {
-            Id = item.Id.ToString();
+            Id = item.Player.Id.ToString();
+            Name = item.Player.Name;
             StartTime = item.BuyinTime;
             UpdatedTime = item.UpdatedTime;
             Buyin = item.Buyin;
             Stack = item.Stack;
         }
 
-        public CashgameListItemPlayerModel(PlayerCashgameList.ItemPlayer item)
+        public CashgameListItemResultModel(PlayerCashgameList.ItemResult item)
         {
-            Id = item.Id.ToString();
+            Id = item.Player.Id.ToString();
+            Name = item.Player.Name;
             StartTime = item.BuyinTime;
             UpdatedTime = item.UpdatedTime;
             Buyin = item.Buyin;

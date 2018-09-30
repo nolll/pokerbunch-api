@@ -34,17 +34,5 @@ namespace Api.Models.CashgameModels
             Culture = detailsResult.Culture;
             Role = detailsResult.Role.ToString().ToLower();
         }
-
-        public CashgameBunchModel(CashgameList.Result listResult)
-        {
-            Id = listResult.Slug;
-            Timezone = listResult.Timezone;
-            CurrencyFormat = listResult.CurrencyFormat;
-            CurrencySymbol = listResult.CurrencySymbol;
-            CurrencyLayout = listResult.CurrencyLayout;
-            ThousandSeparator = listResult.ThousandSeparator;
-            Culture = listResult.Culture;
-            Role = listResult.Role.ToString().ToLower();
-        }
     }
 }
