@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
 using PokerBunch.Common.Urls.ApiUrls;
+using Swashbuckle.Application;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace Api
@@ -32,6 +33,7 @@ namespace Api
             ConfigureErrorHandler(config);
             ConfigureErrorLogger(config);
             ConfigureCompression(config);
+            ConfigureSwagger(config);
             RemoveUnwantedHeaders(app);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
@@ -87,6 +89,13 @@ namespace Api
         private void ConfigureCompression(HttpConfiguration config)
         {
             config.MessageHandlers.Insert(0, new CompressionHandler()); // first runs last
+        }
+
+        private void ConfigureSwagger(HttpConfiguration config)
+        {
+            config
+                .EnableSwagger(c => c.SingleApiVersion("v1", "A title for your API"))
+                .EnableSwaggerUi();
         }
 
         private void RemoveUnwantedHeaders(IAppBuilder app)
