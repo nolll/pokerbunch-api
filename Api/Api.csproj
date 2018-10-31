@@ -170,7 +170,7 @@
     <Compile Include="Models\CashgameModels\CashgameDetailsModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameDetailsPlayerModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListItemModel.cs" />
-    <Compile Include="Models\CashgameModels\CashgameListItemPlayerModel.cs" />
+    <Compile Include="Models\CashgameModels\CashgameListItemResultModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameListModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListItemModel.cs" />
     <Compile Include="Models\CashgameModels\CashgameYearListModel.cs" />
