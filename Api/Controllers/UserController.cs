@@ -29,7 +29,7 @@ namespace Api.Controllers
             return new UserListModel(userListResult);
         }
 
-        [Route(ApiRoutes.User.List)]
+        [Route(ApiRoutes.User.Get)]
         [HttpPost]
         [ApiAuthorize]
         public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
@@ -48,6 +48,10 @@ namespace Api.Controllers
             return new OkModel();
         }
 
+        /// <summary>
+        /// Get the current user.
+        /// </summary>
+        /// <returns>Returns the current user</returns>
         [Route(ApiRoutes.Profile.Get)]
         [HttpGet]
         [ApiAuthorize]
