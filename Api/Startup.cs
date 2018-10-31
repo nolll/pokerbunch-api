@@ -97,7 +97,7 @@ namespace Api
                 .EnableSwagger(c =>
                 {
                     c.SingleApiVersion("v1", "A title for your API");
-                    c.IncludeXmlComments(GetXmlCommentsPathForControllers());
+                    //c.IncludeXmlComments(GetXmlCommentsPathForControllers());
                 })
                 .EnableSwaggerUi();
         }
