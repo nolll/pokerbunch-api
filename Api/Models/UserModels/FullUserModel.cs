@@ -17,7 +17,7 @@ namespace Api.Models.UserModels
         public FullUserModel(UserDetails.Result r)
             : base(r.UserName, r.DisplayName, r.AvatarUrl)
         {
-            Role = r.Role.ToString();
+            Role = r.Role.ToString().ToLower();
             RealName = r.RealName;
             Email = r.Email;
         }
