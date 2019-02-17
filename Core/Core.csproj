@@ -76,7 +76,6 @@
     <Compile Include="Repositories\IEventRepository.cs" />
     <Compile Include="Repositories\ILocationRepository.cs" />
     <Compile Include="Repositories\IRepositoryFactory.cs" />
-    <Compile Include="Services\ApplicationVersion.cs" />
     <Compile Include="Services\CashgameService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
     <Compile Include="Services\Globalization.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="UseCases\CurrentCashgames.cs" />
     <Compile Include="UseCases\GetApp.cs" />
     <Compile Include="UseCases\AppList.cs" />
-    <Compile Include="UseCases\BaseContext.cs" />
     <Compile Include="UseCases\BunchContext.cs" />
     <Compile Include="UseCases\GetBunch.cs" />
     <Compile Include="UseCases\GetBunchList.cs" />

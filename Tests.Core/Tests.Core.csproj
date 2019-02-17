@@ -90,7 +90,6 @@
     <Compile Include="UseCases\AppContextTests.cs" />
     <Compile Include="UseCases\AppDetailsTests.cs" />
     <Compile Include="UseCases\AppListTests.cs" />
-    <Compile Include="UseCases\BaseContextTests.cs" />
     <Compile Include="UseCases\BunchContextTests.cs" />
     <Compile Include="UseCases\CurrentCashgamesTests\Arrange.cs" />
     <Compile Include="UseCases\CurrentCashgamesTests\WithGames.cs" />
