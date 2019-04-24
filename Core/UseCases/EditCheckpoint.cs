@@ -39,7 +39,7 @@ namespace Core.UseCases
             var postedCheckpoint = Checkpoint.Create(
                 existingCheckpoint.CashgameId,
                 existingCheckpoint.PlayerId,
-                TimeZoneInfo.ConvertTimeToUtc(request.Timestamp, bunch.Timezone),
+                request.Timestamp.UtcDateTime,
                 existingCheckpoint.Type,
                 request.Stack,
                 request.Amount,
@@ -55,13 +55,13 @@ namespace Core.UseCases
         {
             public string UserName { get; }
             public int CheckpointId { get; }
-            public DateTime Timestamp { get; }
+            public DateTimeOffset Timestamp { get; }
             [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
             public int Stack { get; }
             [Range(0, int.MaxValue, ErrorMessage = "Amount can't be negative")]
             public int Amount { get; }
 
-            public Request(string userName, int checkpointId, DateTime timestamp, int stack, int amount)
+            public Request(string userName, int checkpointId, DateTimeOffset timestamp, int stack, int amount)
             {
                 UserName = userName;
                 CheckpointId = checkpointId;
