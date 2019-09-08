@@ -16,7 +16,8 @@ namespace Tests.Core.UseCases
             var request = new Actions.Request(TestData.UserA.UserName, TestData.CashgameIdA, TestData.PlayerIdA);
             var result = Sut.Execute(request);
 
-            Assert.AreEqual(DateTime.Parse("2001-01-01 12:00:00"), result.Date);
+            var actionTime = DateTime.SpecifyKind(DateTime.Parse("2001-01-01 12:00:00"), DateTimeKind.Utc);
+            Assert.AreEqual(actionTime, result.Date);
             Assert.AreEqual(TestData.PlayerNameA, result.PlayerName);
             Assert.AreEqual(2, result.CheckpointItems.Count);
         }
@@ -27,9 +28,10 @@ namespace Tests.Core.UseCases
             var request = new Actions.Request(TestData.UserA.UserName, TestData.CashgameIdA, TestData.PlayerIdA);
             var result = Sut.Execute(request);
 
+            var actionTime = DateTime.SpecifyKind(DateTime.Parse("2001-01-01 12:00:00"), DateTimeKind.Utc);
             Assert.AreEqual(BuyinDescription, result.CheckpointItems[0].Type);
             Assert.AreEqual(200, result.CheckpointItems[0].DisplayAmount.Amount);
-            Assert.AreEqual(DateTime.Parse("2001-01-01 11:00:00"), result.CheckpointItems[0].Time);
+            Assert.AreEqual(actionTime, result.CheckpointItems[0].Time);
             Assert.IsFalse(result.CheckpointItems[0].CanEdit);
             Assert.AreEqual(1, result.CheckpointItems[0].CheckpointId);
 

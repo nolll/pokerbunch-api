@@ -109,9 +109,9 @@ namespace Tests.Common
         public const string DateStringA = "2001-01-01";
         public const string DateStringB = "2002-02-02";
         public const string DateStringC = "2003-03-03";
-        public static DateTime StartTimeA = DateTime.Parse("2001-01-01 12:00:00");
-        public static DateTime StartTimeB = DateTime.Parse("2002-02-02 12:00:00");
-        public static DateTime StartTimeC = DateTime.Parse("2003-03-03 12:00:00");
+        public static DateTime StartTimeA = DateTime.SpecifyKind(DateTime.Parse("2001-01-01 12:00:00"), DateTimeKind.Utc);
+        public static DateTime StartTimeB = DateTime.SpecifyKind(DateTime.Parse("2002-02-02 12:00:00"), DateTimeKind.Utc);
+        public static DateTime StartTimeC = DateTime.SpecifyKind(DateTime.Parse("2003-03-03 12:00:00"), DateTimeKind.Utc);
 
         public const int EventIdA = 1;
         public const int EventIdB = 2;
