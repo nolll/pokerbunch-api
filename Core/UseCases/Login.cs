@@ -46,7 +46,7 @@ namespace Core.UseCases
 
         public class Result
         {
-            public string UserName { get; private set; }
+            public string UserName { get; }
 
             public Result(string userName)
             {

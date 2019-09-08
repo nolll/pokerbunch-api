@@ -2,12 +2,12 @@ namespace Infrastructure.Sql.Classes
 {
 	public class RawPlayer
     {
-	    public int BunchId { get; private set; }
-        public int Id { get; private set; }
-        public int UserId { get; private set; }
-	    public string DisplayName { get; private set; }
-	    public int Role { get; private set; }
-	    public string Color { get; private set; }
+	    public int BunchId { get; }
+        public int Id { get; }
+        public int UserId { get; }
+	    public string DisplayName { get; }
+	    public int Role { get; }
+	    public string Color { get; }
 
 	    public RawPlayer(int bunchId, int id, int userId, string displayName, int role, string color)
 	    {

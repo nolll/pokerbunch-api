@@ -4,18 +4,18 @@ namespace Infrastructure.Sql.Classes
 {
     public class RawBunch
     {
-        public int Id { get; private set; }
-        public string Slug { get; private set; }
-        public string DisplayName { get; private set; }
-        public string Description { get; private set; }
-        public string HouseRules { get; private set; }
-        public string TimezoneName { get; private set; }
-        public int DefaultBuyin { get; private set; }
-        public string CurrencyLayout { get; private set; }
-        public string CurrencySymbol { get; private set; }
-        public bool CashgamesEnabled { get; private set; }
-        public bool TournamentsEnabled { get; private set; }
-        public bool VideosEnabled { get; private set; }
+        public int Id { get; }
+        public string Slug { get; }
+        public string DisplayName { get; }
+        public string Description { get; }
+        public string HouseRules { get; }
+        public string TimezoneName { get; }
+        public int DefaultBuyin { get; }
+        public string CurrencyLayout { get; }
+        public string CurrencySymbol { get; }
+        public bool CashgamesEnabled { get; }
+        public bool TournamentsEnabled { get; }
+        public bool VideosEnabled { get; }
 
         public RawBunch(int id, string slug, string displayName, string description, string houseRules, string timezoneName, int defaultBuyin, string currencyLayout, string currencySymbol, bool cashgamesEnabled, bool tournamentsEnabled, bool videosEnabled)
         {

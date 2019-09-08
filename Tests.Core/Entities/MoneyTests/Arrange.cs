@@ -1,5 +1,4 @@
 using Core.Entities;
-using Tests.Common;
 
 namespace Tests.Core.Entities.MoneyTests
 {

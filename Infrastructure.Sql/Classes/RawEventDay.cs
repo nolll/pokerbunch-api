@@ -4,11 +4,11 @@ namespace Infrastructure.Sql.Classes
 {
     public class RawEventDay
     {
-        public int Id { get; private set; }
-        public int BunchId { get; private set; }
-        public string Name { get; private set; }
-        public int LocationId { get; private set; }
-        public DateTime Date { get; private set; }
+        public int Id { get; }
+        public int BunchId { get; }
+        public string Name { get; }
+        public int LocationId { get; }
+        public DateTime Date { get; }
 
         public RawEventDay(int id, int bunchId, string name, int locationId, DateTime date)
         {

@@ -37,7 +37,7 @@ namespace Plumbing
         }
 
         private SqlServerStorageProvider Db => _db ?? (_db = new SqlServerStorageProvider(_connectionString));
-        public ICacheContainer Cache => _cache ?? (_cache = new CacheContainer(new AspNetCacheProvider()));
+        public ICacheContainer Cache => _cache ?? (_cache = new CacheContainer(new MemoryCacheProvider()));
         public IAppRepository AppRepository => _appRepository ?? (_appRepository = new AppRepository(Db, Cache));
         public IBunchRepository BunchRepository => _bunchRepository ?? (_bunchRepository = new BunchRepository(Db, Cache));
         public ICashgameRepository CashgameRepository => _cashgameRepository ?? (_cashgameRepository = new CashgameRepository(Db, Cache));
