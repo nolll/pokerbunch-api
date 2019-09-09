@@ -25,6 +25,7 @@ namespace Api
         {
             AddDependencies(services);
             AddMvc(services);
+            AddCors(services);
             AddAuthorization(services);
             AddAuthentication(services);
         }
@@ -41,6 +42,7 @@ namespace Api
                 app.UseHttpsRedirection();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseMvc();
         }
@@ -68,12 +70,27 @@ namespace Api
 
         private static void AddAuthorization(IServiceCollection services)
         {
-            services.AddAuthorization(options => { options.AddPolicy("UserPolicy", policy => policy.Requirements.Add(new CustomAuthRequirement())); });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("UserPolicy", policy => policy.Requirements.Add(new CustomAuthRequirement()));
+            });
         }
 
         private static void AddMvc(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+        }
+
+        private static void AddCors(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
         }
 
         private void AddDependencies(IServiceCollection services)
