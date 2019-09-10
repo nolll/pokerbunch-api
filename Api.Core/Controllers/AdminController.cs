@@ -54,11 +54,11 @@ namespace Api.Controllers
         /// <summary>
         /// Gets the current application settings
         /// </summary>
-        [Route(ApiRoutes.Settings)]
-        [HttpGet]
-        public AppSettings Settings()
-        {
-            return _appSettings;
-        }
+        //[Route(ApiRoutes.Settings)]
+        //[HttpGet]
+        //public AppSettings Settings()
+        //{
+        //    return _appSettings;
+        //}
     }
 }
