@@ -30,6 +30,7 @@ namespace Plumbing
         // Admin
         public TestEmail TestEmail => new TestEmail(EmailSender, UserRepository);
         public ClearCache ClearCache => new ClearCache(Cache, UserRepository);
+        public EnsureAdmin EnsureAdmin => new EnsureAdmin(UserRepository);
 
         // User
         public UserDetails UserDetails => new UserDetails(UserRepository);
