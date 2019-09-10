@@ -16,6 +16,9 @@ namespace Api.Controllers
             _urls = urls;
         }
 
+        /// <summary>
+        /// The root of this api.
+        /// </summary>
         [Route(ApiRoutes.Root)]
         [HttpGet]
         public HomeModel Home()
@@ -23,6 +26,9 @@ namespace Api.Controllers
             return new HomeModel(_urls);
         }
 
+        /// <summary>
+        /// The current build version of this api.
+        /// </summary>
         [Route(ApiRoutes.Version)]
         [HttpGet]
         public VersionModel Version()
