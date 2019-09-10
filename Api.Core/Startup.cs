@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using Api.Extensions;
 using Api.Urls.ApiUrls;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -88,6 +91,10 @@ namespace Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Poker Bunch Api", Version = "v1" });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 

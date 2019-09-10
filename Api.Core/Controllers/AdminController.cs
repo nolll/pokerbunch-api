@@ -12,6 +12,9 @@ namespace Api.Controllers
         {
         }
 
+        /// <summary>
+        /// Clears all cached data.
+        /// </summary>
         [Route(ApiRoutes.Admin.ClearCache)]
         [HttpPost]
         [ApiAuthorize]
@@ -21,6 +24,9 @@ namespace Api.Controllers
             return new ClearCacheModel(result.ClearCount);
         }
 
+        /// <summary>
+        /// Sends a test email.
+        /// </summary>
         [Route(ApiRoutes.Admin.SendEmail)]
         [HttpPost]
         [ApiAuthorize]

@@ -1,5 +1,4 @@
 using Api.Auth;
-using Api.Extensions;
 using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Urls.ApiUrls;
@@ -17,6 +16,9 @@ namespace Api.Controllers
             _urls = urls;
         }
 
+        /// <summary>
+        /// Gets a specific player.
+        /// </summary>
         [Route(ApiRoutes.Player.Get)]
         [HttpGet]
         [ApiAuthorize]
@@ -26,6 +28,9 @@ namespace Api.Controllers
             return new PlayerModel(getPlayerResult);
         }
 
+        /// <summary>
+        /// Lists all players in a bunch.
+        /// </summary>
         [Route(ApiRoutes.Player.ListByBunch)]
         [HttpGet]
         [ApiAuthorize]
@@ -35,6 +40,9 @@ namespace Api.Controllers
             return new PlayerListModel(playerListResult);
         }
 
+        /// <summary>
+        /// Adds a player to a bunch.
+        /// </summary>
         [Route(ApiRoutes.Player.ListByBunch)]
         [HttpPost]
         [ApiAuthorize]
@@ -44,6 +52,9 @@ namespace Api.Controllers
             return Get(result.Id);
         }
 
+        /// <summary>
+        /// Deletes a specific player.
+        /// </summary>
         [Route(ApiRoutes.Player.Get)]
         [HttpDelete]
         [ApiAuthorize]
@@ -54,6 +65,9 @@ namespace Api.Controllers
             return new PlayerDeleteModel(playerId);
         }
 
+        /// <summary>
+        /// Invites a player to a bunch.
+        /// </summary>
         [Route(ApiRoutes.Player.Invite)]
         [HttpPost]
         [ApiAuthorize]

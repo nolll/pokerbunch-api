@@ -27,7 +27,7 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// The current build version of this api.
+        /// Gets the current build version of this api.
         /// </summary>
         [Route(ApiRoutes.Version)]
         [HttpGet]
