@@ -2,6 +2,7 @@ using Api.Auth;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Api.Routes;
+using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace Api.Controllers
 {
     public class BunchController : BaseController
     {
-        public BunchController(Settings settings) : base(settings)
+        public BunchController(AppSettings appSettings) : base(appSettings)
         {
         }
 

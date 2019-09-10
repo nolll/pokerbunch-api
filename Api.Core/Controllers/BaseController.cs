@@ -1,4 +1,5 @@
 ﻿using Api.Services;
+using Api.Settings;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Plumbing;
@@ -10,12 +11,13 @@ namespace Api.Controllers
     {
         private readonly Bootstrapper _bootstrapper;
         protected UseCaseContainer UseCase => _bootstrapper.UseCases;
-        protected Settings Settings { get; }
+        protected AppSettings AppSettings { get; }
 
-        protected BaseController(Settings settings)
+        protected BaseController(AppSettings appSettings)
         {
-            Settings = settings;
-            _bootstrapper = new Bootstrapper(Settings.ConnectionString, Settings.SmtpHost, Settings.UseSendGrid, Settings.SendGridApiKey);
+            AppSettings = appSettings;
+            var useSendGrid = AppSettings.Email.Provider == EmailProvider.SendGrid;
+            _bootstrapper = new Bootstrapper(AppSettings.Sql.ConnectionString, AppSettings.Email.Smtp.Host, useSendGrid, AppSettings.Email.SendGrid.Key);
         }
 
         protected string CurrentUserName
@@ -27,10 +29,10 @@ namespace Api.Controllers
                 if (User.Identity.IsAuthenticated)
                     return User.Identity.Name;
                 var env = new Environment(Request.Host.Host);
-                if (Settings.AllowAuthOverride && env.IsDevModeAdmin)
-                    return Settings.NoAuthAdminUserName;
-                if (Settings.AllowAuthOverride && env.IsDevModePlayer)
-                    return Settings.NoAuthPlayerUserName;
+                if (AppSettings.Auth.Override.Enabled && env.IsDevModeAdmin)
+                    return AppSettings.Auth.Override.AdminUserName;
+                if (AppSettings.Auth.Override.Enabled && env.IsDevModePlayer)
+                    return AppSettings.Auth.Override.PlayerUserName;
                 return null;
             }
         }

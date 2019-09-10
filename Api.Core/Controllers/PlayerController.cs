@@ -1,6 +1,7 @@
 using Api.Auth;
 using Api.Models.PlayerModels;
 using Api.Routes;
+using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ namespace Api.Controllers
     {
         private readonly UrlProvider _urls;
 
-        public PlayerController(Settings settings, UrlProvider urls) : base(settings)
+        public PlayerController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
         {
             _urls = urls;
         }

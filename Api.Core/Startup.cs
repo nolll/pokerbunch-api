@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Api.Extensions;
+using Api.Settings;
 using Api.Urls.ApiUrls;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,11 +19,51 @@ namespace Api
 {
     public class Startup
     {
-        private readonly Settings _settings;
+        //        private static void ConfigFormatters(HttpConfiguration config)
+        //        {
+        //            var jsonFormatter = new JsonMediaTypeFormatter();
+        //            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        //            jsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        //            jsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
+
+        //            config.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
+
+        //            config.Formatters.Clear();
+        //            config.Formatters.Add(jsonFormatter);
+        //        }
+
+        //        private void ConfigureErrorHandler(HttpConfiguration config)
+        //        {
+        //            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
+        //            config.Services.Replace(typeof(IHttpControllerSelector), new HttpNotFoundAwareDefaultHttpControllerSelector(config));
+        //            config.Services.Replace(typeof(IHttpActionSelector), new HttpNotFoundAwareControllerActionSelector());
+        //        }
+
+        //        private void ConfigureErrorLogger(HttpConfiguration config)
+        //        {
+        //            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
+        //        }
+
+        //        private void ConfigureCompression(HttpConfiguration config)
+        //        {
+        //            config.MessageHandlers.Insert(0, new CompressionHandler()); // first runs last
+        //        }
+
+        //        private void RemoveUnwantedHeaders(IAppBuilder app)
+        //        {
+        //            app.Use((context, next) =>
+        //            {
+        //                context.Response.Headers.Remove("Server");
+        //                return next.Invoke();
+        //            });
+        //        }
+
+
+        private readonly AppSettings _settings;
 
         public Startup(IConfiguration configuration)
         {
-            _settings = new Settings(configuration.Get<AppSettings>());
+            _settings = configuration.Get<AppSettings>();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -71,7 +112,7 @@ namespace Api
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.AuthSecret)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Auth.Secret)),
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
@@ -118,7 +159,7 @@ namespace Api
         private void AddDependencies(IServiceCollection services)
         {
             services.AddSingleton(_settings);
-            services.AddSingleton(new UrlProvider(_settings.ApiHost, _settings.SiteHost));
+            services.AddSingleton(new UrlProvider(_settings.Urls.Api, _settings.Urls.Site));
             services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
         }
     }

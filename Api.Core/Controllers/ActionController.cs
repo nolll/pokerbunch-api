@@ -3,6 +3,7 @@ using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
 using Api.Routes;
+using Api.Settings;
 using Core.Exceptions;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ namespace Api.Controllers
 {
     public class ActionController : BaseController
     {
-        public ActionController(Settings settings) : base(settings)
+        public ActionController(AppSettings appSettings) : base(appSettings)
         {
         }
 

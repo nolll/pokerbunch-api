@@ -1,3 +1,5 @@
+using Infrastructure.Email;
+
 namespace Plumbing
 {
     public class Bootstrapper

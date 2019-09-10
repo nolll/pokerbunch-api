@@ -1,6 +1,7 @@
 using Api.Auth;
 using Api.Models.LocationModels;
 using Api.Routes;
+using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace Api.Controllers
 {
     public class LocationController : BaseController
     {
-        public LocationController(Settings settings) : base(settings)
+        public LocationController(AppSettings appSettings) : base(appSettings)
         {
         }
 

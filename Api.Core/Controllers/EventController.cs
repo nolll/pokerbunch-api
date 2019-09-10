@@ -1,6 +1,7 @@
 ﻿using Api.Auth;
 using Api.Models.EventModels;
 using Api.Routes;
+using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace Api.Controllers
 {
     public class EventController : BaseController
     {
-        public EventController(Settings settings) : base(settings)
+        public EventController(AppSettings appSettings) : base(appSettings)
         {
         }
 

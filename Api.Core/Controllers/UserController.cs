@@ -6,6 +6,7 @@ using Api.Auth;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Api.Routes;
+using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
 using JetBrains.Annotations;
@@ -19,7 +20,7 @@ namespace Api.Controllers
     {
         private readonly UrlProvider _urls;
 
-        public UserController(Settings settings, UrlProvider urls) : base(settings)
+        public UserController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
         {
             _urls = urls;
         }
@@ -87,7 +88,7 @@ namespace Api.Controllers
         private string CreateToken(string userName)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(Settings.AuthSecret);
+            var key = Encoding.ASCII.GetBytes(AppSettings.Auth.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
