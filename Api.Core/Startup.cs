@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Api
 {
@@ -28,6 +29,7 @@ namespace Api
             AddCors(services);
             AddAuthorization(services);
             AddAuthentication(services);
+            AddSwagger(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -42,6 +44,11 @@ namespace Api
                 app.UseHttpsRedirection();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseMvc();
@@ -73,6 +80,14 @@ namespace Api
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("UserPolicy", policy => policy.Requirements.Add(new CustomAuthRequirement()));
+            });
+        }
+
+        private static void AddSwagger(IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Poker Bunch Api", Version = "v1" });
             });
         }
 

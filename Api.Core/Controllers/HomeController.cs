@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-    public class RootController : BaseController
+    public class HomeController : BaseController
     {
+        private readonly Settings _settings;
         private readonly UrlProvider _urls;
 
-        public RootController(Settings settings, UrlProvider urls) : base(settings)
+        public HomeController(Settings settings, UrlProvider urls) : base(settings)
         {
+            _settings = settings;
             _urls = urls;
         }
 
@@ -25,7 +27,7 @@ namespace Api.Controllers
         [HttpGet]
         public VersionModel Version()
         {
-            return new VersionModel();
+            return new VersionModel(_settings.Version);
         }
     }
 }

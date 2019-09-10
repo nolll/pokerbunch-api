@@ -15,6 +15,7 @@ namespace Api
         public string NoAuthAdminUserName => _appSettings.NoAuthAdminUserName;
         public string NoAuthPlayerUserName => _appSettings.NoAuthPlayerUserName;
         public string AuthSecret => _appSettings.AuthSecret;
+        public string Version => _appSettings.Version;
 
         public Settings(AppSettings appSettings)
         {
