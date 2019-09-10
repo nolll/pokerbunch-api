@@ -15,5 +15,6 @@ namespace Api
         public string NoAuthAdminUserName { get; [UsedImplicitly] set; }
         public string NoAuthPlayerUserName { get; [UsedImplicitly] set; }
         public string AuthSecret { get; [UsedImplicitly] set; }
+        public string Version { get; [UsedImplicitly] set; }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Api.Models.HomeModels
 {
@@ -9,15 +6,11 @@ namespace Api.Models.HomeModels
     public class VersionModel
     {
         [DataMember(Name = "version")]
-        public string VersionNumber
+        public string Version { get; }
+        
+        public VersionModel(string version)
         {
-            get
-            {
-                var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                if (assemblyVersion.Count(x => x == '.') == 3)
-                    return assemblyVersion.Substring(0, assemblyVersion.LastIndexOf(".", StringComparison.Ordinal));
-                return assemblyVersion;
-            }
+            Version = version;
         }
     }
 }
