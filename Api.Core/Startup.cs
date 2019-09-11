@@ -3,6 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Api.Extensions;
+using Api.Middlewares;
+using Api.Middlewares.Headers;
 using Api.Settings;
 using Api.Urls.ApiUrls;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -44,11 +47,6 @@ namespace Api
         //            config.Services.Add(typeof(IExceptionLogger), new CustomErrorLogger());
         //        }
 
-        //        private void ConfigureCompression(HttpConfiguration config)
-        //        {
-        //            config.MessageHandlers.Insert(0, new CompressionHandler()); // first runs last
-        //        }
-
         //        private void RemoveUnwantedHeaders(IAppBuilder app)
         //        {
         //            app.Use((context, next) =>
@@ -68,6 +66,7 @@ namespace Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            AddCompression(services);
             AddDependencies(services);
             AddMvc(services);
             AddCors(services);
@@ -78,6 +77,11 @@ namespace Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseResponseCompression();
+            app.UseSecurityHeadersMiddleware(new SecurityHeadersBuilder()
+                .RemoveHeader("X-Powered-By")
+            );
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -98,6 +102,15 @@ namespace Api
             app.UseMvc();
         }
 
+        private void AddCompression(IServiceCollection services)
+        {
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+        }
+
         private void AddAuthentication(IServiceCollection services)
         {
             services.AddAuthentication(x =>
@@ -114,9 +127,19 @@ namespace Api
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Auth.Secret)),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        LifetimeValidator = CustomLifetimeValidator
                     };
                 });
+        }
+
+        private bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters @param)
+        {
+            if (expires != null)
+            {
+                return expires > DateTime.UtcNow;
+            }
+            return false;
         }
 
         private static void AddAuthorization(IServiceCollection services)
