@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore;
+﻿using Api.Bootstrapping;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Api
 {

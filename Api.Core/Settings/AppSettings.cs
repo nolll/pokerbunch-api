@@ -7,5 +7,6 @@
         public AuthSettings Auth { get; set; }
         public SqlSettings Sql { get; set; }
         public EmailSettings Email { get; set; }
+        public LoggingSettings Logging { get; set; }
     }
 }
