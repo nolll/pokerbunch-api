@@ -10,8 +10,26 @@ namespace Api.Controllers
 {
     public class BunchController : BaseController
     {
-        public BunchController(AppSettings appSettings) : base(appSettings)
+        private readonly GetBunch _getBunch;
+        private readonly EditBunch _editBunch;
+        private readonly GetBunchList _getBunchList;
+        private readonly AddBunch _addBunch;
+        private readonly JoinBunch _joinBunch;
+
+        public BunchController(
+            AppSettings appSettings, 
+            GetBunch getBunch, 
+            EditBunch editBunch, 
+            GetBunchList getBunchList,
+            AddBunch addBunch,
+            JoinBunch joinBunch)
+            : base(appSettings)
         {
+            _getBunch = getBunch;
+            _editBunch = editBunch;
+            _getBunchList = getBunchList;
+            _addBunch = addBunch;
+            _joinBunch = joinBunch;
         }
 
         [Route(ApiRoutes.Bunch.Get)]
@@ -20,7 +38,7 @@ namespace Api.Controllers
         public BunchModel Get(string bunchId)
         {
             var request = new GetBunch.Request(CurrentUserName, bunchId);
-            var bunchResult = UseCase.GetBunch.Execute(request);
+            var bunchResult = _getBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
 
@@ -30,7 +48,7 @@ namespace Api.Controllers
         public BunchModel Update(string bunchId, [FromBody] UpdateBunchPostModel post)
         {
             var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
-            var bunchResult = UseCase.EditBunch.Execute(request);
+            var bunchResult = _editBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
 
@@ -40,7 +58,7 @@ namespace Api.Controllers
         public BunchListModel List()
         {
             var request = new GetBunchList.AllBunchesRequest(CurrentUserName);
-            var bunchListResult = UseCase.GetBunchList.Execute(request);
+            var bunchListResult = _getBunchList.Execute(request);
             return new BunchListModel(bunchListResult);
         }
 
@@ -49,7 +67,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public BunchListModel Bunches()
         {
-            var bunchListResult = UseCase.GetBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
+            var bunchListResult = _getBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
             return new BunchListModel(bunchListResult);
         }
 
@@ -59,7 +77,7 @@ namespace Api.Controllers
         public BunchModel Add([FromBody] AddBunchPostModel post)
         {
             var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
-            var bunchResult = UseCase.AddBunch.Execute(request);
+            var bunchResult = _addBunch.Execute(request);
             return new BunchModel(bunchResult);
         }
 
@@ -69,7 +87,7 @@ namespace Api.Controllers
         public PlayerJoinedModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
         {
             var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
-            var result = UseCase.JoinBunch.Execute(request);
+            var result = _joinBunch.Execute(request);
             return new PlayerJoinedModel(result.PlayerId);
         }
     }

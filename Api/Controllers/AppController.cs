@@ -12,10 +12,24 @@ namespace Api.Controllers
     public class AppController : BaseController
     {
         private readonly UrlProvider _urls;
+        private readonly GetApp _getApp;
+        private readonly AppList _appList;
+        private readonly AddApp _addApp;
+        private readonly DeleteApp _deleteApp;
 
-        public AppController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
+        public AppController(
+            AppSettings appSettings,
+            UrlProvider urls,
+            GetApp getApp,
+            AppList appList,
+            AddApp addApp,
+            DeleteApp deleteApp) : base(appSettings)
         {
             _urls = urls;
+            _getApp = getApp;
+            _appList = appList;
+            _addApp = addApp;
+            _deleteApp = deleteApp;
         }
 
         [Route(ApiRoutes.App.Get)]
@@ -23,7 +37,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public AppModel Get(int appId)
         {
-            var result = UseCase.GetApp.Execute(new GetApp.Request(CurrentUserName, appId));
+            var result = _getApp.Execute(new GetApp.Request(CurrentUserName, appId));
             return new AppModel(result, _urls);
         }
 
@@ -33,7 +47,7 @@ namespace Api.Controllers
         public AppListModel GetList()
         {
             var request = new AppList.AllAppsRequest(CurrentUserName);
-            var appListResult = UseCase.GetAppList.Execute(request);
+            var appListResult = _appList.Execute(request);
             return new AppListModel(appListResult, _urls);
         }
 
@@ -43,7 +57,7 @@ namespace Api.Controllers
         public AppListModel Apps()
         {
             var request = new AppList.UserAppsRequest(CurrentUserName);
-            var appListResult = UseCase.GetAppList.Execute(request);
+            var appListResult = _appList.Execute(request);
             return new AppListModel(appListResult, _urls);
         }
 
@@ -52,7 +66,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public AppModel Add([FromBody] AddAppPostModel post)
         {
-            var result = UseCase.AddApp.Execute(new AddApp.Request(CurrentUserName, post.Name));
+            var result = _addApp.Execute(new AddApp.Request(CurrentUserName, post.Name));
             return new AppModel(result, _urls);
         }
 
@@ -61,7 +75,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public OkModel Delete(int appId)
         {
-            UseCase.DeleteApp.Execute(new DeleteApp.Request(CurrentUserName, appId));
+            _deleteApp.Execute(new DeleteApp.Request(CurrentUserName, appId));
             return new OkModel();
         }
     }

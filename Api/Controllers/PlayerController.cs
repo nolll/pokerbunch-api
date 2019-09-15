@@ -11,10 +11,27 @@ namespace Api.Controllers
     public class PlayerController : BaseController
     {
         private readonly UrlProvider _urls;
+        private readonly GetPlayer _getPlayer;
+        private readonly GetPlayerList _getPlayerList;
+        private readonly AddPlayer _addPlayer;
+        private readonly DeletePlayer _deletePlayer;
+        private readonly InvitePlayer _invitePlayer;
 
-        public PlayerController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
+        public PlayerController(
+            AppSettings appSettings, 
+            UrlProvider urls,
+            GetPlayer getPlayer,
+            GetPlayerList getPlayerList,
+            AddPlayer addPlayer,
+            DeletePlayer deletePlayer,
+            InvitePlayer invitePlayer) : base(appSettings)
         {
             _urls = urls;
+            _getPlayer = getPlayer;
+            _getPlayerList = getPlayerList;
+            _addPlayer = addPlayer;
+            _deletePlayer = deletePlayer;
+            _invitePlayer = invitePlayer;
         }
 
         /// <summary>
@@ -25,7 +42,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public PlayerModel Get(int playerId)
         {
-            var getPlayerResult = UseCase.GetPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
+            var getPlayerResult = _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
             return new PlayerModel(getPlayerResult);
         }
 
@@ -37,7 +54,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public PlayerListModel GetList(string bunchId)
         {
-            var playerListResult = UseCase.GetPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
+            var playerListResult = _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
             return new PlayerListModel(playerListResult);
         }
 
@@ -49,7 +66,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public PlayerModel Add(string bunchId, [FromBody] PlayerAddPostModel post)
         {
-            var result = UseCase.AddPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
+            var result = _addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
             return Get(result.Id);
         }
 
@@ -62,7 +79,7 @@ namespace Api.Controllers
         public PlayerDeleteModel Delete(int playerId)
         {
             var deleteRequest = new DeletePlayer.Request(CurrentUserName, playerId);
-            UseCase.DeletePlayer.Execute(deleteRequest);
+            _deletePlayer.Execute(deleteRequest);
             return new PlayerDeleteModel(playerId);
         }
 
@@ -78,7 +95,7 @@ namespace Api.Controllers
             var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}").Absolute();
             var joinBunchWithCodeUrlFormat = _urls.Site.JoinBunch("{0}", "{1}").Absolute();
             var deleteRequest = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
-            UseCase.InvitePlayer.Execute(deleteRequest);
+            _invitePlayer.Execute(deleteRequest);
             return new PlayerInvitedModel(playerId);
         }
     }

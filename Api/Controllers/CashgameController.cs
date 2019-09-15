@@ -12,10 +12,40 @@ namespace Api.Controllers
     public class CashgameController : BaseController
     {
         private readonly UrlProvider _urls;
+        private readonly CashgameDetails _cashgameDetails;
+        private readonly CashgameList _cashgameList;
+        private readonly EventCashgameList _eventCashgameList;
+        private readonly PlayerCashgameList _playerCashgameList;
+        private readonly AddCashgame _addCashgame;
+        private readonly EditCashgame _editCashgame;
+        private readonly DeleteCashgame _deleteCashgame;
+        private readonly CurrentCashgames _currentCashgames;
+        private readonly CashgameYearList _cashgameYearList;
 
-        public CashgameController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
+        public CashgameController(
+            AppSettings appSettings,
+            UrlProvider urls,
+            CashgameDetails cashgameDetails,
+            CashgameList cashgameList,
+            EventCashgameList eventCashgameList,
+            PlayerCashgameList playerCashgameList,
+            AddCashgame addCashgame,
+            EditCashgame editCashgame,
+            DeleteCashgame deleteCashgame,
+            CurrentCashgames currentCashgames,
+            CashgameYearList cashgameYearList) 
+            : base(appSettings)
         {
             _urls = urls;
+            _cashgameDetails = cashgameDetails;
+            _cashgameList = cashgameList;
+            _eventCashgameList = eventCashgameList;
+            _playerCashgameList = playerCashgameList;
+            _addCashgame = addCashgame;
+            _editCashgame = editCashgame;
+            _deleteCashgame = deleteCashgame;
+            _currentCashgames = currentCashgames;
+            _cashgameYearList = cashgameYearList;
         }
 
         [Route(ApiRoutes.Cashgame.Get)]
@@ -24,7 +54,7 @@ namespace Api.Controllers
         public CashgameDetailsModel Get(int cashgameId)
         {
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
-            var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
+            var detailsResult = _cashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
         }
 
@@ -33,7 +63,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameListModel List(string bunchId)
         {
-            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
+            var listResult = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
             return new CashgameListModel(listResult);
         }
 
@@ -42,7 +72,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameListModel List(string bunchId, int year)
         {
-            var listResult = UseCase.CashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
+            var listResult = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
             return new CashgameListModel(listResult);
         }
 
@@ -51,7 +81,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameListModel EventCashgameList(int eventId)
         {
-            var listResult = UseCase.EventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
+            var listResult = _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
             return new CashgameListModel(listResult);
         }
 
@@ -60,7 +90,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameListModel PlayerCashgameList(int playerId)
         {
-            var listResult = UseCase.PlayerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
+            var listResult = _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
             return new CashgameListModel(listResult);
         }
 
@@ -70,9 +100,9 @@ namespace Api.Controllers
         public CashgameDetailsModel Add(string bunchId, [FromBody] AddCashgamePostModel post)
         {
             var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
-            var result = UseCase.AddCashgame.Execute(addRequest);
+            var result = _addCashgame.Execute(addRequest);
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, result.CashgameId, DateTime.UtcNow);
-            var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
+            var detailsResult = _cashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
         }
 
@@ -82,9 +112,9 @@ namespace Api.Controllers
         public CashgameDetailsModel Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
         {
             var listRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
-            UseCase.EditCashgame.Execute(listRequest);
+            _editCashgame.Execute(listRequest);
             var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
-            var detailsResult = UseCase.CashgameDetails.Execute(detailsRequest);
+            var detailsResult = _cashgameDetails.Execute(detailsRequest);
             return new CashgameDetailsModel(detailsResult);
         }
 
@@ -94,7 +124,7 @@ namespace Api.Controllers
         public CashgameDeleteModel Delete(int cashgameId)
         {
             var deleteRequest = new DeleteCashgame.Request(CurrentUserName, cashgameId);
-            UseCase.DeleteCashgame.Execute(deleteRequest);
+            _deleteCashgame.Execute(deleteRequest);
             return new CashgameDeleteModel(cashgameId);
         }
 
@@ -103,7 +133,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CurrentCashgameListModel Current(string bunchId)
         {
-            var currentGamesResult = UseCase.CurrentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
+            var currentGamesResult = _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
             return new CurrentCashgameListModel(currentGamesResult, _urls);
         }
 
@@ -112,7 +142,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public CashgameYearListModel Years(string bunchId)
         {
-            var listResult = UseCase.CashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
+            var listResult = _cashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
             return new CashgameYearListModel(listResult, _urls);
         }
     }

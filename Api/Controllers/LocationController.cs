@@ -9,8 +9,19 @@ namespace Api.Controllers
 {
     public class LocationController : BaseController
     {
-        public LocationController(AppSettings appSettings) : base(appSettings)
+        private readonly GetLocation _getLocation;
+        private readonly GetLocationList _getLocationList;
+        private readonly AddLocation _addLocation;
+
+        public LocationController(
+            AppSettings appSettings,
+            GetLocation getLocation,
+            GetLocationList getLocationList,
+            AddLocation addLocation) : base(appSettings)
         {
+            _getLocation = getLocation;
+            _getLocationList = getLocationList;
+            _addLocation = addLocation;
         }
 
         [Route(ApiRoutes.Location.Get)]
@@ -18,7 +29,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public LocationModel Get(int locationId)
         {
-            var result = UseCase.GetLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
+            var result = _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
             return new LocationModel(result);
         }
 
@@ -27,7 +38,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public LocationListModel GetList(string bunchId)
         {
-            var locationListResult = UseCase.GetLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
+            var locationListResult = _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
             return new LocationListModel(locationListResult);
         }
 
@@ -36,7 +47,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)
         {
-            var result = UseCase.AddLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
+            var result = _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
             return new LocationModel(result);
         }
     }

@@ -5,6 +5,14 @@ using System.Text;
 using Api.Extensions;
 using Api.Settings;
 using Api.Urls.ApiUrls;
+using Core.Cache;
+using Core.Repositories;
+using Core.Services;
+using Core.UseCases;
+using Infrastructure.Cache;
+using Infrastructure.Email;
+using Infrastructure.Sql;
+using Infrastructure.Sql.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -67,7 +75,89 @@ namespace Api.Bootstrapping
         {
             _services.AddSingleton(_settings);
             _services.AddSingleton(new UrlProvider(_settings.Urls.Api, _settings.Urls.Site));
+
             _services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+            _services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
+            _services.AddSingleton<ICacheContainer, CacheContainer>();
+            _services.AddSingleton<SqlServerStorageProvider>();
+            _services.AddSingleton<IUserRepository, UserRepository>();
+            _services.AddSingleton<IAppRepository, AppRepository>();
+            _services.AddSingleton<IBunchRepository, BunchRepository>();
+            _services.AddSingleton<ICashgameRepository, CashgameRepository>();
+            _services.AddSingleton<IEventRepository, EventRepository>();
+            _services.AddSingleton<ILocationRepository, LocationRepository>();
+            _services.AddSingleton<IPlayerRepository, PlayerRepository>();
+            _services.AddSingleton(GetEmailSender());
+            _services.AddSingleton(new SqlServerStorageProvider(_settings.Sql.ConnectionString));
+            _services.AddSingleton<IRandomizer, Randomizer>();
+
+            // Admin
+            _services.AddSingleton<ClearCache>();
+            _services.AddSingleton<TestEmail>();
+            _services.AddSingleton<EnsureAdmin>();
+
+            // Auth
+            _services.AddSingleton<Login>();
+
+            // User
+            _services.AddSingleton<UserDetails>();
+            _services.AddSingleton<UserList>();
+            _services.AddSingleton<EditUser>();
+            _services.AddSingleton<AddUser>();
+
+            // Bunch
+            _services.AddSingleton<GetBunchList>();
+            _services.AddSingleton<GetBunch>();
+            _services.AddSingleton<AddBunch>();
+            _services.AddSingleton<EditBunch>();
+
+            // Events
+            _services.AddSingleton<EventDetails>();
+            _services.AddSingleton<EventList>();
+            _services.AddSingleton<AddEvent>();
+
+            // Locations
+            _services.AddSingleton<GetLocationList>();
+            _services.AddSingleton<GetLocation>();
+            _services.AddSingleton<AddLocation>();
+
+            // Cashgame
+            _services.AddSingleton<CashgameList>();
+            _services.AddSingleton<CashgameYearList>();
+            _services.AddSingleton<EventCashgameList>();
+            _services.AddSingleton<PlayerCashgameList>();
+            _services.AddSingleton<CurrentCashgames>();
+            _services.AddSingleton<CashgameDetails>();
+            _services.AddSingleton<Buyin>();
+            _services.AddSingleton<Report>();
+            _services.AddSingleton<Cashout>();
+            _services.AddSingleton<AddCashgame>();
+            _services.AddSingleton<EditCashgame>();
+            _services.AddSingleton<DeleteCashgame>();
+            _services.AddSingleton<EditCheckpoint>();
+            _services.AddSingleton<DeleteCheckpoint>();
+
+            // Player
+            _services.AddSingleton<GetPlayer>();
+            _services.AddSingleton<GetPlayerList>();
+            _services.AddSingleton<AddPlayer>();
+            _services.AddSingleton<DeletePlayer>();
+            _services.AddSingleton<InvitePlayer>();
+            _services.AddSingleton<JoinBunch>();
+
+            // Apps
+            _services.AddSingleton<VerifyAppKey>();
+            _services.AddSingleton<GetApp>();
+            _services.AddSingleton<AppList>();
+            _services.AddSingleton<AddApp>();
+            _services.AddSingleton<DeleteApp>();
+        }
+
+    private IEmailSender GetEmailSender()
+        {
+            if (_settings.Email.Provider == EmailProvider.SendGrid)
+                return new SendGridEmailSender(_settings.Email.SendGrid.Key);
+            return new SmtpEmailSender(_settings.Email.Smtp.Host);
         }
 
         private void AddMvc()

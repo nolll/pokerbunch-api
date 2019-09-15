@@ -8,7 +8,6 @@ using Api.Models.UserModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
-using Core.Exceptions;
 using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
@@ -17,62 +16,31 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers
 {
-    public class TestController : BaseController
-    {
-        public TestController(AppSettings appSettings) : base(appSettings)
-        {
-        }
-
-        [Route("test/unexpected")]
-        [HttpGet]
-        public void Unexpected()
-        {
-            throw new Exception("unexpected");
-        }
-
-        [Route("test/notfound")]
-        [HttpGet]
-        public void NotFoundException()
-        {
-            throw new NotFoundException("not found");
-        }
-
-        [Route("test/accessdenied")]
-        [HttpGet]
-        public void AccessDeniedException()
-        {
-            throw new LoginException();
-        }
-
-        [Route("test/auth")]
-        [HttpGet]
-        public void AuthException()
-        {
-            throw new AuthException();
-        }
-
-        [Route("test/validation")]
-        [HttpGet]
-        public void ValidationException()
-        {
-            throw new ValidationException("validation");
-        }
-
-        [Route("test/conflict")]
-        [HttpGet]
-        public void ConflictException()
-        {
-            throw new EmailExistsException();
-        }
-    }
-
     public class UserController : BaseController
     {
         private readonly UrlProvider _urls;
+        private readonly UserDetails _userDetails;
+        private readonly UserList _userList;
+        private readonly EditUser _editUser;
+        private readonly AddUser _addUser;
+        private readonly Login _login;
 
-        public UserController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
+        public UserController(
+            AppSettings appSettings, 
+            UrlProvider urls, 
+            UserDetails userDetails,
+            UserList userList,
+            EditUser editUser,
+            AddUser addUser,
+            Login login) 
+            : base(appSettings)
         {
             _urls = urls;
+            _userDetails = userDetails;
+            _userList = userList;
+            _editUser = editUser;
+            _addUser = addUser;
+            _login = login;
         }
 
         [Route(ApiRoutes.User.Get)]
@@ -80,7 +48,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public UserModel GetUser(string userName)
         {
-            var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
+            var userDetails = _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
             return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
         }
 
@@ -89,7 +57,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public UserListModel List()
         {
-            var userListResult = UseCase.UserList.Execute(new UserList.Request(CurrentUserName));
+            var userListResult = _userList.Execute(new UserList.Request(CurrentUserName));
             return new UserListModel(userListResult, _urls);
         }
 
@@ -99,8 +67,8 @@ namespace Api.Controllers
         public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
         {
             var request = new EditUser.Request(CurrentUserName, post.DisplayName, post.RealName, post.Email);
-            var editUserResult = UseCase.EditUser.Execute(request);
-            var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(editUserResult.UserName));
+            var editUserResult = _editUser.Execute(request);
+            var userDetails = _userDetails.Execute(new UserDetails.Request(editUserResult.UserName));
             return new FullUserModel(userDetails);
         }
 
@@ -108,7 +76,7 @@ namespace Api.Controllers
         [HttpPost]
         public OkModel Add([FromBody] AddUserPostModel post)
         {
-            UseCase.AddUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login.Absolute()));
+            _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login.Absolute()));
             return new OkModel();
         }
 
@@ -121,7 +89,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public UserModel Profile()
         {
-            var userDetails = UseCase.UserDetails.Execute(new UserDetails.Request(CurrentUserName));
+            var userDetails = _userDetails.Execute(new UserDetails.Request(CurrentUserName));
             return new FullUserModel(userDetails);
         }
 
@@ -130,7 +98,7 @@ namespace Api.Controllers
         [HttpPost("token")]
         public IActionResult Authenticate([FromForm]LoginPostModel postModel)
         {
-            var result = UseCase.Login.Execute(new Login.Request(postModel.UserName, postModel.Password));
+            var result = _login.Execute(new Login.Request(postModel.UserName, postModel.Password));
             var token = CreateToken(result.UserName);
             return Ok(token);
         }

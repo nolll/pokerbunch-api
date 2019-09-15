@@ -11,10 +11,16 @@ namespace Api.Controllers
     public class AdminController : BaseController
     {
         private readonly AppSettings _appSettings;
+        private readonly ClearCache _clearCache;
+        private readonly TestEmail _testEmail;
+        private readonly EnsureAdmin _ensureAdmin;
 
-        public AdminController(AppSettings appSettings) : base(appSettings)
+        public AdminController(AppSettings appSettings, ClearCache clearCache, TestEmail testEmail, EnsureAdmin ensureAdmin) : base(appSettings)
         {
             _appSettings = appSettings;
+            _clearCache = clearCache;
+            _testEmail = testEmail;
+            _ensureAdmin = ensureAdmin;
         }
 
         /// <summary>
@@ -25,7 +31,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public ClearCacheModel ClearCache()
         {
-            var result = UseCase.ClearCache.Execute(new ClearCache.Request(CurrentUserName));
+            var result = _clearCache.Execute(new ClearCache.Request(CurrentUserName));
             return new ClearCacheModel(result.ClearCount);
         }
 
@@ -37,7 +43,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public SendEmailModel SendEmail()
         {
-            var result = UseCase.TestEmail.Execute(new TestEmail.Request(CurrentUserName));
+            var result = _testEmail.Execute(new TestEmail.Request(CurrentUserName));
             return new SendEmailModel(result);
         }
 
@@ -59,7 +65,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public AppSettings Settings()
         {
-            UseCase.EnsureAdmin.Execute(new EnsureAdmin.Request(CurrentUserName));
+            _ensureAdmin.Execute(new EnsureAdmin.Request(CurrentUserName));
 
             return _appSettings;
         }

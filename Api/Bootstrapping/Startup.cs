@@ -10,7 +10,6 @@ namespace Api.Bootstrapping
     {
         // Memcache
         // Injection
-        // Error handling
         // Https
 
         private readonly AppSettings _settings;

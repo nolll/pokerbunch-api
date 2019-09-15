@@ -12,8 +12,26 @@ namespace Api.Controllers
 {
     public class ActionController : BaseController
     {
-        public ActionController(AppSettings appSettings) : base(appSettings)
+        private readonly Buyin _buyin;
+        private readonly Report _report;
+        private readonly Cashout _cashout;
+        private readonly EditCheckpoint _editCheckpoint;
+        private readonly DeleteCheckpoint _deleteCheckpoint;
+
+        public ActionController(
+            AppSettings appSettings,
+            Buyin buyin,
+            Report report,
+            Cashout cashout,
+            EditCheckpoint editCheckpoint,
+            DeleteCheckpoint deleteCheckpoint) 
+            : base(appSettings)
         {
+            _buyin = buyin;
+            _report = report;
+            _cashout = cashout;
+            _editCheckpoint = editCheckpoint;
+            _deleteCheckpoint = deleteCheckpoint;
         }
 
         [Route(ApiRoutes.Action.List)]
@@ -33,19 +51,19 @@ namespace Api.Controllers
 
         private OkModel Buyin(int cashgameId, AddCashgameActionPostModel post)
         {
-            UseCase.Buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+            _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
         private OkModel Report(int cashgameId, AddCashgameActionPostModel post)
         {
-            UseCase.Report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+            _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
         private OkModel Cashout(int cashgameId, AddCashgameActionPostModel post)
         {
-            UseCase.Cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+            _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
             return new OkModel();
         }
 
@@ -54,7 +72,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public OkModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
         {
-            UseCase.EditCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
+            _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
             return new OkModel();
         }
 
@@ -63,7 +81,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public OkModel DeleteAction(int cashgameId, int actionId)
         {
-            UseCase.DeleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+            _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
             return new OkModel();
         }
 

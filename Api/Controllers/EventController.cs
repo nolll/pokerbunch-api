@@ -9,8 +9,19 @@ namespace Api.Controllers
 {
     public class EventController : BaseController
     {
-        public EventController(AppSettings appSettings) : base(appSettings)
+        private readonly EventDetails _eventDetails;
+        private readonly EventList _eventList;
+        private readonly AddEvent _addEvent;
+
+        public EventController(
+            AppSettings appSettings,
+            EventDetails eventDetails,
+            EventList eventList,
+            AddEvent addEvent) : base(appSettings)
         {
+            _eventDetails = eventDetails;
+            _eventList = eventList;
+            _addEvent = addEvent;
         }
 
         [Route(ApiRoutes.Event.Get)]
@@ -18,7 +29,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public EventModel Get(int eventId)
         {
-            var result = UseCase.GetEvent.Execute(new EventDetails.Request(CurrentUserName, eventId));
+            var result = _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
             return new EventModel(result);
         }
 
@@ -27,7 +38,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public EventListModel List(string bunchId)
         {
-            var eventListResult = UseCase.GetEventList.Execute(new EventList.Request(CurrentUserName, bunchId));
+            var eventListResult = _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
             return new EventListModel(eventListResult);
         }
 
@@ -36,7 +47,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public EventModel Add(string bunchId, [FromBody] EventAddPostModel post)
         {
-            var result = UseCase.AddEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
+            var result = _addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
             return Get(result.Id);
         }
     }
