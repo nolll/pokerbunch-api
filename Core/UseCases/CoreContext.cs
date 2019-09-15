@@ -17,7 +17,7 @@ namespace Core.UseCases
             var isAuthenticated = !string.IsNullOrEmpty(request.UserName);
             var userName = isAuthenticated ? request.UserName : string.Empty;
             var user = isAuthenticated ? _userRepository.Get(userName) : null;
-            if (isAuthenticated && user == null) // Broken auth cookie
+            if (isAuthenticated && user == null)
                 throw new NotLoggedInException();
             var userId = isAuthenticated ? user.Id : 0;
             var userDisplayName = isAuthenticated ? user.DisplayName : string.Empty;

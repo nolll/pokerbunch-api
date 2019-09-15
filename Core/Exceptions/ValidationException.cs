@@ -7,7 +7,7 @@ namespace Core.Exceptions
     {
         public override string Message => "Invalid input";
 
-        public IEnumerable<string> Messages { get; private set; }
+        public IEnumerable<string> Messages { get; }
 
         public ValidationException(Validator validator)
         {

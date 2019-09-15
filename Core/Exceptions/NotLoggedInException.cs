@@ -1,4 +1,4 @@
 namespace Core.Exceptions
 {
-    public class NotLoggedInException : PokerBunchException { }
+    public class NotLoggedInException : AuthException { }
 }

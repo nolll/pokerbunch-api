@@ -8,12 +8,10 @@ namespace Api.Bootstrapping
 {
     public class Startup
     {
-        //        private void ConfigureErrorHandler(HttpConfiguration config)
-        //        {
-        //            config.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
-        //            config.Services.Replace(typeof(IHttpControllerSelector), new HttpNotFoundAwareDefaultHttpControllerSelector(config));
-        //            config.Services.Replace(typeof(IHttpActionSelector), new HttpNotFoundAwareControllerActionSelector());
-        //        }
+        // Memcache
+        // Injection
+        // Error handling
+        // Https
 
         private readonly AppSettings _settings;
 
