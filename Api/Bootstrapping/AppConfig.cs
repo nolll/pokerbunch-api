@@ -1,11 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Core.Exceptions;
+﻿using Api.Middlewares;
+using Api.Routes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Internal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace Api.Bootstrapping
 {
@@ -78,47 +74,12 @@ namespace Api.Bootstrapping
 
         private void ConfigureErrors()
         {
-            _app.UseStatusCodePagesWithReExecute("/Error");
-            _app.UseExceptionHandler("/Error");
-            _app.UseMiddleware<ExceptionLoggingMiddleware>();
-        }
-    }
-
-    public class ExceptionLoggingMiddleware
-    {
-        private readonly ILogger _logger;
-        private readonly IHostingEnvironment _env;
-        private readonly RequestDelegate _next;
-
-        public ExceptionLoggingMiddleware(RequestDelegate next, ILogger logger, IHostingEnvironment env)
-        {
-            _logger = logger;
-            _env = env;
-            _next = next;
-        }
-
-        public async Task InvokeAsync(HttpContext httpContext)
-        {
-            try
+            if (IsDev)
             {
-                await _next(httpContext);
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
-            catch (AccessDeniedException)
-            {
-                throw;
-            }
-            catch (ConflictException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(new EventId(0), ex, ex.Message);
-                throw;
+                var errorUrl = $"/{ApiRoutes.Error}";
+                _app.UseStatusCodePagesWithReExecute(errorUrl);
+                _app.UseExceptionHandler(errorUrl);
+                _app.UseMiddleware<ExceptionLoggingMiddleware>();
             }
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Net;
-using Api.Models.AdminModels;
+using Api.Models.CommonModels;
+using Api.Routes;
 using Core.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace Api.Controllers
 {
     public class ErrorController : Controller
     {
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route(ApiRoutes.Error)]
         public ErrorModel Index()
         {
             var exception = GetException();
@@ -41,6 +42,18 @@ namespace Api.Controllers
 
             if (ex is NotFoundException)
                 return HttpStatusCode.NotFound;
+
+            if (ex is AccessDeniedException)
+                return HttpStatusCode.Forbidden;
+
+            if (ex is AuthException)
+                return HttpStatusCode.Unauthorized;
+
+            if (ex is ValidationException)
+                return HttpStatusCode.BadRequest;
+
+            if (ex is ConflictException)
+                return HttpStatusCode.Conflict;
 
             return HttpStatusCode.InternalServerError;
         }

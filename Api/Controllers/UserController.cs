@@ -8,6 +8,7 @@ using Api.Models.UserModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
+using Core.Exceptions;
 using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,55 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers
 {
+    public class TestController : BaseController
+    {
+        public TestController(AppSettings appSettings) : base(appSettings)
+        {
+        }
+
+        [Route("test/unexpected")]
+        [HttpGet]
+        public void Unexpected()
+        {
+            throw new Exception("unexpected");
+        }
+
+        [Route("test/notfound")]
+        [HttpGet]
+        public void NotFoundException()
+        {
+            throw new NotFoundException("not found");
+        }
+
+        [Route("test/accessdenied")]
+        [HttpGet]
+        public void AccessDeniedException()
+        {
+            throw new LoginException();
+        }
+
+        [Route("test/auth")]
+        [HttpGet]
+        public void AuthException()
+        {
+            throw new AuthException();
+        }
+
+        [Route("test/validation")]
+        [HttpGet]
+        public void ValidationException()
+        {
+            throw new ValidationException("validation");
+        }
+
+        [Route("test/conflict")]
+        [HttpGet]
+        public void ConflictException()
+        {
+            throw new EmailExistsException();
+        }
+    }
+
     public class UserController : BaseController
     {
         private readonly UrlProvider _urls;

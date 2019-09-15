@@ -1,7 +1,6 @@
 using System.Runtime.Serialization;
-using Api.Models.CommonModels;
 
-namespace Api.Models.AdminModels
+namespace Api.Models.CommonModels
 {
     [DataContract(Namespace = "", Name = "error")]
     public class ErrorModel : MessageModel

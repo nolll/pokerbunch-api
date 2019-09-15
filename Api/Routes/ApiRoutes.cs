@@ -5,6 +5,7 @@ namespace Api.Routes
         public const string Root = "";
         public const string Version = "version";
         public const string Settings = "settings";
+        public const string Error = "error";
 
         public static class Action
         {
