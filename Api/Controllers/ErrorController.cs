@@ -11,6 +11,7 @@ namespace Api.Controllers
     public class ErrorController : Controller
     {
         [Route(ApiRoutes.Error)]
+        [HttpGet]
         public ErrorModel Index()
         {
             var exception = GetException();
