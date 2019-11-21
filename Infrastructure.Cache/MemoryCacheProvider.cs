@@ -6,7 +6,11 @@ namespace Infrastructure.Cache
 {
     public class MemoryCacheProvider : ICacheProvider
     {
-        private static MemoryCache Cache => new MemoryCache("memcache");
+        private static MemoryCache Cache = new MemoryCache("memcache");
+
+        public MemoryCacheProvider()
+        {
+        }
 
         public object Get(string key)
         {
@@ -23,15 +27,10 @@ namespace Infrastructure.Cache
             Cache.Remove(key);
         }
 
-        public int ClearAll()
+        public void ClearAll()
         {
-            var count = 0;
-            foreach (var entry in Cache)
-            {
-                Cache.Remove(entry.Key);
-                count++;
-            }
-            return count;
+            Cache.Dispose();
+            Cache = new MemoryCache("memcache");
         }
     }
 }

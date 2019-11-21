@@ -20,15 +20,14 @@ namespace Core.Cache
             Remove(CacheKeyProvider.GetKey<T>(id));
         }
 
-        public int ClearAll()
+        public void ClearAll()
         {
-            return _cacheProvider.ClearAll();
+            _cacheProvider.ClearAll();
         }
 
         public T GetAndStore<T>(Func<T> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
         {
-            T cachedObject;
-            var foundInCache = TryGet(cacheKey, out cachedObject);
+            var foundInCache = TryGet(cacheKey, out T cachedObject);
 
             if (foundInCache)
             {
@@ -44,9 +43,8 @@ namespace Core.Cache
 
         public T GetAndStore<T>(Func<int, T> sourceExpression, int id, TimeSpan cacheTime) where T : class, IEntity
         {
-            T cachedObject;
             var cacheKey = CacheKeyProvider.GetKey<T>(id);
-            var foundInCache = TryGet(cacheKey, out cachedObject);
+            var foundInCache = TryGet(cacheKey, out T cachedObject);
 
             if (foundInCache)
             {
@@ -66,9 +64,8 @@ namespace Core.Cache
             var notInCache = new List<int>();
             foreach (var id in ids)
             {
-                T cachedObject;
                 var cacheKey = CacheKeyProvider.GetKey<T>(id);
-                var foundInCache = TryGet(cacheKey, out cachedObject);
+                var foundInCache = TryGet(cacheKey, out T cachedObject);
                 if (foundInCache)
                     list.Add(cachedObject);
                 else

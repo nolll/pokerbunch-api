@@ -14,14 +14,12 @@ namespace Core.UseCases
             _userRepository = userRepository;
         }
 
-        public Result Execute(Request request)
+        public void Execute(Request request)
         {
             var user = _userRepository.Get(request.UserName);
             RequireRole.Admin(user);
 
-            var clearCount = _cache.ClearAll();
-
-            return new Result(clearCount);
+            _cache.ClearAll();
         }
 
         public class Request
@@ -31,16 +29,6 @@ namespace Core.UseCases
             public Request(string userName)
             {
                 UserName = userName;
-            }
-        }
-
-        public class Result
-        {
-            public int ClearCount { get; }
-
-            public Result(int clearCount)
-            {
-                ClearCount = clearCount;
             }
         }
     }

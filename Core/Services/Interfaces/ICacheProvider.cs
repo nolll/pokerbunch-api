@@ -7,6 +7,6 @@ namespace Core.Services
         object Get(string key);
         void Put(string key, object obj, TimeSpan time);
         void Remove(string key);
-        int ClearAll();
+        void ClearAll();
     }
 }
