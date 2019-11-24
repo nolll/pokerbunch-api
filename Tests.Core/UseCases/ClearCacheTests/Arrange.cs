@@ -1,6 +1,5 @@
 using Core.Entities;
 using Core.Repositories;
-using Core.Services;
 using Core.UseCases;
 using Tests.Core.TestClasses;
 
@@ -16,11 +15,11 @@ namespace Tests.Core.UseCases.ClearCacheTests
             var user = new UserInTest(globalRole: Role);
 
             Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
-            Mock<ICacheContainer>().Verify(o => o.ClearAll());
         }
 
         protected override void Execute()
         {
+            Sut.Execute(new ClearCache.Request(UserName));
         }
     }
 }
