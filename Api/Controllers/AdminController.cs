@@ -31,8 +31,8 @@ namespace Api.Controllers
         [ApiAuthorize]
         public ClearCacheModel ClearCache()
         {
-            var result = _clearCache.Execute(new ClearCache.Request(CurrentUserName));
-            return new ClearCacheModel(result.ClearCount);
+            _clearCache.Execute(new ClearCache.Request(CurrentUserName));
+            return new ClearCacheModel();
         }
 
         /// <summary>

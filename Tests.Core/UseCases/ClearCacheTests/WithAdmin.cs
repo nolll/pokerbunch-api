@@ -1,4 +1,5 @@
 using Core.Entities;
+using Core.UseCases;
 using NUnit.Framework;
 
 namespace Tests.Core.UseCases.ClearCacheTests
@@ -8,9 +9,9 @@ namespace Tests.Core.UseCases.ClearCacheTests
         protected override Role Role => Role.Admin;
 
         [Test]
-        public void ThrowsException()
+        public void ClearsCache()
         {
-            Assert.AreEqual(ExpectedNumberOfClearedObjects, Result.ClearCount);
+            Sut.Execute(new ClearCache.Request(UserName));
         }
     }
 }
