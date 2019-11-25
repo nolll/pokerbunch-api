@@ -61,20 +61,20 @@ namespace Core.UseCases
             [Range(0, int.MaxValue, ErrorMessage = "Amount can't be negative")]
             public int Amount { get; }
 
-            public Request(string userName, int checkpointId, DateTimeOffset timestamp, int stack, int amount)
+            public Request(string userName, int checkpointId, DateTimeOffset timestamp, int stack, int? amount)
             {
                 UserName = userName;
                 CheckpointId = checkpointId;
                 Timestamp = timestamp;
                 Stack = stack;
-                Amount = amount;
+                Amount = amount ?? 0;
             }
         }
 
         public class Result
         {
-            public int CashgameId { get; private set; }
-            public int PlayerId { get; private set; }
+            public int CashgameId { get; }
+            public int PlayerId { get; }
 
             public Result(int cashgameId, int playerId)
             {

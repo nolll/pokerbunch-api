@@ -7,6 +7,6 @@ namespace Api.Models.CashgameModels
     {
         public DateTimeOffset Timestamp { get; [UsedImplicitly] set; }
         public int Stack { get; [UsedImplicitly] set; }
-        public int Added { get; [UsedImplicitly] set; }
+        public int? Added { get; [UsedImplicitly] set; }
     }
 }
