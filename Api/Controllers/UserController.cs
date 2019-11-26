@@ -13,6 +13,9 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Controllers
 {
@@ -94,6 +97,11 @@ namespace Api.Controllers
         }
 
         // https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api
+        /// <summary>
+        /// Get an auth token
+        /// </summary>
+        /// <param name="postModel"></param>
+        /// <returns>A token that can be used for authentication</returns>
         [AllowAnonymous]
         [HttpPost("token")]
         public IActionResult Authenticate([FromForm]LoginPostModel postModel)

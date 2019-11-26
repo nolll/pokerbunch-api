@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Api.Extensions;
+using Api.Extensions.Swagger;
 using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.Cache;
@@ -219,11 +220,12 @@ namespace Api.Bootstrapping
         {
             _services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Poker Bunch Api", Version = "v1" });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+                var xmlFile = $"{assemblyName}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.SwaggerDoc("v1", new Info { Title = "Poker Bunch Api", Version = "v1" });
                 c.IncludeXmlComments(xmlPath);
+                c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
             });
         }
     }
