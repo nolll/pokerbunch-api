@@ -100,13 +100,14 @@ namespace Api.Controllers
         /// <summary>
         /// Get an auth token
         /// </summary>
-        /// <param name="postModel"></param>
+        /// <param name="userName">Username</param>
+        /// <param name="password" format="password">Password</param>
         /// <returns>A token that can be used for authentication</returns>
         [AllowAnonymous]
         [HttpPost("token")]
-        public IActionResult Authenticate([FromForm]LoginPostModel postModel)
+        public IActionResult Authenticate([FromForm]string userName, [FromForm] string password)
         {
-            var result = _login.Execute(new Login.Request(postModel.UserName, postModel.Password));
+            var result = _login.Execute(new Login.Request(userName, password));
             var token = CreateToken(result.UserName);
             return Ok(token);
         }
@@ -127,11 +128,5 @@ namespace Api.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-    }
-
-    public class LoginPostModel
-    {
-        public string UserName { get; [UsedImplicitly] set; }
-        public string Password { get; [UsedImplicitly] set; }
     }
 }
