@@ -36,7 +36,6 @@ namespace Api.Urls.ApiUrls
             _host = host;
         }
 
-        public Url App(string appId) => new ApiAppUrl(_host, appId);
         public Url BunchCashgames(string bunchId, int? year) => new ApiBunchCashgamesUrl(_host, bunchId, year);
         public Url Cashgame(string cashgameId) => new ApiCashgameUrl(_host, cashgameId);
         public Url User(string userName) => new ApiUserUrl(_host, userName);

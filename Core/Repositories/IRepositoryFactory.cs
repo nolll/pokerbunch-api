@@ -2,7 +2,6 @@
 {
     public interface IRepositoryFactory
     {
-        IAppRepository CreateAppRepository(IAppRepository appRepository);
         IBunchRepository CreateBunchRepository(IBunchRepository bunchRepository);
         ICashgameRepository CreateCashgameRepository(ICashgameRepository cashgameService);
         IEventRepository CreateEventRepository(IEventRepository eventRepository);
