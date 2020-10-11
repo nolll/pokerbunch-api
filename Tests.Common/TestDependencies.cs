@@ -11,7 +11,6 @@ namespace Tests.Common
         public FakeCashgameRepository Cashgame { get; }
         public FakeEventRepository Event { get; }
         public FakeLocationRepository Location { get; }
-        public FakeAppRepository App { get; }
 
         public FakeEmailSender EmailSender { get; }
         public FakeRandomizer Randomizer { get; }
@@ -24,7 +23,6 @@ namespace Tests.Common
             Cashgame = new FakeCashgameRepository();
             Event = new FakeEventRepository();
             Location = new FakeLocationRepository();
-            App = new FakeAppRepository();
 
             EmailSender = new FakeEmailSender();
             Randomizer = new FakeRandomizer();

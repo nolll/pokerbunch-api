@@ -118,15 +118,6 @@ namespace Tests.Common
         public const string EventNameA = "Event A";
         public const string EventNameB = "Event B";
 
-        public const int AppIdA = 1;
-        public const int AppIdB = 2;
-        public const string AppKeyA = "Key A";
-        public const string AppKeyB = "Key B";
-        public const string AppNameA = "App A";
-        public const string AppNameB = "App B";
-        public static App AppA = new App(AppIdA, AppKeyA, AppNameA, UserIdA);
-        public static App AppB = new App(AppIdB, AppKeyB, AppNameB, UserIdB);
-
         public const string TestUrl = "https://pokerbunch.com/test";
 
         public static IList<Checkpoint> RunningGameCheckpoints

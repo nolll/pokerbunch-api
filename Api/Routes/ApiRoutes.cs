@@ -19,13 +19,6 @@ namespace Api.Routes
             public const string SendEmail = "admin/sendemail";
         }
 
-        public static class App
-        {
-            public const string Get = "apps/{appId}";
-            public const string List = "apps";
-            public const string ListForCurrentUser = "user/apps";
-        }
-
         public static class Bunch
         {
             public const string Get = "bunches/{bunchId}";
