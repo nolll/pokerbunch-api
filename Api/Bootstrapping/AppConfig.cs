@@ -21,12 +21,12 @@ namespace Api.Bootstrapping
 
         public void Configure()
         {
+            ConfigureCors();
             ConfigureCompression();
             ConfigureExceptions();
             ConfigureHttps();
             ConfigureErrors();
             ConfigureSwagger();
-            ConfigureCors();
             ConfigureAuth();
             ConfigureMvc();
         }
