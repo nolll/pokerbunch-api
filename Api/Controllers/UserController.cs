@@ -65,11 +65,11 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.User.Get)]
-        [HttpPost]
+        [HttpPut]
         [ApiAuthorize]
         public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
         {
-            var request = new EditUser.Request(CurrentUserName, post.DisplayName, post.RealName, post.Email);
+            var request = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
             var editUserResult = _editUser.Execute(request);
             var userDetails = _userDetails.Execute(new UserDetails.Request(editUserResult.UserName));
             return new FullUserModel(userDetails);

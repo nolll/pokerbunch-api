@@ -43,7 +43,7 @@ namespace Api.Controllers
         }
 
         [Route(ApiRoutes.Bunch.Get)]
-        [HttpPost]
+        [HttpPut]
         [ApiAuthorize]
         public BunchModel Update(string bunchId, [FromBody] UpdateBunchPostModel post)
         {
