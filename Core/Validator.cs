@@ -15,19 +15,8 @@ namespace Core
             System.ComponentModel.DataAnnotations.Validator.TryValidateObject(subject, context, _errors, true);
         }
 
-        public IEnumerable<string> Errors
-        {
-            get { return _errors.Select(o => o.ErrorMessage); }
-        }
-
-        private bool HasErrors
-        {
-            get { return _errors.Count > 0; }
-        }
-
-        public bool IsValid
-        {
-            get { return !HasErrors; }
-        }
+        public IEnumerable<string> Errors => _errors.Select(o => o.ErrorMessage);
+        private bool HasErrors => _errors.Count > 0;
+        public bool IsValid => !HasErrors;
     }
 }

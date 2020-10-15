@@ -8,5 +8,6 @@
         public SqlSettings Sql { get; set; }
         public EmailSettings Email { get; set; }
         public LoggingSettings Logging { get; set; }
+        public ErrorSettings Error { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace Api.Bootstrapping
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            new AppConfig(app, env).Configure();
+            new AppConfig(_settings, app, env).Configure();
         }
     }
 }

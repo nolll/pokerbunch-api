@@ -5,7 +5,7 @@ namespace Core.Exceptions
 {
     public class ValidationException : PokerBunchException
     {
-        public override string Message => "Invalid input";
+        public override string Message => string.Join(' ', Messages);
 
         public IEnumerable<string> Messages { get; }
 

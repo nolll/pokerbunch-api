@@ -48,7 +48,7 @@ namespace Api.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(new EventId(0), ex, ex.Message);
+                _logger.LogError(ex, ex.Message);
                 throw;
             }
         }

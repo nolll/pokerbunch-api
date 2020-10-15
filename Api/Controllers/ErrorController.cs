@@ -11,7 +11,7 @@ namespace Api.Controllers
     public class ErrorController : Controller
     {
         [Route(ApiRoutes.Error)]
-        [HttpGet]
+        [HttpGet, HttpDelete, HttpPost, HttpPut]
         public ErrorModel Index()
         {
             var exception = GetException();

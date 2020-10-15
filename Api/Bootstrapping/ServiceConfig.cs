@@ -146,7 +146,7 @@ namespace Api.Bootstrapping
             _services.AddSingleton<JoinBunch>();
         }
 
-    private IEmailSender GetEmailSender()
+        private IEmailSender GetEmailSender()
         {
             if (_settings.Email.Provider == EmailProvider.SendGrid)
                 return new SendGridEmailSender(_settings.Email.SendGrid.Key);

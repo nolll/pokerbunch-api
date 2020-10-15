@@ -1,5 +1,6 @@
 ﻿using Api.Middlewares;
 using Api.Routes;
+using Api.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
@@ -7,14 +8,16 @@ namespace Api.Bootstrapping
 {
     public class AppConfig
     {
+        private readonly AppSettings _settings;
         private readonly IApplicationBuilder _app;
         private readonly IHostingEnvironment _env;
 
         private bool IsDev => _env.IsDevelopment();
         private bool IsProd => !IsDev;
 
-        public AppConfig(IApplicationBuilder app, IHostingEnvironment env)
+        public AppConfig(AppSettings settings, IApplicationBuilder app, IHostingEnvironment env)
         {
+            _settings = settings;
             _app = app;
             _env = env;
         }
@@ -23,7 +26,6 @@ namespace Api.Bootstrapping
         {
             ConfigureCors();
             ConfigureCompression();
-            ConfigureExceptions();
             ConfigureHttps();
             ConfigureErrors();
             ConfigureSwagger();
@@ -34,12 +36,6 @@ namespace Api.Bootstrapping
         private void ConfigureCompression()
         {
             _app.UseResponseCompression();
-        }
-
-        private void ConfigureExceptions()
-        {
-            if(IsDev)
-                _app.UseDeveloperExceptionPage();
         }
 
         private void ConfigureHttps()
@@ -74,13 +70,18 @@ namespace Api.Bootstrapping
 
         private void ConfigureErrors()
         {
-            if (IsDev)
+            if (_settings.Error.DetailedErrors)
+            {
+                _app.UseDeveloperExceptionPage();
+            }
+            else
             {
                 var errorUrl = $"/{ApiRoutes.Error}";
                 _app.UseStatusCodePagesWithReExecute(errorUrl);
                 _app.UseExceptionHandler(errorUrl);
                 _app.UseMiddleware<ExceptionLoggingMiddleware>();
             }
+
         }
     }
 }
