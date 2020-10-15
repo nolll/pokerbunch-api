@@ -3,11 +3,6 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 pool:
   name: Default
 
-trigger:
-  branches:
-    include:
-    - master
-
 steps:
 - task: DotNetCoreCLI@2
   displayName: Restore

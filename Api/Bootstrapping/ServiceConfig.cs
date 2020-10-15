@@ -82,7 +82,6 @@ namespace Api.Bootstrapping
             _services.AddSingleton<ICacheContainer, CacheContainer>();
             _services.AddSingleton<SqlServerStorageProvider>();
             _services.AddSingleton<IUserRepository, UserRepository>();
-            _services.AddSingleton<IAppRepository, AppRepository>();
             _services.AddSingleton<IBunchRepository, BunchRepository>();
             _services.AddSingleton<ICashgameRepository, CashgameRepository>();
             _services.AddSingleton<IEventRepository, EventRepository>();
@@ -145,13 +144,6 @@ namespace Api.Bootstrapping
             _services.AddSingleton<DeletePlayer>();
             _services.AddSingleton<InvitePlayer>();
             _services.AddSingleton<JoinBunch>();
-
-            // Apps
-            _services.AddSingleton<VerifyAppKey>();
-            _services.AddSingleton<GetApp>();
-            _services.AddSingleton<AppList>();
-            _services.AddSingleton<AddApp>();
-            _services.AddSingleton<DeleteApp>();
         }
 
     private IEmailSender GetEmailSender()
