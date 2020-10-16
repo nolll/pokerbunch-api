@@ -30,7 +30,7 @@ namespace Core.UseCases
             if(user == null)
                 throw new UserNotFoundException(request.Email);
 
-            var password = PasswordGenerator.CreatePassword(_randomizer.GetAllowedChars());
+            var password = PasswordService.CreatePassword(_randomizer.GetAllowedChars());
             var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(password, salt);
 

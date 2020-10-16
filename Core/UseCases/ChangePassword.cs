@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
@@ -23,12 +24,13 @@ namespace Core.UseCases
             if(!validator.IsValid)
                 throw new ValidationException(validator);
 
-            if (request.Password != request.Repeat)
-                throw new ValidationException("The passwords dos not match");
+            var user = _userRepository.Get(request.UserName);
+            var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
+            if (isCurrentPwdValid)
+                throw new AuthException();
 
             var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
             var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
-            var user = _userRepository.Get(request.UserName);
             user = CreateUser(user, encryptedPassword, salt);
 
             _userRepository.Update(user);
@@ -52,13 +54,13 @@ namespace Core.UseCases
             public string UserName { get; }
             [Required(ErrorMessage = "Password can't be empty")]
             public string Password { get; }
-            public string Repeat { get; }
+            public string OldPassword { get; }
 
-            public Request(string userName, string password, string repeat)
+            public Request(string userName, string password, string oldPassword)
             {
                 UserName = userName;
                 Password = password;
-                Repeat = repeat;
+                OldPassword = oldPassword;
             }
         }
     }

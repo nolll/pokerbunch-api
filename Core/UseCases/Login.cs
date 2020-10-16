@@ -28,8 +28,9 @@ namespace Core.UseCases
             var user = _userRepository.Get(loginName);
             if (user == null)
                 return null;
-            var encryptedPassword = EncryptionService.Encrypt(password, user.Salt);
-            return encryptedPassword == user.EncryptedPassword ? user : null;
+
+            var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
+            return isValid ? user : null;
         }
 
         public class Request 
