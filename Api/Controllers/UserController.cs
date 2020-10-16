@@ -9,13 +9,9 @@ using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Annotations;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Controllers
 {
@@ -27,6 +23,7 @@ namespace Api.Controllers
         private readonly EditUser _editUser;
         private readonly AddUser _addUser;
         private readonly Login _login;
+        private readonly ChangePassword _changePassword;
 
         public UserController(
             AppSettings appSettings, 
@@ -35,7 +32,8 @@ namespace Api.Controllers
             UserList userList,
             EditUser editUser,
             AddUser addUser,
-            Login login) 
+            Login login,
+            ChangePassword changePassword) 
             : base(appSettings)
         {
             _urls = urls;
@@ -44,6 +42,7 @@ namespace Api.Controllers
             _editUser = editUser;
             _addUser = addUser;
             _login = login;
+            _changePassword = changePassword;
         }
 
         [Route(ApiRoutes.User.Get)]
@@ -73,6 +72,16 @@ namespace Api.Controllers
             var editUserResult = _editUser.Execute(request);
             var userDetails = _userDetails.Execute(new UserDetails.Request(editUserResult.UserName));
             return new FullUserModel(userDetails);
+        }
+
+        [Route(ApiRoutes.Profile.PasswordChange)]
+        [HttpPut]
+        [ApiAuthorize]
+        public OkModel ChangePassword([FromBody] ChangePasswordPostModel post)
+        {
+            var request = new ChangePassword.Request(CurrentUserName, post.Password, post.OldPassword);
+            _changePassword.Execute(request);
+            return new OkModel();
         }
 
         [Route(ApiRoutes.User.List)]
