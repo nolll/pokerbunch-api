@@ -26,7 +26,7 @@ namespace Core.UseCases
 
             var user = _userRepository.Get(request.UserName);
             var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
-            if (isCurrentPwdValid)
+            if (!isCurrentPwdValid)
                 throw new AuthException();
 
             var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
