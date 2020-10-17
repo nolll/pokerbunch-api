@@ -1,11 +1,21 @@
 namespace Api.Routes
 {
+    public static class SiteRoutes
+    {
+        public const string AddUser = "user/add";
+        public const string JoinBunch = "bunch/join/{bunchId}";
+        public const string JoinBunchWithCode = "bunch/join/{bunchId}/{code}";
+        public const string ApiDocs = "apidocs";
+        public const string Login = "auth/login";
+    }
+
     public static class ApiRoutes
     {
         public const string Root = "";
         public const string Version = "version";
         public const string Settings = "settings";
         public const string Error = "error";
+        public const string Swagger = "swagger";
 
         public static class Action
         {

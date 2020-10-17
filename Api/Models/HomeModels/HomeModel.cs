@@ -15,5 +15,11 @@ namespace Api.Models.HomeModels
 
         [DataMember(Name = "userProfileUrl")]
         public string UserProfileUrl => _urls.Api.UserProfile.Absolute();
+
+        [DataMember(Name = "docs")]
+        public string DocsUrl => _urls.Site.ApiDocs.Absolute();
+
+        [DataMember(Name = "swagger")]
+        public string SwaggerUrl => _urls.Api.Swagger.Absolute();
     }
 }
