@@ -106,7 +106,7 @@ namespace Api.Controllers
         [HttpPost]
         public OkModel ResetPassword([FromBody] ResetPasswordPostModel post)
         {
-            var request = new ResetPassword.Request(CurrentUserName, post.Email);
+            var request = new ResetPassword.Request(post.Email, _urls.Site.Login.Absolute());
             _resetPassword.Execute(request);
             return new OkModel();
         }
