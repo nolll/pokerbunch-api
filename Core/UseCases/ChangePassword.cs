@@ -27,10 +27,10 @@ namespace Core.UseCases
             var user = _userRepository.Get(request.UserName);
             var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
             if (!isCurrentPwdValid)
-                throw new AuthException();
+                throw new AuthException("The old password was not correct");
 
             var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
-            var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
+            var encryptedPassword = EncryptionService.Encrypt(request.NewPassword, salt);
             user = CreateUser(user, encryptedPassword, salt);
 
             _userRepository.Update(user);
@@ -53,13 +53,13 @@ namespace Core.UseCases
         {
             public string UserName { get; }
             [Required(ErrorMessage = "Password can't be empty")]
-            public string Password { get; }
+            public string NewPassword { get; }
             public string OldPassword { get; }
 
-            public Request(string userName, string password, string oldPassword)
+            public Request(string userName, string newPassword, string oldPassword)
             {
                 UserName = userName;
-                Password = password;
+                NewPassword = newPassword;
                 OldPassword = oldPassword;
             }
         }

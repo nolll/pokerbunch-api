@@ -19,7 +19,7 @@ namespace Core.UseCases
             var user = GetLoggedInUser(request.LoginName, request.Password);
 
             if (user == null)
-                throw new LoginException();
+                throw new LoginException("There was something wrong with your username or password. Please try again.");
             return new Result(user.UserName);
         }
 

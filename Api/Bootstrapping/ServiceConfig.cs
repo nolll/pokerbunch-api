@@ -104,6 +104,7 @@ namespace Api.Bootstrapping
             _services.AddSingleton<UserList>();
             _services.AddSingleton<EditUser>();
             _services.AddSingleton<AddUser>();
+            _services.AddSingleton<ChangePassword>();
 
             // Bunch
             _services.AddSingleton<GetBunchList>();

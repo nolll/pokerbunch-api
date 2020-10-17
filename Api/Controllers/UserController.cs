@@ -79,7 +79,7 @@ namespace Api.Controllers
         [ApiAuthorize]
         public OkModel ChangePassword([FromBody] ChangePasswordPostModel post)
         {
-            var request = new ChangePassword.Request(CurrentUserName, post.Password, post.OldPassword);
+            var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
             _changePassword.Execute(request);
             return new OkModel();
         }

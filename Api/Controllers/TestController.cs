@@ -29,14 +29,14 @@ namespace Api.Controllers
         [HttpGet]
         public void AccessDeniedException()
         {
-            throw new LoginException();
+            throw new AccessDeniedException("access denied");
         }
 
         [Route("test/auth")]
         [HttpGet]
         public void AuthException()
         {
-            throw new AuthException();
+            throw new AuthException("auth error");
         }
 
         [Route("test/validation")]

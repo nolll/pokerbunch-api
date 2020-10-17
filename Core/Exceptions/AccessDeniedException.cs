@@ -6,7 +6,7 @@ namespace Core.Exceptions
         {
         }
 
-        protected AccessDeniedException(string message) : base(message)
+        public AccessDeniedException(string message) : base(message)
         {
         }
     }
