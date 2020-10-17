@@ -24,6 +24,7 @@ namespace Api.Controllers
         private readonly AddUser _addUser;
         private readonly Login _login;
         private readonly ChangePassword _changePassword;
+        private readonly ResetPassword _resetPassword;
 
         public UserController(
             AppSettings appSettings, 
@@ -33,7 +34,8 @@ namespace Api.Controllers
             EditUser editUser,
             AddUser addUser,
             Login login,
-            ChangePassword changePassword) 
+            ChangePassword changePassword,
+            ResetPassword resetPassword) 
             : base(appSettings)
         {
             _urls = urls;
@@ -43,8 +45,12 @@ namespace Api.Controllers
             _addUser = addUser;
             _login = login;
             _changePassword = changePassword;
+            _resetPassword = resetPassword;
         }
 
+        /// <summary>
+        /// Get user.
+        /// </summary>
         [Route(ApiRoutes.User.Get)]
         [HttpGet]
         [ApiAuthorize]
@@ -54,6 +60,9 @@ namespace Api.Controllers
             return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
         }
 
+        /// <summary>
+        /// List users.
+        /// </summary>
         [Route(ApiRoutes.User.List)]
         [HttpGet]
         [ApiAuthorize]
@@ -63,6 +72,9 @@ namespace Api.Controllers
             return new UserListModel(userListResult, _urls);
         }
 
+        /// <summary>
+        /// Update user.
+        /// </summary>
         [Route(ApiRoutes.User.Get)]
         [HttpPut]
         [ApiAuthorize]
@@ -74,7 +86,10 @@ namespace Api.Controllers
             return new FullUserModel(userDetails);
         }
 
-        [Route(ApiRoutes.Profile.PasswordChange)]
+        /// <summary>
+        /// Change password.
+        /// </summary>
+        [Route(ApiRoutes.Profile.Password)]
         [HttpPut]
         [ApiAuthorize]
         public OkModel ChangePassword([FromBody] ChangePasswordPostModel post)
@@ -84,6 +99,21 @@ namespace Api.Controllers
             return new OkModel();
         }
 
+        /// <summary>
+        /// Reset password.
+        /// </summary>
+        [Route(ApiRoutes.Profile.Password)]
+        [HttpPost]
+        public OkModel ResetPassword([FromBody] ResetPasswordPostModel post)
+        {
+            var request = new ResetPassword.Request(CurrentUserName, post.Email);
+            _resetPassword.Execute(request);
+            return new OkModel();
+        }
+
+        /// <summary>
+        /// Add user.
+        /// </summary>
         [Route(ApiRoutes.User.List)]
         [HttpPost]
         public OkModel Add([FromBody] AddUserPostModel post)

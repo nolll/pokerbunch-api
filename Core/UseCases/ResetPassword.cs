@@ -6,13 +6,13 @@ using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases
 {
-    public class ForgotPassword
+    public class ResetPassword
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmailSender _emailSender;
         private readonly IRandomizer _randomizer;
 
-        public ForgotPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
+        public ResetPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
@@ -38,7 +38,7 @@ namespace Core.UseCases
 
             _userRepository.Update(user);
             
-            var message = new ForgotPasswordMessage(password, request.LoginUrl);
+            var message = new ResetPasswordMessage(password, request.LoginUrl);
             _emailSender.Send(request.Email, message);
         }
 
@@ -56,12 +56,12 @@ namespace Core.UseCases
             }
         }
 
-        private class ForgotPasswordMessage : IMessage
+        private class ResetPasswordMessage : IMessage
         {
             private readonly string _password;
             private readonly string _loginUrl;
 
-            public ForgotPasswordMessage(string password, string loginUrl)
+            public ResetPasswordMessage(string password, string loginUrl)
             {
                 _password = password;
                 _loginUrl = loginUrl;

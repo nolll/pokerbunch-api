@@ -6,14 +6,14 @@ using Tests.Common;
 
 namespace Tests.Core.UseCases
 {
-    class ForgotPasswordTests : TestBase
+    class ResetPasswordTests : TestBase
     {
         private const string ValidEmail = TestData.UserEmailA;
         private const string InvalidEmail = "";
         private const string NonExistingEmail = "a@b.com";
 
         [Test]
-        public void ForgotPassword_WithInvalidEmail_ValidationExceptionIsThrown()
+        public void ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
         {
             var request = CreateRequest(InvalidEmail);
 
@@ -22,13 +22,13 @@ namespace Tests.Core.UseCases
         }
 
         [Test]
-        public void ForgotPassword_UserNotFound_ThrowsException()
+        public void ResetPassword_UserNotFound_ThrowsException()
         {
             Assert.Throws<UserNotFoundException>(() => Sut.Execute(CreateRequest(NonExistingEmail)));
         }
 
         [Test]
-        public void ForgotPassword_SendsPasswordEmail()
+        public void ResetPassword_SendsPasswordEmail()
         {
             const string subject = "Poker Bunch Password Recovery";
             const string body = @"Here is your new password for Poker Bunch:
@@ -43,7 +43,7 @@ Please sign in here: loginUrl";
         }
 
         [Test]
-        public void ForgotPassword_SavesUserWithNewPassword()
+        public void ResetPassword_SavesUserWithNewPassword()
         {
             Sut.Execute(CreateRequest());
 
@@ -52,12 +52,12 @@ Please sign in here: loginUrl";
             Assert.AreEqual("aaaaaaaaaa", savedUser.Salt);
         }
 
-        private ForgotPassword.Request CreateRequest(string email = ValidEmail)
+        private ResetPassword.Request CreateRequest(string email = ValidEmail)
         {
-            return new ForgotPassword.Request(email, "loginUrl");
+            return new ResetPassword.Request(email, "loginUrl");
         }
 
-        private ForgotPassword Sut => new ForgotPassword(
+        private ResetPassword Sut => new ResetPassword(
             Deps.User,
             Deps.EmailSender,
             Deps.Randomizer);

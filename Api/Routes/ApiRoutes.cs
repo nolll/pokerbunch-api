@@ -60,8 +60,7 @@ namespace Api.Routes
         public static class Profile
         {
             public const string Get = "user";
-            public const string PasswordChange = "user/password/change";
-            public const string PasswordReset = "user/password/reset";
+            public const string Password = "user/password";
         }
 
         public static class Token
