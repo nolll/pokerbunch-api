@@ -87,6 +87,7 @@ namespace Api.Bootstrapping
             _services.AddSingleton<IEventRepository, EventRepository>();
             _services.AddSingleton<ILocationRepository, LocationRepository>();
             _services.AddSingleton<IPlayerRepository, PlayerRepository>();
+            _services.AddSingleton<ITimezoneRepository, TimezoneRepository>();
             _services.AddSingleton(GetEmailSender());
             _services.AddSingleton(new SqlServerStorageProvider(_settings.Sql.ConnectionString));
             _services.AddSingleton<IRandomizer, Randomizer>();
