@@ -97,6 +97,9 @@ namespace Api.Bootstrapping
             _services.AddSingleton<TestEmail>();
             _services.AddSingleton<EnsureAdmin>();
 
+            // Misc
+            _services.AddSingleton<GetTimezoneList>();
+
             // Auth
             _services.AddSingleton<Login>();
 

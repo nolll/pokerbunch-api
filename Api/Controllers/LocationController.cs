@@ -7,27 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-    public class TimezoneController : BaseController
-    {
-        private readonly GetTimezoneList _getTimezoneList;
-
-        public TimezoneController(
-            AppSettings appSettings,
-            GetTimezoneList getTimezoneList)
-            : base(appSettings)
-        {
-            _getTimezoneList = getTimezoneList;
-        }
-
-        [Route(ApiRoutes.Location.ListByBunch)]
-        [HttpGet]
-        public TimezoneListModel GetList(string bunchId)
-        {
-            var timezoneListResult = _getTimezoneList.Execute();
-            return new TimezoneListModel(timezoneListResult);
-        }
-    }
-
     public class LocationController : BaseController
     {
         private readonly GetLocation _getLocation;

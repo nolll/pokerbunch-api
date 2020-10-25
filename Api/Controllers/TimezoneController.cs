@@ -18,9 +18,9 @@ namespace Api.Controllers
             _getTimezoneList = getTimezoneList;
         }
 
-        [Route(ApiRoutes.Location.ListByBunch)]
+        [Route(ApiRoutes.Misc.Timezones)]
         [HttpGet]
-        public TimezoneListModel GetList(string bunchId)
+        public TimezoneListModel GetList()
         {
             var timezoneListResult = _getTimezoneList.Execute();
             return new TimezoneListModel(timezoneListResult);

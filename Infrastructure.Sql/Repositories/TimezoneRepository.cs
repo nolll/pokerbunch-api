@@ -10,7 +10,8 @@ namespace Infrastructure.Sql.Repositories
     {
         public IList<Timezone> List()
         {
-            return TimeZoneInfo.GetSystemTimeZones().Select(o => new Timezone(o.Id, o.DisplayName)).ToList();
+            var timezones = TimeZoneInfo.GetSystemTimeZones();
+            return timezones.Select(o => new Timezone(o.Id, o.DisplayName)).ToList();
         }
     }
 }
