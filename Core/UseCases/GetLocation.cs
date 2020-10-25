@@ -1,8 +1,49 @@
+using System.Collections.Generic;
+using System.Linq;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases
 {
+    public class GetTimezoneList
+    {
+        private readonly ITimezoneRepository _timezoneRepository;
+
+        public GetTimezoneList(ITimezoneRepository timezoneRepository)
+        {
+            _timezoneRepository = timezoneRepository;
+        }
+
+        public Result Execute()
+        {
+            var timezones = _timezoneRepository.List().Select(o => new Timezone(o.Id, o.Name)).ToList();
+
+            return new Result(timezones);
+        }
+
+        public class Result
+        {
+            public IList<Timezone> Timezones { get; }
+
+            public Result(IList<Timezone> timezones)
+            {
+                Timezones = timezones;
+            }
+        }
+
+        public class Timezone
+        {
+            public string Id { get; }
+            public string Name { get; }
+
+            public Timezone(string id, string name)
+            {
+                Id = id;
+                Name = name;
+            }
+        }
+    }
+
     public class GetLocation
     {
         private readonly ILocationRepository _locationRepository;

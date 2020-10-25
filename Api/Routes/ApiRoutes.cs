@@ -1,14 +1,5 @@
 namespace Api.Routes
 {
-    public static class SiteRoutes
-    {
-        public const string AddUser = "user/add";
-        public const string JoinBunch = "bunch/join/{bunchId}";
-        public const string JoinBunchWithCode = "bunch/join/{bunchId}/{code}";
-        public const string ApiDocs = "apidocs";
-        public const string Login = "auth/login";
-    }
-
     public static class ApiRoutes
     {
         public const string Root = "";
@@ -58,6 +49,11 @@ namespace Api.Routes
         {
             public const string Get = "locations/{locationId}";
             public const string ListByBunch = "bunches/{bunchId}/locations";
+        }
+
+        public static class Misc
+        {
+            public const string Timezones = "misc/timezones";
         }
 
         public static class Player
