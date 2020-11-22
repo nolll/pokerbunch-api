@@ -46,7 +46,7 @@ namespace Core.UseCases
             var bunch = CreateBunch(request);
             var id = _bunchRepository.Add(bunch);
             var user = _userRepository.Get(request.UserName);
-            var player = Player.New(id, user.Id, Role.Manager);
+            var player = Player.New(id, user.Id, user.UserName, Role.Manager);
             var playerId = _playerRepository.Add(player);
             var createdPlayer = _playerRepository.Get(playerId);
 

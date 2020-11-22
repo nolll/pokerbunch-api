@@ -63,6 +63,7 @@ namespace Core.UseCases
             public int Id { get; }
             public string Color { get; }
             public string UserId { get; }
+            public string UserName { get; }
 
             public ResultItem(Player player)
             {
@@ -70,6 +71,7 @@ namespace Core.UseCases
                 Id = player.Id;
                 Color = player.Color;
                 UserId = player.IsUser ? player.UserId.ToString() : null;
+                UserName = player.IsUser ? player.UserName.ToString() : null;
             }
         }
     }

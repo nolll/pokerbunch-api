@@ -8,6 +8,7 @@ namespace Tests.Core.TestClasses
             int bunchId = 0, 
             int id = 0, 
             int userId = 0, 
+            string userName = null,
             string displayName = null, 
             Role role = Role.Player, 
             string color = null)
@@ -15,6 +16,7 @@ namespace Tests.Core.TestClasses
                 bunchId, 
                 id, 
                 userId, 
+                userName,
                 displayName, 
                 role, 
                 color)

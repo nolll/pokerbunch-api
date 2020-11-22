@@ -21,7 +21,7 @@ namespace Tests.Core.UseCases.GetBunchTests
         protected override void Setup()
         {
             var bunch = new Bunch(BunchId, Slug, DisplayName, Description, HouseRules);
-            var player = new Player(BunchId, PlayerId, UserId, role: Role);
+            var player = new Player(BunchId, PlayerId, UserId, UserName, role: Role);
             var user = new User(UserId, UserName);
 
             Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(bunch);

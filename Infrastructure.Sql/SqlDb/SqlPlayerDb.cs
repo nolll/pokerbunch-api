@@ -136,6 +136,7 @@ namespace Infrastructure.Sql.SqlDb
                 rawPlayer.BunchId,
                 rawPlayer.Id,
                 rawPlayer.UserId,
+                rawPlayer.UserName,
                 rawPlayer.DisplayName,
                 (Role)rawPlayer.Role,
                 rawPlayer.Color);
@@ -147,6 +148,7 @@ namespace Infrastructure.Sql.SqlDb
                 reader.GetIntValue("HomegameID"),
                 reader.GetIntValue("PlayerID"),
                 reader.GetIntValue("UserID"),
+                reader.GetStringValue("UserName"),
                 reader.GetStringValue("PlayerName"),
                 reader.GetIntValue("RoleID"),
                 reader.GetStringValue("Color"));

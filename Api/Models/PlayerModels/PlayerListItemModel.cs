@@ -15,6 +15,9 @@ namespace Api.Models.PlayerModels
         [DataMember(Name = "userId")]
         public string UserId { get; }
 
+        [DataMember(Name = "userName")]
+        public string UserName { get; }
+
         [DataMember(Name = "color")]
         public string Color { get; }
 
@@ -24,6 +27,7 @@ namespace Api.Models.PlayerModels
             Name = r.Name;
             Color = r.Color;
             UserId = r.UserId;
+            UserName = r.UserName;
         }
     }
 }

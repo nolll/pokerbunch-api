@@ -67,10 +67,10 @@ namespace Tests.Common
         public static readonly Bunch BunchA = new Bunch(BunchIdA, SlugA, BunchNameA, DescriptionA, HouseRulesA, TimeZoneUtc, DefaultBuyinA, Currency.Default);
         public static readonly Bunch BunchB = new Bunch(BunchIdB, SlugB, BunchNameB, DescriptionB, HouseRulesB, TimeZoneLocal, DefaultBuyinB, Currency.Default);
 
-        public static readonly Player PlayerA = new Player(BunchIdA, PlayerIdA, UserIdA, PlayerNameA, Role.Player, "#9e9e9e");
-        public static readonly Player PlayerB = new Player(BunchIdA, PlayerIdB, UserIdB, PlayerNameB, Role.Player, "#9e9e9e");
-        public static readonly Player PlayerC = new Player(BunchIdA, PlayerIdC, UserIdC, PlayerNameC, Role.Manager, "#9e9e9e");
-        public static readonly Player PlayerD = new Player(BunchIdA, PlayerIdD, UserIdNone, PlayerNameD, Role.Player, "#9e9e9e");
+        public static readonly Player PlayerA = new Player(BunchIdA, PlayerIdA, UserIdA, UserNameA, PlayerNameA, Role.Player, "#9e9e9e");
+        public static readonly Player PlayerB = new Player(BunchIdA, PlayerIdB, UserIdB, UserNameB, PlayerNameB, Role.Player, "#9e9e9e");
+        public static readonly Player PlayerC = new Player(BunchIdA, PlayerIdC, UserIdC, UserNameC, PlayerNameC, Role.Manager, "#9e9e9e");
+        public static readonly Player PlayerD = new Player(BunchIdA, PlayerIdD, UserIdNone, default, PlayerNameD, Role.Player, "#9e9e9e");
         public static readonly Player ManagerPlayer = PlayerC;
 
         public const int BuyinCheckpointId = 1;

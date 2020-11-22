@@ -29,7 +29,7 @@ namespace Tests.Core.UseCases.CashoutTests
         protected override void Setup()
         {
             var cashgame = CreateCashgame();
-            var player = new Player(BunchId, PlayerId, UserId);
+            var player = new Player(BunchId, PlayerId, UserId, UserName);
             var user = new User(UserId, UserName);
 
             CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
