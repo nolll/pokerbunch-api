@@ -12,17 +12,8 @@ namespace Api.Models.PlayerModels
         [DataMember(Name = "name")]
         public string Name { get; }
 
-        //[DataMember(Name = "canDelete")]
-        //public bool CanDelete { get; }
-
-        //[DataMember(Name = "isUser")]
-        //public bool IsUser { get; }
-
-        //[DataMember(Name = "userName")]
-        //public string UserName { get; }
-
-        //[DataMember(Name = "avatarUrl")]
-        //public string AvatarUrl { get; }
+        [DataMember(Name = "userId")]
+        public string UserId { get; }
 
         [DataMember(Name = "color")]
         public string Color { get; }
@@ -32,6 +23,7 @@ namespace Api.Models.PlayerModels
             Id = r.Id;
             Name = r.Name;
             Color = r.Color;
+            UserId = r.UserId;
         }
     }
 }

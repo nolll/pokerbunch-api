@@ -45,9 +45,9 @@ namespace Core.UseCases
 
         public class Result
         {
-            public IList<ResultItem> Players { get; private set; }
-            public bool CanAddPlayer { get; private set; }
-            public string Slug { get; private set; }
+            public IList<ResultItem> Players { get; }
+            public bool CanAddPlayer { get; }
+            public string Slug { get; }
 
             public Result(Bunch bunch, IEnumerable<Player> players, bool isManager)
             {
@@ -62,12 +62,14 @@ namespace Core.UseCases
             public string Name { get; }
             public int Id { get; }
             public string Color { get; }
+            public string UserId { get; }
 
             public ResultItem(Player player)
             {
                 Name = player.DisplayName;
                 Id = player.Id;
                 Color = player.Color;
+                UserId = player.IsUser ? player.UserId.ToString() : null;
             }
         }
     }
