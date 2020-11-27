@@ -1,8 +1,10 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Api.Auth;
+using Api.Extensions;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Api.Routes;
@@ -12,6 +14,7 @@ using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Api.Controllers
 {
@@ -143,12 +146,47 @@ namespace Api.Controllers
         /// <param name="password" format="password">Password</param>
         /// <returns>A token that can be used for authentication</returns>
         [AllowAnonymous]
-        [HttpPost("token")]
-        public IActionResult Authenticate([FromForm]string userName, [FromForm] string password)
+        [HttpPost]
+        [Route(ApiRoutes.Token.Get)]
+        public IActionResult Authenticate([FromForm] string userName, [FromForm] string password)
         {
-            var result = _login.Execute(new Login.Request(userName, password));
+            var post = GetLoginPostModel(userName, password);
+            var result = _login.Execute(new Login.Request(post.UserName, post.Password));
             var token = CreateToken(result.UserName);
             return Ok(token);
+        }
+
+        private LoginPostModel GetLoginPostModel(string userName, string password)
+        {
+            var fromForm = GetLoginPostModelFromForm(userName, password);
+            if (fromForm != null)
+                return fromForm;
+
+            var fromBody = GetLoginPostModelFromJsonBody();
+            if (fromBody != null)
+                return fromBody;
+
+            return new LoginPostModel();
+        }
+
+        private LoginPostModel GetLoginPostModelFromForm(string userName, string password)
+        {
+            if (userName == null || password == null)
+                return null;
+
+            return new LoginPostModel
+            {
+                UserName = userName,
+                Password = password
+            };
+        }
+
+        private LoginPostModel GetLoginPostModelFromJsonBody()
+        {
+            var body = Request.BodyAsString();
+            return !string.IsNullOrEmpty(body)
+                ? JsonConvert.DeserializeObject<LoginPostModel>(body) 
+                : null;
         }
 
         private string CreateToken(string userName)
