@@ -166,8 +166,7 @@ namespace Api.Bootstrapping
                 .AddMvc(options =>
                 {
                     options.EnableEndpointRouting = false;
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
         }
 
         private void AddCors()
