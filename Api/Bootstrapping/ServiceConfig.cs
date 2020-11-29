@@ -162,18 +162,23 @@ namespace Api.Bootstrapping
 
         private void AddMvc()
         {
-            _services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            _services
+                .AddMvc(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         private void AddCors()
         {
             _services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
+                options.AddPolicy("CorsPolicy", builder => builder
+                    .SetIsOriginAllowed(_ => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             });
         }
 

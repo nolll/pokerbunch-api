@@ -19,3 +19,4 @@ Web/Assets
 **/*.Debug.config
 **/Local.config
 **/appsettings.Development.json
+*.user

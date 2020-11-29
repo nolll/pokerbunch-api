@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.CommonModels;
@@ -148,21 +149,21 @@ namespace Api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route(ApiRoutes.Token.Get)]
-        public IActionResult Authenticate([FromForm] string userName, [FromForm] string password)
+        public async Task<IActionResult> Authenticate([FromForm] string userName, [FromForm] string password)
         {
-            var post = GetLoginPostModel(userName, password);
+            var post = await GetLoginPostModel(userName, password);
             var result = _login.Execute(new Login.Request(post.UserName, post.Password));
             var token = CreateToken(result.UserName);
             return Ok(token);
         }
 
-        private LoginPostModel GetLoginPostModel(string userName, string password)
+        private async Task<LoginPostModel> GetLoginPostModel(string userName, string password)
         {
             var fromForm = GetLoginPostModelFromForm(userName, password);
             if (fromForm != null)
                 return fromForm;
 
-            var fromBody = GetLoginPostModelFromJsonBody();
+            var fromBody = await GetLoginPostModelFromJsonBody();
             if (fromBody != null)
                 return fromBody;
 
@@ -181,9 +182,9 @@ namespace Api.Controllers
             };
         }
 
-        private LoginPostModel GetLoginPostModelFromJsonBody()
+        private async Task<LoginPostModel> GetLoginPostModelFromJsonBody()
         {
-            var body = Request.BodyAsString();
+            var body = await Request.BodyAsString();
             return !string.IsNullOrEmpty(body)
                 ? JsonConvert.DeserializeObject<LoginPostModel>(body) 
                 : null;
