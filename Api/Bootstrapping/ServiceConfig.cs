@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Api.Bootstrapping
@@ -221,7 +222,7 @@ namespace Api.Bootstrapping
                 var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
                 var xmlFile = $"{assemblyName}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.SwaggerDoc("v1", new Info { Title = "Poker Bunch Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Poker Bunch Api", Version = "v1" });
                 c.IncludeXmlComments(xmlPath);
                 c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
             });

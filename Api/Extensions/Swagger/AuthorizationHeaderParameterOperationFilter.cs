@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -8,7 +9,7 @@ namespace Api.Extensions.Swagger
 {
     public class AuthorizationHeaderParameterOperationFilter : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
             var isAuthorized = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is AuthorizeFilter);
@@ -17,15 +18,14 @@ namespace Api.Extensions.Swagger
             if (isAuthorized && !allowAnonymous)
             {
                 if (operation.Parameters == null)
-                    operation.Parameters = new List<IParameter>();
+                    operation.Parameters = new List<OpenApiParameter>();
 
-                operation.Parameters.Add(new NonBodyParameter
+                operation.Parameters.Add(new OpenApiParameter
                 {
                     Name = "Authorization",
-                    In = "header",
+                    In = ParameterLocation.Header,
                     Description = "access token",
                     Required = true,
-                    Type = "string"
                 });
             }
         }
