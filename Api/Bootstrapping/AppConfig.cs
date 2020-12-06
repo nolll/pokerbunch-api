@@ -24,7 +24,6 @@ namespace Api.Bootstrapping
 
         public void Configure()
         {
-            ConfigureCors();
             ConfigureCompression();
             ConfigureHttps();
             ConfigureCustomHeaders();
@@ -32,11 +31,6 @@ namespace Api.Bootstrapping
             ConfigureSwagger();
             ConfigureAuth();
             ConfigureMvc();
-        }
-
-        private void ConfigureCors()
-        {
-            _app.UseCors("CorsPolicy");
         }
 
         private void ConfigureCompression()

@@ -44,7 +44,6 @@ namespace Api.Bootstrapping
             AddLogging();
             AddDependencies();
             AddMvc();
-            AddCors();
             AddAuthorization();
             AddAuthentication();
             AddSwagger();
@@ -167,18 +166,6 @@ namespace Api.Bootstrapping
                 {
                     options.EnableEndpointRouting = false;
                 });
-        }
-
-        private void AddCors()
-        {
-            _services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", builder => builder
-                    .SetIsOriginAllowed(_ => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
         }
 
         private void AddAuthentication()

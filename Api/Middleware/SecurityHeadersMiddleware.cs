@@ -30,6 +30,7 @@ namespace Api.Middleware
             httpContext.AddHeader("X-Frame-Options", "DENY");
             httpContext.AddHeader("X-XSS-Protection", "1; mode=block");
             httpContext.AddHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
+            httpContext.AddHeader("Access-Control-Allow-Origin", "*");
         }
 
         private static void SetCspSecurityHeaders(HttpContext httpContext)

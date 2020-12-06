@@ -2,7 +2,7 @@
 
 namespace Api.Extensions
 {
-    public static class ResponseExtensions
+    public static class HeaderExtensions
     {
         public static void AddHeader(this HttpContext httpContext, string header, string value)
         {
