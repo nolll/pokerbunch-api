@@ -1,4 +1,4 @@
-﻿using Api.Middlewares;
+﻿using Api.Middleware;
 using Api.Routes;
 using Api.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -27,10 +27,16 @@ namespace Api.Bootstrapping
             ConfigureCors();
             ConfigureCompression();
             ConfigureHttps();
+            ConfigureCustomHeaders();
             ConfigureErrors();
             ConfigureSwagger();
             ConfigureAuth();
             ConfigureMvc();
+        }
+
+        private void ConfigureCors()
+        {
+            _app.UseCors("CorsPolicy");
         }
 
         private void ConfigureCompression()
@@ -47,25 +53,9 @@ namespace Api.Bootstrapping
             }
         }
 
-        private void ConfigureSwagger()
+        private void ConfigureCustomHeaders()
         {
-            _app.UseSwagger();
-            _app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
-        }
-
-        private void ConfigureCors()
-        {
-            _app.UseCors("CorsPolicy");
-        }
-
-        private void ConfigureAuth()
-        {
-            _app.UseAuthentication();
-        }
-
-        private void ConfigureMvc()
-        {
-            _app.UseMvc();
+            _app.UseMiddleware<SecurityHeadersMiddleware>();
         }
 
         private void ConfigureErrors()
@@ -83,5 +73,21 @@ namespace Api.Bootstrapping
             }
 
         }
+
+        private void ConfigureSwagger()
+        {
+            _app.UseSwagger();
+            _app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+        }
+
+        private void ConfigureAuth()
+        {
+            _app.UseAuthentication();
+        }
+
+        private void ConfigureMvc()
+        {
+            _app.UseMvc();
+        }
     }
-}
+    }

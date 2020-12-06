@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Core.Exceptions;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Middlewares
+namespace Api.Middleware
 {
+    [UsedImplicitly]
     public class ExceptionLoggingMiddleware
     {
         private readonly ILogger<ExceptionLoggingMiddleware> _logger;
