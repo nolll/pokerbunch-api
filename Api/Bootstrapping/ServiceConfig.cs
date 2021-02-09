@@ -69,7 +69,7 @@ namespace Api.Bootstrapping
                 if (_settings.Logging.Loggers.Console)
                     logging.AddConsole();
 
-                logging.SetMinimumLevel(_settings.Logging.LogLevel);
+                logging.SetMinimumLevel(_settings.Logging.LogLevel.Default);
             });
         }
 
