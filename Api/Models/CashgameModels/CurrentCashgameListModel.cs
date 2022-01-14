@@ -4,14 +4,13 @@ using System.Runtime.Serialization;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
 
-namespace Api.Models.CashgameModels
+namespace Api.Models.CashgameModels;
+
+[CollectionDataContract(Namespace = "", Name = "cashgames", ItemName = "cashgame")]
+public class CurrentCashgameListModel : List<ApiCurrentGame>
 {
-    [CollectionDataContract(Namespace = "", Name = "cashgames", ItemName = "cashgame")]
-    public class CurrentCashgameListModel : List<ApiCurrentGame>
+    public CurrentCashgameListModel(CurrentCashgames.Result listResult, UrlProvider urls)
     {
-        public CurrentCashgameListModel(CurrentCashgames.Result listResult, UrlProvider urls)
-        {
-            AddRange(listResult.Games.Select(o => new ApiCurrentGame(o, urls)).ToList());
-        }
+        AddRange(listResult.Games.Select(o => new ApiCurrentGame(o, urls)).ToList());
     }
 }

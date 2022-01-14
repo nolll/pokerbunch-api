@@ -4,87 +4,86 @@ using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
 
-namespace Core.UseCases
+namespace Core.UseCases;
+
+public class ResetPassword
 {
-    public class ResetPassword
+    private readonly IUserRepository _userRepository;
+    private readonly IEmailSender _emailSender;
+    private readonly IRandomizer _randomizer;
+
+    public ResetPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IEmailSender _emailSender;
-        private readonly IRandomizer _randomizer;
+        _userRepository = userRepository;
+        _emailSender = emailSender;
+        _randomizer = randomizer;
+    }
 
-        public ResetPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
-        {
-            _userRepository = userRepository;
-            _emailSender = emailSender;
-            _randomizer = randomizer;
-        }
+    public void Execute(Request request)
+    {
+        var validator = new Validator(request);
 
-        public void Execute(Request request)
-        {
-            var validator = new Validator(request);
+        if (!validator.IsValid)
+            throw new ValidationException(validator);
 
-            if (!validator.IsValid)
-                throw new ValidationException(validator);
+        var user = _userRepository.Get(request.Email);
+        if(user == null)
+            throw new UserNotFoundException(request.Email);
 
-            var user = _userRepository.Get(request.Email);
-            if(user == null)
-                throw new UserNotFoundException(request.Email);
+        var password = PasswordService.CreatePassword(_randomizer.GetAllowedChars());
+        var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
+        var encryptedPassword = EncryptionService.Encrypt(password, salt);
 
-            var password = PasswordService.CreatePassword(_randomizer.GetAllowedChars());
-            var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
-            var encryptedPassword = EncryptionService.Encrypt(password, salt);
+        user.SetPassword(encryptedPassword, salt);
 
-            user.SetPassword(encryptedPassword, salt);
-
-            _userRepository.Update(user);
+        _userRepository.Update(user);
             
-            var message = new ResetPasswordMessage(password, request.LoginUrl);
-            _emailSender.Send(request.Email, message);
+        var message = new ResetPasswordMessage(password, request.LoginUrl);
+        _emailSender.Send(request.Email, message);
+    }
+
+    public class Request
+    {
+        [Required(ErrorMessage = "Email can't be empty")]
+        [EmailAddress(ErrorMessage = "The email address is not valid")]
+        public string Email { get; }
+        public string LoginUrl { get; }
+
+        public Request(string email, string loginUrl)
+        {
+            Email = email;
+            LoginUrl = loginUrl;
+        }
+    }
+
+    private class ResetPasswordMessage : IMessage
+    {
+        private readonly string _password;
+        private readonly string _loginUrl;
+
+        public ResetPasswordMessage(string password, string loginUrl)
+        {
+            _password = password;
+            _loginUrl = loginUrl;
         }
 
-        public class Request
+        public string Subject
         {
-            [Required(ErrorMessage = "Email can't be empty")]
-            [EmailAddress(ErrorMessage = "The email address is not valid")]
-            public string Email { get; }
-            public string LoginUrl { get; }
+            get { return "Poker Bunch Password Recovery"; }
+        }
 
-            public Request(string email, string loginUrl)
+        public string Body
+        {
+            get
             {
-                Email = email;
-                LoginUrl = loginUrl;
+                return string.Format(BodyFormat, _password, _loginUrl);
             }
         }
 
-        private class ResetPasswordMessage : IMessage
-        {
-            private readonly string _password;
-            private readonly string _loginUrl;
-
-            public ResetPasswordMessage(string password, string loginUrl)
-            {
-                _password = password;
-                _loginUrl = loginUrl;
-            }
-
-            public string Subject
-            {
-                get { return "Poker Bunch Password Recovery"; }
-            }
-
-            public string Body
-            {
-                get
-                {
-                    return string.Format(BodyFormat, _password, _loginUrl);
-                }
-            }
-
-            private const string BodyFormat =
-@"Here is your new password for Poker Bunch:
+        private const string BodyFormat =
+            @"Here is your new password for Poker Bunch:
 {0}
 
 Please sign in here: {1}";
-        }
     }
 }

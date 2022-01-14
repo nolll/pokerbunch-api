@@ -1,13 +1,12 @@
 using System;
 using System.Runtime.Caching;
 
-namespace Infrastructure.Cache
+namespace Infrastructure.Cache;
+
+public class SlidingExpirationPolicy : CacheItemPolicy
 {
-    public class SlidingExpirationPolicy : CacheItemPolicy
+    public SlidingExpirationPolicy(TimeSpan timeSpan)
     {
-        public SlidingExpirationPolicy(TimeSpan timeSpan)
-        {
-            SlidingExpiration = timeSpan;
-        }
+        SlidingExpiration = timeSpan;
     }
 }

@@ -1,13 +1,12 @@
-namespace Core.Exceptions
-{
-    public class AccessDeniedException : PokerBunchException
-    {
-        public AccessDeniedException()
-        {
-        }
+namespace Core.Exceptions;
 
-        public AccessDeniedException(string message) : base(message)
-        {
-        }
+public class AccessDeniedException : PokerBunchException
+{
+    public AccessDeniedException()
+    {
+    }
+
+    public AccessDeniedException(string message) : base(message)
+    {
     }
 }

@@ -4,125 +4,124 @@ using System.Linq;
 using Core.Entities;
 using Core.Services;
 
-namespace Core.Cache
+namespace Core.Cache;
+
+public class CacheContainer : ICacheContainer
 {
-    public class CacheContainer : ICacheContainer
+    private readonly ICacheProvider _cacheProvider;
+
+    public CacheContainer(ICacheProvider cacheProvider)
     {
-        private readonly ICacheProvider _cacheProvider;
+        _cacheProvider = cacheProvider;
+    }
 
-        public CacheContainer(ICacheProvider cacheProvider)
+    public void Remove<T>(int id)
+    {
+        Remove(CacheKeyProvider.GetKey<T>(id));
+    }
+
+    public void ClearAll()
+    {
+        _cacheProvider.ClearAll();
+    }
+
+    public T GetAndStore<T>(Func<T> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
+    {
+        var foundInCache = TryGet(cacheKey, out T cachedObject);
+
+        if (foundInCache)
         {
-            _cacheProvider = cacheProvider;
-        }
-
-        public void Remove<T>(int id)
-        {
-            Remove(CacheKeyProvider.GetKey<T>(id));
-        }
-
-        public void ClearAll()
-        {
-            _cacheProvider.ClearAll();
-        }
-
-        public T GetAndStore<T>(Func<T> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
-        {
-            var foundInCache = TryGet(cacheKey, out T cachedObject);
-
-            if (foundInCache)
-            {
-                return cachedObject;
-            }
-            cachedObject = sourceExpression();
-            if (cachedObject != null)
-            {
-                Insert(cacheKey, cachedObject, cacheTime);
-            }
             return cachedObject;
         }
+        cachedObject = sourceExpression();
+        if (cachedObject != null)
+        {
+            Insert(cacheKey, cachedObject, cacheTime);
+        }
+        return cachedObject;
+    }
 
-        public T GetAndStore<T>(Func<int, T> sourceExpression, int id, TimeSpan cacheTime) where T : class, IEntity
+    public T GetAndStore<T>(Func<int, T> sourceExpression, int id, TimeSpan cacheTime) where T : class, IEntity
+    {
+        var cacheKey = CacheKeyProvider.GetKey<T>(id);
+        var foundInCache = TryGet(cacheKey, out T cachedObject);
+
+        if (foundInCache)
+        {
+            return cachedObject;
+        }
+        cachedObject = sourceExpression(id);
+        if (cachedObject != null)
+        {
+            Insert(cacheKey, cachedObject, cacheTime);
+        }
+        return cachedObject;
+    }
+
+    public IList<T> GetAndStore<T>(Func<IList<int>, IList<T>> sourceExpression, IList<int> ids, TimeSpan cacheTime) where T : class, IEntity
+    {
+        var list = new List<T>();
+        var notInCache = new List<int>();
+        foreach (var id in ids)
         {
             var cacheKey = CacheKeyProvider.GetKey<T>(id);
             var foundInCache = TryGet(cacheKey, out T cachedObject);
-
             if (foundInCache)
+                list.Add(cachedObject);
+            else
             {
-                return cachedObject;
+                notInCache.Add(id);
             }
-            cachedObject = sourceExpression(id);
-            if (cachedObject != null)
-            {
-                Insert(cacheKey, cachedObject, cacheTime);
-            }
-            return cachedObject;
         }
-
-        public IList<T> GetAndStore<T>(Func<IList<int>, IList<T>> sourceExpression, IList<int> ids, TimeSpan cacheTime) where T : class, IEntity
+        if (notInCache.Any())
         {
-            var list = new List<T>();
-            var notInCache = new List<int>();
-            foreach (var id in ids)
+            var sourceItems = sourceExpression(notInCache);
+            foreach (var sourceItem in sourceItems)
             {
-                var cacheKey = CacheKeyProvider.GetKey<T>(id);
-                var foundInCache = TryGet(cacheKey, out T cachedObject);
-                if (foundInCache)
-                    list.Add(cachedObject);
-                else
+                if (sourceItem != null) //Om något id inte har hämtats så stoppar vi inte in det i vårt resultat eller i cachen.
                 {
-                    notInCache.Add(id);
+                    var cacheKey = CacheKeyProvider.GetKey<T>(sourceItem.Id);
+                    Insert(cacheKey, sourceItem, cacheTime);
                 }
             }
-            if (notInCache.Any())
-            {
-                var sourceItems = sourceExpression(notInCache);
-                foreach (var sourceItem in sourceItems)
-                {
-                    if (sourceItem != null) //Om något id inte har hämtats så stoppar vi inte in det i vårt resultat eller i cachen.
-                    {
-                        var cacheKey = CacheKeyProvider.GetKey<T>(sourceItem.Id);
-                        Insert(cacheKey, sourceItem, cacheTime);
-                    }
-                }
 
-                list = list.Concat(sourceItems.Where(o => o != null)).ToList();
-                return OrderItemsByIdList(ids, list);
-            }
-            return list;
+            list = list.Concat(sourceItems.Where(o => o != null)).ToList();
+            return OrderItemsByIdList(ids, list);
         }
+        return list;
+    }
 
-        private static IList<T> OrderItemsByIdList<T>(IEnumerable<int> ids, IEnumerable<T> list) where T : class, IEntity
+    private static IList<T> OrderItemsByIdList<T>(IEnumerable<int> ids, IEnumerable<T> list) where T : class, IEntity
+    {
+        var result = ids.Select(id => list.FirstOrDefault(i => i.Id == id)).ToList();
+        return result.Where(r => r != null).ToList();
+    }
+
+    private bool TryGet<T>(string key, out T value) where T : class
+    {
+        // Uncomment this row to temporarily disable cache in development
+        //value = null; return false;
+
+        var o = _cacheProvider.Get(key);
+
+        if (o == null)
         {
-            var result = ids.Select(id => list.FirstOrDefault(i => i.Id == id)).ToList();
-            return result.Where(r => r != null).ToList();
+            // A real null was found, this means that 'nothing is cached for this key
+            value = default(T);
+            return false;
         }
 
-        private bool TryGet<T>(string key, out T value) where T : class
-        {
-            // Uncomment this row to temporarily disable cache in development
-            //value = null; return false;
+        value = (T)o;
+        return true;
+    }
 
-            var o = _cacheProvider.Get(key);
+    private void Insert(string cacheKey, object objectToBeCached, TimeSpan cacheTime)
+    {
+        _cacheProvider.Put(cacheKey, objectToBeCached, cacheTime);
+    }
 
-            if (o == null)
-            {
-                // A real null was found, this means that 'nothing is cached for this key
-                value = default(T);
-                return false;
-            }
-
-            value = (T)o;
-            return true;
-        }
-
-        private void Insert(string cacheKey, object objectToBeCached, TimeSpan cacheTime)
-        {
-            _cacheProvider.Put(cacheKey, objectToBeCached, cacheTime);
-        }
-
-        public void Remove(string cacheKey)
-        {
-            _cacheProvider.Remove(cacheKey);
-        }
+    public void Remove(string cacheKey)
+    {
+        _cacheProvider.Remove(cacheKey);
     }
 }

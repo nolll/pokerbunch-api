@@ -1,10 +1,9 @@
-namespace Core.Exceptions
+namespace Core.Exceptions;
+
+public class AuthException : PokerBunchException
 {
-    public class AuthException : PokerBunchException
+    public AuthException(string message)
+        : base(message)
     {
-        public AuthException(string message)
-            : base(message)
-        {
-        }
     }
 }

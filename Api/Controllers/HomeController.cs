@@ -4,25 +4,24 @@ using Api.Settings;
 using Api.Urls.ApiUrls;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace Api.Controllers;
+
+public class HomeController : BaseController
 {
-    public class HomeController : BaseController
+    private readonly UrlProvider _urls;
+
+    public HomeController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
     {
-        private readonly UrlProvider _urls;
+        _urls = urls;
+    }
 
-        public HomeController(AppSettings appSettings, UrlProvider urls) : base(appSettings)
-        {
-            _urls = urls;
-        }
-
-        /// <summary>
-        /// The root of this api.
-        /// </summary>
-        [Route(ApiRoutes.Root)]
-        [HttpGet]
-        public HomeModel Home()
-        {
-            return new HomeModel(_urls);
-        }
+    /// <summary>
+    /// The root of this api.
+    /// </summary>
+    [Route(ApiRoutes.Root)]
+    [HttpGet]
+    public HomeModel Home()
+    {
+        return new HomeModel(_urls);
     }
 }

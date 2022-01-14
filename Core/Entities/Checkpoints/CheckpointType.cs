@@ -1,9 +1,8 @@
-namespace Core.Entities.Checkpoints
+namespace Core.Entities.Checkpoints;
+
+public enum CheckpointType
 {
-	public enum CheckpointType
-    {
-        Report = 0,
-		Buyin = 1,
-		Cashout = 2
-	}
+    Report = 0,
+    Buyin = 1,
+    Cashout = 2
 }

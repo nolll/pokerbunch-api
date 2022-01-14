@@ -3,33 +3,32 @@ using Api.Settings;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace Api.Controllers;
+
+[UsedImplicitly]
+public abstract class BaseController : Controller
 {
-    [UsedImplicitly]
-    public abstract class BaseController : Controller
+    protected AppSettings AppSettings { get; }
+
+    protected BaseController(AppSettings appSettings)
     {
-        protected AppSettings AppSettings { get; }
+        AppSettings = appSettings;
+    }
 
-        protected BaseController(AppSettings appSettings)
+    protected string CurrentUserName
+    {
+        get
         {
-            AppSettings = appSettings;
-        }
-
-        protected string CurrentUserName
-        {
-            get
-            {
-                if (User?.Identity == null)
-                    return null;
-                if (User.Identity.IsAuthenticated)
-                    return User.Identity.Name;
-                var env = new Environment(Request.Host.Host);
-                if (AppSettings.Auth.Override.Enabled && env.IsDevModeAdmin)
-                    return AppSettings.Auth.Override.AdminUserName;
-                if (AppSettings.Auth.Override.Enabled && env.IsDevModePlayer)
-                    return AppSettings.Auth.Override.PlayerUserName;
+            if (User?.Identity == null)
                 return null;
-            }
+            if (User.Identity.IsAuthenticated)
+                return User.Identity.Name;
+            var env = new Environment(Request.Host.Host);
+            if (AppSettings.Auth.Override.Enabled && env.IsDevModeAdmin)
+                return AppSettings.Auth.Override.AdminUserName;
+            if (AppSettings.Auth.Override.Enabled && env.IsDevModePlayer)
+                return AppSettings.Auth.Override.PlayerUserName;
+            return null;
         }
     }
 }

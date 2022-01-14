@@ -1,16 +1,15 @@
 using Core.Entities;
 using NUnit.Framework;
 
-namespace Tests.Core.UseCases.ClearCacheTests
-{
-    public class WithAdmin : Arrange
-    {
-        protected override Role Role => Role.Admin;
+namespace Tests.Core.UseCases.ClearCacheTests;
 
-        [Test]
-        public void NoException()
-        {
-            Execute();
-        }
+public class WithAdmin : Arrange
+{
+    protected override Role Role => Role.Admin;
+
+    [Test]
+    public void NoException()
+    {
+        Execute();
     }
 }

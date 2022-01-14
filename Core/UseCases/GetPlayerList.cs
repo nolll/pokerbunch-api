@@ -4,75 +4,74 @@ using Core.Entities;
 using Core.Repositories;
 using Core.Services;
 
-namespace Core.UseCases
+namespace Core.UseCases;
+
+public class GetPlayerList
 {
-    public class GetPlayerList
+    private readonly IBunchRepository _bunchRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IPlayerRepository _playerRepository;
+
+    public GetPlayerList(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
     {
-        private readonly IBunchRepository _bunchRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IPlayerRepository _playerRepository;
+        _bunchRepository = bunchRepository;
+        _userRepository = userRepository;
+        _playerRepository = playerRepository;
+    }
 
-        public GetPlayerList(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
+    public Result Execute(Request request)
+    {
+        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var user = _userRepository.Get(request.UserName);
+        var player = _playerRepository.Get(bunch.Id, user.Id);
+        RequireRole.Player(user, player);
+        var players = _playerRepository.List(bunch.Id);
+        var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
+
+        return new Result(bunch, players, isManager);
+    }
+
+    public class Request
+    {
+        public string UserName { get; }
+        public string Slug { get; }
+
+        public Request(string userName, string slug)
         {
-            _bunchRepository = bunchRepository;
-            _userRepository = userRepository;
-            _playerRepository = playerRepository;
+            UserName = userName;
+            Slug = slug;
         }
+    }
 
-        public Result Execute(Request request)
+    public class Result
+    {
+        public IList<ResultItem> Players { get; }
+        public bool CanAddPlayer { get; }
+        public string Slug { get; }
+
+        public Result(Bunch bunch, IEnumerable<Player> players, bool isManager)
         {
-            var bunch = _bunchRepository.GetBySlug(request.Slug);
-            var user = _userRepository.Get(request.UserName);
-            var player = _playerRepository.Get(bunch.Id, user.Id);
-            RequireRole.Player(user, player);
-            var players = _playerRepository.List(bunch.Id);
-            var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
-
-            return new Result(bunch, players, isManager);
+            Players = players.Select(o => new ResultItem(o)).OrderBy(o => o.Name).ToList();
+            CanAddPlayer = isManager;
+            Slug = bunch.Slug;
         }
+    }
 
-        public class Request
+    public class ResultItem
+    {
+        public string Name { get; }
+        public int Id { get; }
+        public string Color { get; }
+        public string UserId { get; }
+        public string UserName { get; }
+
+        public ResultItem(Player player)
         {
-            public string UserName { get; }
-            public string Slug { get; }
-
-            public Request(string userName, string slug)
-            {
-                UserName = userName;
-                Slug = slug;
-            }
-        }
-
-        public class Result
-        {
-            public IList<ResultItem> Players { get; }
-            public bool CanAddPlayer { get; }
-            public string Slug { get; }
-
-            public Result(Bunch bunch, IEnumerable<Player> players, bool isManager)
-            {
-                Players = players.Select(o => new ResultItem(o)).OrderBy(o => o.Name).ToList();
-                CanAddPlayer = isManager;
-                Slug = bunch.Slug;
-            }
-        }
-
-        public class ResultItem
-        {
-            public string Name { get; }
-            public int Id { get; }
-            public string Color { get; }
-            public string UserId { get; }
-            public string UserName { get; }
-
-            public ResultItem(Player player)
-            {
-                Name = player.DisplayName;
-                Id = player.Id;
-                Color = player.Color;
-                UserId = player.IsUser ? player.UserId.ToString() : null;
-                UserName = player.IsUser ? player.UserName.ToString() : null;
-            }
+            Name = player.DisplayName;
+            Id = player.Id;
+            Color = player.Color;
+            UserId = player.IsUser ? player.UserId.ToString() : null;
+            UserName = player.IsUser ? player.UserName.ToString() : null;
         }
     }
 }

@@ -4,29 +4,28 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Api.Bootstrapping
+namespace Api.Bootstrapping;
+
+public class Startup
 {
-    public class Startup
+    // Memcache
+    // Injection
+    // Https
+
+    private readonly AppSettings _settings;
+
+    public Startup(IConfiguration configuration)
     {
-        // Memcache
-        // Injection
-        // Https
+        _settings = configuration.Get<AppSettings>();
+    }
 
-        private readonly AppSettings _settings;
+    public void ConfigureServices(IServiceCollection services)
+    {
+        new ServiceConfig(_settings, services).Configure();
+    }
 
-        public Startup(IConfiguration configuration)
-        {
-            _settings = configuration.Get<AppSettings>();
-        }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            new ServiceConfig(_settings, services).Configure();
-        }
-
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            new AppConfig(_settings, app, env).Configure();
-        }
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        new AppConfig(_settings, app, env).Configure();
     }
 }

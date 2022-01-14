@@ -1,8 +1,7 @@
-namespace Core.Entities
+namespace Core.Entities;
+
+public enum GameStatus
 {
-	public enum GameStatus
-    {
-		Running = 1,
-		Finished = 2
-	}
+    Running = 1,
+    Finished = 2
 }

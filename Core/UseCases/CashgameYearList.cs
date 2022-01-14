@@ -3,58 +3,57 @@ using System.Linq;
 using Core.Repositories;
 using Core.Services;
 
-namespace Core.UseCases
+namespace Core.UseCases;
+
+public class CashgameYearList
 {
-    public class CashgameYearList
+    private readonly IBunchRepository _bunchRepository;
+    private readonly ICashgameRepository _cashgameRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IPlayerRepository _playerRepository;
+
+    public CashgameYearList(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
     {
-        private readonly IBunchRepository _bunchRepository;
-        private readonly ICashgameRepository _cashgameRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IPlayerRepository _playerRepository;
+        _bunchRepository = bunchRepository;
+        _cashgameRepository = cashgameRepository;
+        _userRepository = userRepository;
+        _playerRepository = playerRepository;
+    }
 
-        public CashgameYearList(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
+    public Result Execute(Request request)
+    {
+        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var user = _userRepository.Get(request.UserName);
+        var player = _playerRepository.Get(bunch.Id, user.Id);
+        RequireRole.Player(user, player);
+        var years = _cashgameRepository.GetYears(bunch.Id);
+
+        return new Result(
+            request.Slug,
+            years.ToList());
+    }
+
+    public class Request
+    {
+        public string UserName { get; }
+        public string Slug { get; }
+
+        public Request(string userName, string slug)
         {
-            _bunchRepository = bunchRepository;
-            _cashgameRepository = cashgameRepository;
-            _userRepository = userRepository;
-            _playerRepository = playerRepository;
+            UserName = userName;
+            Slug = slug;
         }
+    }
 
-        public Result Execute(Request request)
+    public class Result
+    {
+        public IList<int> Years { get; }
+        public string Slug { get; }
+
+        public Result(string slug, IList<int> years)
         {
-            var bunch = _bunchRepository.GetBySlug(request.Slug);
-            var user = _userRepository.Get(request.UserName);
-            var player = _playerRepository.Get(bunch.Id, user.Id);
-            RequireRole.Player(user, player);
-            var years = _cashgameRepository.GetYears(bunch.Id);
-
-            return new Result(
-                request.Slug,
-                years.ToList());
-        }
-
-        public class Request
-        {
-            public string UserName { get; }
-            public string Slug { get; }
-
-            public Request(string userName, string slug)
-            {
-                UserName = userName;
-                Slug = slug;
-            }
-        }
-
-        public class Result
-        {
-            public IList<int> Years { get; }
-            public string Slug { get; }
-
-            public Result(string slug, IList<int> years)
-            {
-                Slug = slug;
-                Years = years;
-            }
+            Slug = slug;
+            Years = years;
         }
     }
 }

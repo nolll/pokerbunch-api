@@ -3,14 +3,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Core.UseCases;
 
-namespace Api.Models.LocationModels
+namespace Api.Models.LocationModels;
+
+[CollectionDataContract(Namespace = "", Name = "locations", ItemName = "location")]
+public class LocationListModel : List<LocationModel>
 {
-    [CollectionDataContract(Namespace = "", Name = "locations", ItemName = "location")]
-    public class LocationListModel : List<LocationModel>
+    public LocationListModel(GetLocationList.Result locationListResult)
     {
-        public LocationListModel(GetLocationList.Result locationListResult)
-        {
-            AddRange(locationListResult.Locations.Select(o => new LocationModel(o)));
-        }
+        AddRange(locationListResult.Locations.Select(o => new LocationModel(o)));
     }
 }

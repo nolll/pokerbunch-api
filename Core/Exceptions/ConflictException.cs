@@ -1,9 +1,8 @@
-namespace Core.Exceptions
+namespace Core.Exceptions;
+
+public class ConflictException : PokerBunchException
 {
-    public class ConflictException : PokerBunchException
+    protected ConflictException(string message) : base(message)
     {
-        protected ConflictException(string message) : base(message)
-        {
-        }
     }
 }

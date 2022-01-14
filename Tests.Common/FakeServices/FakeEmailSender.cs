@@ -1,23 +1,22 @@
 using Core;
 using Core.Services;
 
-namespace Tests.Common.FakeServices
+namespace Tests.Common.FakeServices;
+
+public class FakeEmailSender : IEmailSender
 {
-    public class FakeEmailSender : IEmailSender
+    public string To { get; private set; }
+    public IMessage Message { get; private set; }
+
+    public void Send(string to, IMessage message)
     {
-        public string To { get; private set; }
-        public IMessage Message { get; private set; }
+        To = to;
+        Message = message;
+    }
 
-        public void Send(string to, IMessage message)
-        {
-            To = to;
-            Message = message;
-        }
-
-        public void Reset()
-        {
-            To = null;
-            Message = null;
-        }
+    public void Reset()
+    {
+        To = null;
+        Message = null;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Api.Settings
+﻿namespace Api.Settings;
+
+public class ErrorSettings
 {
-    public class ErrorSettings
-    {
-        public bool DetailedErrors { get; set; } = false;
-    }
+    public bool DetailedErrors { get; set; } = false;
 }

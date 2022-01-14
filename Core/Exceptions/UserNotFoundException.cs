@@ -1,10 +1,9 @@
-namespace Core.Exceptions
+namespace Core.Exceptions;
+
+public class UserNotFoundException : NotFoundException
 {
-    public class UserNotFoundException : NotFoundException
+    public UserNotFoundException(string userName)
+        : base($"User not found: {userName}")
     {
-        public UserNotFoundException(string userName)
-            : base($"User not found: {userName}")
-        {
-        }
     }
 }

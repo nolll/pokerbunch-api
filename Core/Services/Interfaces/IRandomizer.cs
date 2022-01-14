@@ -1,7 +1,6 @@
-namespace Core.Services
+namespace Core.Services;
+
+public interface IRandomizer
 {
-    public interface IRandomizer
-    {
-        string GetAllowedChars();
-    }
+    string GetAllowedChars();
 }

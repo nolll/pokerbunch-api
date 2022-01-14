@@ -3,56 +3,55 @@ using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
-namespace Core.UseCases
+namespace Core.UseCases;
+
+public class Login
 {
-    public class Login
+    private readonly IUserRepository _userRepository;
+
+    public Login(IUserRepository userRepository)
     {
-        private readonly IUserRepository _userRepository;
+        _userRepository = userRepository;
+    }
 
-        public Login(IUserRepository userRepository)
+    public Result Execute(Request request)
+    {
+        var user = GetLoggedInUser(request.LoginName, request.Password);
+
+        if (user == null)
+            throw new LoginException("There was something wrong with your username or password. Please try again.");
+        return new Result(user.UserName);
+    }
+
+    private User GetLoggedInUser(string loginName, string password)
+    {
+        var user = _userRepository.Get(loginName);
+        if (user == null)
+            return null;
+
+        var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
+        return isValid ? user : null;
+    }
+
+    public class Request 
+    {
+        public string LoginName { get; }
+        public string Password { get; }
+
+        public Request(string loginName, string password)
         {
-            _userRepository = userRepository;
+            LoginName = loginName;
+            Password = password;
         }
+    }
 
-        public Result Execute(Request request)
+    public class Result
+    {
+        public string UserName { get; }
+
+        public Result(string userName)
         {
-            var user = GetLoggedInUser(request.LoginName, request.Password);
-
-            if (user == null)
-                throw new LoginException("There was something wrong with your username or password. Please try again.");
-            return new Result(user.UserName);
-        }
-
-        private User GetLoggedInUser(string loginName, string password)
-        {
-            var user = _userRepository.Get(loginName);
-            if (user == null)
-                return null;
-
-            var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
-            return isValid ? user : null;
-        }
-
-        public class Request 
-        {
-            public string LoginName { get; }
-            public string Password { get; }
-
-            public Request(string loginName, string password)
-            {
-                LoginName = loginName;
-                Password = password;
-            }
-        }
-
-        public class Result
-        {
-            public string UserName { get; }
-
-            public Result(string userName)
-            {
-                UserName = userName;
-            }
+            UserName = userName;
         }
     }
 }

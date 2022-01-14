@@ -1,8 +1,7 @@
-namespace Core
+namespace Core;
+
+public interface IMessage
 {
-    public interface IMessage
-    {
-        string Subject { get; }
-        string Body { get; }
-    }
+    string Subject { get; }
+    string Body { get; }
 }

@@ -1,12 +1,11 @@
 ﻿using NUnit.Framework;
 
-namespace Tests.Core.UseCases.UserDetailsTests
-{
-    public class OwnUser : Arrange
-    {
-        protected override bool ViewingOwnUser => true;
+namespace Tests.Core.UseCases.UserDetailsTests;
 
-        [Test]
-        public void CanViewAllIsTrue() => Assert.IsTrue(Result.CanViewAll);
-    }
+public class OwnUser : Arrange
+{
+    protected override bool ViewingOwnUser => true;
+
+    [Test]
+    public void CanViewAllIsTrue() => Assert.IsTrue(Result.CanViewAll);
 }

@@ -1,13 +1,12 @@
 ﻿using Api.Routes;
 
-namespace Api.Urls.ApiUrls
-{
-    public class ApiBunchesUrl : ApiUrl
-    {
-        protected override string Input => ApiRoutes.Bunch.List;
+namespace Api.Urls.ApiUrls;
 
-        public ApiBunchesUrl(string host) : base(host)
-        {
-        }
+public class ApiBunchesUrl : ApiUrl
+{
+    protected override string Input => ApiRoutes.Bunch.List;
+
+    public ApiBunchesUrl(string host) : base(host)
+    {
     }
 }

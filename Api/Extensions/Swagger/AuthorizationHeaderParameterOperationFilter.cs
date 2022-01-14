@@ -5,29 +5,28 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Api.Extensions.Swagger
+namespace Api.Extensions.Swagger;
+
+public class AuthorizationHeaderParameterOperationFilter : IOperationFilter
 {
-    public class AuthorizationHeaderParameterOperationFilter : IOperationFilter
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
+        var isAuthorized = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is AuthorizeFilter);
+        var allowAnonymous = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is IAllowAnonymousFilter);
+
+        if (isAuthorized && !allowAnonymous)
         {
-            var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
-            var isAuthorized = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is AuthorizeFilter);
-            var allowAnonymous = filterPipeline.Select(filterInfo => filterInfo.Filter).Any(filter => filter is IAllowAnonymousFilter);
+            if (operation.Parameters == null)
+                operation.Parameters = new List<OpenApiParameter>();
 
-            if (isAuthorized && !allowAnonymous)
+            operation.Parameters.Add(new OpenApiParameter
             {
-                if (operation.Parameters == null)
-                    operation.Parameters = new List<OpenApiParameter>();
-
-                operation.Parameters.Add(new OpenApiParameter
-                {
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Description = "access token",
-                    Required = true,
-                });
-            }
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Description = "access token",
+                Required = true,
+            });
         }
     }
 }
