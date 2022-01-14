@@ -1,8 +1,7 @@
-﻿namespace Api.Settings
+﻿namespace Api.Settings;
+
+public enum EmailProvider
 {
-    public enum EmailProvider
-    {
-        Smtp,
-        SendGrid
-    }
+    Smtp,
+    SendGrid
 }

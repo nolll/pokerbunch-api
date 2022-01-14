@@ -6,37 +6,36 @@ using Core.UseCases;
 using Moq;
 using Tests.Core.TestClasses;
 
-namespace Tests.Core.UseCases.TestEmailTests
+namespace Tests.Core.UseCases.TestEmailTests;
+
+public abstract class Arrange : UseCaseTest<TestEmail>
 {
-    public abstract class Arrange : UseCaseTest<TestEmail>
+    protected TestEmail.Result Result;
+
+    protected abstract Role Role { get; }
+    protected string To;
+    protected string Subject;
+    protected string Body;
+
+    private string UserName = "user-name-1";
+
+    protected readonly string Email = "henriks@gmail.com";
+
+    protected override void Setup()
     {
-        protected TestEmail.Result Result;
+        To = null;
+        Subject = null;
+        Body = null;
 
-        protected abstract Role Role { get; }
-        protected string To;
-        protected string Subject;
-        protected string Body;
+        var user = new UserInTest(globalRole: Role);
 
-        private string UserName = "user-name-1";
+        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
+        Mock<IEmailSender>().Setup(o => o.Send(It.IsAny<string>(), It.IsAny<IMessage>()))
+            .Callback((string to, IMessage message) => { To = to; Subject = message.Subject; Body = message.Body; });
+    }
 
-        protected readonly string Email = "henriks@gmail.com";
-
-        protected override void Setup()
-        {
-            To = null;
-            Subject = null;
-            Body = null;
-
-            var user = new UserInTest(globalRole: Role);
-
-            Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
-            Mock<IEmailSender>().Setup(o => o.Send(It.IsAny<string>(), It.IsAny<IMessage>()))
-                .Callback((string to, IMessage message) => { To = to; Subject = message.Subject; Body = message.Body; });
-        }
-
-        protected override void Execute()
-        {
-            Result = Sut.Execute(new TestEmail.Request(UserName));
-        }
+    protected override void Execute()
+    {
+        Result = Sut.Execute(new TestEmail.Request(UserName));
     }
 }

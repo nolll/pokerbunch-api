@@ -1,7 +1,6 @@
-﻿namespace Api.Settings
+﻿namespace Api.Settings;
+
+public class EmailSmtpSettings
 {
-    public class EmailSmtpSettings
-    {
-        public string Host { get; set; }
-    }
+    public string Host { get; set; }
 }

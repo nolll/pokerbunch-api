@@ -3,23 +3,22 @@ using Core.Repositories;
 using Core.UseCases;
 using Tests.Core.TestClasses;
 
-namespace Tests.Core.UseCases.ClearCacheTests
+namespace Tests.Core.UseCases.ClearCacheTests;
+
+public abstract class Arrange : UseCaseTest<ClearCache>
 {
-    public abstract class Arrange : UseCaseTest<ClearCache>
+    protected string UserName = "user-name-1";
+    protected abstract Role Role { get; }
+
+    protected override void Setup()
     {
-        protected string UserName = "user-name-1";
-        protected abstract Role Role { get; }
+        var user = new UserInTest(globalRole: Role);
 
-        protected override void Setup()
-        {
-            var user = new UserInTest(globalRole: Role);
+        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
+    }
 
-            Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
-        }
-
-        protected override void Execute()
-        {
-            Sut.Execute(new ClearCache.Request(UserName));
-        }
+    protected override void Execute()
+    {
+        Sut.Execute(new ClearCache.Request(UserName));
     }
 }

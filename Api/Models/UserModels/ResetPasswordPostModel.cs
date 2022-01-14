@@ -1,9 +1,8 @@
 using JetBrains.Annotations;
 
-namespace Api.Models.UserModels
+namespace Api.Models.UserModels;
+
+public class ResetPasswordPostModel
 {
-    public class ResetPasswordPostModel
-    {
-        public string Email { get; [UsedImplicitly] set; }
-    }
+    public string Email { get; [UsedImplicitly] set; }
 }

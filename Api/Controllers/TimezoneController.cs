@@ -4,26 +4,25 @@ using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace Api.Controllers;
+
+public class TimezoneController : BaseController
 {
-    public class TimezoneController : BaseController
+    private readonly GetTimezoneList _getTimezoneList;
+
+    public TimezoneController(
+        AppSettings appSettings,
+        GetTimezoneList getTimezoneList)
+        : base(appSettings)
     {
-        private readonly GetTimezoneList _getTimezoneList;
+        _getTimezoneList = getTimezoneList;
+    }
 
-        public TimezoneController(
-            AppSettings appSettings,
-            GetTimezoneList getTimezoneList)
-            : base(appSettings)
-        {
-            _getTimezoneList = getTimezoneList;
-        }
-
-        [Route(ApiRoutes.Misc.Timezones)]
-        [HttpGet]
-        public TimezoneListModel GetList()
-        {
-            var timezoneListResult = _getTimezoneList.Execute();
-            return new TimezoneListModel(timezoneListResult);
-        }
+    [Route(ApiRoutes.Misc.Timezones)]
+    [HttpGet]
+    public TimezoneListModel GetList()
+    {
+        var timezoneListResult = _getTimezoneList.Execute();
+        return new TimezoneListModel(timezoneListResult);
     }
 }

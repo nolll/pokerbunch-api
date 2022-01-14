@@ -1,7 +1,6 @@
-﻿namespace Tests.Common
+﻿namespace Tests.Common;
+
+public class MockBase
 {
-    public class MockBase
-    {
         
-    }
 }

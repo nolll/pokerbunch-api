@@ -1,9 +1,8 @@
-namespace Infrastructure.Sql
+namespace Infrastructure.Sql;
+
+public static class CacheTime
 {
-    public static class CacheTime
-    {
-        public const int Short = 10;
-        public const int Medium = 120;
-        public const int Long = 1440;
-    }
+    public const int Short = 10;
+    public const int Medium = 120;
+    public const int Long = 1440;
 }

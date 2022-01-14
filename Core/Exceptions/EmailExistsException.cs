@@ -1,10 +1,9 @@
-namespace Core.Exceptions
+namespace Core.Exceptions;
+
+public class EmailExistsException : ConflictException
 {
-    public class EmailExistsException : ConflictException
+    public EmailExistsException()
+        : base("The Email Address is in use")
     {
-        public EmailExistsException()
-            : base("The Email Address is in use")
-        {
-        }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using JetBrains.Annotations;
 
-namespace Api.Models.BunchModels
+namespace Api.Models.BunchModels;
+
+public class JoinBunchPostModel
 {
-    public class JoinBunchPostModel
-    {
-        public string Code { get; [UsedImplicitly] set; }
-    }
+    public string Code { get; [UsedImplicitly] set; }
 }

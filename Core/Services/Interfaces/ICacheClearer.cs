@@ -1,7 +1,6 @@
-namespace Core.Services
+namespace Core.Services;
+
+public interface ICacheClearer
 {
-    public interface ICacheClearer
-    {
-        int Clear();     
-    }
+    int Clear();     
 }

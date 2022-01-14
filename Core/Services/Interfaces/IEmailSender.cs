@@ -1,7 +1,6 @@
-namespace Core.Services
+namespace Core.Services;
+
+public interface IEmailSender
 {
-    public interface IEmailSender
-    {
-        void Send(string to, IMessage message);
-    }
+    void Send(string to, IMessage message);
 }

@@ -1,9 +1,8 @@
 using Core.Entities;
 
-namespace Tests.Core.Entities.MoneyTests
+namespace Tests.Core.Entities.MoneyTests;
+
+public abstract class Arrange
 {
-    public abstract class Arrange
-    {
-        protected virtual Currency Currency => Currency.Default;
-    }
+    protected virtual Currency Currency => Currency.Default;
 }

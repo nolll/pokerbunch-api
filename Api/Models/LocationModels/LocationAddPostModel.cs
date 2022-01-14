@@ -1,9 +1,8 @@
 ﻿using JetBrains.Annotations;
 
-namespace Api.Models.LocationModels
+namespace Api.Models.LocationModels;
+
+public class LocationAddPostModel
 {
-    public class LocationAddPostModel
-    {
-        public string Name { get; [UsedImplicitly] set; }
-    }
+    public string Name { get; [UsedImplicitly] set; }
 }

@@ -1,9 +1,8 @@
 using JetBrains.Annotations;
 
-namespace Api.Models.CashgameModels
+namespace Api.Models.CashgameModels;
+
+public class AddCashgamePostModel
 {
-    public class AddCashgamePostModel
-    {
-        public int LocationId { get; [UsedImplicitly] set; }
-    }
+    public int LocationId { get; [UsedImplicitly] set; }
 }

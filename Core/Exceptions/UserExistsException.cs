@@ -1,10 +1,9 @@
-namespace Core.Exceptions
+namespace Core.Exceptions;
+
+public class UserExistsException : ConflictException
 {
-    public class UserExistsException : ConflictException
+    public UserExistsException()
+        : base("The User Name is in use")
     {
-        public UserExistsException()
-            : base("The User Name is in use")
-        {
-        }
     }
 }

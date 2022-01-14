@@ -3,58 +3,57 @@ using System.Linq;
 using Core.Repositories;
 using Core.Services;
 
-namespace Core.UseCases
+namespace Core.UseCases;
+
+public class UserList
 {
-    public class UserList
+    private readonly IUserRepository _userRepository;
+
+    public UserList(IUserRepository userRepository)
     {
-        private readonly IUserRepository _userRepository;
+        _userRepository = userRepository;
+    }
 
-        public UserList(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
-        public Result Execute(Request request)
-        {
-            var user = _userRepository.Get(request.UserName);
-            RequireRole.Admin(user);
+    public Result Execute(Request request)
+    {
+        var user = _userRepository.Get(request.UserName);
+        RequireRole.Admin(user);
             
-            var users = _userRepository.List();
-            var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();
+        var users = _userRepository.List();
+        var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();
 
-            return new Result(userItems);
-        }
+        return new Result(userItems);
+    }
 
-        public class Request
+    public class Request
+    {
+        public string UserName { get; }
+
+        public Request(string userName)
         {
-            public string UserName { get; }
-
-            public Request(string userName)
-            {
-                UserName = userName;
-            }
+            UserName = userName;
         }
+    }
 
-        public class Result
+    public class Result
+    {
+        public IList<UserListItem> Users { get; private set; }
+
+        public Result(IList<UserListItem> userItems)
         {
-            public IList<UserListItem> Users { get; private set; }
-
-            public Result(IList<UserListItem> userItems)
-            {
-                Users = userItems;
-            }
+            Users = userItems;
         }
+    }
 
-        public class UserListItem
+    public class UserListItem
+    {
+        public string DisplayName { get; private set; }
+        public string UserName { get; private set; }
+
+        public UserListItem(string displayName, string userName)
         {
-            public string DisplayName { get; private set; }
-            public string UserName { get; private set; }
-
-            public UserListItem(string displayName, string userName)
-            {
-                DisplayName = displayName;
-                UserName = userName;
-            }
+            DisplayName = displayName;
+            UserName = userName;
         }
     }
 }

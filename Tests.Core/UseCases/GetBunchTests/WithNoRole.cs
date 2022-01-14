@@ -1,16 +1,15 @@
 ﻿using Core.Exceptions;
 using NUnit.Framework;
 
-namespace Tests.Core.UseCases.GetBunchTests
-{
-    public class WithNoRole : Arrange
-    {
-        protected override bool ExecuteAutomatically => false;
+namespace Tests.Core.UseCases.GetBunchTests;
 
-        [Test]
-        public void AccessDenied()
-        {
-            Assert.Throws<AccessDeniedException>(Execute);
-        }
+public class WithNoRole : Arrange
+{
+    protected override bool ExecuteAutomatically => false;
+
+    [Test]
+    public void AccessDenied()
+    {
+        Assert.Throws<AccessDeniedException>(Execute);
     }
 }

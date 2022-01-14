@@ -1,35 +1,34 @@
 ﻿using Core.Repositories;
 using Core.Services;
 
-namespace Core.UseCases
+namespace Core.UseCases;
+
+public class ClearCache
 {
-    public class ClearCache
+    private readonly ICacheContainer _cache;
+    private readonly IUserRepository _userRepository;
+
+    public ClearCache(ICacheContainer cache, IUserRepository userRepository)
     {
-        private readonly ICacheContainer _cache;
-        private readonly IUserRepository _userRepository;
+        _cache = cache;
+        _userRepository = userRepository;
+    }
 
-        public ClearCache(ICacheContainer cache, IUserRepository userRepository)
+    public void Execute(Request request)
+    {
+        var user = _userRepository.Get(request.UserName);
+        RequireRole.Admin(user);
+
+        _cache.ClearAll();
+    }
+
+    public class Request
+    {
+        public string UserName { get; }
+
+        public Request(string userName)
         {
-            _cache = cache;
-            _userRepository = userRepository;
-        }
-
-        public void Execute(Request request)
-        {
-            var user = _userRepository.Get(request.UserName);
-            RequireRole.Admin(user);
-
-            _cache.ClearAll();
-        }
-
-        public class Request
-        {
-            public string UserName { get; }
-
-            public Request(string userName)
-            {
-                UserName = userName;
-            }
+            UserName = userName;
         }
     }
 }

@@ -1,12 +1,11 @@
-namespace Core.Services
+namespace Core.Services;
+
+public static class SlugGenerator
 {
-    public static class SlugGenerator
+    public static string GetSlug(string displayName)
     {
-        public static string GetSlug(string displayName)
-        {
-            if (displayName == null)
-                return null;
-            return displayName.Replace(" ", "-").ToLower();
-        }
+        if (displayName == null)
+            return null;
+        return displayName.Replace(" ", "-").ToLower();
     }
 }

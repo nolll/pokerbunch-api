@@ -1,12 +1,11 @@
 using Core.Services;
 
-namespace Tests.Common.FakeServices
+namespace Tests.Common.FakeServices;
+
+public class FakeRandomizer : IRandomizer
 {
-    public class FakeRandomizer : IRandomizer
+    public string GetAllowedChars()
     {
-        public string GetAllowedChars()
-        {
-            return "a";
-        }
+        return "a";
     }
 }

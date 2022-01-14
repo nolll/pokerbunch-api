@@ -6,53 +6,52 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Middleware
+namespace Api.Middleware;
+
+[UsedImplicitly]
+public class ExceptionLoggingMiddleware
 {
-    [UsedImplicitly]
-    public class ExceptionLoggingMiddleware
+    private readonly ILogger<ExceptionLoggingMiddleware> _logger;
+    private readonly IHostingEnvironment _env;
+    private readonly RequestDelegate _next;
+
+    public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger, IHostingEnvironment env)
     {
-        private readonly ILogger<ExceptionLoggingMiddleware> _logger;
-        private readonly IHostingEnvironment _env;
-        private readonly RequestDelegate _next;
+        _logger = logger;
+        _env = env;
+        _next = next;
+    }
 
-        public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger, IHostingEnvironment env)
+    public async Task InvokeAsync(HttpContext httpContext)
+    {
+        try
         {
-            _logger = logger;
-            _env = env;
-            _next = next;
+            await _next(httpContext);
         }
-
-        public async Task InvokeAsync(HttpContext httpContext)
+        catch (NotFoundException)
         {
-            try
-            {
-                await _next(httpContext);
-            }
-            catch (NotFoundException)
-            {
-                throw;
-            }
-            catch (AccessDeniedException)
-            {
-                throw;
-            }
-            catch (AuthException)
-            {
-                throw;
-            }
-            catch (ValidationException)
-            {
-                throw;
-            }
-            catch (ConflictException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                throw;
-            }
+            throw;
+        }
+        catch (AccessDeniedException)
+        {
+            throw;
+        }
+        catch (AuthException)
+        {
+            throw;
+        }
+        catch (ValidationException)
+        {
+            throw;
+        }
+        catch (ConflictException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
         }
     }
 }

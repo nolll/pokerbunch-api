@@ -5,82 +5,81 @@ using System.Data.SqlClient;
 using System.Linq;
 using Infrastructure.Sql.Interfaces;
 
-namespace Infrastructure.Sql
+namespace Infrastructure.Sql;
+
+public class SqlServerStorageProvider
 {
-	public class SqlServerStorageProvider
-	{
-	    private readonly string _connectionString;
+    private readonly string _connectionString;
 
-        public SqlServerStorageProvider(string connectionString)
+    public SqlServerStorageProvider(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+
+    private SqlConnection GetConnection()
+    {
+        return new SqlConnection(_connectionString);
+    }
+
+    public IStorageDataReader Query(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
+    {
+        using (var connection = GetConnection())
         {
-            _connectionString = connectionString;
-        }
-
-	    private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_connectionString);
-        }
-
-	    public IStorageDataReader Query(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
-	    {
-            using (var connection = GetConnection())
+            connection.Open();
+            using (var command = new SqlCommand(sql, connection))
             {
-                connection.Open();
-                using (var command = new SqlCommand(sql, connection))
+                if (parameters != null)
                 {
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(ToSqlCommands(parameters));
-                    }
-                    var mySqlReader = command.ExecuteReader();
-                    var dt = new DataTable();
-                    dt.Load(mySqlReader);
-                    return new StorageDataReader(dt.CreateDataReader());
+                    command.Parameters.AddRange(ToSqlCommands(parameters));
                 }
-            }
-	    }
-
-	    public IStorageDataReader Query(string sql, ListSqlParameter parameter)
-	    {
-	        var sqlWithIdList = sql.Replace(parameter.ParameterName, parameter.ParameterNameList);
-	        return Query(sqlWithIdList, parameter.ParameterList);
-	    }
-
-	    public int Execute(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
-        {
-            using (var connection = GetConnection())
-            {
-                connection.Open();
-                using (var command = new SqlCommand(sql, connection))
-                {
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(ToSqlCommands(parameters));
-                    }
-                    return command.ExecuteNonQuery();
-                }
+                var mySqlReader = command.ExecuteReader();
+                var dt = new DataTable();
+                dt.Load(mySqlReader);
+                return new StorageDataReader(dt.CreateDataReader());
             }
         }
+    }
 
-        public int ExecuteInsert(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
+    public IStorageDataReader Query(string sql, ListSqlParameter parameter)
+    {
+        var sqlWithIdList = sql.Replace(parameter.ParameterName, parameter.ParameterNameList);
+        return Query(sqlWithIdList, parameter.ParameterList);
+    }
+
+    public int Execute(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
+    {
+        using (var connection = GetConnection())
         {
-            using (var connection = GetConnection())
+            connection.Open();
+            using (var command = new SqlCommand(sql, connection))
             {
-                connection.Open();
-                using (var command = new SqlCommand(sql, connection))
+                if (parameters != null)
                 {
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(ToSqlCommands(parameters));
-                    }
-                    return Convert.ToInt32(command.ExecuteScalar());
+                    command.Parameters.AddRange(ToSqlCommands(parameters));
                 }
+                return command.ExecuteNonQuery();
             }
         }
+    }
 
-        private SqlParameter[] ToSqlCommands(IEnumerable<SimpleSqlParameter> parameters)
+    public int ExecuteInsert(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
+    {
+        using (var connection = GetConnection())
         {
-            return parameters.Select(o => o.SqlParameter).ToArray();
+            connection.Open();
+            using (var command = new SqlCommand(sql, connection))
+            {
+                if (parameters != null)
+                {
+                    command.Parameters.AddRange(ToSqlCommands(parameters));
+                }
+                return Convert.ToInt32(command.ExecuteScalar());
+            }
         }
-	}
+    }
+
+    private SqlParameter[] ToSqlCommands(IEnumerable<SimpleSqlParameter> parameters)
+    {
+        return parameters.Select(o => o.SqlParameter).ToArray();
+    }
 }
