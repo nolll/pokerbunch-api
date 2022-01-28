@@ -4,9 +4,10 @@ public static class GravatarService
 {
     public static string GetAvatarUrl(string email)
     {
-        const string urlFormat = "https://www.gravatar.com/avatar/{0}?s=100";
         var hash = EncryptionService.GetMd5Hash(email);
+        const int size = 100;
+        const string defaultMode = "blank";
 
-        return string.Format(urlFormat, hash);
+        return $"https://gravatar.com/avatar/{hash}?s={size}&d={defaultMode}";
     }
 }
