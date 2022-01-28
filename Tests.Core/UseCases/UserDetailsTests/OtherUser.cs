@@ -20,5 +20,5 @@ public class OtherUser : Arrange
     public void CanViewAllIsFalse() => Assert.IsFalse(Result.CanViewAll);
 
     [Test]
-    public void AvatarUrlIsSet() => Assert.AreEqual("https://www.gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=100", Result.AvatarUrl);
+    public void AvatarUrlIsSet() => Assert.AreEqual("https://gravatar.com/avatar/0c83f57c786a0b4a39efab23731c7ebc?s=100&d=blank", Result.AvatarUrl);
 }
