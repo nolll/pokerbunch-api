@@ -81,7 +81,6 @@ public class ServiceConfig
         _services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
         _services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
         _services.AddSingleton<ICacheContainer, CacheContainer>();
-        _services.AddSingleton<SqlServerStorageProvider>();
         _services.AddSingleton<IUserRepository, UserRepository>();
         _services.AddSingleton<IBunchRepository, BunchRepository>();
         _services.AddSingleton<ICashgameRepository, CashgameRepository>();
