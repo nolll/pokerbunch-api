@@ -8,10 +8,6 @@ namespace Api.Bootstrapping;
 
 public class Startup
 {
-    // Memcache
-    // Injection
-    // Https
-
     private readonly AppSettings _settings;
 
     public Startup(IConfiguration configuration)
@@ -24,7 +20,7 @@ public class Startup
         new ServiceConfig(_settings, services).Configure();
     }
 
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         new AppConfig(_settings, app, env).Configure();
     }

@@ -3,6 +3,7 @@ using Api.Routes;
 using Api.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Api.Bootstrapping;
 
@@ -10,12 +11,12 @@ public class AppConfig
 {
     private readonly AppSettings _settings;
     private readonly IApplicationBuilder _app;
-    private readonly IHostingEnvironment _env;
+    private readonly IWebHostEnvironment _env;
 
     private bool IsDev => _env.IsDevelopment();
     private bool IsProd => !IsDev;
 
-    public AppConfig(AppSettings settings, IApplicationBuilder app, IHostingEnvironment env)
+    public AppConfig(AppSettings settings, IApplicationBuilder app, IWebHostEnvironment env)
     {
         _settings = settings;
         _app = app;
