@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 
 namespace Infrastructure.Sql;
 
@@ -13,12 +14,12 @@ public class SimpleSqlParameter : IEquatable<SimpleSqlParameter>
         Value = value;
     }
 
-    public object SqlParameter
+    public NpgsqlParameter SqlParameter
     {
         get
         {
             var value = Value ?? DBNull.Value;
-            return new { ParameterName, value };
+            return new NpgsqlParameter(ParameterName, value);
         }
     }
 

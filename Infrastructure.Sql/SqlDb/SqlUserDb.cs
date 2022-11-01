@@ -8,8 +8,8 @@ namespace Infrastructure.Sql.SqlDb;
 
 public class SqlUserDb
 {
-    private const string DataSql = "SELECT u.UserID, u.UserName, u.DisplayName, u.RealName, u.Email, u.Password, u.Salt, u.RoleID FROM [User] u ";
-    private const string SearchSql = "SELECT u.UserID FROM [User] u ";
+    private const string DataSql = "SELECT u.user_iD, u.user_name, u.display_name, u.real_name, u.email, u.password, u.salt, u.role_id FROM pb_user u ";
+    private const string SearchSql = "SELECT u.user_id FROM pb_user u ";
         
     private readonly SqlServerStorageProvider _db;
 
@@ -20,7 +20,7 @@ public class SqlUserDb
 
     public User Get(int id)
     {
-        var sql = string.Concat(DataSql, "WHERE u.UserId = @userId");
+        var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@userId", id)
@@ -32,7 +32,7 @@ public class SqlUserDb
 
     public IList<User> Get(IList<int> ids)
     {
-        var sql = string.Concat(DataSql, "WHERE u.UserID IN(@ids)");
+        var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
         var parameter = new ListSqlParameter("@ids", ids);
         var reader = _db.Query(sql, parameter);
         var rawUsers = reader.ReadList(CreateRawUser);
@@ -52,7 +52,7 @@ public class SqlUserDb
 
     public void Update(User user)
     {
-        const string sql = "UPDATE [user] SET DisplayName = @displayName, RealName = @realName, Email = @email, Password = @password, Salt = @salt WHERE UserID = @userId";
+        const string sql = "UPDATE pb_user SET display_name = @displayName, real_name = @realName, email = @email, password = @password, salt = @salt WHERE user_id = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@displayName", user.DisplayName),
@@ -67,7 +67,7 @@ public class SqlUserDb
 
     public int Add(User user)
     {
-        const string sql = "INSERT INTO [user] (UserName, DisplayName, Email, RoleId, Password, Salt) VALUES (@userName, @displayName, @email, 1, @password, @salt) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
+        const string sql = "INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt) VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@userName", user.UserName),
@@ -81,25 +81,25 @@ public class SqlUserDb
         
     private int? GetIdByNameOrEmail(string nameOrEmail)
     {
-        var sql = string.Concat(SearchSql, "WHERE (u.UserName = @query OR u.Email = @query)");
+        var sql = string.Concat(SearchSql, "WHERE (u.user_name = @query OR u.email = @query)");
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@query", nameOrEmail)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadInt("UserID");
+        return reader.ReadInt("user_id");
     }
 
     private IList<int> GetIds()
     {
-        var sql = string.Concat(SearchSql, "ORDER BY u.DisplayName");
+        var sql = string.Concat(SearchSql, "ORDER BY u.display_name");
         var reader = _db.Query(sql);
-        return reader.ReadIntList("UserID");
+        return reader.ReadIntList("user_id");
     }
 
     public bool DeleteUser(int userId)
     {
-        const string sql = "DELETE FROM [user] WHERE UserID = @userId";
+        const string sql = "DELETE FROM pb_user WHERE user_iD = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@userId", userId)
@@ -111,13 +111,13 @@ public class SqlUserDb
     private static RawUser CreateRawUser(IStorageDataReader reader)
     {
         return new RawUser(
-            reader.GetIntValue("UserID"),
-            reader.GetStringValue("UserName"),
-            reader.GetStringValue("DisplayName"),
-            reader.GetStringValue("RealName"),
-            reader.GetStringValue("Email"),
-            reader.GetIntValue("RoleID"),
-            reader.GetStringValue("Password"),
-            reader.GetStringValue("Salt"));
+            reader.GetIntValue("user_id"),
+            reader.GetStringValue("user_name"),
+            reader.GetStringValue("display_name"),
+            reader.GetStringValue("real_name"),
+            reader.GetStringValue("email"),
+            reader.GetIntValue("role_id"),
+            reader.GetStringValue("password"),
+            reader.GetStringValue("salt"));
     }
 }

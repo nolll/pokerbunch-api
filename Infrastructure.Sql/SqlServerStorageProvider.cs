@@ -78,7 +78,7 @@ public class SqlServerStorageProvider
         }
     }
 
-    private object[] ToSqlCommands(IEnumerable<SimpleSqlParameter> parameters)
+    private NpgsqlParameter[] ToSqlCommands(IEnumerable<SimpleSqlParameter> parameters)
     {
         return parameters.Select(o => o.SqlParameter).ToArray();
     }
