@@ -17,13 +17,13 @@ using Infrastructure.Sql.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
+using Npgsql;
 
 namespace Api.Bootstrapping;
 
@@ -31,18 +31,22 @@ public class ServiceConfig
 {
     private readonly AppSettings _settings;
     private readonly IServiceCollection _services;
+    private readonly IConfiguration _configuration;
 
-    public ServiceConfig(AppSettings settings, IServiceCollection services)
+    public ServiceConfig(AppSettings settings, IServiceCollection services, IConfiguration configuration)
     {
         _settings = settings;
         _services = services;
+        _configuration = configuration;
     }
 
     public void Configure()
     {
+        var connectionString = GetConnectionString();
+
         AddCompression();
         AddLogging();
-        AddDependencies();
+        AddDependencies(connectionString);
         AddMvc();
         AddCors();
         AddAuthorization();
@@ -73,7 +77,7 @@ public class ServiceConfig
         });
     }
 
-    private void AddDependencies()
+    private void AddDependencies(string connectionString)
     {
         _services.AddSingleton(_settings);
         _services.AddSingleton(new UrlProvider(_settings.Urls.Api, _settings.Urls.Site));
@@ -89,7 +93,7 @@ public class ServiceConfig
         _services.AddSingleton<IPlayerRepository, PlayerRepository>();
         _services.AddSingleton<ITimezoneRepository, TimezoneRepository>();
         _services.AddSingleton(GetEmailSender());
-        _services.AddSingleton(new SqlServerStorageProvider(_settings.Sql.ConnectionString));
+        _services.AddSingleton(new SqlServerStorageProvider(connectionString));
         _services.AddSingleton<IRandomizer, Randomizer>();
 
         // Admin
@@ -150,6 +154,25 @@ public class ServiceConfig
         _services.AddSingleton<DeletePlayer>();
         _services.AddSingleton<InvitePlayer>();
         _services.AddSingleton<JoinBunch>();
+    }
+
+    private string GetConnectionString()
+    {
+        var databaseUrl = _configuration.GetValue<string>("DATABASE_URL");
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = databaseUri.Host,
+            Port = databaseUri.Port,
+            Username = userInfo[0],
+            Password = userInfo[1],
+            Database = databaseUri.LocalPath.TrimStart('/'),
+            TrustServerCertificate = true
+        };
+
+        return builder.ToString();
     }
 
     private IEmailSender GetEmailSender()

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using Infrastructure.Sql.Interfaces;
+using Npgsql;
+using System.Data;
 
 namespace Infrastructure.Sql;
 
@@ -16,9 +16,9 @@ public class SqlServerStorageProvider
         _connectionString = connectionString;
     }
 
-    private SqlConnection GetConnection()
+    private NpgsqlConnection GetConnection()
     {
-        return new SqlConnection(_connectionString);
+        return new NpgsqlConnection(_connectionString);
     }
 
     public IStorageDataReader Query(string sql, IEnumerable<SimpleSqlParameter> parameters = null)
@@ -26,7 +26,7 @@ public class SqlServerStorageProvider
         using (var connection = GetConnection())
         {
             connection.Open();
-            using (var command = new SqlCommand(sql, connection))
+            using (var command = new NpgsqlCommand(sql, connection))
             {
                 if (parameters != null)
                 {
@@ -51,7 +51,7 @@ public class SqlServerStorageProvider
         using (var connection = GetConnection())
         {
             connection.Open();
-            using (var command = new SqlCommand(sql, connection))
+            using (var command = new NpgsqlCommand(sql, connection))
             {
                 if (parameters != null)
                 {
@@ -67,7 +67,7 @@ public class SqlServerStorageProvider
         using (var connection = GetConnection())
         {
             connection.Open();
-            using (var command = new SqlCommand(sql, connection))
+            using (var command = new NpgsqlCommand(sql, connection))
             {
                 if (parameters != null)
                 {
@@ -78,7 +78,7 @@ public class SqlServerStorageProvider
         }
     }
 
-    private SqlParameter[] ToSqlCommands(IEnumerable<SimpleSqlParameter> parameters)
+    private object[] ToSqlCommands(IEnumerable<SimpleSqlParameter> parameters)
     {
         return parameters.Select(o => o.SqlParameter).ToArray();
     }

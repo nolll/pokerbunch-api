@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Core.Exceptions;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -12,13 +11,11 @@ namespace Api.Middleware;
 public class ExceptionLoggingMiddleware
 {
     private readonly ILogger<ExceptionLoggingMiddleware> _logger;
-    private readonly IHostingEnvironment _env;
     private readonly RequestDelegate _next;
 
-    public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger, IHostingEnvironment env)
+    public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger)
     {
         _logger = logger;
-        _env = env;
         _next = next;
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 
 namespace Infrastructure.Sql;
 
@@ -14,12 +13,12 @@ public class SimpleSqlParameter : IEquatable<SimpleSqlParameter>
         Value = value;
     }
 
-    public SqlParameter SqlParameter
+    public object SqlParameter
     {
         get
         {
             var value = Value ?? DBNull.Value;
-            return new SqlParameter(ParameterName, value);
+            return new { ParameterName, value };
         }
     }
 
