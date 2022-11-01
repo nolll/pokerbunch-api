@@ -9,11 +9,13 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlPlayerDb
 {
     private const string DataSql = @"
-SELECT p.HomegameID, p.PlayerID, p.UserID, p.RoleID, ISNULL(p.PlayerName, u.DisplayName) AS PlayerName, p.Color, u.UserName 
-FROM player p 
-LEFT JOIN [user] u ON u.UserID = p.UserID ";
+SELECT p.bunch_id, p.player_id, p.user_id, p.role_id, COALESCE(u.display_name, p.player_name) AS player_name, p.color, u.user_name 
+FROM pb_player p 
+LEFT JOIN pb_user u ON u.user_id = p.user_id ";
         
-    private const string SearchSql = "SELECT p.PlayerID FROM player p ";
+    private const string SearchSql = @"
+SELECT p.player_id
+FROM pb_player p ";
 
     private readonly SqlServerStorageProvider _db;
 
@@ -24,46 +26,46 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
 
     public IList<int> Find(int bunchId)
     {
-        var sql = string.Concat(SearchSql, "WHERE p.HomegameID = @homegameId");
+        var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@homegameId", bunchId)
+            new SimpleSqlParameter("@bunchId", bunchId)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("PlayerID");
+        return reader.ReadIntList("player_id");
 
     }
 
     public IList<int> Find(int bunchId, string name)
     {
-        var sql = string.Concat(SearchSql, "LEFT JOIN [user] u on p.UserID = u.UserID WHERE p.HomegameID = @homegameId AND (p.PlayerName = @playerName OR u.DisplayName = @playerName)");
+        var sql = string.Concat(SearchSql, "LEFT JOIN pb_user u on p.user_id = u.user_id WHERE p.bunch_id = @bunchId AND (p.player_name = @playerName OR u.display_name = @playerName)");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@homegameId", bunchId),
+            new SimpleSqlParameter("@bunchId", bunchId),
             new SimpleSqlParameter("@playerName", name)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("PlayerID");
+        return reader.ReadIntList("player_id");
 
     }
 
     public IList<int> Find(int bunchId, int userId)
     {
-        var sql = string.Concat(SearchSql, "WHERE p.HomegameID = @homegameId AND p.UserID = @userId");
+        var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId AND p.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@homegameId", bunchId),
+            new SimpleSqlParameter("@bunchId", bunchId),
             new SimpleSqlParameter("@userId", userId)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("PlayerID");
+        return reader.ReadIntList("player_id");
     }
 
     public IList<Player> Get(IList<int> ids)
     {
         if(!ids.Any())
             return new List<Player>();
-        var sql = string.Concat(DataSql, "WHERE p.PlayerID IN (@ids)");
+        var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
         var parameter = new ListSqlParameter("@ids", ids);
         var reader = _db.Query(sql, parameter);
         var rawPlayers = reader.ReadList(CreateRawPlayer);
@@ -72,7 +74,7 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
 
     public Player Get(int id)
     {
-        var sql = string.Concat(DataSql, "WHERE p.PlayerID = @id");
+        var sql = string.Concat(DataSql, "WHERE p.player_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@id", id)
@@ -86,10 +88,12 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
     {
         if (player.IsUser)
         {
-            const string sql = "INSERT INTO player (HomegameID, UserID, RoleID, Approved, Color) VALUES (@homegameId, @userId, @role, 1, @color) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
+            const string sql = @"
+INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
+VALUES (@bunchId, @userId, @role, 1, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
-                new SimpleSqlParameter("@homegameId", player.BunchId),
+                new SimpleSqlParameter("@bunchId", player.BunchId),
                 new SimpleSqlParameter("@userId", player.UserId),
                 new SimpleSqlParameter("@role", player.Role),
                 new SimpleSqlParameter("@color", player.Color)
@@ -98,10 +102,12 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
         }
         else
         {
-            const string sql = "INSERT INTO player (HomegameID, RoleID, Approved, PlayerName, Color) VALUES (@homegameId, @role, 1, @playerName, @color) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
+            const string sql = @"
+INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
+VALUES (@bunchId, @role, 1, @playerName, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
-                new SimpleSqlParameter("@homegameId", player.BunchId),
+                new SimpleSqlParameter("@bunchId", player.BunchId),
                 new SimpleSqlParameter("@role", (int)Role.Player),
                 new SimpleSqlParameter("@playerName", player.DisplayName),
                 new SimpleSqlParameter("@color", player.Color)
@@ -112,10 +118,17 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
 
     public bool JoinHomegame(Player player, Bunch bunch, int userId)
     {
-        const string sql = "UPDATE player SET HomegameID = @homegameId, PlayerName = NULL, UserID = @userId, RoleID = @role, Approved = 1 WHERE PlayerID = @playerId";
+        const string sql = @"
+UPDATE player
+SET bunch_id = @bunchId,
+    player_name = NULL,
+    user_id = @userId,
+    role_id = @role,
+    approved = 1
+WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@homegameId", bunch.Id),
+            new SimpleSqlParameter("@bunchId", bunch.Id),
             new SimpleSqlParameter("@userId", userId),
             new SimpleSqlParameter("@role", (int) player.Role),
             new SimpleSqlParameter("@playerId", player.Id)
@@ -126,7 +139,9 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
 
     public void Delete(int playerId)
     {
-        const string sql = @"DELETE FROM player WHERE PlayerID = @playerId";
+        const string sql = @"
+DELETE FROM pb_player
+WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@playerId", playerId)
@@ -149,12 +164,12 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
     private static RawPlayer CreateRawPlayer(IStorageDataReader reader)
     {
         return new RawPlayer(
-            reader.GetIntValue("HomegameID"),
-            reader.GetIntValue("PlayerID"),
-            reader.GetIntValue("UserID"),
-            reader.GetStringValue("UserName"),
-            reader.GetStringValue("PlayerName"),
-            reader.GetIntValue("RoleID"),
-            reader.GetStringValue("Color"));
+            reader.GetIntValue("bunch_id"),
+            reader.GetIntValue("player_id"),
+            reader.GetIntValue("user_id"),
+            reader.GetStringValue("user_name"),
+            reader.GetStringValue("player_name"),
+            reader.GetIntValue("role_id"),
+            reader.GetStringValue("color"));
     }
 }
