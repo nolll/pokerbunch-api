@@ -8,12 +8,13 @@ namespace Infrastructure.Sql.SqlDb;
 
 public class SqlEventDb
 {
-    private const string EventSql = @"SELECT e.EventID, e.BunchID, e.Name, g.LocationId, g.Date
-                                        FROM [Event] e
-                                        LEFT JOIN EventCashgame ecg on e.EventId = ecg.EventId
-                                        LEFT JOIN Game g on ecg.GameId = g.GameID
-                                        {0}
-                                        ORDER BY e.EventId, g.Date";
+    private const string EventSql = @"
+SELECT e.event_id, e.bunch_id, e.name, g.location_id, g.date
+FROM pb_event e
+LEFT JOIN pb_event_cashgame ecg on e.event_id = ecg.event_id
+LEFT JOIN pb_game g on ecg.game_id = g.game_id
+{0}
+ORDER BY e.event_id, g.date";
 
     private readonly SqlServerStorageProvider _db;
 
@@ -24,7 +25,7 @@ public class SqlEventDb
 
     public Event Get(int id)
     {
-        const string whereClause = "WHERE e.EventID = @id";
+        const string whereClause = "WHERE e.event_id = @id";
         var sql = string.Format(EventSql, whereClause);
         var parameters = new List<SimpleSqlParameter>
         {
@@ -38,7 +39,7 @@ public class SqlEventDb
 
     public IList<Event> Get(IList<int> ids)
     {
-        const string whereClause = "WHERE e.EventID IN(@ids)";
+        const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
         var parameter = new ListSqlParameter("@ids", ids);
         var reader = _db.Query(sql, parameter);
@@ -48,29 +49,40 @@ public class SqlEventDb
 
     public IList<int> FindByBunchId(int bunchId)
     {
-        const string sql = "SELECT e.EventID FROM [Event] e WHERE e.BunchID = @id";
+        const string sql = @"
+SELECT e.event_id
+FROM pb_event e
+WHERE e.bunch_id = @id";
+
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@id", bunchId)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("EventID");
+        return reader.ReadIntList("event_id");
     }
 
     public IList<int> FindByCashgameId(int cashgameId)
     {
-        const string sql = "SELECT ecg.EventID FROM [EventCashgame] ecg WHERE ecg.CashgameId = @id";
+        const string sql = @"
+SELECT ecg.event_id
+FROM pb_event_cashgame ecg
+WHERE ecg.cashgame_id = @id";
+
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@id", cashgameId)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("EventID");
+        return reader.ReadIntList("event_id");
     }
 
     public int Add(Event e)
     {
-        const string sql = "INSERT INTO event (Name, BunchId) VALUES (@name, @bunchId) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
+        const string sql = @"
+INSERT INTO pb_event (name, bunch_id)
+VALUES (@name, @bunchId) RETURNING event_id";
+
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@name", e.Name),
@@ -81,7 +93,9 @@ public class SqlEventDb
 
     public void AddCashgame(int eventId, int cashgameId)
     {
-        const string sql = "INSERT INTO eventcashgame (EventId, GameId) VALUES (@eventId, @cashgameId)";
+        const string sql = @"
+INSERT INTO pb_event_cashgame (event_id, game_id)
+VALUES (@eventId, @cashgameId)";
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@eventId", eventId),
@@ -134,10 +148,10 @@ public class SqlEventDb
     private static RawEventDay CreateRawEventDay(IStorageDataReader reader)
     {
         return new RawEventDay(
-            reader.GetIntValue("EventID"),
-            reader.GetIntValue("BunchId"),
-            reader.GetStringValue("Name"),
-            reader.GetIntValue("LocationId"),
-            reader.GetDateTimeValue("Date"));
+            reader.GetIntValue("event_id"),
+            reader.GetIntValue("bunch_id"),
+            reader.GetStringValue("name"),
+            reader.GetIntValue("location_id"),
+            reader.GetDateTimeValue("date"));
     }
 }
