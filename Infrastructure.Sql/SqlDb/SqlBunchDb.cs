@@ -10,8 +10,14 @@ namespace Infrastructure.Sql.SqlDb;
 
 public class SqlBunchDb
 {
-    private const string DataSql = "SELECT h.HomegameID, h.Name, h.DisplayName, h.Description, h.Currency, h.CurrencyLayout, h.Timezone, h.DefaultBuyin, h.CashgamesEnabled, h.TournamentsEnabled, h.VideosEnabled, h.HouseRules FROM homegame h";
-    private const string SearchSql = "SELECT h.HomegameID FROM homegame h";
+    private const string DataSql = @"
+SELECT b.bunch_id, b.name, b.display_name, b.description, b.currency, b.currency_layout, b.timezone, b.default_buyin, b.cashgames_enabled, b.tournaments_enabled, b.videos_enabled, b.house_rules
+FROM pb_bunch b";
+
+    private const string SearchSql = @"
+SELECT h.bunch_id
+FROM pb_bunch b";
+
     private readonly SqlServerStorageProvider _db;
         
     public SqlBunchDb(SqlServerStorageProvider db)
@@ -21,7 +27,7 @@ public class SqlBunchDb
 
     public IList<Bunch> Get(IList<int> ids)
     {
-        var sql = string.Concat(DataSql, " WHERE h.HomegameID IN(@ids)");
+        var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
         var parameter = new ListSqlParameter("@ids", ids);
         var reader = _db.Query(sql, parameter);
         var rawHomegames = reader.ReadList(CreateRawBunch);
@@ -30,7 +36,7 @@ public class SqlBunchDb
 
     public Bunch Get(int id)
     {
-        var sql = string.Concat(DataSql, " WHERE HomegameID = @id");
+        var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@id", id)
@@ -43,15 +49,15 @@ public class SqlBunchDb
     public IList<int> Search()
     {
         var reader = _db.Query(SearchSql);
-        return reader.ReadIntList("HomegameID");
+        return reader.ReadIntList("bunch_id");
     }
 
     public IList<int> Search(string slug)
     {
-        var sql = string.Concat(SearchSql, " WHERE h.Name = @slug");
+        var sql = string.Concat(SearchSql, " WHERE b.name = @slug");
         var parameters = new SqlParameters(new SimpleSqlParameter("@slug", slug));
         var reader = _db.Query(sql, parameters);
-        var id = reader.ReadInt("HomegameID");
+        var id = reader.ReadInt("bunch_id");
         if(id.HasValue)
             return new List<int>{id.Value};
         return new List<int>();
@@ -59,19 +65,22 @@ public class SqlBunchDb
 
     public IList<int> Search(int userId)
     {
-        var sql = string.Concat(SearchSql, "  INNER JOIN player p on h.HomegameID = p.HomegameID WHERE p.UserID = @userId ORDER BY h.Name");
+        var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@userId", userId)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("HomegameID");
+        return reader.ReadIntList("bunch_id");
     }
         
     public int Add(Bunch bunch)
     {
         var rawBunch = RawBunch.Create(bunch);
-        const string sql = "INSERT INTO homegame (Name, DisplayName, Description, Currency, CurrencyLayout, Timezone, DefaultBuyin, CashgamesEnabled, TournamentsEnabled, VideosEnabled, HouseRules) VALUES (@slug, @displayName, @description, @currencySymbol, @currencyLayout, @timeZone, 0, @cashgamesEnabled, @tournamentsEnabled, @videosEnabled, @houseRules) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
+        const string sql = @"
+INSERT INTO pb_bunch (name, display_name, description, currency, currency_layout, timezone, default_buyin, cashgames_enabled, tournaments_enabled, videos_enabled, house_rules)
+VALUES (@slug, @displayName, @description, @currencySymbol, @currencyLayout, @timeZone, 0, @cashgamesEnabled, @tournamentsEnabled, @videosEnabled, @houseRules) RETURNING bunch_id";
+
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@slug", rawBunch.Slug),
@@ -91,7 +100,20 @@ public class SqlBunchDb
     public void Update(Bunch bunch)
     {
         var rawBunch = RawBunch.Create(bunch);
-        const string sql = "UPDATE homegame SET Name = @slug, DisplayName = @displayName, Description = @description, HouseRules = @houseRules, Currency = @currencySymbol, CurrencyLayout = @currencyLayout, Timezone = @timeZone, DefaultBuyin = @defaultBuyin, CashgamesEnabled = @cashgamesEnabled, TournamentsEnabled = @tournamentsEnabled, VideosEnabled = @videosEnabled WHERE HomegameID = @id";
+        const string sql = @"
+UPDATE pb_bunch
+SET name = @slug,
+    display_name = @displayName,
+    description = @description, 
+    house_rules = @houseRules,
+    currency = @currencySymbol,
+    currency_layout = @currencyLayout,
+    timezone = @timeZone,
+    default_buyin = @defaultBuyin,
+    cashgames_enabled = @cashgamesEnabled,
+    tournaments_enabled = @tournamentsEnabled,
+    videos_enabled = @videosEnabled
+WHERE bunch_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -130,7 +152,11 @@ public class SqlBunchDb
         
     public bool DeleteBunch(int id)
     {
-        const string sql = "DELETE FROM homegame WHERE Id = @id";
+        const string sql = @"
+DELETE
+FROM pb_bunch
+WHERE bunch_id = @id";
+
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@id", id)
@@ -142,17 +168,17 @@ public class SqlBunchDb
     private static RawBunch CreateRawBunch(IStorageDataReader reader)
     {
         return new RawBunch(
-            reader.GetIntValue("HomegameID"),
-            reader.GetStringValue("Name"),
-            reader.GetStringValue("DisplayName"),
-            reader.GetStringValue("Description"),
-            reader.GetStringValue("HouseRules"),
-            reader.GetStringValue("Timezone"),
-            reader.GetIntValue("DefaultBuyin"),
-            reader.GetStringValue("CurrencyLayout"),
-            reader.GetStringValue("Currency"),
-            reader.GetBooleanValue("CashgamesEnabled"),
-            reader.GetBooleanValue("TournamentsEnabled"),
-            reader.GetBooleanValue("VideosEnabled"));
+            reader.GetIntValue("bunch_id"),
+            reader.GetStringValue("name"),
+            reader.GetStringValue("display_name"),
+            reader.GetStringValue("description"),
+            reader.GetStringValue("house_rules"),
+            reader.GetStringValue("timezone"),
+            reader.GetIntValue("default_buyin"),
+            reader.GetStringValue("currency_layout"),
+            reader.GetStringValue("currency"),
+            reader.GetBooleanValue("cashgames_enabled"),
+            reader.GetBooleanValue("tournaments_enabled"),
+            reader.GetBooleanValue("videos_enabled"));
     }
 }
