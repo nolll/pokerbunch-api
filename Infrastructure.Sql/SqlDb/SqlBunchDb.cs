@@ -15,7 +15,7 @@ SELECT b.bunch_id, b.name, b.display_name, b.description, b.currency, b.currency
 FROM pb_bunch b";
 
     private const string SearchSql = @"
-SELECT h.bunch_id
+SELECT b.bunch_id
 FROM pb_bunch b";
 
     private readonly SqlServerStorageProvider _db;
