@@ -242,3 +242,7 @@ CREATE TABLE pb_video(
         FOREIGN KEY(bunch_id) 
         REFERENCES pb_bunch(bunch_id)
 );
+
+INSERT INTO pb_role (role_id, role_name) VALUES (1, 'Player');
+INSERT INTO pb_role (role_id, role_name) VALUES (2, 'Manager');
+INSERT INTO pb_role (role_id, role_name) VALUES (3, 'Admin');

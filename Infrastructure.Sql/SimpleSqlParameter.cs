@@ -1,30 +1,40 @@
 ﻿using Npgsql;
 using System;
+using System.Globalization;
 
 namespace Infrastructure.Sql;
 
-public class SimpleSqlParameter : IEquatable<SimpleSqlParameter>
+public class SimpleSqlParameter
 {
-    private string ParameterName { get; }
-    private object Value { get; }
+    public NpgsqlParameter SqlParameter { get; }
 
-    public SimpleSqlParameter(string parameterName, object value)
+    public SimpleSqlParameter(string parameterName, string value)
+        : this(CreateSqlParameter(parameterName, value))
     {
-        ParameterName = parameterName;
-        Value = value;
     }
 
-    public NpgsqlParameter SqlParameter
+    public SimpleSqlParameter(string parameterName, int value)
+        : this(CreateSqlParameter(parameterName, value))
     {
-        get
-        {
-            var value = Value ?? DBNull.Value;
-            return new NpgsqlParameter(ParameterName, value);
-        }
     }
 
-    public bool Equals(SimpleSqlParameter other)
+    public SimpleSqlParameter(string parameterName, bool value)
+        : this(CreateSqlParameter(parameterName, value ? 1 : 0))
     {
-        return ParameterName.Equals(other.ParameterName) && Value.Equals(other.Value);
+    }
+
+    public SimpleSqlParameter(string parameterName, DateTime value)
+        : this(CreateSqlParameter(parameterName, value.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture)))
+    {
+    }
+
+    private SimpleSqlParameter(NpgsqlParameter parameter)
+    {
+        SqlParameter = parameter;
+    }
+
+    private static NpgsqlParameter CreateSqlParameter(string parameterName, object value)
+    {
+        return new NpgsqlParameter(parameterName, value ?? DBNull.Value);
     }
 }

@@ -95,7 +95,7 @@ VALUES (@bunchId, @userId, @role, 1, @color) RETURNING player_id";
             {
                 new SimpleSqlParameter("@bunchId", player.BunchId),
                 new SimpleSqlParameter("@userId", player.UserId),
-                new SimpleSqlParameter("@role", player.Role),
+                new SimpleSqlParameter("@role", (int)player.Role),
                 new SimpleSqlParameter("@color", player.Color)
             };
             return _db.ExecuteInsert(sql, parameters);

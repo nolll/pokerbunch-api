@@ -282,7 +282,7 @@ VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkp
         {
             new SimpleSqlParameter("@gameId", checkpoint.CashgameId),
             new SimpleSqlParameter("@playerId", checkpoint.PlayerId),
-            new SimpleSqlParameter("@type", checkpoint.Type),
+            new SimpleSqlParameter("@type", (int)checkpoint.Type),
             new SimpleSqlParameter("@amount", checkpoint.Amount),
             new SimpleSqlParameter("@stack", checkpoint.Stack),
             new SimpleSqlParameter("@timestamp", checkpoint.Timestamp.ToUniversalTime())
