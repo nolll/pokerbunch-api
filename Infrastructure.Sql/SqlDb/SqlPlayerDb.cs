@@ -90,12 +90,13 @@ FROM pb_player p ";
         {
             const string sql = @"
 INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
-VALUES (@bunchId, @userId, @role, 1, @color) RETURNING player_id";
+VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
                 new SimpleSqlParameter("@bunchId", player.BunchId),
                 new SimpleSqlParameter("@userId", player.UserId),
                 new SimpleSqlParameter("@role", (int)player.Role),
+                new SimpleSqlParameter("@approved", true),
                 new SimpleSqlParameter("@color", player.Color)
             };
             return _db.ExecuteInsert(sql, parameters);
@@ -104,11 +105,12 @@ VALUES (@bunchId, @userId, @role, 1, @color) RETURNING player_id";
         {
             const string sql = @"
 INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
-VALUES (@bunchId, @role, 1, @playerName, @color) RETURNING player_id";
+VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
                 new SimpleSqlParameter("@bunchId", player.BunchId),
                 new SimpleSqlParameter("@role", (int)Role.Player),
+                new SimpleSqlParameter("@approved", true),
                 new SimpleSqlParameter("@playerName", player.DisplayName),
                 new SimpleSqlParameter("@color", player.Color)
             };
@@ -124,13 +126,14 @@ SET bunch_id = @bunchId,
     player_name = NULL,
     user_id = @userId,
     role_id = @role,
-    approved = 1
+    approved = @approved,
 WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
             new SimpleSqlParameter("@bunchId", bunch.Id),
             new SimpleSqlParameter("@userId", userId),
             new SimpleSqlParameter("@role", (int) player.Role),
+            new SimpleSqlParameter("@approved", true),
             new SimpleSqlParameter("@playerId", player.Id)
         };
         var rowCount = _db.Execute(sql, parameters);

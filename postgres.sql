@@ -27,9 +27,9 @@ CREATE TABLE pb_bunch(
 	default_buyin INT NOT NULL,
 	currency VARCHAR(3) NOT NULL,
 	currency_layout VARCHAR(20) NOT NULL,
-	cashgames_enabled BIT NOT NULL,
-	tournaments_enabled BIT NOT NULL,
-	videos_enabled BIT NOT NULL,
+	cashgames_enabled BOOLEAN NOT NULL,
+	tournaments_enabled BOOLEAN NOT NULL,
+	videos_enabled BOOLEAN NOT NULL,
 	house_rules TEXT NULL
 );
 
@@ -83,7 +83,7 @@ CREATE TABLE pb_player(
 	bunch_id INT NOT NULL,
 	user_id INT NULL,
 	role_id INT NOT NULL,
-	approved BIT DEFAULT 0::bit NOT NULL,
+	approved BOOLEAN DEFAULT FALSE NOT NULL,
 	player_name VARCHAR(50) NULL,
 	color VARCHAR(10) NULL,
     CONSTRAINT fk_bunch
@@ -142,7 +142,7 @@ CREATE TABLE pb_tournament(
 	duration INT NOT NULL,
 	location VARCHAR(50) NOT NULL,
 	timestamp TIMESTAMP NOT NULL,
-	published BIT NOT NULL,
+	published BOOLEAN NOT NULL,
     CONSTRAINT fk_bunch
         FOREIGN KEY(bunch_id)
         REFERENCES pb_bunch(bunch_id)
@@ -237,7 +237,7 @@ CREATE TABLE pb_video(
 	height INT NOT NULL,
 	source VARCHAR(20) NOT NULL,
 	type VARCHAR(20) NOT NULL,
-	hidden BIT NOT NULL,
+	hidden BOOLEAN NOT NULL,
     CONSTRAINT fk_bunch
         FOREIGN KEY(bunch_id) 
         REFERENCES pb_bunch(bunch_id)
