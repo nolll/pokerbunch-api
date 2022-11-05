@@ -91,7 +91,6 @@ public class ServiceConfig
         _services.AddSingleton<IEventRepository, EventRepository>();
         _services.AddSingleton<ILocationRepository, LocationRepository>();
         _services.AddSingleton<IPlayerRepository, PlayerRepository>();
-        _services.AddSingleton<ITimezoneRepository, TimezoneRepository>();
         _services.AddSingleton(GetEmailSender());
         _services.AddSingleton(new SqlServerStorageProvider(connectionString));
         _services.AddSingleton<IRandomizer, Randomizer>();
@@ -100,9 +99,6 @@ public class ServiceConfig
         _services.AddSingleton<ClearCache>();
         _services.AddSingleton<TestEmail>();
         _services.AddSingleton<EnsureAdmin>();
-
-        // Misc
-        _services.AddSingleton<GetTimezoneList>();
 
         // Auth
         _services.AddSingleton<Login>();
