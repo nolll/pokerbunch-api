@@ -95,10 +95,13 @@ VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id"
         
     private int? GetIdByNameOrEmail(string nameOrEmail)
     {
+        if (string.IsNullOrEmpty(nameOrEmail))
+            return null;
+
         var sql = string.Concat(SearchSql, "WHERE (u.user_name = @query OR u.email = @query)");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@query", nameOrEmail)
+            new("@query", nameOrEmail)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadInt("user_id");
