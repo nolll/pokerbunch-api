@@ -20,3 +20,4 @@ Web/Assets
 **/Local.config
 **/appsettings.Development.json
 *.user
+.env.dev

@@ -13,6 +13,7 @@ using Api.Urls.ApiUrls;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -140,55 +141,40 @@ public class UserController : BaseController
 
     // https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api
     /// <summary>
-    /// Get an auth token
+    /// Get an auth token by posting form data.
     /// </summary>
     /// <param name="userName">Username</param>
     /// <param name="password" format="password">Password</param>
     /// <returns>A token that can be used for authentication</returns>
     [AllowAnonymous]
     [HttpPost]
-    [Route(ApiRoutes.Token.Get)]
-    public async Task<IActionResult> Authenticate([FromForm] string userName, [FromForm] string password)
+    [Route(ApiRoutes.Auth.Token)]
+    public IActionResult Token([FromForm] string userName, [FromForm] string password)
     {
-        var post = await GetLoginPostModel(userName, password);
-        var result = _login.Execute(new Login.Request(post.UserName, post.Password));
-        var token = CreateToken(result.UserName);
+        var post = new LoginPostModel { UserName = userName, Password = password };
+        var token = GetToken(post);
         return Ok(token);
     }
 
-    private async Task<LoginPostModel> GetLoginPostModel(string userName, string password)
+    /// <summary>
+    /// Get an auth token by posting json data
+    /// </summary>
+    /// <returns>A token that can be used for authentication</returns>
+    [AllowAnonymous]
+    [HttpPost]
+    [Route(ApiRoutes.Auth.Login)]
+    public IActionResult Login([FromBody] LoginPostModel post)
     {
-        var fromForm = GetLoginPostModelFromForm(userName, password);
-        if (fromForm != null)
-            return fromForm;
-
-        var fromBody = await GetLoginPostModelFromJsonBody();
-        if (fromBody != null)
-            return fromBody;
-
-        return new LoginPostModel();
+        var token = GetToken(post);
+        return Ok(token);
     }
 
-    private LoginPostModel GetLoginPostModelFromForm(string userName, string password)
+    private string GetToken(LoginPostModel loginPostModel)
     {
-        if (userName == null || password == null)
-            return null;
-
-        return new LoginPostModel
-        {
-            UserName = userName,
-            Password = password
-        };
+        var result = _login.Execute(new Login.Request(loginPostModel.UserName, loginPostModel.Password));
+        return CreateToken(result.UserName);
     }
-
-    private async Task<LoginPostModel> GetLoginPostModelFromJsonBody()
-    {
-        var body = await Request.BodyAsString();
-        return !string.IsNullOrEmpty(body)
-            ? JsonConvert.DeserializeObject<LoginPostModel>(body) 
-            : null;
-    }
-
+    
     private string CreateToken(string userName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
