@@ -17,9 +17,9 @@ LEFT JOIN pb_user u ON u.user_id = p.user_id ";
 SELECT p.player_id
 FROM pb_player p ";
 
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresStorageProvider _db;
 
-    public SqlPlayerDb(SqlServerStorageProvider db)
+    public SqlPlayerDb(PostgresStorageProvider db)
     {
         _db = db;
     }

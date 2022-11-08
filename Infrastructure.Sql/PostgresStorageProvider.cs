@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Sql;
 
-public class SqlServerStorageProvider
+public class PostgresStorageProvider
 {
     private readonly string _connectionString;
 
-    public SqlServerStorageProvider(string connectionString)
+    public PostgresStorageProvider(string connectionString)
     {
         _connectionString = connectionString;
     }

@@ -23,9 +23,9 @@ FROM pb_game g ";
 SELECT cp.game_id
 FROM pb_cashgame_checkpoint cp ";
         
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresStorageProvider _db;
 
-    public SqlCashgameDb(SqlServerStorageProvider db)
+    public SqlCashgameDb(PostgresStorageProvider db)
     {
         _db = db;
     }

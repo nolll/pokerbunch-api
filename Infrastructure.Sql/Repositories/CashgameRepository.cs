@@ -13,7 +13,7 @@ public class CashgameRepository : ICashgameRepository
     private readonly SqlCashgameDb _cashgameDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public CashgameRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
+    public CashgameRepository(PostgresStorageProvider db, ICacheContainer cacheContainer)
     {
         _cashgameDb = new SqlCashgameDb(db);
         _cacheContainer = cacheContainer;

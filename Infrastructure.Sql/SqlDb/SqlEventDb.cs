@@ -16,9 +16,9 @@ LEFT JOIN pb_game g on ecg.game_id = g.game_id
 {0}
 ORDER BY e.event_id, g.date";
 
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresStorageProvider _db;
 
-    public SqlEventDb(SqlServerStorageProvider db)
+    public SqlEventDb(PostgresStorageProvider db)
     {
         _db = db;
     }

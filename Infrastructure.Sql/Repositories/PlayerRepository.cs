@@ -13,7 +13,7 @@ public class PlayerRepository : IPlayerRepository
     private readonly SqlPlayerDb _playerDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public PlayerRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
+    public PlayerRepository(PostgresStorageProvider db, ICacheContainer cacheContainer)
     {
         _playerDb = new SqlPlayerDb(db);
         _cacheContainer = cacheContainer;

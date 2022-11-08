@@ -14,7 +14,7 @@ public class BunchRepository : IBunchRepository
     private readonly SqlBunchDb _bunchDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public BunchRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
+    public BunchRepository(PostgresStorageProvider db, ICacheContainer cacheContainer)
     {
         _bunchDb = new SqlBunchDb(db);
         _cacheContainer = cacheContainer;

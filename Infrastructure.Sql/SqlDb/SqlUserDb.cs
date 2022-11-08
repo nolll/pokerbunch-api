@@ -16,9 +16,9 @@ FROM pb_user u ";
 SELECT u.user_id
 FROM pb_user u ";
         
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresStorageProvider _db;
 
-    public SqlUserDb(SqlServerStorageProvider db)
+    public SqlUserDb(PostgresStorageProvider db)
     {
         _db = db;
     }

@@ -15,9 +15,9 @@ FROM pb_location l ";
 SELECT l.location_id
 FROM pb_location l ";
 
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresStorageProvider _db;
 
-    public SqlLocationDb(SqlServerStorageProvider db)
+    public SqlLocationDb(PostgresStorageProvider db)
     {
         _db = db;
     }

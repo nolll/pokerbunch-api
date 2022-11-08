@@ -12,7 +12,7 @@ public class UserRepository : IUserRepository
     private readonly SqlUserDb _userDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public UserRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
+    public UserRepository(PostgresStorageProvider db, ICacheContainer cacheContainer)
     {
         _userDb = new SqlUserDb(db);
         _cacheContainer = cacheContainer;

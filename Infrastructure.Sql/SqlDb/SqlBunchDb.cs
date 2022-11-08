@@ -18,9 +18,9 @@ FROM pb_bunch b";
 SELECT b.bunch_id
 FROM pb_bunch b";
 
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresStorageProvider _db;
         
-    public SqlBunchDb(SqlServerStorageProvider db)
+    public SqlBunchDb(PostgresStorageProvider db)
     {
         _db = db;
     }
