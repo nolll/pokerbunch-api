@@ -1,13 +1,18 @@
+using Api;
 using Core.Cache;
 using Core.UseCases;
 using Infrastructure.Sql;
 using Infrastructure.Sql.Repositories;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
 
 public class ApplicationTests
 {
+    private WebApplicationFactory<Program> _webApplicationFactory;
+
+
     private static readonly PostgresStorageProvider Db = new(DatabaseHandler.ConnectionString);
     private static readonly CacheContainer Cache = new(new FakeCacheProvider());
     private static readonly FakeRandomizer Randomizer = new();
@@ -30,12 +35,22 @@ public class ApplicationTests
     private const string TimeZone = "Europe/Stockholm";
 
     [Test]
-    public void TestEverything()
+    public async Task TestEverything()
     {
+        _webApplicationFactory = new WebApplicationFactory<Program>();
+
         VerifyMasterData();
+        await VersionReturns200();
         Register();
         Login();
         CreateBunch();
+    }
+
+    private async Task VersionReturns200()
+    {
+        var client = _webApplicationFactory.CreateClient();
+        var response = await client.GetAsync("/version");
+        response.EnsureSuccessStatusCode();
     }
 
     private void VerifyMasterData()
