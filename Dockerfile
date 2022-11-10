@@ -11,6 +11,7 @@ COPY Infrastructure.Sql/*.csproj ./Infrastructure.Sql/
 COPY Api/*.csproj ./Api/
 COPY Tests.Common/*.csproj ./Tests.Common/
 COPY Tests.Core/*.csproj ./Tests.Core/
+COPY Tests.Integration/*.csproj ./Tests.Integration/
 
 RUN dotnet restore .
 COPY . .
@@ -33,6 +34,9 @@ WORKDIR /Tests.Common
 RUN dotnet build -c Release -o /app
 
 WORKDIR /Tests.Core
+RUN dotnet build -c Release -o /app
+
+WORKDIR /Tests.Integration
 RUN dotnet build -c Release -o /app
 
 FROM build AS publish
