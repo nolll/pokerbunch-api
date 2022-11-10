@@ -29,7 +29,7 @@ FROM pb_player p ";
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId)
+            new("@bunchId", bunchId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("player_id");
@@ -41,8 +41,8 @@ FROM pb_player p ";
         var sql = string.Concat(SearchSql, "LEFT JOIN pb_user u on p.user_id = u.user_id WHERE p.bunch_id = @bunchId AND (p.player_name = @playerName OR u.display_name = @playerName)");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId),
-            new SimpleSqlParameter("@playerName", name)
+            new("@bunchId", bunchId),
+            new("@playerName", name)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("player_id");
@@ -54,8 +54,8 @@ FROM pb_player p ";
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId AND p.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId),
-            new SimpleSqlParameter("@userId", userId)
+            new("@bunchId", bunchId),
+            new("@userId", userId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("player_id");
@@ -77,7 +77,7 @@ FROM pb_player p ";
         var sql = string.Concat(DataSql, "WHERE p.player_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", id)
+            new("@id", id)
         };
         var reader = _db.Query(sql, parameters);
         var rawPlayer = reader.ReadOne(CreateRawPlayer);
@@ -93,11 +93,11 @@ INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
 VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
-                new SimpleSqlParameter("@bunchId", player.BunchId),
-                new SimpleSqlParameter("@userId", player.UserId),
-                new SimpleSqlParameter("@role", (int)player.Role),
-                new SimpleSqlParameter("@approved", true),
-                new SimpleSqlParameter("@color", player.Color)
+                new("@bunchId", player.BunchId),
+                new("@userId", player.UserId),
+                new("@role", (int)player.Role),
+                new("@approved", true),
+                new("@color", player.Color)
             };
             return _db.ExecuteInsert(sql, parameters);
         }
@@ -108,11 +108,11 @@ INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
 VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
-                new SimpleSqlParameter("@bunchId", player.BunchId),
-                new SimpleSqlParameter("@role", (int)Role.Player),
-                new SimpleSqlParameter("@approved", true),
-                new SimpleSqlParameter("@playerName", player.DisplayName),
-                new SimpleSqlParameter("@color", player.Color)
+                new("@bunchId", player.BunchId),
+                new("@role", (int)Role.Player),
+                new("@approved", true),
+                new("@playerName", player.DisplayName),
+                new("@color", player.Color)
             };
             return _db.ExecuteInsert(sql, parameters);
         }
@@ -130,11 +130,11 @@ SET bunch_id = @bunchId,
 WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunch.Id),
-            new SimpleSqlParameter("@userId", userId),
-            new SimpleSqlParameter("@role", (int) player.Role),
-            new SimpleSqlParameter("@approved", true),
-            new SimpleSqlParameter("@playerId", player.Id)
+            new("@bunchId", bunch.Id),
+            new("@userId", userId),
+            new("@role", (int) player.Role),
+            new("@approved", true),
+            new("@playerId", player.Id)
         };
         var rowCount = _db.Execute(sql, parameters);
         return rowCount > 0;
@@ -147,7 +147,7 @@ DELETE FROM pb_player
 WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@playerId", playerId)
+            new("@playerId", playerId)
         };
         _db.Execute(sql, parameters);
     }

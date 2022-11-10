@@ -39,7 +39,7 @@ FROM pb_bunch b";
         var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", id)
+            new("@id", id)
         };
         var reader = _db.Query(sql, parameters);
         var rawHomegame = reader.ReadOne(CreateRawBunch);
@@ -68,7 +68,7 @@ FROM pb_bunch b";
         var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@userId", userId)
+            new("@userId", userId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("bunch_id");
@@ -83,16 +83,16 @@ VALUES (@slug, @displayName, @description, @currencySymbol, @currencyLayout, @ti
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@slug", rawBunch.Slug),
-            new SimpleSqlParameter("@displayName", rawBunch.DisplayName),
-            new SimpleSqlParameter("@description", rawBunch.Description),
-            new SimpleSqlParameter("@currencySymbol", rawBunch.CurrencySymbol),
-            new SimpleSqlParameter("@currencyLayout", rawBunch.CurrencyLayout),
-            new SimpleSqlParameter("@timeZone", rawBunch.TimezoneName),
-            new SimpleSqlParameter("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new SimpleSqlParameter("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new SimpleSqlParameter("@videosEnabled", rawBunch.VideosEnabled),
-            new SimpleSqlParameter("@houseRules", rawBunch.HouseRules)
+            new("@slug", rawBunch.Slug),
+            new("@displayName", rawBunch.DisplayName),
+            new("@description", rawBunch.Description),
+            new("@currencySymbol", rawBunch.CurrencySymbol),
+            new("@currencyLayout", rawBunch.CurrencyLayout),
+            new("@timeZone", rawBunch.TimezoneName),
+            new("@cashgamesEnabled", rawBunch.CashgamesEnabled),
+            new("@tournamentsEnabled", rawBunch.TournamentsEnabled),
+            new("@videosEnabled", rawBunch.VideosEnabled),
+            new("@houseRules", rawBunch.HouseRules)
         };
         return _db.ExecuteInsert(sql, parameters);
     }
@@ -117,18 +117,18 @@ WHERE bunch_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@slug", rawBunch.Slug),
-            new SimpleSqlParameter("@displayName", rawBunch.DisplayName),
-            new SimpleSqlParameter("@description", rawBunch.Description),
-            new SimpleSqlParameter("@houseRules", rawBunch.HouseRules),
-            new SimpleSqlParameter("@currencySymbol", rawBunch.CurrencySymbol),
-            new SimpleSqlParameter("@currencyLayout", rawBunch.CurrencyLayout),
-            new SimpleSqlParameter("@timeZone", rawBunch.TimezoneName),
-            new SimpleSqlParameter("@defaultBuyin", rawBunch.DefaultBuyin),
-            new SimpleSqlParameter("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new SimpleSqlParameter("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new SimpleSqlParameter("@videosEnabled", rawBunch.VideosEnabled),
-            new SimpleSqlParameter("@id", rawBunch.Id)
+            new("@slug", rawBunch.Slug),
+            new("@displayName", rawBunch.DisplayName),
+            new("@description", rawBunch.Description),
+            new("@houseRules", rawBunch.HouseRules),
+            new("@currencySymbol", rawBunch.CurrencySymbol),
+            new("@currencyLayout", rawBunch.CurrencyLayout),
+            new("@timeZone", rawBunch.TimezoneName),
+            new("@defaultBuyin", rawBunch.DefaultBuyin),
+            new("@cashgamesEnabled", rawBunch.CashgamesEnabled),
+            new("@tournamentsEnabled", rawBunch.TournamentsEnabled),
+            new("@videosEnabled", rawBunch.VideosEnabled),
+            new("@id", rawBunch.Id)
         };
 
         _db.Execute(sql, parameters);
@@ -159,7 +159,7 @@ WHERE bunch_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", id)
+            new("@id", id)
         };
         var rowCount = _db.Execute(sql, parameters);
         return rowCount > 0;

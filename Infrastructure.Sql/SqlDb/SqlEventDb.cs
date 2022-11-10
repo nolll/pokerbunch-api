@@ -29,7 +29,7 @@ ORDER BY e.event_id, g.date";
         var sql = string.Format(EventSql, whereClause);
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", id)
+            new("@id", id)
         };
         var reader = _db.Query(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
@@ -56,7 +56,7 @@ WHERE e.bunch_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", bunchId)
+            new("@id", bunchId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("event_id");
@@ -71,7 +71,7 @@ WHERE ecg.cashgame_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", cashgameId)
+            new("@id", cashgameId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("event_id");
@@ -85,8 +85,8 @@ VALUES (@name, @bunchId) RETURNING event_id";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@name", e.Name),
-            new SimpleSqlParameter("@bunchId", e.BunchId)
+            new("@name", e.Name),
+            new("@bunchId", e.BunchId)
         };
         return _db.ExecuteInsert(sql, parameters);
     }
@@ -98,8 +98,8 @@ INSERT INTO pb_event_cashgame (event_id, game_id)
 VALUES (@eventId, @cashgameId)";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@eventId", eventId),
-            new SimpleSqlParameter("@cashgameId", cashgameId)
+            new("@eventId", eventId),
+            new("@cashgameId", cashgameId)
         };
         _db.ExecuteInsert(sql, parameters);
     }

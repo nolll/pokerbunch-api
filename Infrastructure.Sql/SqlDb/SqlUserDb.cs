@@ -28,7 +28,7 @@ FROM pb_user u ";
         var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@userId", id)
+            new("@userId", id)
         };
         var reader = _db.Query(sql, parameters);
         var rawUser = reader.ReadOne(CreateRawUser);
@@ -67,12 +67,12 @@ SET display_name = @displayName,
 WHERE user_id = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@displayName", user.DisplayName),
-            new SimpleSqlParameter("@realName", user.RealName),
-            new SimpleSqlParameter("@email", user.Email),
-            new SimpleSqlParameter("@password", user.EncryptedPassword),
-            new SimpleSqlParameter("@salt", user.Salt),
-            new SimpleSqlParameter("@userId", user.Id)
+            new("@displayName", user.DisplayName),
+            new("@realName", user.RealName),
+            new("@email", user.Email),
+            new("@password", user.EncryptedPassword),
+            new("@salt", user.Salt),
+            new("@userId", user.Id)
         };
         _db.Execute(sql, parameters);
     }
@@ -84,11 +84,11 @@ INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
 VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@userName", user.UserName),
-            new SimpleSqlParameter("@displayName", user.DisplayName),
-            new SimpleSqlParameter("@email", user.Email),
-            new SimpleSqlParameter("@password", user.EncryptedPassword),
-            new SimpleSqlParameter("@salt", user.Salt)
+            new("@userName", user.UserName),
+            new("@displayName", user.DisplayName),
+            new("@email", user.Email),
+            new("@password", user.EncryptedPassword),
+            new("@salt", user.Salt)
         };
         return _db.ExecuteInsert(sql, parameters);
     }
@@ -119,7 +119,7 @@ VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id"
         const string sql = "DELETE FROM pb_user WHERE user_iD = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@userId", userId)
+            new("@userId", userId)
         };
         var rowCount = _db.Execute(sql, parameters);
         return rowCount > 0;

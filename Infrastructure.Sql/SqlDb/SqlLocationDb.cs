@@ -27,7 +27,7 @@ FROM pb_location l ";
         var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@id", id)
+            new("@id", id)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadOne(CreateLocation);
@@ -49,7 +49,7 @@ FROM pb_location l ";
         var sql = string.Concat(SearchIdSql, "WHERE l.bunch_id = @bunchId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId)
+            new("@bunchId", bunchId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("bunch_id");
@@ -62,8 +62,8 @@ INSERT INTO pb_location (name, bunch_id)
 VALUES (@name, @bunchId) RETURNING location_id";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@name", location.Name),
-            new SimpleSqlParameter("@bunchId", location.BunchId)
+            new("@name", location.Name),
+            new("@bunchId", location.BunchId)
         };
         return _db.ExecuteInsert(sql, parameters);
     }

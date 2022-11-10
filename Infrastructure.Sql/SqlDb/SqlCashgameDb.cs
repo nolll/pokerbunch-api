@@ -35,7 +35,7 @@ FROM pb_cashgame_checkpoint cp ";
         var sql = string.Concat(DataSql, "WHERE g.game_id = @cashgameId ORDER BY g.game_id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@cashgameId", cashgameId)
+            new("@cashgameId", cashgameId)
         };
         var reader = _db.Query(sql, parameters);
         var rawGame = reader.ReadOne(CreateRawCashgame);
@@ -62,8 +62,8 @@ FROM pb_cashgame_checkpoint cp ";
         const int status = (int)GameStatus.Finished;
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId),
-            new SimpleSqlParameter("@status", status)
+            new("@bunchId", bunchId),
+            new("@status", status)
         };
         if (year.HasValue)
         {
@@ -79,7 +79,7 @@ FROM pb_cashgame_checkpoint cp ";
         var sql = string.Concat(SearchSql, "WHERE g.game_id IN (SELECT ecg.game_id FROM pb_event_cashgame ecg WHERE ecg.event_id = @eventId)");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@eventId", eventId),
+            new("@eventId", eventId),
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("game_id");
@@ -91,8 +91,8 @@ FROM pb_cashgame_checkpoint cp ";
         var sql = string.Concat(SearchSql, "WHERE g.bunch_id = @bunchId AND g.status = @status");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId),
-            new SimpleSqlParameter("@status", status)
+            new("@bunchId", bunchId),
+            new("@status", status)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("game_id");
@@ -103,7 +103,7 @@ FROM pb_cashgame_checkpoint cp ";
         var sql = string.Concat(SearchByCheckpointSql, "WHERE cp.checkpoint_id = @checkpointId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@checkpointId", checkpointId)
+            new("@checkpointId", checkpointId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("game_id");
@@ -127,8 +127,8 @@ FROM pb_cashgame_checkpoint cp ";
 SELECT DISTINCT YEAR(g.date) as 'Year' FROM pb_game g WHERE g.bunch_id = @bunchId AND g.status = @status ORDER BY 'Year' DESC";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunchId),
-            new SimpleSqlParameter("@status", (int) GameStatus.Finished)
+            new("@bunchId", bunchId),
+            new("@status", (int) GameStatus.Finished)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("year");
@@ -140,7 +140,7 @@ DELETE FROM pb_game WHERE game_id = @cashgameId";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@cashgameId", id)
+            new("@cashgameId", id)
         };
         _db.Execute(sql, parameters);
     }
@@ -155,10 +155,10 @@ VALUES (@bunchId, @locationId, @status, @date) RETURNING game_id";
         var timezoneAdjustedDate = TimeZoneInfo.ConvertTime(rawCashgame.Date, bunch.Timezone);
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@bunchId", bunch.Id),
-            new SimpleSqlParameter("@locationId", rawCashgame.LocationId),
-            new SimpleSqlParameter("@status", rawCashgame.Status),
-            new SimpleSqlParameter("@date", timezoneAdjustedDate)
+            new("@bunchId", bunch.Id),
+            new("@locationId", rawCashgame.LocationId),
+            new("@status", rawCashgame.Status),
+            new("@date", timezoneAdjustedDate)
         };
         return _db.ExecuteInsert(sql, parameters);
     }
@@ -175,10 +175,10 @@ WHERE game_id = @cashgameId";
         var rawCashgame = CreateRawCashgame(cashgame);
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@locationId", rawCashgame.LocationId),
-            new SimpleSqlParameter("@date", rawCashgame.Date),
-            new SimpleSqlParameter("@status", rawCashgame.Status),
-            new SimpleSqlParameter("@cashgameId", rawCashgame.Id)
+            new("@locationId", rawCashgame.LocationId),
+            new("@date", rawCashgame.Date),
+            new("@status", rawCashgame.Status),
+            new("@cashgameId", rawCashgame.Id)
         };
         if (cashgame.AddedCheckpoints.Any())
         {
@@ -213,7 +213,7 @@ WHERE player_id = @playerId";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@playerId", playerId)
+            new("@playerId", playerId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadIntList("game_id");
@@ -280,12 +280,12 @@ VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkp
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@gameId", checkpoint.CashgameId),
-            new SimpleSqlParameter("@playerId", checkpoint.PlayerId),
-            new SimpleSqlParameter("@type", (int)checkpoint.Type),
-            new SimpleSqlParameter("@amount", checkpoint.Amount),
-            new SimpleSqlParameter("@stack", checkpoint.Stack),
-            new SimpleSqlParameter("@timestamp", checkpoint.Timestamp.ToUniversalTime())
+            new("@gameId", checkpoint.CashgameId),
+            new("@playerId", checkpoint.PlayerId),
+            new("@type", (int)checkpoint.Type),
+            new("@amount", checkpoint.Amount),
+            new("@stack", checkpoint.Stack),
+            new("@timestamp", checkpoint.Timestamp.ToUniversalTime())
         };
         return _db.ExecuteInsert(sql, parameters);
     }
@@ -300,10 +300,10 @@ SET timestamp = @timestamp,
 WHERE checkpoint_id = @checkpointId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@timestamp", checkpoint.Timestamp),
-            new SimpleSqlParameter("@amount", checkpoint.Amount),
-            new SimpleSqlParameter("@stack", checkpoint.Stack),
-            new SimpleSqlParameter("@checkpointId", checkpoint.Id)
+            new("@timestamp", checkpoint.Timestamp),
+            new("@amount", checkpoint.Amount),
+            new("@stack", checkpoint.Stack),
+            new("@checkpointId", checkpoint.Id)
         };
         _db.Execute(sql, parameters);
     }
@@ -330,7 +330,7 @@ WHERE cp.game_id = @cashgameId
 ORDER BY cp.player_id, cp.timestamp";
         var parameters = new List<SimpleSqlParameter>
         {
-            new SimpleSqlParameter("@cashgameId", cashgameId)
+            new("@cashgameId", cashgameId)
         };
         var reader = _db.Query(sql, parameters);
         return reader.ReadList(CreateRawCheckpoint);
