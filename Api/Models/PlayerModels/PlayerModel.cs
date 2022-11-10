@@ -1,37 +1,34 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.PlayerModels;
 
-[DataContract(Namespace = "", Name = "player")]
 public class PlayerModel
 {
-    [DataMember(Name = "id")]
-    public int Id { get; }
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
 
-    [DataMember(Name = "name")]
-    public string Name { get; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
 
-    //[DataMember(Name = "canDelete")]
-    //public bool CanDelete { get; }
+    [JsonPropertyName("userId")]
+    public string UserId { get; set; }
 
-    //[DataMember(Name = "isUser")]
-    //public bool IsUser { get; }
+    [JsonPropertyName("userName")]
+    public string UserName { get; set; }
 
-    [DataMember(Name = "userId")]
-    public string UserId { get; }
+    [JsonPropertyName("avatarUrl")]
+    public string AvatarUrl { get; set; }
 
-    [DataMember(Name = "userName")]
-    public string UserName { get; }
+    [JsonPropertyName("bunchId")]
+    public string Slug { get; set; }
 
-    [DataMember(Name = "avatarUrl")]
-    public string AvatarUrl { get; }
+    [JsonPropertyName("color")]
+    public string Color { get; set; }
 
-    [DataMember(Name = "bunchId")]
-    public string Slug { get; }
-
-    [DataMember(Name = "color")]
-    public string Color { get; }
+    public PlayerModel()
+    {
+    }
 
     public PlayerModel(GetPlayer.Result r)
     {

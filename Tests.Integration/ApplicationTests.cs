@@ -1,3 +1,9 @@
+using System.Net;
+using System.Text.Json;
+using Api.Models.BunchModels;
+using Api.Models.PlayerModels;
+using Api.Models.UserModels;
+using Api.Routes;
 using Infrastructure.Sql;
 
 namespace Tests.Integration;
@@ -10,7 +16,6 @@ public class ApplicationTests
     private const string UserDisplayName = "User 1";
     private const string Email = "user1@example.org";
     private const string Password = "password";
-    private const string LoginUrl = "/login";
 
     private const string BunchDisplayName = "Bunch 1";
     private const string BunchSlug = "bunch-1";
@@ -25,17 +30,11 @@ public class ApplicationTests
         _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString);
 
         VerifyMasterData();
-        await VersionReturns200();
-        //Register();
-        //Login();
-        //CreateBunch();
-    }
-
-    private async Task VersionReturns200()
-    {
-        var client = _webApplicationFactory.CreateClient();
-        var response = await client.GetAsync("/version");
-        response.EnsureSuccessStatusCode();
+        await Version();
+        await Register();
+        var token = await Login();
+        await CreateBunch(token);
+        await AddPlayer(token);
     }
 
     private void VerifyMasterData()
@@ -52,30 +51,105 @@ public class ApplicationTests
         Assert.That(roles[2].Name, Is.EqualTo("Admin"));
     }
 
-    //private void Register()
-    //{
-    //    var addUser = new AddUser(UserRepository, Randomizer, EmailSender);
+    private async Task Version()
+    {
+        var response = await Client.GetAsync(ApiRoutes.Version);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
 
-    //    addUser.Execute(new AddUser.Request(UserName, UserDisplayName, Email, Password, LoginUrl));
-    //}
+    private async Task Register()
+    {
+        var parameters = new AddUserPostModel
+        {
+            UserName = UserName,
+            DisplayName = UserDisplayName,
+            Email = Email,
+            Password = Password
+        };
 
-    //private void Login()
-    //{
-    //    var login = new Login(UserRepository);
+        var response = await Client.PostAsJsonAsync(ApiRoutes.User.List, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
 
-    //    var result = login.Execute(new Login.Request(UserName, Password));
+    private async Task<string> Login()
+    {
+        var parameters = new LoginPostModel
+        {
+            UserName = UserName,
+            Password = Password
+        };
 
-    //    Assert.That(result.UserName, Is.EqualTo(UserName));
-    //}
+        var response = await Client.PostAsJsonAsync(ApiRoutes.Auth.Login, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-    //private void CreateBunch()
-    //{
-    //    var addBunch = new AddBunch(UserRepository, BunchRepository, PlayerRepository);
+        var token = await response.Content.ReadAsStringAsync();
+        Assert.That(token, Is.Not.Empty);
 
-    //    var result = addBunch.Execute(new AddBunch.Request(UserName, BunchDisplayName, BunchDescription, CurrencySymbol, CurrencyLayout, TimeZone));
+        return token;
+    }
 
-    //    Assert.That(result.Name, Is.EqualTo(BunchDisplayName));
-    //    Assert.That(result.Slug, Is.EqualTo(BunchSlug));
-    //    Assert.That(result.DefaultBuyin, Is.EqualTo(200));
-    //}
+    private async Task CreateBunch(string token)
+    {
+        var parameters = new AddBunchPostModel
+        {
+            Name = BunchDisplayName,
+            Description = BunchDescription,
+            Timezone = TimeZone,
+            CurrencySymbol = CurrencySymbol,
+            CurrencyLayout = CurrencyLayout
+        };
+
+        var response = await AuthorizedClient(token).PostAsJsonAsync(ApiRoutes.Bunch.List, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<BunchModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Name, Is.EqualTo(BunchDisplayName));
+        Assert.That(result.Id, Is.EqualTo(BunchSlug));
+        Assert.That(result.DefaultBuyin, Is.EqualTo(200));
+        Assert.That(result.CurrencySymbol, Is.EqualTo(CurrencySymbol));
+        Assert.That(result.CurrencyLayout, Is.EqualTo(CurrencyLayout));
+        Assert.That(result.CurrencyFormat, Is.EqualTo("${0}"));
+        Assert.That(result.Description, Is.EqualTo(BunchDescription));
+        Assert.That(result.HouseRules, Is.EqualTo(""));
+        Assert.That(result.Role, Is.EqualTo("manager"));
+        Assert.That(result.Timezone, Is.EqualTo(TimeZone));
+        Assert.That(result.ThousandSeparator, Is.EqualTo(" "));
+        Assert.That(result.Player.Id, Is.EqualTo("1"));
+        Assert.That(result.Player.Name, Is.EqualTo(UserDisplayName));
+    }
+
+    private async Task AddPlayer(string token)
+    {
+        const string playerName = "Player Name";
+
+        var parameters = new PlayerAddPostModel
+        {
+            Name = playerName
+        };
+
+        var url = ApiRoutes.Player.ListByBunch.Replace("{bunchId}", BunchSlug);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<PlayerModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Name, Is.EqualTo(playerName));
+        Assert.That(result.Id, Is.EqualTo(2));
+        Assert.That(result.Slug, Is.EqualTo(BunchSlug));
+        Assert.That(result.Color, Is.EqualTo("#9e9e9e"));
+        Assert.That(result.AvatarUrl, Is.EqualTo(""));
+        Assert.That(result.UserId, Is.EqualTo(""));
+        Assert.That(result.UserName, Is.EqualTo(""));
+    }
+
+    private HttpClient Client => _webApplicationFactory.CreateClient();
+    private HttpClient AuthorizedClient(string token)
+    {
+        var client = _webApplicationFactory.CreateClient();
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        return client;
+    }
 }

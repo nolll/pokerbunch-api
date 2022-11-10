@@ -2,9 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Api.Auth;
-using Api.Extensions;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Api.Routes;
@@ -13,9 +11,7 @@ using Api.Urls.ApiUrls;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 
 namespace Api.Controllers;
 

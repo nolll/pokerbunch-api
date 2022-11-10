@@ -1,46 +1,49 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.BunchModels;
 
-[DataContract(Namespace = "", Name = "bunch")]
 public class BunchModel
 {
-    [DataMember(Name = "id")]
-    public string Id { get; }
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
 
-    [DataMember(Name = "name")]
-    public string Name { get; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
 
-    [DataMember(Name = "description")]
-    public string Description { get; }
+    [JsonPropertyName("description")]
+    public string Description { get; set; }
 
-    [DataMember(Name = "houseRules")]
-    public string HouseRules { get; }
+    [JsonPropertyName("houseRules")]
+    public string HouseRules { get; set; }
 
-    [DataMember(Name = "timezone")]
-    public string Timezone { get; }
+    [JsonPropertyName("timezone")]
+    public string Timezone { get; set; }
 
-    [DataMember(Name = "currencySymbol")]
-    public string CurrencySymbol { get; }
+    [JsonPropertyName("currencySymbol")]
+    public string CurrencySymbol { get; set; }
 
-    [DataMember(Name = "currencyLayout")]
-    public string CurrencyLayout { get; }
+    [JsonPropertyName("currencyLayout")]
+    public string CurrencyLayout { get; set; }
 
-    [DataMember(Name = "currencyFormat")]
-    public string CurrencyFormat { get; }
+    [JsonPropertyName("currencyFormat")]
+    public string CurrencyFormat { get; set; }
 
-    [DataMember(Name = "thousandSeparator")]
-    public string ThousandSeparator { get; }
+    [JsonPropertyName("thousandSeparator")]
+    public string ThousandSeparator { get; set; }
 
-    [DataMember(Name = "defaultBuyin")]
-    public int DefaultBuyin { get; }
+    [JsonPropertyName("defaultBuyin")]
+    public int DefaultBuyin { get; set; }
 
-    [DataMember(Name = "player")]
-    public BunchPlayerModel Player { get; }
+    [JsonPropertyName("player")]
+    public BunchPlayerModel Player { get; set; }
 
-    [DataMember(Name = "role")]
-    public string Role { get; }
+    [JsonPropertyName("role")]
+    public string Role { get; set; }
+
+    public BunchModel()
+    {
+    }
 
     public BunchModel(BunchResult r)
         : this(r.Slug, r.Name, r.Description)
@@ -70,10 +73,14 @@ public class BunchModel
 
     public class BunchPlayerModel
     {
-        [DataMember(Name = "id")]
-        public string Id { get; }
-        [DataMember(Name = "name")]
-        public string Name { get; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        public BunchPlayerModel()
+        {
+        }
 
         public BunchPlayerModel(string id, string name)
         {

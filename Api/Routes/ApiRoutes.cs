@@ -50,12 +50,7 @@ public static class ApiRoutes
         public const string Get = "locations/{locationId}";
         public const string ListByBunch = "bunches/{bunchId}/locations";
     }
-
-    public static class Misc
-    {
-        public const string Timezones = "misc/timezones";
-    }
-
+    
     public static class Player
     {
         public const string Get = "players/{playerId}";

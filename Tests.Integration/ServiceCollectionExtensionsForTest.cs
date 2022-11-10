@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Integration;
 
-public static class ServiceCollectionExtensions
+public static class ServiceCollectionExtensionsForTest
 {
     public static void ReplaceSingleton<T>(this IServiceCollection services, T instance) where T : class
     {

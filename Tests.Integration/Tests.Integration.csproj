@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Api\Api.csproj" />
-    <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Infrastructure.Sql\Infrastructure.Sql.csproj" />
     <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
   </ItemGroup>
