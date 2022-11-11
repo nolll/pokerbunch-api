@@ -4,7 +4,9 @@ using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
 using Api.Routes;
+using Core.UseCases;
 using Infrastructure.Sql;
+using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
 
@@ -12,10 +14,20 @@ public class ApplicationTests
 {
     private WebApplicationFactoryInTest _webApplicationFactory;
 
-    private const string UserName = "user1";
-    private const string UserDisplayName = "User 1";
-    private const string Email = "user1@example.org";
-    private const string Password = "password";
+    private const string AdminUserName = "admin";
+    private const string AdminDisplayName = "Admin";
+    private const string AdminEmail = "admin@example.org";
+    private const string AdminPassword = "adminpassword";
+
+    private const string ManagerUserName = "manager";
+    private const string ManagerDisplayName = "Manager";
+    private const string ManagerEmail = "manager@example.org";
+    private const string ManagerPassword = "managerpassword";
+
+    private const string UserUserName = "user";
+    private const string UserDisplayName = "User";
+    private const string UserEmail = "user@example.org";
+    private const string UserPassword = "userpassword";
 
     private const string BunchDisplayName = "Bunch 1";
     private const string BunchSlug = "bunch-1";
@@ -27,14 +39,21 @@ public class ApplicationTests
     [Test]
     public async Task TestEverything()
     {
-        _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString);
+        var emailSender = new FakeEmailSender();
+        _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString, emailSender);
 
         VerifyMasterData();
         await Version();
-        await Register();
-        var token = await Login();
-        await CreateBunch(token);
-        await AddPlayer(token);
+        await RegisterAdmin();
+        var adminValidationCode = emailSender.LastMessage;
+        await RegisterManager();
+        await RegisterRegularUser();
+        var adminToken = await Login(AdminUserName, AdminPassword);
+        var managerToken = await Login(ManagerUserName, ManagerPassword);
+        var userToken = await Login(UserUserName, UserPassword);
+        await CreateBunch(managerToken);
+        await AddPlayer(managerToken);
+        await JoinBunch(BunchSlug, userToken, adminValidationCode.Body);
     }
 
     private void VerifyMasterData()
@@ -57,26 +76,43 @@ public class ApplicationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
-    private async Task Register()
+    private async Task RegisterAdmin()
+    {
+        await RegisterUser(AdminUserName, AdminDisplayName, AdminEmail, AdminPassword);
+        var db = new PostgresStorageProvider(DatabaseHandler.ConnectionString);
+        await db.ExecuteAsync("UPDATE pb_user SET role = 3 WHERE user_id = 1");
+    }
+
+    private async Task RegisterManager()
+    {
+        await RegisterUser(ManagerUserName, ManagerDisplayName, ManagerEmail, ManagerPassword);
+    }
+
+    private async Task RegisterRegularUser()
+    {
+        await RegisterUser(UserUserName, UserDisplayName, UserEmail, UserPassword);
+    }
+
+    private async Task RegisterUser(string userName, string displayName, string email, string password)
     {
         var parameters = new AddUserPostModel
         {
-            UserName = UserName,
-            DisplayName = UserDisplayName,
-            Email = Email,
-            Password = Password
+            UserName = userName,
+            DisplayName = displayName,
+            Email = email,
+            Password = password
         };
 
         var response = await Client.PostAsJsonAsync(ApiRoutes.User.List, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-
-    private async Task<string> Login()
+    
+    private async Task<string> Login(string userName, string password)
     {
         var parameters = new LoginPostModel
         {
-            UserName = UserName,
-            Password = Password
+            UserName = userName,
+            Password = password
         };
 
         var response = await Client.PostAsJsonAsync(ApiRoutes.Auth.Login, parameters);
@@ -86,6 +122,18 @@ public class ApplicationTests
         Assert.That(token, Is.Not.Empty);
 
         return token;
+    }
+    
+    private async Task<UserModel> GetUser(string token, string userName)
+    {
+        var url = ApiRoutes.User.Get.Replace("{userName}", userName);
+        var response = await AuthorizedClient(token).GetAsync(url);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<UserModel>(content);
+
+        return result;
     }
 
     private async Task CreateBunch(string token)
@@ -117,7 +165,7 @@ public class ApplicationTests
         Assert.That(result.Timezone, Is.EqualTo(TimeZone));
         Assert.That(result.ThousandSeparator, Is.EqualTo(" "));
         Assert.That(result.Player.Id, Is.EqualTo("1"));
-        Assert.That(result.Player.Name, Is.EqualTo(UserDisplayName));
+        Assert.That(result.Player.Name, Is.EqualTo(ManagerDisplayName));
     }
 
     private async Task AddPlayer(string token)
@@ -143,6 +191,16 @@ public class ApplicationTests
         Assert.That(result.AvatarUrl, Is.EqualTo(""));
         Assert.That(result.UserId, Is.EqualTo(""));
         Assert.That(result.UserName, Is.EqualTo(""));
+    }
+
+    private async Task JoinBunch(string token, string bunchId, string validationCode)
+    {
+        var url = ApiRoutes.Bunch.Join.Replace("{bunchId}", bunchId);
+        var parameters = new JoinBunchPostModel
+        {
+            Code = validationCode
+        };
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();

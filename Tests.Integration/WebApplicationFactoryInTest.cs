@@ -10,10 +10,12 @@ namespace Tests.Integration;
 public class WebApplicationFactoryInTest : WebApplicationFactory<Program>
 {
     private readonly string _connectionString;
+    private readonly IEmailSender _emailSender;
 
-    public WebApplicationFactoryInTest(string connectionString)
+    public WebApplicationFactoryInTest(string connectionString, IEmailSender emailSender)
     {
         _connectionString = connectionString;
+        _emailSender = emailSender;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -21,7 +23,7 @@ public class WebApplicationFactoryInTest : WebApplicationFactory<Program>
         builder.ConfigureServices(services =>
         {
             services.ReplaceSingleton(new PostgresStorageProvider(_connectionString));
-            services.ReplaceSingleton<IEmailSender>(new FakeEmailSender());
+            services.ReplaceSingleton(_emailSender);
             services.ReplaceSingleton<IRandomizer>(new FakeRandomizer());
             services.ReplaceSingleton<ICacheProvider>(new FakeCacheProvider());
        });
