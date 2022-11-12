@@ -114,7 +114,7 @@ public class ApplicationTests
             Password = password
         };
 
-        var response = await Client.PostAsJsonAsync(ApiRoutes.User.List, parameters);
+        var response = await Client.PostAsJsonAsync(ApiRoutes.User.Add, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
     
@@ -158,7 +158,7 @@ public class ApplicationTests
             CurrencyLayout = CurrencyLayout
         };
 
-        var response = await AuthorizedClient(token).PostAsJsonAsync(ApiRoutes.Bunch.List, parameters);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(ApiRoutes.Bunch.Add, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -196,7 +196,7 @@ public class ApplicationTests
             Name = playerName
         };
 
-        var url = ApiRoutes.Player.ListByBunch.Replace("{bunchId}", BunchSlug);
+        var url = ApiRoutes.Player.AddToBunch.Replace("{bunchId}", BunchSlug);
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 

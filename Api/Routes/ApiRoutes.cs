@@ -25,6 +25,7 @@ public static class ApiRoutes
         public const string Get = "bunches/{bunchId}";
         public const string Join = "bunches/{bunchId}/join";
         public const string List = "bunches";
+        public const string Add = List;
         public const string ListForCurrentUser = "user/bunches";
     }
 
@@ -56,6 +57,7 @@ public static class ApiRoutes
         public const string Get = "players/{playerId}";
         public const string Invite = "players/{playerId}/invite";
         public const string ListByBunch = "bunches/{bunchId}/players";
+        public const string AddToBunch = ListByBunch;
     }
 
     public static class Profile
@@ -74,5 +76,6 @@ public static class ApiRoutes
     {
         public const string Get = "users/{userName}";
         public const string List = "users";
+        public const string Add = List;
     }
 }
