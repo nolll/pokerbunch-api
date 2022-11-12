@@ -9,13 +9,13 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlPlayerDb
 {
     private const string DataSql = @"
-SELECT p.bunch_id, p.player_id, p.user_id, p.role_id, COALESCE(u.display_name, p.player_name) AS player_name, p.color, u.user_name 
-FROM pb_player p 
-LEFT JOIN pb_user u ON u.user_id = p.user_id ";
+        SELECT p.bunch_id, p.player_id, p.user_id, p.role_id, COALESCE(u.display_name, p.player_name) AS player_name, p.color, u.user_name 
+        FROM pb_player p 
+        LEFT JOIN pb_user u ON u.user_id = p.user_id ";
         
     private const string SearchSql = @"
-SELECT p.player_id
-FROM pb_player p ";
+        SELECT p.player_id
+        FROM pb_player p ";
 
     private readonly PostgresStorageProvider _db;
 
@@ -89,8 +89,8 @@ FROM pb_player p ";
         if (player.IsUser)
         {
             const string sql = @"
-INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
-VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
+                INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
+                VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
                 new("@bunchId", player.BunchId),
@@ -104,8 +104,8 @@ VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
         else
         {
             const string sql = @"
-INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
-VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
+                INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
+                VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
             var parameters = new List<SimpleSqlParameter>
             {
                 new("@bunchId", player.BunchId),
@@ -121,13 +121,13 @@ VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
     public bool JoinBunch(Player player, Bunch bunch, int userId)
     {
         const string sql = @"
-UPDATE pb_player
-SET bunch_id = @bunchId,
-    player_name = NULL,
-    user_id = @userId,
-    role_id = @role,
-    approved = @approved
-WHERE player_id = @playerId";
+            UPDATE pb_player
+            SET bunch_id = @bunchId,
+                player_name = NULL,
+                user_id = @userId,
+                role_id = @role,
+                approved = @approved
+            WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@bunchId", bunch.Id),
@@ -143,8 +143,8 @@ WHERE player_id = @playerId";
     public void Delete(int playerId)
     {
         const string sql = @"
-DELETE FROM pb_player
-WHERE player_id = @playerId";
+            DELETE FROM pb_player
+            WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@playerId", playerId)

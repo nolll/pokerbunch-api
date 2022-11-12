@@ -11,17 +11,17 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlCashgameDb
 {
     private const string DataSql = @"
-SELECT g.game_id, g.bunch_id, g.location_id, ecg.event_id, g.status, g.date
-FROM pb_game g
-LEFT JOIN pb_event_cashgame ecg ON ecg.game_id = g.game_id ";
+        SELECT g.game_id, g.bunch_id, g.location_id, ecg.event_id, g.status, g.date
+        FROM pb_game g
+        LEFT JOIN pb_event_cashgame ecg ON ecg.game_id = g.game_id ";
 
     private const string SearchSql = @"
-SELECT g.game_id
-FROM pb_game g ";
+        SELECT g.game_id
+        FROM pb_game g ";
 
     private const string SearchByCheckpointSql = @"
-SELECT cp.game_id
-FROM pb_cashgame_checkpoint cp ";
+        SELECT cp.game_id
+        FROM pb_cashgame_checkpoint cp ";
         
     private readonly PostgresStorageProvider _db;
 
@@ -124,7 +124,11 @@ FROM pb_cashgame_checkpoint cp ";
     public IList<int> GetYears(int bunchId)
     {
         const string sql = @"
-SELECT DISTINCT YEAR(g.date) as 'Year' FROM pb_game g WHERE g.bunch_id = @bunchId AND g.status = @status ORDER BY 'Year' DESC";
+            SELECT DISTINCT YEAR(g.date) as 'Year'
+            FROM pb_game g
+            WHERE g.bunch_id = @bunchId
+            AND g.status = @status
+            ORDER BY 'Year' DESC";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@bunchId", bunchId),
@@ -136,7 +140,7 @@ SELECT DISTINCT YEAR(g.date) as 'Year' FROM pb_game g WHERE g.bunch_id = @bunchI
 
     public void DeleteGame(int id){
         const string sql = @"
-DELETE FROM pb_game WHERE game_id = @cashgameId";
+            DELETE FROM pb_game WHERE game_id = @cashgameId";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -149,8 +153,8 @@ DELETE FROM pb_game WHERE game_id = @cashgameId";
     {
         var rawCashgame = CreateRawCashgame(cashgame);
         const string sql = @"
-INSERT INTO pb_game (bunchID, location_id, status, date)
-VALUES (@bunchId, @locationId, @status, @date) RETURNING game_id";
+            INSERT INTO pb_game (bunchID, location_id, status, date)
+            VALUES (@bunchId, @locationId, @status, @date) RETURNING game_id";
 
         var timezoneAdjustedDate = TimeZoneInfo.ConvertTime(rawCashgame.Date, bunch.Timezone);
         var parameters = new List<SimpleSqlParameter>
@@ -166,11 +170,11 @@ VALUES (@bunchId, @locationId, @status, @date) RETURNING game_id";
     public void UpdateGame(Cashgame cashgame)
     {
         const string sql = @"
-UPDATE pb_game
-SET location_id = @locationId,
-    date = @date,
-    status = @status
-WHERE game_id = @cashgameId";
+            UPDATE pb_game
+            SET location_id = @locationId,
+                date = @date,
+                status = @status
+            WHERE game_id = @cashgameId";
 
         var rawCashgame = CreateRawCashgame(cashgame);
         var parameters = new List<SimpleSqlParameter>
@@ -207,9 +211,9 @@ WHERE game_id = @cashgameId";
     public IList<int> FindByPlayerId(int playerId)
     {
         const string sql = @"
-SELECT DISTINCT game_id
-FROM pb_cashgame_checkpoint
-WHERE player_id = @playerId";
+            SELECT DISTINCT game_id
+            FROM pb_cashgame_checkpoint
+            WHERE player_id = @playerId";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -275,8 +279,8 @@ WHERE player_id = @playerId";
     private int AddCheckpoint(Checkpoint checkpoint)
     {
         const string sql = @"
-INSERT INTO pb_cashgamecheckpoint (game_id, player_id, type, amount, stack, timestamp)
-VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
+            INSERT INTO pb_cashgamecheckpoint (game_id, player_id, type, amount, stack, timestamp)
+            VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -293,11 +297,11 @@ VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkp
     private void UpdateCheckpoint(Checkpoint checkpoint)
     {
         const string sql = @"
-UPDATE pb_cashgame_checkpoint
-SET timestamp = @timestamp,
-    amount = @amount,
-    stack = @stack
-WHERE checkpoint_id = @checkpointId";
+            UPDATE pb_cashgame_checkpoint
+            SET timestamp = @timestamp,
+                amount = @amount,
+                stack = @stack
+            WHERE checkpoint_id = @checkpointId";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@timestamp", checkpoint.Timestamp),
@@ -311,8 +315,8 @@ WHERE checkpoint_id = @checkpointId";
     private void DeleteCheckpoint(Checkpoint checkpoint)
     {
         const string sql = @"
-DELETE FROM pb_cashgame_checkpoint
-WHERE checkpoint_id = @checkpointId";
+            DELETE FROM pb_cashgame_checkpoint
+            WHERE checkpoint_id = @checkpointId";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -324,10 +328,10 @@ WHERE checkpoint_id = @checkpointId";
     private IList<RawCheckpoint> GetCheckpoints(int cashgameId)
     {
         const string sql = @"
-SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
-FROM pb_cashgame_checkpoint cp
-WHERE cp.game_id = @cashgameId
-ORDER BY cp.player_id, cp.timestamp";
+            SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
+            FROM pb_cashgame_checkpoint cp
+            WHERE cp.game_id = @cashgameId
+            ORDER BY cp.player_id, cp.timestamp";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@cashgameId", cashgameId)
@@ -351,10 +355,10 @@ ORDER BY cp.player_id, cp.timestamp";
     public IList<RawCheckpoint> GetCheckpoints(IList<int> cashgameIdList)
     {
         const string sql = @"
-SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
-FROM pb_cashgame_checkpoint cp
-WHERE cp.game_id IN (@cashgameIdList)
-ORDER BY cp.player_id, cp.timestamp";
+            SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
+            FROM pb_cashgame_checkpoint cp
+            WHERE cp.game_id IN (@cashgameIdList)
+            ORDER BY cp.player_id, cp.timestamp";
 
         var parameter = new ListSqlParameter("@cashgameIdList", cashgameIdList);
         var reader = _db.Query(sql, parameter);

@@ -9,12 +9,12 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlUserDb
 {
     private const string DataSql = @"
-SELECT u.user_iD, u.user_name, u.display_name, u.real_name, u.email, u.password, u.salt, u.role_id
-FROM pb_user u ";
+        SELECT u.user_iD, u.user_name, u.display_name, u.real_name, u.email, u.password, u.salt, u.role_id
+        FROM pb_user u ";
 
     private const string SearchSql = @"
-SELECT u.user_id
-FROM pb_user u ";
+        SELECT u.user_id
+        FROM pb_user u ";
         
     private readonly PostgresStorageProvider _db;
 
@@ -58,13 +58,13 @@ FROM pb_user u ";
     public void Update(User user)
     {
         const string sql = @"
-UPDATE pb_user 
-SET display_name = @displayName,
-    real_name = @realName,
-    email = @email,
-    password = @password,
-    salt = @salt
-WHERE user_id = @userId";
+            UPDATE pb_user 
+            SET display_name = @displayName,
+                real_name = @realName,
+                email = @email,
+                password = @password,
+                salt = @salt
+            WHERE user_id = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@displayName", user.DisplayName),
@@ -80,8 +80,8 @@ WHERE user_id = @userId";
     public int Add(User user)
     {
         const string sql = @"
-INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
-VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
+            INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
+            VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@userName", user.UserName),
@@ -116,7 +116,9 @@ VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id"
 
     public bool DeleteUser(int userId)
     {
-        const string sql = "DELETE FROM pb_user WHERE user_iD = @userId";
+        const string sql = @"
+            DELETE FROM pb_user
+            WHERE user_iD = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@userId", userId)

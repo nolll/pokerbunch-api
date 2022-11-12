@@ -8,12 +8,12 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlLocationDb
 {
     private const string DataSql = @"
-SELECT l.location_id, l.name, l.bunch_id
-FROM pb_location l ";
+        SELECT l.location_id, l.name, l.bunch_id
+        FROM pb_location l ";
 
     private const string SearchIdSql = @"
-SELECT l.location_id
-FROM pb_location l ";
+        SELECT l.location_id
+        FROM pb_location l ";
 
     private readonly PostgresStorageProvider _db;
 
@@ -58,8 +58,8 @@ FROM pb_location l ";
     public int Add(Location location)
     {
         const string sql = @"
-INSERT INTO pb_location (name, bunch_id)
-VALUES (@name, @bunchId) RETURNING location_id";
+            INSERT INTO pb_location (name, bunch_id)
+            VALUES (@name, @bunchId) RETURNING location_id";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@name", location.Name),

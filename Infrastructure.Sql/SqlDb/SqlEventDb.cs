@@ -9,12 +9,12 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlEventDb
 {
     private const string EventSql = @"
-SELECT e.event_id, e.bunch_id, e.name, g.location_id, g.date
-FROM pb_event e
-LEFT JOIN pb_event_cashgame ecg on e.event_id = ecg.event_id
-LEFT JOIN pb_game g on ecg.game_id = g.game_id
-{0}
-ORDER BY e.event_id, g.date";
+        SELECT e.event_id, e.bunch_id, e.name, g.location_id, g.date
+        FROM pb_event e
+        LEFT JOIN pb_event_cashgame ecg on e.event_id = ecg.event_id
+        LEFT JOIN pb_game g on ecg.game_id = g.game_id
+        {0}
+        ORDER BY e.event_id, g.date";
 
     private readonly PostgresStorageProvider _db;
 
@@ -50,9 +50,9 @@ ORDER BY e.event_id, g.date";
     public IList<int> FindByBunchId(int bunchId)
     {
         const string sql = @"
-SELECT e.event_id
-FROM pb_event e
-WHERE e.bunch_id = @id";
+            SELECT e.event_id
+            FROM pb_event e
+            WHERE e.bunch_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -65,9 +65,9 @@ WHERE e.bunch_id = @id";
     public IList<int> FindByCashgameId(int cashgameId)
     {
         const string sql = @"
-SELECT ecg.event_id
-FROM pb_event_cashgame ecg
-WHERE ecg.cashgame_id = @id";
+            SELECT ecg.event_id
+            FROM pb_event_cashgame ecg
+            WHERE ecg.cashgame_id = @id";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -80,8 +80,8 @@ WHERE ecg.cashgame_id = @id";
     public int Add(Event e)
     {
         const string sql = @"
-INSERT INTO pb_event (name, bunch_id)
-VALUES (@name, @bunchId) RETURNING event_id";
+            INSERT INTO pb_event (name, bunch_id)
+            VALUES (@name, @bunchId) RETURNING event_id";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -94,8 +94,8 @@ VALUES (@name, @bunchId) RETURNING event_id";
     public void AddCashgame(int eventId, int cashgameId)
     {
         const string sql = @"
-INSERT INTO pb_event_cashgame (event_id, game_id)
-VALUES (@eventId, @cashgameId)";
+            INSERT INTO pb_event_cashgame (event_id, game_id)
+            VALUES (@eventId, @cashgameId)";
         var parameters = new List<SimpleSqlParameter>
         {
             new("@eventId", eventId),
