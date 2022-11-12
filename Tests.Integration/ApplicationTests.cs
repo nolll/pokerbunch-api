@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
+using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
 using Api.Routes;
@@ -10,6 +11,33 @@ using Infrastructure.Sql;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
+
+/* Routes left to test */
+//Root
+//Settings
+//Error
+//Swagger
+//Action.Get
+//Action.List
+//Admin.ClearCache
+//Admin.SendEmail
+//Bunch.List
+//Bunch.ListForCurrentUser
+//Cashgame.Get
+//Cashgame.ListByBunch
+//Cashgame.ListByBunchAndYear
+//Cashgame.ListCurrentByBunch
+//Cashgame.ListByEvent
+//Cashgame.ListByPlayer
+//Cashgame.YearsByBunch
+//Event.Get
+//Event.ListByBunch
+//Player.Get
+//Player.ListByBunch
+//Profile.Get
+//Profile.Password
+//Auth.Token
+//User.List
 
 public class ApplicationTests
 {
@@ -40,6 +68,8 @@ public class ApplicationTests
     private const string BunchDisplayName = "Bunch 1";
     private const string BunchSlug = "bunch-1";
     private const string BunchDescription = "Bunch Description 1";
+    private const int BunchLocationId = 1;
+    private const string BunchLocationName = "Bunch Location 1";
     private const string CurrencySymbol = "$";
     private const string CurrencyLayout = "{SYMBOL}{AMOUNT}";
     private const string TimeZone = "Europe/Stockholm";
@@ -60,11 +90,14 @@ public class ApplicationTests
         await CreateBunch(managerToken);
         await AddPlayerForUser(managerToken);
         var verificationCode = await InviteUserToBunch(managerToken);
-        await JoinBunch(userToken, BunchSlug, verificationCode);
+        await JoinBunch(userToken, verificationCode);
         await AddPlayerWithoutUser(managerToken);
-        await GetBunchAsAdmin(adminToken, BunchSlug);
-        await GetBunchAsManager(managerToken, BunchSlug);
-        await GetBunchAsUser(userToken, BunchSlug);
+        await GetBunchAsAdmin(adminToken);
+        await GetBunchAsManager(managerToken);
+        await GetBunchAsUser(userToken);
+        await AddLocation(managerToken);
+        await ListLocations(managerToken);
+        await GetLocation(managerToken);
     }
 
     private void VerifyMasterData()
@@ -231,9 +264,9 @@ public class ApplicationTests
         return regex.Match(message.Body).Groups[1].Value.Trim();
     }
 
-    private async Task JoinBunch(string token, string bunchId, string validationCode)
+    private async Task JoinBunch(string token, string validationCode)
     {
-        var url = ApiRoutes.Bunch.Join.Replace("{bunchId}", bunchId);
+        var url = ApiRoutes.Bunch.Join.Replace("{bunchId}", BunchSlug);
         var parameters = new JoinBunchPostModel
         {
             Code = validationCode
@@ -242,9 +275,9 @@ public class ApplicationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
-    private async Task GetBunchAsAdmin(string token, string bunchId)
+    private async Task GetBunchAsAdmin(string token)
     {
-        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", bunchId);
+        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", BunchSlug);
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -253,9 +286,9 @@ public class ApplicationTests
         Assert.That(result.Player, Is.Null);
     }
 
-    private async Task GetBunchAsManager(string token, string bunchId)
+    private async Task GetBunchAsManager(string token)
     {
-        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", bunchId);
+        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", BunchSlug);
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -265,9 +298,9 @@ public class ApplicationTests
         Assert.That(result.Player.Name, Is.EqualTo(ManagerDisplayName));
     }
 
-    private async Task GetBunchAsUser(string token, string bunchId)
+    private async Task GetBunchAsUser(string token)
     {
-        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", bunchId);
+        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", BunchSlug);
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -289,6 +322,47 @@ public class ApplicationTests
         Assert.That(bunch.HouseRules, Is.EqualTo(""));
         Assert.That(bunch.Timezone, Is.EqualTo(TimeZone));
         Assert.That(bunch.ThousandSeparator, Is.EqualTo(" "));
+    }
+
+    private async Task AddLocation(string token)
+    {
+        var parameters = new LocationAddPostModel
+        {
+            Name = BunchLocationName
+        };
+
+        var url = ApiRoutes.Location.Add.Replace("{bunchId}", BunchSlug);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<LocationModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo(BunchLocationId));
+    }
+
+    private async Task ListLocations(string token)
+    {
+        var url = ApiRoutes.Location.ListByBunch.Replace("{bunchId}", BunchSlug);
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<List<LocationModel>>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(1));
+        var location = result[0];
+        Assert.That(location.Id, Is.EqualTo(BunchLocationId));
+        Assert.That(location.Name, Is.EqualTo(BunchLocationName));
+        Assert.That(location.Bunch, Is.EqualTo(BunchSlug));
+    }
+
+    private async Task GetLocation(string token)
+    {
+        var url = ApiRoutes.Location.Get.Replace("{locationId}", BunchLocationId.ToString());
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<LocationModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo(BunchLocationId));
+        Assert.That(result.Name, Is.EqualTo(BunchLocationName));
+        Assert.That(result.Bunch, Is.EqualTo(BunchSlug));
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();

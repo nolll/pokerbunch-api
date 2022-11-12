@@ -52,7 +52,7 @@ public class SqlLocationDb
             new("@bunchId", bunchId)
         };
         var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("bunch_id");
+        return reader.ReadIntList("location_id");
     }
         
     public int Add(Location location)

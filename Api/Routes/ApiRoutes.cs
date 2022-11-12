@@ -50,6 +50,7 @@ public static class ApiRoutes
     {
         public const string Get = "locations/{locationId}";
         public const string ListByBunch = "bunches/{bunchId}/locations";
+        public const string Add = ListByBunch;
     }
     
     public static class Player

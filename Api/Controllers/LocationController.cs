@@ -42,7 +42,7 @@ public class LocationController : BaseController
         return new LocationListModel(locationListResult);
     }
 
-    [Route(ApiRoutes.Location.ListByBunch)]
+    [Route(ApiRoutes.Location.Add)]
     [HttpPost]
     [ApiAuthorize]
     public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)

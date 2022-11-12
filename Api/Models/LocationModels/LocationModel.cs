@@ -1,17 +1,20 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.LocationModels;
 
-[DataContract(Namespace = "", Name = "location")]
 public class LocationModel
 {
-    [DataMember(Name = "id")]
-    public int Id { get; }
-    [DataMember(Name = "name")]
-    public string Name { get; }
-    [DataMember(Name = "bunch")]
-    public string Bunch { get; }
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("bunch")]
+    public string Bunch { get; set; }
+
+    public LocationModel()
+    {
+    }
 
     public LocationModel(GetLocationList.Location location)
         : this(location.Id, location.Name, location.Slug)
