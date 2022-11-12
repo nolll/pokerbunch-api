@@ -118,15 +118,15 @@ VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
         }
     }
 
-    public bool JoinHomegame(Player player, Bunch bunch, int userId)
+    public bool JoinBunch(Player player, Bunch bunch, int userId)
     {
         const string sql = @"
-UPDATE player
+UPDATE pb_player
 SET bunch_id = @bunchId,
     player_name = NULL,
     user_id = @userId,
     role_id = @role,
-    approved = @approved,
+    approved = @approved
 WHERE player_id = @playerId";
         var parameters = new List<SimpleSqlParameter>
         {

@@ -1,10 +1,11 @@
 using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
 using Api.Routes;
-using Core.UseCases;
+using Core;
 using Infrastructure.Sql;
 using Tests.Common.FakeServices;
 
@@ -13,6 +14,7 @@ namespace Tests.Integration;
 public class ApplicationTests
 {
     private WebApplicationFactoryInTest _webApplicationFactory;
+    private readonly FakeEmailSender _emailSender = new();
 
     private const string AdminUserName = "admin";
     private const string AdminDisplayName = "Admin";
@@ -23,11 +25,17 @@ public class ApplicationTests
     private const string ManagerDisplayName = "Manager";
     private const string ManagerEmail = "manager@example.org";
     private const string ManagerPassword = "managerpassword";
+    private const string ManagerPlayerId = "1";
 
     private const string UserUserName = "user";
     private const string UserDisplayName = "User";
+    private const string UserPlayerName = "User Player Name";
     private const string UserEmail = "user@example.org";
     private const string UserPassword = "userpassword";
+    private const string UserPlayerId = "2";
+
+    private const string PlayerName = "Player Name";
+    private const string PlayerPlayerId = "3";
 
     private const string BunchDisplayName = "Bunch 1";
     private const string BunchSlug = "bunch-1";
@@ -39,21 +47,24 @@ public class ApplicationTests
     [Test]
     public async Task TestEverything()
     {
-        var emailSender = new FakeEmailSender();
-        _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString, emailSender);
+        _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString, _emailSender);
 
         VerifyMasterData();
         await Version();
         await RegisterAdmin();
-        var adminValidationCode = emailSender.LastMessage;
         await RegisterManager();
         await RegisterRegularUser();
         var adminToken = await Login(AdminUserName, AdminPassword);
         var managerToken = await Login(ManagerUserName, ManagerPassword);
         var userToken = await Login(UserUserName, UserPassword);
         await CreateBunch(managerToken);
-        await AddPlayer(managerToken);
-        await JoinBunch(BunchSlug, userToken, adminValidationCode.Body);
+        await AddPlayerForUser(managerToken);
+        var verificationCode = await InviteUserToBunch(managerToken);
+        await JoinBunch(userToken, BunchSlug, verificationCode);
+        await AddPlayerWithoutUser(managerToken);
+        await GetBunchAsAdmin(adminToken, BunchSlug);
+        await GetBunchAsManager(managerToken, BunchSlug);
+        await GetBunchAsUser(userToken, BunchSlug);
     }
 
     private void VerifyMasterData()
@@ -80,7 +91,7 @@ public class ApplicationTests
     {
         await RegisterUser(AdminUserName, AdminDisplayName, AdminEmail, AdminPassword);
         var db = new PostgresStorageProvider(DatabaseHandler.ConnectionString);
-        await db.ExecuteAsync("UPDATE pb_user SET role = 3 WHERE user_id = 1");
+        await db.ExecuteAsync("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
     }
 
     private async Task RegisterManager()
@@ -155,7 +166,7 @@ public class ApplicationTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Name, Is.EqualTo(BunchDisplayName));
         Assert.That(result.Id, Is.EqualTo(BunchSlug));
-        Assert.That(result.DefaultBuyin, Is.EqualTo(200));
+        Assert.That(result.DefaultBuyin, Is.EqualTo(0));
         Assert.That(result.CurrencySymbol, Is.EqualTo(CurrencySymbol));
         Assert.That(result.CurrencyLayout, Is.EqualTo(CurrencyLayout));
         Assert.That(result.CurrencyFormat, Is.EqualTo("${0}"));
@@ -168,10 +179,18 @@ public class ApplicationTests
         Assert.That(result.Player.Name, Is.EqualTo(ManagerDisplayName));
     }
 
-    private async Task AddPlayer(string token)
+    private async Task AddPlayerForUser(string token)
     {
-        const string playerName = "Player Name";
+        await AddPlayer(token, UserPlayerName, UserPlayerId);
+    }
 
+    private async Task AddPlayerWithoutUser(string token)
+    {
+        await AddPlayer(token, PlayerName, PlayerPlayerId);
+    }
+
+    private async Task AddPlayer(string token, string playerName, string expectedId)
+    {
         var parameters = new PlayerAddPostModel
         {
             Name = playerName
@@ -185,12 +204,31 @@ public class ApplicationTests
         var result = JsonSerializer.Deserialize<PlayerModel>(content);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Name, Is.EqualTo(playerName));
-        Assert.That(result.Id, Is.EqualTo(2));
+        Assert.That(result.Id, Is.EqualTo(expectedId));
         Assert.That(result.Slug, Is.EqualTo(BunchSlug));
         Assert.That(result.Color, Is.EqualTo("#9e9e9e"));
         Assert.That(result.AvatarUrl, Is.EqualTo(""));
         Assert.That(result.UserId, Is.EqualTo(""));
         Assert.That(result.UserName, Is.EqualTo(""));
+    }
+
+    private async Task<string> InviteUserToBunch(string token)
+    {
+        var parameters = new PlayerInvitePostModel
+        {
+            Email = UserEmail
+        };
+
+        var url = ApiRoutes.Player.Invite.Replace("{playerId}", UserPlayerId);
+        await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+
+        return GetVerificationCode(_emailSender.LastMessage);
+    }
+
+    private string GetVerificationCode(IMessage message)
+    {
+        var regex = new Regex("verification code: (.+)");
+        return regex.Match(message.Body).Groups[1].Value.Trim();
     }
 
     private async Task JoinBunch(string token, string bunchId, string validationCode)
@@ -201,6 +239,56 @@ public class ApplicationTests
             Code = validationCode
         };
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task GetBunchAsAdmin(string token, string bunchId)
+    {
+        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", bunchId);
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<BunchModel>(content);
+        Assert.That(result, Is.Not.Null);
+        AssertCommonUserProperties(result);
+        Assert.That(result.Role, Is.EqualTo("admin"));
+        Assert.That(result.Player, Is.Null);
+    }
+
+    private async Task GetBunchAsManager(string token, string bunchId)
+    {
+        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", bunchId);
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<BunchModel>(content);
+        Assert.That(result, Is.Not.Null);
+        AssertCommonUserProperties(result);
+        Assert.That(result.Role, Is.EqualTo("manager"));
+        Assert.That(result.Player.Id, Is.EqualTo(ManagerPlayerId));
+        Assert.That(result.Player.Name, Is.EqualTo(ManagerDisplayName));
+    }
+
+    private async Task GetBunchAsUser(string token, string bunchId)
+    {
+        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", bunchId);
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<BunchModel>(content);
+        Assert.That(result, Is.Not.Null);
+        AssertCommonUserProperties(result);
+        Assert.That(result.Role, Is.EqualTo("player"));
+        Assert.That(result.Player.Id, Is.EqualTo(UserPlayerId));
+        Assert.That(result.Player.Name, Is.EqualTo(UserDisplayName));
+    }
+
+    private void AssertCommonUserProperties(BunchModel bunch)
+    {
+        Assert.That(bunch.Name, Is.EqualTo(BunchDisplayName));
+        Assert.That(bunch.Id, Is.EqualTo(BunchSlug));
+        Assert.That(bunch.DefaultBuyin, Is.EqualTo(0));
+        Assert.That(bunch.CurrencySymbol, Is.EqualTo(CurrencySymbol));
+        Assert.That(bunch.CurrencyLayout, Is.EqualTo(CurrencyLayout));
+        Assert.That(bunch.CurrencyFormat, Is.EqualTo("${0}"));
+        Assert.That(bunch.Description, Is.EqualTo(BunchDescription));
+        Assert.That(bunch.HouseRules, Is.EqualTo(""));
+        Assert.That(bunch.Timezone, Is.EqualTo(TimeZone));
+        Assert.That(bunch.ThousandSeparator, Is.EqualTo(" "));
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();

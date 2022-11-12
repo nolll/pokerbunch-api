@@ -6,7 +6,7 @@ namespace Api.Models.PlayerModels;
 public class PlayerModel
 {
     [JsonPropertyName("id")]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     [JsonPropertyName("name")]
     public string Name { get; set; }
@@ -32,7 +32,7 @@ public class PlayerModel
 
     public PlayerModel(GetPlayer.Result r)
     {
-        Id = r.PlayerId;
+        Id = r.PlayerId.ToString();
         Name = r.DisplayName;
         Slug = r.Slug;
         UserId = r.UserId.ToString();

@@ -51,7 +51,7 @@ public class PlayerRepository : IPlayerRepository
 
     public bool JoinBunch(Player player, Bunch bunch, int userId)
     {
-        return _playerDb.JoinHomegame(player, bunch, userId);
+        return _playerDb.JoinBunch(player, bunch, userId);
     }
 
     public void Delete(int playerId)

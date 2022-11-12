@@ -62,7 +62,7 @@ public class AddBunch
             request.Description,
             string.Empty,
             TimeZoneInfo.FindSystemTimeZoneById(request.TimeZone),
-            200,
+            0,
             new Currency(request.CurrencySymbol, request.CurrencyLayout));
     }
 
