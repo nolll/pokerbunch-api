@@ -1,3 +1,4 @@
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -17,7 +18,9 @@ public class TestEmail
     public Result Execute(Request request)
     {
         var user = _userRepository.Get(request.UserName);
-        RequireRole.Admin(user);
+        if (!AccessControl.CanSendTestEmail(user))
+            throw new AccessDeniedException();
+
         const string email = "henriks@gmail.com";
         var message = new TestMessage();
         _emailSender.Send(email, message);

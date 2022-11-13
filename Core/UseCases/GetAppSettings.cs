@@ -1,13 +1,14 @@
-﻿using Core.Repositories;
+﻿using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class EnsureAdmin
+public class RequireAppsettingsAccess
 {
     private readonly IUserRepository _userRepository;
 
-    public EnsureAdmin(IUserRepository userRepository)
+    public RequireAppsettingsAccess(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
@@ -15,7 +16,8 @@ public class EnsureAdmin
     public void Execute(Request request)
     {
         var user = _userRepository.Get(request.UserName);
-        RequireRole.Admin(user);
+        if (!AccessControl.CanSeeAppSettings(user))
+            throw new AccessDeniedException();
     }
 
     public class Request

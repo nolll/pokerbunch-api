@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -27,13 +28,15 @@ public class GetPlayer
         var user = _userRepository.Get(player.UserId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Player(currentUser, currentPlayer);
-        var isManager = RoleHandler.IsInRole(currentUser, currentPlayer, Role.Manager);
+        if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
+            throw new AccessDeniedException();
+
+        var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
         var cashgames = _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : string.Empty;
 
-        return new Result(bunch, player, user, isManager, hasPlayed, avatarUrl);
+        return new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl);
     }
 
     public class Request
@@ -60,13 +63,13 @@ public class GetPlayer
         public string Slug { get; }
         public string Color { get; }
 
-        public Result(Bunch bunch, Player player, User user, bool isManager, bool hasPlayed, string avatarUrl)
+        public Result(Bunch bunch, Player player, User user, bool canDelete, bool hasPlayed, string avatarUrl)
         {
             var isUser = user != null;
 
             DisplayName = player.DisplayName;
             PlayerId = player.Id;
-            CanDelete = isManager && !hasPlayed;
+            CanDelete = canDelete && !hasPlayed;
             IsUser = isUser;
             UserId = user?.Id;
             UserName = isUser ? user.UserName : string.Empty;

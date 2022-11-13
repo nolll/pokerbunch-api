@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -20,7 +21,8 @@ public class GetBunchList
     public Result Execute(AllBunchesRequest request)
     {
         var user = _userRepository.Get(request.UserName);
-        RequireRole.Admin(user);
+        if (!AccessControl.CanListBunches(user))
+            throw new AccessDeniedException();
 
         var bunches = _bunchRepository.List();
         return new Result(bunches);

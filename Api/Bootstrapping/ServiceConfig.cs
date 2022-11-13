@@ -98,7 +98,7 @@ public class ServiceConfig
         // Admin
         _services.AddSingleton<ClearCache>();
         _services.AddSingleton<TestEmail>();
-        _services.AddSingleton<EnsureAdmin>();
+        _services.AddSingleton<RequireAppsettingsAccess>();
 
         // Auth
         _services.AddSingleton<Login>();

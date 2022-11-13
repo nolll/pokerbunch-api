@@ -1,4 +1,5 @@
-﻿using Core.Repositories;
+﻿using Core.Exceptions;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
@@ -17,7 +18,8 @@ public class ClearCache
     public void Execute(Request request)
     {
         var user = _userRepository.Get(request.UserName);
-        RequireRole.Admin(user);
+        if (!AccessControl.CanClearCache(user))
+            throw new AccessDeniedException();
 
         _cache.ClearAll();
     }

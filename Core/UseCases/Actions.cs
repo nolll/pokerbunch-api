@@ -33,22 +33,21 @@ public class Actions
         RequireRole.Player(user, player);
         var playerResult = cashgame.GetResult(player.Id);
         var currentPlayer = _playerRepository.Get(bunch.Id, user.Id);
-        var isManager = RoleHandler.IsInRole(user, currentPlayer, Role.Manager);
+        var canEdit = RoleHandler.IsInRole(user, currentPlayer, Role.Manager);
 
-        var date = cashgame.StartTime.HasValue ? cashgame.StartTime.Value : DateTime.MinValue;
+        var date = cashgame.StartTime ?? DateTime.MinValue;
         var playerName = player.DisplayName;
-        var checkpointItems = playerResult.Checkpoints.Select(o => CreateCheckpointItem(bunch, isManager, o)).ToList();
+        var checkpointItems = playerResult.Checkpoints.Select(o => CreateCheckpointItem(bunch, canEdit, o)).ToList();
 
         return new Result(date, playerName, bunch.Slug, checkpointItems);
     }
 
-    private static CheckpointItem CreateCheckpointItem(Bunch bunch, bool isManager, Checkpoint checkpoint)
+    private static CheckpointItem CreateCheckpointItem(Bunch bunch, bool canEdit, Checkpoint checkpoint)
     {
         var type = checkpoint.Description;
         var displayAmount = new Money(GetDisplayAmount(checkpoint), bunch.Currency);
         var time = TimeZoneInfo.ConvertTime(checkpoint.Timestamp, bunch.Timezone);
-        var canEdit = isManager;
-
+        
         return new CheckpointItem(time, checkpoint.Id, type, displayAmount, canEdit);
     }
 
@@ -75,10 +74,10 @@ public class Actions
 
     public class Result
     {
-        public DateTime Date { get; private set; }
-        public string PlayerName { get; private set; }
-        public string Slug { get; private set; }
-        public IList<CheckpointItem> CheckpointItems { get; private set; }
+        public DateTime Date { get; }
+        public string PlayerName { get; }
+        public string Slug { get; }
+        public IList<CheckpointItem> CheckpointItems { get; }
 
         public Result(DateTime date, string playerName, string slug, List<CheckpointItem> checkpointItems)
         {
@@ -91,11 +90,11 @@ public class Actions
 
     public class CheckpointItem
     {
-        public DateTime Time { get; private set; }
-        public int CheckpointId { get; private set; }
-        public string Type { get; private set; }
-        public Money DisplayAmount { get; private set; }
-        public bool CanEdit { get; private set; }
+        public DateTime Time { get; }
+        public int CheckpointId { get; }
+        public string Type { get; }
+        public Money DisplayAmount { get; }
+        public bool CanEdit { get; }
 
         public CheckpointItem(DateTime time, int checkpointId, string type, Money displayAmount, bool canEdit)
         {

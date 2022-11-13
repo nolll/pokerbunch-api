@@ -14,14 +14,14 @@ public class AdminController : BaseController
     private readonly AppSettings _appSettings;
     private readonly ClearCache _clearCache;
     private readonly TestEmail _testEmail;
-    private readonly EnsureAdmin _ensureAdmin;
+    private readonly RequireAppsettingsAccess _requireAppsettingsAccess;
 
-    public AdminController(AppSettings appSettings, ClearCache clearCache, TestEmail testEmail, EnsureAdmin ensureAdmin) : base(appSettings)
+    public AdminController(AppSettings appSettings, ClearCache clearCache, TestEmail testEmail, RequireAppsettingsAccess requireAppsettingsAccess) : base(appSettings)
     {
         _appSettings = appSettings;
         _clearCache = clearCache;
         _testEmail = testEmail;
-        _ensureAdmin = ensureAdmin;
+        _requireAppsettingsAccess = requireAppsettingsAccess;
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class AdminController : BaseController
     [ApiAuthorize]
     public AppSettings Settings()
     {
-        _ensureAdmin.Execute(new EnsureAdmin.Request(CurrentUserName));
+        _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
 
         return _appSettings;
     }

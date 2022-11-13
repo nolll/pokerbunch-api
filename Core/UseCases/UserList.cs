@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -17,7 +18,8 @@ public class UserList
     public Result Execute(Request request)
     {
         var user = _userRepository.Get(request.UserName);
-        RequireRole.Admin(user);
+        if (!AccessControl.CanListUsers(user))
+            throw new AccessDeniedException();
             
         var users = _userRepository.List();
         var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();

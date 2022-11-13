@@ -14,24 +14,6 @@ public static class RequireRole
     {
         Require(user, player, Role.Manager);
     }
-
-    public static void Admin(User user)
-    {
-        if (!user.IsAdmin)
-            throw new AccessDeniedException();
-    }
-
-    public static void Me(User user, int userId)
-    {
-        if (!user.IsAdmin && userId != user.Id)
-            throw new AccessDeniedException();
-    }
-
-    public static void Me(User user, Player player, int playerId)
-    {
-        if (!user.IsAdmin && playerId != player.Id)
-            throw new AccessDeniedException();
-    }
     
     private static void Require(User user, Player player, Role role)
     {
