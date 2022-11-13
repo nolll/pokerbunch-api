@@ -1,4 +1,5 @@
 using Api.Auth;
+using Api.Models.CommonModels;
 using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Settings;
@@ -76,11 +77,11 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Get)]
     [HttpDelete]
     [ApiAuthorize]
-    public PlayerDeleteModel Delete(int playerId)
+    public MessageModel Delete(int playerId)
     {
         var deleteRequest = new DeletePlayer.Request(CurrentUserName, playerId);
         _deletePlayer.Execute(deleteRequest);
-        return new PlayerDeleteModel(playerId);
+        return new PlayerDeletedModel(playerId);
     }
 
     /// <summary>
@@ -89,7 +90,7 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Invite)]
     [HttpPost]
     [ApiAuthorize]
-    public PlayerInvitedModel Invite(int playerId, [FromBody] PlayerInvitePostModel post)
+    public MessageModel Invite(int playerId, [FromBody] PlayerInvitePostModel post)
     {
         var registerUrl = _urls.Site.AddUser;
         var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}");

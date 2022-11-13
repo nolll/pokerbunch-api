@@ -37,7 +37,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.List)]
     [HttpPost]
     [ApiAuthorize]
-    public OkModel Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
+    public MessageModel Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
         if(post.Type == ActionType.Buyin)
             return Buyin(cashgameId, post);
@@ -49,19 +49,19 @@ public class ActionController : BaseController
         throw new NotFoundException($"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]");
     }
 
-    private OkModel Buyin(int cashgameId, AddCashgameActionPostModel post)
+    private MessageModel Buyin(int cashgameId, AddCashgameActionPostModel post)
     {
         _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
         return new OkModel();
     }
 
-    private OkModel Report(int cashgameId, AddCashgameActionPostModel post)
+    private MessageModel Report(int cashgameId, AddCashgameActionPostModel post)
     {
         _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return new OkModel();
     }
 
-    private OkModel Cashout(int cashgameId, AddCashgameActionPostModel post)
+    private MessageModel Cashout(int cashgameId, AddCashgameActionPostModel post)
     {
         _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return new OkModel();
@@ -70,7 +70,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Get)]
     [HttpPut]
     [ApiAuthorize]
-    public OkModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
+    public MessageModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
     {
         _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
         return new OkModel();
@@ -79,7 +79,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Get)]
     [HttpDelete]
     [ApiAuthorize]
-    public OkModel DeleteAction(int cashgameId, int actionId)
+    public MessageModel DeleteAction(int cashgameId, int actionId)
     {
         _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
         return new OkModel();

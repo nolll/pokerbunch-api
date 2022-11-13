@@ -6,6 +6,6 @@ public static class SwaggerSchema
 {
     public static string GetSwaggerTypeName(Type type)
     {
-        return type.Name;
+        return type.Name.Replace("Model", "");
     }
 }

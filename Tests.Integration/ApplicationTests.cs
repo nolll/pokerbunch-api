@@ -141,26 +141,14 @@ public class ApplicationTests
 
     private async Task RegisterUser(string userName, string displayName, string email, string password)
     {
-        var parameters = new AddUserPostModel
-        {
-            UserName = userName,
-            DisplayName = displayName,
-            Email = email,
-            Password = password
-        };
-
+        var parameters = new AddUserPostModel(userName, displayName, email, password);
         var response = await Client.PostAsJsonAsync(new ApiUserAddUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
     
     private async Task<string> Login(string userName, string password)
     {
-        var parameters = new LoginPostModel
-        {
-            UserName = userName,
-            Password = password
-        };
-
+        var parameters = new LoginPostModel(userName, password);
         var response = await Client.PostAsJsonAsync(new ApiLoginUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -184,15 +172,7 @@ public class ApplicationTests
 
     private async Task CreateBunch(string token)
     {
-        var parameters = new AddBunchPostModel
-        {
-            Name = BunchDisplayName,
-            Description = BunchDescription,
-            Timezone = TimeZone,
-            CurrencySymbol = CurrencySymbol,
-            CurrencyLayout = CurrencyLayout
-        };
-
+        var parameters = new AddBunchPostModel(BunchDisplayName, BunchDescription, TimeZone, CurrencySymbol, CurrencyLayout);
         var response = await AuthorizedClient(token).PostAsJsonAsync(new ApiBunchAddUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -226,11 +206,7 @@ public class ApplicationTests
 
     private async Task AddPlayer(string token, string playerName, string expectedId)
     {
-        var parameters = new PlayerAddPostModel
-        {
-            Name = playerName
-        };
-
+        var parameters = new PlayerAddPostModel(playerName);
         var url = new ApiPlayerAddUrl(BunchSlug).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -249,11 +225,7 @@ public class ApplicationTests
 
     private async Task<string> InviteUserToBunch(string token)
     {
-        var parameters = new PlayerInvitePostModel
-        {
-            Email = UserEmail
-        };
-
+        var parameters = new PlayerInvitePostModel(UserEmail);
         var url = new ApiPlayerInviteUrl(UserPlayerId).Relative;
         await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
 
@@ -269,10 +241,7 @@ public class ApplicationTests
     private async Task JoinBunch(string token, string validationCode)
     {
         var url = new ApiBunchJoinUrl(BunchSlug).Relative;
-        var parameters = new JoinBunchPostModel
-        {
-            Code = validationCode
-        };
+        var parameters = new JoinBunchPostModel(validationCode);
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
@@ -328,11 +297,7 @@ public class ApplicationTests
 
     private async Task AddLocation(string token)
     {
-        var parameters = new LocationAddPostModel
-        {
-            Name = BunchLocationName
-        };
-
+        var parameters = new LocationAddPostModel(BunchLocationName);
         var url = new ApiLocationAddUrl(BunchSlug).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -369,11 +334,7 @@ public class ApplicationTests
 
     private async Task AddCashgame(string token)
     {
-        var parameters = new AddCashgamePostModel
-        {
-            LocationId = BunchLocationId
-        };
-
+        var parameters = new AddCashgamePostModel(BunchLocationId);
         var url = new ApiCashgameAddUrl(BunchSlug).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));

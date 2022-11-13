@@ -1,5 +1,6 @@
 using Api.Auth;
 using Api.Models.BunchModels;
+using Api.Models.CommonModels;
 using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Settings;
@@ -84,7 +85,7 @@ public class BunchController : BaseController
     [Route(ApiRoutes.Bunch.Join)]
     [HttpPost]
     [ApiAuthorize]
-    public PlayerJoinedModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
+    public MessageModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
         var result = _joinBunch.Execute(request);

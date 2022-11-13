@@ -2,12 +2,12 @@ using Api.Models.CommonModels;
 
 namespace Api.Models.CashgameModels;
 
-public class CashgameDeleteModel : MessageModel
+public class CashgameDeletedModel : MessageModel
 {
     private readonly int _id;
     public override string Message => $"Cashgame deleted {_id}";
 
-    public CashgameDeleteModel(int id)
+    public CashgameDeletedModel(int id)
     {
         _id = id;
     }

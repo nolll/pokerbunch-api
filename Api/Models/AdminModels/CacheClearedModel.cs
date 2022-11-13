@@ -2,7 +2,7 @@ using Api.Models.CommonModels;
 
 namespace Api.Models.AdminModels;
 
-public class ClearCacheModel : MessageModel
+public class CacheClearedModel : MessageModel
 {
     public override string Message => "The cache was cleared";
 }

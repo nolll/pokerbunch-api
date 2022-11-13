@@ -12,7 +12,7 @@ public class ErrorController : Controller
 {
     [Route(ApiRoutes.Error)]
     [HttpGet, HttpDelete, HttpPost, HttpPut]
-    public ErrorModel Index()
+    public MessageModel Index()
     {
         var exception = GetException();
         var statusCode = GetStatusCode(exception);

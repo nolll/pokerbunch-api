@@ -1,5 +1,6 @@
 using Api.Auth;
 using Api.Models.AdminModels;
+using Api.Models.CommonModels;
 using Api.Models.HomeModels;
 using Api.Routes;
 using Api.Settings;
@@ -29,10 +30,10 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [ApiAuthorize]
-    public ClearCacheModel ClearCache()
+    public MessageModel ClearCache()
     {
         _clearCache.Execute(new ClearCache.Request(CurrentUserName));
-        return new ClearCacheModel();
+        return new CacheClearedModel();
     }
 
     /// <summary>
@@ -41,10 +42,10 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [ApiAuthorize]
-    public SendEmailModel SendEmail()
+    public MessageModel SendEmail()
     {
         var result = _testEmail.Execute(new TestEmail.Request(CurrentUserName));
-        return new SendEmailModel(result);
+        return new EmailSentModel(result);
     }
 
     /// <summary>

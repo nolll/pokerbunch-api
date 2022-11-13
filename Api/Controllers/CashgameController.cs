@@ -1,6 +1,7 @@
 using System;
 using Api.Auth;
 using Api.Models.CashgameModels;
+using Api.Models.CommonModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
@@ -121,11 +122,11 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.Delete)]
     [HttpDelete]
     [ApiAuthorize]
-    public CashgameDeleteModel Delete(int cashgameId)
+    public MessageModel Delete(int cashgameId)
     {
         var deleteRequest = new DeleteCashgame.Request(CurrentUserName, cashgameId);
         _deleteCashgame.Execute(deleteRequest);
-        return new CashgameDeleteModel(cashgameId);
+        return new CashgameDeletedModel(cashgameId);
     }
 
     [Route(ApiRoutes.Cashgame.ListCurrentByBunch)]

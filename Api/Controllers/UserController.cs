@@ -92,7 +92,7 @@ public class UserController : BaseController
     [Route(ApiRoutes.Profile.Password)]
     [HttpPut]
     [ApiAuthorize]
-    public OkModel ChangePassword([FromBody] ChangePasswordPostModel post)
+    public MessageModel ChangePassword([FromBody] ChangePasswordPostModel post)
     {
         var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
         _changePassword.Execute(request);
@@ -104,7 +104,7 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.Profile.Password)]
     [HttpPost]
-    public OkModel ResetPassword([FromBody] ResetPasswordPostModel post)
+    public MessageModel ResetPassword([FromBody] ResetPasswordPostModel post)
     {
         var request = new ResetPassword.Request(post.Email, _urls.Site.Login);
         _resetPassword.Execute(request);
@@ -116,7 +116,7 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.User.List)]
     [HttpPost]
-    public OkModel Add([FromBody] AddUserPostModel post)
+    public MessageModel Add([FromBody] AddUserPostModel post)
     {
         _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login));
         return new OkModel();
@@ -147,7 +147,7 @@ public class UserController : BaseController
     [Route(ApiRoutes.Auth.Token)]
     public IActionResult Token([FromForm] string userName, [FromForm] string password)
     {
-        var post = new LoginPostModel { UserName = userName, Password = password };
+        var post = new LoginPostModel(userName, password);
         var token = GetToken(post);
         return Ok(token);
     }
