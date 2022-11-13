@@ -7,7 +7,7 @@ public class ApiCashgameUrl : ApiUrl
 {
     private readonly string _cashgameId;
 
-    public ApiCashgameUrl(string host, string cashgameId) : base(host)
+    public ApiCashgameUrl(string cashgameId)
     {
         _cashgameId = cashgameId;
     }

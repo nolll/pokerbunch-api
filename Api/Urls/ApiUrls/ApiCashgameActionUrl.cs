@@ -8,7 +8,7 @@ public class ApiCashgameActionUrl : ApiUrl
     private readonly string _cashgameId;
     private readonly string _actionId;
 
-    public ApiCashgameActionUrl(string host, string cashgameId, string actionId) : base(host)
+    public ApiCashgameActionUrl(string cashgameId, string actionId)
     {
         _cashgameId = cashgameId;
         _actionId = actionId;

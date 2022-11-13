@@ -106,7 +106,7 @@ public class UserController : BaseController
     [HttpPost]
     public OkModel ResetPassword([FromBody] ResetPasswordPostModel post)
     {
-        var request = new ResetPassword.Request(post.Email, _urls.Site.Login.Absolute());
+        var request = new ResetPassword.Request(post.Email, _urls.Site.Login);
         _resetPassword.Execute(request);
         return new OkModel();
     }
@@ -118,7 +118,7 @@ public class UserController : BaseController
     [HttpPost]
     public OkModel Add([FromBody] AddUserPostModel post)
     {
-        _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login.Absolute()));
+        _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login));
         return new OkModel();
     }
 

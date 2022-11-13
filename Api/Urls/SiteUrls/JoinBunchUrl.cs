@@ -7,7 +7,7 @@ public class JoinBunchUrl : SiteUrl
     private readonly string _code;
     private readonly string _bunchId;
 
-    public JoinBunchUrl(string host, string bunchId, string code = null) : base(host)
+    public JoinBunchUrl(string bunchId, string code = null)
     {
         _bunchId = bunchId;
         _code = code;

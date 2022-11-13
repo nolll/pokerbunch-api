@@ -11,8 +11,8 @@ public class SiteUrlProvider
         _host = host;
     }
 
-    public Url AddUser => new AddUserUrl(_host);
-    public Url JoinBunch(string bunchId, string code = null) => new JoinBunchUrl(_host, bunchId, code);
-    public Url Login => new LoginUrl(_host);
-    public Url ApiDocs => new DocsUrl(_host);
+    public string AddUser => new AddUserUrl().Absolute(_host);
+    public string JoinBunch(string bunchId, string code = null) => new JoinBunchUrl(bunchId, code).Absolute(_host);
+    public string Login => new LoginUrl().Absolute(_host);
+    public string ApiDocs => new DocsUrl().Absolute(_host);
 }

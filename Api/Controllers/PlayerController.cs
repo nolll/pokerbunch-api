@@ -91,9 +91,9 @@ public class PlayerController : BaseController
     [ApiAuthorize]
     public PlayerInvitedModel Invite(int playerId, [FromBody] PlayerInvitePostModel post)
     {
-        var registerUrl = _urls.Site.AddUser.Absolute();
-        var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}").Absolute();
-        var joinBunchWithCodeUrlFormat = _urls.Site.JoinBunch("{0}", "{1}").Absolute();
+        var registerUrl = _urls.Site.AddUser;
+        var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}");
+        var joinBunchWithCodeUrlFormat = _urls.Site.JoinBunch("{0}", "{1}");
         var deleteRequest = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
         _invitePlayer.Execute(deleteRequest);
         return new PlayerInvitedModel(playerId);

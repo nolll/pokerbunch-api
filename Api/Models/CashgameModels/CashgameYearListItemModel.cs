@@ -14,7 +14,7 @@ public class CashgameYearListItemModel
     public CashgameYearListItemModel(string bunchId, int year, UrlProvider urls)
     {
         Id = year.ToString();
-        Url = urls.Api.BunchCashgames(bunchId, year).Absolute();
+        Url = urls.Api.BunchCashgames(bunchId, year);
     }
 
     [JsonConstructor]

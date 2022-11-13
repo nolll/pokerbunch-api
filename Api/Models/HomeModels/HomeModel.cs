@@ -16,9 +16,9 @@ public class HomeModel
 
     public HomeModel(UrlProvider urls)
     {
-        UserProfileUrl = urls.Api.UserProfile.Absolute();
-        DocsUrl = urls.Site.ApiDocs.Absolute();
-        SwaggerUrl = urls.Api.Swagger.Absolute();
+        UserProfileUrl = urls.Api.UserProfile;
+        DocsUrl = urls.Site.ApiDocs;
+        SwaggerUrl = urls.Api.Swagger;
     }
 
     [JsonConstructor]

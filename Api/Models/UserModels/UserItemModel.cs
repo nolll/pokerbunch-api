@@ -16,7 +16,7 @@ public class UserItemModel
     public string Url { get; }
 
     public UserItemModel(UserList.UserListItem r, UrlProvider urls)
-        : this(r.UserName, r.DisplayName, urls.Api.User(r.UserName).Absolute())
+        : this(r.UserName, r.DisplayName, urls.Api.User(r.UserName))
     {
     }
 

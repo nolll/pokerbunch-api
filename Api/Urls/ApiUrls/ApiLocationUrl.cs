@@ -7,7 +7,7 @@ public class ApiLocationUrl : ApiUrl
 {
     private readonly string _locationId;
 
-    public ApiLocationUrl(string host, string locationId) : base(host)
+    public ApiLocationUrl(string locationId)
     {
         _locationId = locationId;
     }

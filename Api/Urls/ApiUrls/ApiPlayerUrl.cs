@@ -7,7 +7,7 @@ public class ApiPlayerUrl : ApiUrl
 {
     private readonly string _playerId;
 
-    public ApiPlayerUrl(string host, string playerId) : base(host)
+    public ApiPlayerUrl(string playerId)
     {
         _playerId = playerId;
     }

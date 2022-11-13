@@ -7,7 +7,7 @@ public class ApiBunchLocationsUrl : ApiUrl
 {
     private readonly string _bunchId;
 
-    public ApiBunchLocationsUrl(string host, string bunchId) : base(host)
+    public ApiBunchLocationsUrl(string bunchId)
     {
         _bunchId = bunchId;
     }

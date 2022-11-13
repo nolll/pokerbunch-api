@@ -46,13 +46,14 @@ public class ApiCurrentGame
 {
     [JsonPropertyName("id")]
     public string Id { get; }
+    
     [JsonPropertyName("url")]
     public string Url { get; }
 
     public ApiCurrentGame(CurrentCashgames.Game game, UrlProvider urls)
     {
         Id = game.Id.ToString();
-        Url = urls.Api.Cashgame(game.Id.ToString()).Absolute();
+        Url = urls.Api.Cashgame(game.Id.ToString());
     }
 
     [JsonConstructor]
