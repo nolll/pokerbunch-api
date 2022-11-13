@@ -12,5 +12,10 @@ public class ApiLocationUrl : ApiUrl
         _locationId = locationId;
     }
 
+    public ApiLocationUrl(int locationId)
+        : this(locationId.ToString())
+    {
+    }
+
     protected override string Input => RouteParams.Replace(ApiRoutes.Location.Get, RouteReplace.LocationId(_locationId));
 }

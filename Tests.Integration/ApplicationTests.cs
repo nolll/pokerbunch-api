@@ -6,7 +6,7 @@ using Api.Models.CashgameModels;
 using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
-using Api.Routes;
+using Api.Urls.ApiUrls;
 using Core;
 using Infrastructure.Sql;
 using Tests.Common.FakeServices;
@@ -118,7 +118,7 @@ public class ApplicationTests
 
     private async Task Version()
     {
-        var response = await Client.GetAsync(ApiRoutes.Version);
+        var response = await Client.GetAsync(new ApiVersionUrl().Relative);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -149,7 +149,7 @@ public class ApplicationTests
             Password = password
         };
 
-        var response = await Client.PostAsJsonAsync(ApiRoutes.User.Add, parameters);
+        var response = await Client.PostAsJsonAsync(new ApiUserAddUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
     
@@ -161,7 +161,7 @@ public class ApplicationTests
             Password = password
         };
 
-        var response = await Client.PostAsJsonAsync(ApiRoutes.Auth.Login, parameters);
+        var response = await Client.PostAsJsonAsync(new ApiLoginUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var token = await response.Content.ReadAsStringAsync();
@@ -172,7 +172,7 @@ public class ApplicationTests
     
     private async Task<UserModel> GetUser(string token, string userName)
     {
-        var url = ApiRoutes.User.Get.Replace("{userName}", userName);
+        var url = new ApiUserUrl(userName).Relative;
         var response = await AuthorizedClient(token).GetAsync(url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -193,7 +193,7 @@ public class ApplicationTests
             CurrencyLayout = CurrencyLayout
         };
 
-        var response = await AuthorizedClient(token).PostAsJsonAsync(ApiRoutes.Bunch.Add, parameters);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(new ApiBunchAddUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -231,7 +231,7 @@ public class ApplicationTests
             Name = playerName
         };
 
-        var url = ApiRoutes.Player.AddToBunch.Replace("{bunchId}", BunchSlug);
+        var url = new ApiPlayerAddUrl(BunchSlug).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -254,7 +254,7 @@ public class ApplicationTests
             Email = UserEmail
         };
 
-        var url = ApiRoutes.Player.Invite.Replace("{playerId}", UserPlayerId);
+        var url = new ApiPlayerInviteUrl(UserPlayerId).Relative;
         await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
 
         return GetVerificationCode(_emailSender.LastMessage);
@@ -268,7 +268,7 @@ public class ApplicationTests
 
     private async Task JoinBunch(string token, string validationCode)
     {
-        var url = ApiRoutes.Bunch.Join.Replace("{bunchId}", BunchSlug);
+        var url = new ApiBunchJoinUrl(BunchSlug).Relative;
         var parameters = new JoinBunchPostModel
         {
             Code = validationCode
@@ -279,7 +279,7 @@ public class ApplicationTests
 
     private async Task GetBunchAsAdmin(string token)
     {
-        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", BunchSlug);
+        var url = new ApiBunchUrl(BunchSlug).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -290,7 +290,7 @@ public class ApplicationTests
 
     private async Task GetBunchAsManager(string token)
     {
-        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", BunchSlug);
+        var url = new ApiBunchUrl(BunchSlug).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -302,7 +302,7 @@ public class ApplicationTests
 
     private async Task GetBunchAsUser(string token)
     {
-        var url = ApiRoutes.Bunch.Get.Replace("{bunchId}", BunchSlug);
+        var url = new ApiBunchUrl(BunchSlug).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -333,7 +333,7 @@ public class ApplicationTests
             Name = BunchLocationName
         };
 
-        var url = ApiRoutes.Location.Add.Replace("{bunchId}", BunchSlug);
+        var url = new ApiLocationAddUrl(BunchSlug).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -345,7 +345,7 @@ public class ApplicationTests
 
     private async Task ListLocations(string token)
     {
-        var url = ApiRoutes.Location.ListByBunch.Replace("{bunchId}", BunchSlug);
+        var url = new ApiLocationListUrl(BunchSlug).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<List<LocationModel>>(content);
         Assert.That(result, Is.Not.Null);
@@ -358,7 +358,7 @@ public class ApplicationTests
 
     private async Task GetLocation(string token)
     {
-        var url = ApiRoutes.Location.Get.Replace("{locationId}", BunchLocationId.ToString());
+        var url = new ApiLocationUrl(BunchLocationId).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<LocationModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -374,7 +374,7 @@ public class ApplicationTests
             LocationId = BunchLocationId
         };
 
-        var url = ApiRoutes.Cashgame.Add.Replace("{bunchId}", BunchSlug);
+        var url = new ApiCashgameAddUrl(BunchSlug).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
