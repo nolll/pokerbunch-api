@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
+using Api.Models.CashgameModels;
 using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
@@ -11,33 +12,6 @@ using Infrastructure.Sql;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
-
-/* Routes left to test */
-//Root
-//Settings
-//Error
-//Swagger
-//Action.Get
-//Action.List
-//Admin.ClearCache
-//Admin.SendEmail
-//Bunch.List
-//Bunch.ListForCurrentUser
-//Cashgame.Get
-//Cashgame.ListByBunch
-//Cashgame.ListByBunchAndYear
-//Cashgame.ListCurrentByBunch
-//Cashgame.ListByEvent
-//Cashgame.ListByPlayer
-//Cashgame.YearsByBunch
-//Event.Get
-//Event.ListByBunch
-//Player.Get
-//Player.ListByBunch
-//Profile.Get
-//Profile.Password
-//Auth.Token
-//User.List
 
 public class ApplicationTests
 {
@@ -74,8 +48,35 @@ public class ApplicationTests
     private const string CurrencyLayout = "{SYMBOL}{AMOUNT}";
     private const string TimeZone = "Europe/Stockholm";
 
+    /* Routes left to test */
+    //Root
+    //Settings
+    //Error
+    //Swagger
+    //Action.Get
+    //Action.List
+    //Admin.ClearCache
+    //Admin.SendEmail
+    //Bunch.List
+    //Bunch.ListForCurrentUser
+    //Cashgame.Get
+    //Cashgame.ListByBunch
+    //Cashgame.ListByBunchAndYear
+    //Cashgame.ListCurrentByBunch
+    //Cashgame.ListByEvent
+    //Cashgame.ListByPlayer
+    //Cashgame.YearsByBunch
+    //Event.Get
+    //Event.ListByBunch
+    //Player.Get
+    //Player.ListByBunch
+    //Profile.Get
+    //Profile.Password
+    //Auth.Token
+    //User.List
+
     [Test]
-    public async Task TestEverything()
+    public async Task TestApplication()
     {
         _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString, _emailSender);
 
@@ -98,6 +99,7 @@ public class ApplicationTests
         await AddLocation(managerToken);
         await ListLocations(managerToken);
         await GetLocation(managerToken);
+        await AddCashgame(userToken);
     }
 
     private void VerifyMasterData()
@@ -363,6 +365,24 @@ public class ApplicationTests
         Assert.That(result.Id, Is.EqualTo(BunchLocationId));
         Assert.That(result.Name, Is.EqualTo(BunchLocationName));
         Assert.That(result.Bunch, Is.EqualTo(BunchSlug));
+    }
+
+    private async Task AddCashgame(string token)
+    {
+        var parameters = new AddCashgamePostModel
+        {
+            LocationId = BunchLocationId
+        };
+
+        var url = ApiRoutes.Cashgame.Add.Replace("{bunchId}", BunchSlug);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo("1"));
+        Assert.That(result.IsRunning, Is.EqualTo(true));
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();

@@ -1,24 +1,31 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Api.Urls.ApiUrls;
 
 namespace Api.Models.HomeModels;
 
-[DataContract(Namespace = "", Name = "user")]
 public class HomeModel
 {
-    private readonly UrlProvider _urls;
+    [JsonPropertyName("userProfileUrl")]
+    public string UserProfileUrl { get; }
+
+    [JsonPropertyName("docs")]
+    public string DocsUrl { get; }
+
+    [JsonPropertyName("swagger")]
+    public string SwaggerUrl { get; }
 
     public HomeModel(UrlProvider urls)
     {
-        _urls = urls;
+        UserProfileUrl = urls.Api.UserProfile.Absolute();
+        DocsUrl = urls.Site.ApiDocs.Absolute();
+        SwaggerUrl = urls.Api.Swagger.Absolute();
     }
 
-    [DataMember(Name = "userProfileUrl")]
-    public string UserProfileUrl => _urls.Api.UserProfile.Absolute();
-
-    [DataMember(Name = "docs")]
-    public string DocsUrl => _urls.Site.ApiDocs.Absolute();
-
-    [DataMember(Name = "swagger")]
-    public string SwaggerUrl => _urls.Api.Swagger.Absolute();
+    [JsonConstructor]
+    public HomeModel(string userProfileUrl, string docsUrl, string swaggerUrl)
+    {
+        UserProfileUrl = userProfileUrl;
+        DocsUrl = docsUrl;
+        SwaggerUrl = swaggerUrl;
+    }
 }

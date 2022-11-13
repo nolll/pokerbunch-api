@@ -1,23 +1,25 @@
 using System;
-using System.Runtime.Serialization;
-using Api.Extensions;
+using System.Text.Json.Serialization;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "result")]
 public class ApiRunningResult
 {
-    [DataMember(Name = "name")]
+    [JsonPropertyName("name")]
     public string Name { get; }
-    [DataMember(Name = "buyin")]
+
+    [JsonPropertyName("buyin")]
     public int Buyin { get; }
-    [DataMember(Name = "stack")]
+    
+    [JsonPropertyName("stack")]
     public int Stack { get; }
-    [DataMember(Name = "winnings")]
+    
+    [JsonPropertyName("winnings")]
     public int Winnings { get; }
-    [DataMember(Name = "lastupdate")]
+    
+    [JsonPropertyName("lastupdate")]
     public DateTime LastUpdate { get; }
 
     public ApiRunningResult(CashgameDetails.RunningCashgamePlayerItem playerItem)
@@ -28,19 +30,35 @@ public class ApiRunningResult
         Winnings = playerItem.Winnings;
         LastUpdate = playerItem.UpdatedTime;
     }
+
+    [JsonConstructor]
+    public ApiRunningResult(string name, int buyin, int stack, int winnings, DateTime lastUpdate)
+    {
+        Name = name;
+        Buyin = buyin;
+        Stack = stack;
+        Winnings = winnings;
+        LastUpdate = lastUpdate;
+    }
 }
 
-[DataContract(Namespace = "", Name = "game")]
 public class ApiCurrentGame
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "url")]
+    [JsonPropertyName("url")]
     public string Url { get; }
 
     public ApiCurrentGame(CurrentCashgames.Game game, UrlProvider urls)
     {
         Id = game.Id.ToString();
         Url = urls.Api.Cashgame(game.Id.ToString()).Absolute();
+    }
+
+    [JsonConstructor]
+    public ApiCurrentGame(string id, string url)
+    {
+        Id = id;
+        Url = url;
     }
 }

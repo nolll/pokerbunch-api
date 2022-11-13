@@ -94,7 +94,7 @@ public class CashgameController : BaseController
         return new CashgameListModel(listResult);
     }
 
-    [Route(ApiRoutes.Cashgame.ListByBunch)]
+    [Route(ApiRoutes.Cashgame.Add)]
     [HttpPost]
     [ApiAuthorize]
     public CashgameDetailsModel Add(string bunchId, [FromBody] AddCashgamePostModel post)
@@ -106,7 +106,7 @@ public class CashgameController : BaseController
         return new CashgameDetailsModel(detailsResult);
     }
 
-    [Route(ApiRoutes.Cashgame.Get)]
+    [Route(ApiRoutes.Cashgame.Update)]
     [HttpPut]
     [ApiAuthorize]
     public CashgameDetailsModel Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
@@ -118,7 +118,7 @@ public class CashgameController : BaseController
         return new CashgameDetailsModel(detailsResult);
     }
 
-    [Route(ApiRoutes.Cashgame.Get)]
+    [Route(ApiRoutes.Cashgame.Delete)]
     [HttpDelete]
     [ApiAuthorize]
     public CashgameDeleteModel Delete(int cashgameId)

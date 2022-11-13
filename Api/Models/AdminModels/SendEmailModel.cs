@@ -4,7 +4,6 @@ using Core.UseCases;
 
 namespace Api.Models.AdminModels;
 
-[DataContract(Namespace = "", Name = "emailsent")]
 public class SendEmailModel : MessageModel
 {
     private readonly string _email;

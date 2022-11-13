@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "player")]
 public class CashgameDetailsPlayerModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "name")]
+    [JsonPropertyName("name")]
     public string Name { get; }
-    [DataMember(Name = "color")]
+    [JsonPropertyName("color")]
     public string Color { get; }
-    [DataMember(Name = "startTime")]
+    [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }
-    [DataMember(Name = "updatedTime")]
+    [JsonPropertyName("updatedTime")]
     public DateTime UpdatedTime { get; }
-    [DataMember(Name = "buyin")]
+    [JsonPropertyName("buyin")]
     public int Buyin { get; }
-    [DataMember(Name = "stack")]
+    [JsonPropertyName("stack")]
     public int Stack { get; }
-    [DataMember(Name = "actions")]
+    [JsonPropertyName("actions")]
     public IList<CashgameDetailsActionModel> Actions { get; }
 
     public CashgameDetailsPlayerModel(CashgameDetails.RunningCashgamePlayerItem item)
@@ -36,5 +35,18 @@ public class CashgameDetailsPlayerModel
         Buyin = item.Buyin;
         Stack = item.Stack;
         Actions = item.Checkpoints.Select(o => new CashgameDetailsActionModel(o)).ToList();
+    }
+
+    [JsonConstructor]
+    public CashgameDetailsPlayerModel(string id, string name, string color, DateTime startTime, DateTime updatedTime, int buyin, int stack, IList<CashgameDetailsActionModel> actions)
+    {
+        Id = id;
+        Name = name;
+        Color = color;
+        StartTime = startTime;
+        UpdatedTime = updatedTime;
+        Buyin = buyin;
+        Stack = stack;
+        Actions = actions;
     }
 }

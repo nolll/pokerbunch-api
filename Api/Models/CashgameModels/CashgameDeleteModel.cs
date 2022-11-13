@@ -1,9 +1,7 @@
-using System.Runtime.Serialization;
 using Api.Models.CommonModels;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "cashgame")]
 public class CashgameDeleteModel : MessageModel
 {
     private readonly int _id;

@@ -13,16 +13,14 @@ public class AddCashgame
     private readonly IUserRepository _userRepository;
     private readonly IPlayerRepository _playerRepository;
     private readonly ILocationRepository _locationRepository;
-    private readonly IEventRepository _eventRepository;
 
-    public AddCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
+    public AddCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
     {
         _bunchRepository = bunchRepository;
         _cashgameRepository = cashgameRepository;
         _userRepository = userRepository;
         _playerRepository = playerRepository;
         _locationRepository = locationRepository;
-        _eventRepository = eventRepository;
     }
 
     public Result Execute(Request request)

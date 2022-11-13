@@ -1,20 +1,26 @@
-using System.Runtime.Serialization;
-using Api.Extensions;
+using System.Text.Json.Serialization;
 using Api.Urls.ApiUrls;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "year")]
 public class CashgameYearListItemModel
 {
-    [DataMember(Name = "year")]
+    [JsonPropertyName("year")]
     public string Id { get; }
-    [DataMember(Name = "url")]
+    
+    [JsonPropertyName("url")]
     public string Url { get; }
 
     public CashgameYearListItemModel(string bunchId, int year, UrlProvider urls)
     {
         Id = year.ToString();
         Url = urls.Api.BunchCashgames(bunchId, year).Absolute();
+    }
+
+    [JsonConstructor]
+    public CashgameYearListItemModel(string id, string url)
+    {
+        Id = id;
+        Url = url;
     }
 }

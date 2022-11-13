@@ -1,9 +1,9 @@
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Api.Models.CommonModels;
 
 public abstract class MessageModel
 {
-    [DataMember(Name = "message")]
+    [JsonPropertyName("message")]
     public abstract string Message { get; }
 }

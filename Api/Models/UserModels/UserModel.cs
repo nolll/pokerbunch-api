@@ -1,26 +1,18 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.UserModels;
 
-[DataContract(Namespace = "", Name = "user")]
 public class UserModel
 {
-    [DataMember(Name = "userName")]
+    [JsonPropertyName("userName")]
     public string UserName { get; }
 
-    [DataMember(Name = "displayName")]
+    [JsonPropertyName("displayName")]
     public string DisplayName { get; }
 
-    [DataMember(Name = "avatar")]
+    [JsonPropertyName("avatar")]
     public string Avatar { get; }
-
-    public UserModel(string userName, string displayName, string avatarUrl)
-    {
-        UserName = userName;
-        DisplayName = displayName;
-        Avatar = avatarUrl;
-    }
 
     public UserModel(UserDetails.Result r)
         : this(r.UserName, r.DisplayName, r.AvatarUrl)
@@ -28,5 +20,13 @@ public class UserModel
         UserName = r.UserName;
         DisplayName = r.DisplayName;
         Avatar = r.AvatarUrl;
+    }
+
+    [JsonConstructor]
+    public UserModel(string userName, string displayName, string avatarUrl)
+    {
+        UserName = userName;
+        DisplayName = displayName;
+        Avatar = avatarUrl;
     }
 }

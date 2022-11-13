@@ -40,11 +40,10 @@ public class AddCashgameTests : TestBase
         return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId);
     }
 
-    private AddCashgame Sut => new AddCashgame(
+    private AddCashgame Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
         Deps.User,
         Deps.Player,
-        Deps.Location,
-        Deps.Event);
+        Deps.Location);
 }

@@ -1,22 +1,24 @@
-using System;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Api.Models.LocationModels;
 using Core.UseCases;
 
 namespace Api.Models.EventModels;
 
-[DataContract(Namespace = "", Name = "event")]
 public class EventModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public int Id { get; }
-    [DataMember(Name = "bunchId")]
+    
+    [JsonPropertyName("bunchId")]
     public string BunchId { get; }
-    [DataMember(Name = "name")]
+    
+    [JsonPropertyName("name")]
     public string Name { get; }
-    [DataMember(Name = "startDate")]
+    
+    [JsonPropertyName("startDate")]
     public string StartDate { get; }
-    [DataMember(Name = "location")]
+    
+    [JsonPropertyName("location")]
     public SmallLocationModel Location { get; }
 
     public EventModel(EventList.Event e)
@@ -35,5 +37,15 @@ public class EventModel
         Name = r.Name;
         StartDate = r.StartDate?.IsoString;
         Location = r.LocationId > 0 ? new SmallLocationModel(r) : null;
+    }
+
+    [JsonConstructor]
+    public EventModel(int id, string bunchId, string name, string startDate, SmallLocationModel location)
+    {
+        Id = id;
+        BunchId = bunchId;
+        Name = name;
+        StartDate = startDate;
+        Location = location;
     }
 }

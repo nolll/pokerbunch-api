@@ -6,15 +6,11 @@ namespace Api.Models.LocationModels;
 public class LocationModel
 {
     [JsonPropertyName("id")]
-    public int Id { get; set; }
+    public int Id { get; }
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; }
     [JsonPropertyName("bunch")]
-    public string Bunch { get; set; }
-
-    public LocationModel()
-    {
-    }
+    public string Bunch { get; }
 
     public LocationModel(GetLocationList.Location location)
         : this(location.Id, location.Name, location.Slug)
@@ -31,7 +27,8 @@ public class LocationModel
     {
     }
 
-    private LocationModel(int id, string name, string bunch)
+    [JsonConstructor]
+    public LocationModel(int id, string name, string bunch)
     {
         Id = id;
         Name = name;

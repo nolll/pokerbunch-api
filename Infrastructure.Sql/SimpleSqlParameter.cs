@@ -25,8 +25,8 @@ public class SimpleSqlParameter
     {
     }
 
-    public SimpleSqlParameter(string parameterName, DateTime value)
-        : this(CreateSqlParameter(parameterName, DbType.DateTime, value.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture)))
+    public SimpleSqlParameter(string parameterName, DateTime value, DbType type = DbType.DateTime)
+        : this(CreateSqlParameter(parameterName, type, value))
     {
     }
 

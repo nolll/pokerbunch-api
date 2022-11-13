@@ -33,6 +33,9 @@ public static class ApiRoutes
     {
         public const string Get = "cashgames/{cashgameId}";
         public const string ListByBunch = "bunches/{bunchId}/cashgames";
+        public const string Add = ListByBunch;
+        public const string Update = ListByBunch;
+        public const string Delete = ListByBunch;
         public const string ListByBunchAndYear = "bunches/{bunchId}/cashgames/{year}";
         public const string ListCurrentByBunch = "bunches/{bunchId}/cashgames/current";
         public const string ListByEvent = "events/{eventId}/cashgames";

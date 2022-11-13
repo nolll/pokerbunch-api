@@ -6,29 +6,25 @@ namespace Api.Models.PlayerModels;
 public class PlayerModel
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    public string Id { get; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; }
 
     [JsonPropertyName("userId")]
-    public string UserId { get; set; }
+    public string UserId { get; }
 
     [JsonPropertyName("userName")]
-    public string UserName { get; set; }
+    public string UserName { get; }
 
     [JsonPropertyName("avatarUrl")]
-    public string AvatarUrl { get; set; }
+    public string AvatarUrl { get; }
 
     [JsonPropertyName("bunchId")]
-    public string Slug { get; set; }
+    public string Slug { get; }
 
     [JsonPropertyName("color")]
-    public string Color { get; set; }
-
-    public PlayerModel()
-    {
-    }
+    public string Color { get; }
 
     public PlayerModel(GetPlayer.Result r)
     {
@@ -39,5 +35,17 @@ public class PlayerModel
         UserName = r.UserName;
         AvatarUrl = r.AvatarUrl;
         Color = r.Color;
+    }
+
+    [JsonConstructor]
+    public PlayerModel(string id, string name, string userId, string userName, string avatarUrl, string slug, string color)
+    {
+        Id = id;
+        Name = name;
+        UserId = userId;
+        UserName = userName;
+        AvatarUrl = avatarUrl;
+        Slug = slug;
+        Color = color;
     }
 }

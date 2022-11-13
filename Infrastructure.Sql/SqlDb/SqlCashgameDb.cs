@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
@@ -153,7 +154,7 @@ public class SqlCashgameDb
     {
         var rawCashgame = CreateRawCashgame(cashgame);
         const string sql = @"
-            INSERT INTO pb_game (bunchID, location_id, status, date)
+            INSERT INTO pb_game (bunch_id, location_id, status, date)
             VALUES (@bunchId, @locationId, @status, @date) RETURNING game_id";
 
         var timezoneAdjustedDate = TimeZoneInfo.ConvertTime(rawCashgame.Date, bunch.Timezone);
@@ -162,7 +163,7 @@ public class SqlCashgameDb
             new("@bunchId", bunch.Id),
             new("@locationId", rawCashgame.LocationId),
             new("@status", rawCashgame.Status),
-            new("@date", timezoneAdjustedDate)
+            new("@date", timezoneAdjustedDate.Date, DbType.Date)
         };
         return _db.ExecuteInsert(sql, parameters);
     }
