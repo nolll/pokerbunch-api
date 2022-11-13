@@ -247,6 +247,7 @@ public class ServiceConfig
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Poker Bunch Api", Version = "v1" });
             c.IncludeXmlComments(xmlPath);
             c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
+            c.CustomSchemaIds(SwaggerSchema.GetSwaggerTypeName);
         });
     }
 }
