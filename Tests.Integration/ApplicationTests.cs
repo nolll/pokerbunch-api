@@ -118,11 +118,13 @@ public class ApplicationTests
         await CashgameReport(userToken, CashgameId, UserPlayerIdInt, 265);
         await CashgameReport(managerToken, CashgameId, PlayerPlayerIdInt, 175);
 
-        await GetCurrentCashgame(userToken);
+        var cashgameId = await GetCurrentCashgameId(userToken);
+        await GetRunningCashgame(userToken, cashgameId);
 
         await CashgameCashout(userToken, CashgameId, UserPlayerIdInt, 255);
         await CashgameCashout(managerToken, CashgameId, ManagerPlayerIdInt, 85);
         await CashgameCashout(managerToken, CashgameId, PlayerPlayerIdInt, 310);
+        await GetFinishedCashgame(userToken, cashgameId);
     }
 
     private void VerifyMasterData()
@@ -393,13 +395,37 @@ public class ApplicationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
-    private async Task GetCurrentCashgame(string token)
+    private async Task<string> GetCurrentCashgameId(string token)
     {
         var url = new ApiBunchCashgamesCurrentUrl(BunchId).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
-        var result = JsonSerializer.Deserialize<IEnumerable<ApiCurrentGame>>(content).ToList();
+        var result = JsonSerializer.Deserialize<IEnumerable<ApiCurrentGame>>(content)!.ToList();
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Count, Is.EqualTo(1));
+
+        return result.First().Id;
+    }
+
+    private async Task GetRunningCashgame(string token, string cashgameId)
+    {
+        var url = new ApiCashgameUrl(cashgameId).Relative;
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo("1"));
+        Assert.That(result.IsRunning, Is.True);
+        Assert.That(result.Players.Count, Is.EqualTo(3));
+    }
+
+    private async Task GetFinishedCashgame(string token, string cashgameId)
+    {
+        var url = new ApiCashgameUrl(cashgameId).Relative;
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo("1"));
+        Assert.That(result.IsRunning, Is.False);
+        Assert.That(result.Players.Count, Is.EqualTo(3));
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();
