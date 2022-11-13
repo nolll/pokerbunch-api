@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Api.Auth;
 using Api.Models.LocationModels;
 using Api.Routes;
@@ -36,10 +38,10 @@ public class LocationController : BaseController
     [Route(ApiRoutes.Location.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public LocationListModel GetList(string bunchId)
+    public IEnumerable<LocationModel> GetList(string bunchId)
     {
         var locationListResult = _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
-        return new LocationListModel(locationListResult);
+        return locationListResult.Locations.Select(o => new LocationModel(o));
     }
 
     [Route(ApiRoutes.Location.Add)]

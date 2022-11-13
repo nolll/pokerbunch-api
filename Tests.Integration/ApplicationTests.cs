@@ -27,26 +27,31 @@ public class ApplicationTests
     private const string ManagerDisplayName = "Manager";
     private const string ManagerEmail = "manager@example.org";
     private const string ManagerPassword = "managerpassword";
-    private const string ManagerPlayerId = "1";
+    private const int ManagerPlayerIdInt = 1;
+    private const string ManagerPlayerIdString = "1";
 
     private const string UserUserName = "user";
     private const string UserDisplayName = "User";
     private const string UserPlayerName = "User Player Name";
     private const string UserEmail = "user@example.org";
     private const string UserPassword = "userpassword";
-    private const string UserPlayerId = "2";
+    private const int UserPlayerIdInt = 2;
+    private const string UserPlayerIdString = "2";
 
     private const string PlayerName = "Player Name";
-    private const string PlayerPlayerId = "3";
+    private const int PlayerPlayerIdInt = 3;
+    private const string PlayerPlayerIdString = "3";
 
     private const string BunchDisplayName = "Bunch 1";
-    private const string BunchSlug = "bunch-1";
+    private const string BunchId = "bunch-1";
     private const string BunchDescription = "Bunch Description 1";
     private const int BunchLocationId = 1;
     private const string BunchLocationName = "Bunch Location 1";
     private const string CurrencySymbol = "$";
     private const string CurrencyLayout = "{SYMBOL}{AMOUNT}";
     private const string TimeZone = "Europe/Stockholm";
+
+    private const string CashgameId = "1";
 
     /* Routes left to test */
     //Root
@@ -81,13 +86,16 @@ public class ApplicationTests
         _webApplicationFactory = new WebApplicationFactoryInTest(DatabaseHandler.ConnectionString, _emailSender);
 
         VerifyMasterData();
+        
         await Version();
+
         await RegisterAdmin();
         await RegisterManager();
         await RegisterRegularUser();
         var adminToken = await Login(AdminUserName, AdminPassword);
         var managerToken = await Login(ManagerUserName, ManagerPassword);
         var userToken = await Login(UserUserName, UserPassword);
+        
         await CreateBunch(managerToken);
         await AddPlayerForUser(managerToken);
         var verificationCode = await InviteUserToBunch(managerToken);
@@ -96,10 +104,25 @@ public class ApplicationTests
         await GetBunchAsAdmin(adminToken);
         await GetBunchAsManager(managerToken);
         await GetBunchAsUser(userToken);
+        
         await AddLocation(managerToken);
         await ListLocations(managerToken);
         await GetLocation(managerToken);
-        await AddCashgame(userToken);
+        
+        await AddCashgame(userToken, CashgameId);
+        await CashgameBuyin(managerToken, CashgameId, ManagerPlayerIdInt, 100);
+        await CashgameBuyin(userToken, CashgameId, UserPlayerIdInt, 200);
+        await CashgameBuyin(managerToken, CashgameId, PlayerPlayerIdInt, 100);
+        await CashgameBuyin(managerToken, CashgameId, ManagerPlayerIdInt, 100, 50);
+        await CashgameReport(managerToken, CashgameId, ManagerPlayerIdInt, 75);
+        await CashgameReport(userToken, CashgameId, UserPlayerIdInt, 265);
+        await CashgameReport(managerToken, CashgameId, PlayerPlayerIdInt, 175);
+
+        await GetCurrentCashgame(userToken);
+
+        await CashgameCashout(userToken, CashgameId, UserPlayerIdInt, 255);
+        await CashgameCashout(managerToken, CashgameId, ManagerPlayerIdInt, 85);
+        await CashgameCashout(managerToken, CashgameId, PlayerPlayerIdInt, 310);
     }
 
     private void VerifyMasterData()
@@ -180,7 +203,7 @@ public class ApplicationTests
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Name, Is.EqualTo(BunchDisplayName));
-        Assert.That(result.Id, Is.EqualTo(BunchSlug));
+        Assert.That(result.Id, Is.EqualTo(BunchId));
         Assert.That(result.DefaultBuyin, Is.EqualTo(0));
         Assert.That(result.CurrencySymbol, Is.EqualTo(CurrencySymbol));
         Assert.That(result.CurrencyLayout, Is.EqualTo(CurrencyLayout));
@@ -196,18 +219,18 @@ public class ApplicationTests
 
     private async Task AddPlayerForUser(string token)
     {
-        await AddPlayer(token, UserPlayerName, UserPlayerId);
+        await AddPlayer(token, UserPlayerName, UserPlayerIdString);
     }
 
     private async Task AddPlayerWithoutUser(string token)
     {
-        await AddPlayer(token, PlayerName, PlayerPlayerId);
+        await AddPlayer(token, PlayerName, PlayerPlayerIdString);
     }
 
     private async Task AddPlayer(string token, string playerName, string expectedId)
     {
         var parameters = new PlayerAddPostModel(playerName);
-        var url = new ApiPlayerAddUrl(BunchSlug).Relative;
+        var url = new ApiPlayerAddUrl(BunchId).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -216,7 +239,7 @@ public class ApplicationTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Name, Is.EqualTo(playerName));
         Assert.That(result.Id, Is.EqualTo(expectedId));
-        Assert.That(result.Slug, Is.EqualTo(BunchSlug));
+        Assert.That(result.Slug, Is.EqualTo(BunchId));
         Assert.That(result.Color, Is.EqualTo("#9e9e9e"));
         Assert.That(result.AvatarUrl, Is.EqualTo(""));
         Assert.That(result.UserId, Is.EqualTo(""));
@@ -226,7 +249,7 @@ public class ApplicationTests
     private async Task<string> InviteUserToBunch(string token)
     {
         var parameters = new PlayerInvitePostModel(UserEmail);
-        var url = new ApiPlayerInviteUrl(UserPlayerId).Relative;
+        var url = new ApiPlayerInviteUrl(UserPlayerIdString).Relative;
         await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
 
         return GetVerificationCode(_emailSender.LastMessage);
@@ -240,7 +263,7 @@ public class ApplicationTests
 
     private async Task JoinBunch(string token, string validationCode)
     {
-        var url = new ApiBunchJoinUrl(BunchSlug).Relative;
+        var url = new ApiBunchJoinUrl(BunchId).Relative;
         var parameters = new JoinBunchPostModel(validationCode);
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -248,7 +271,7 @@ public class ApplicationTests
 
     private async Task GetBunchAsAdmin(string token)
     {
-        var url = new ApiBunchUrl(BunchSlug).Relative;
+        var url = new ApiBunchUrl(BunchId).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
@@ -259,32 +282,32 @@ public class ApplicationTests
 
     private async Task GetBunchAsManager(string token)
     {
-        var url = new ApiBunchUrl(BunchSlug).Relative;
+        var url = new ApiBunchUrl(BunchId).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
         AssertCommonUserProperties(result);
         Assert.That(result.Role, Is.EqualTo("manager"));
-        Assert.That(result.Player.Id, Is.EqualTo(ManagerPlayerId));
+        Assert.That(result.Player.Id, Is.EqualTo(ManagerPlayerIdString));
         Assert.That(result.Player.Name, Is.EqualTo(ManagerDisplayName));
     }
 
     private async Task GetBunchAsUser(string token)
     {
-        var url = new ApiBunchUrl(BunchSlug).Relative;
+        var url = new ApiBunchUrl(BunchId).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<BunchModel>(content);
         Assert.That(result, Is.Not.Null);
         AssertCommonUserProperties(result);
         Assert.That(result.Role, Is.EqualTo("player"));
-        Assert.That(result.Player.Id, Is.EqualTo(UserPlayerId));
+        Assert.That(result.Player.Id, Is.EqualTo(UserPlayerIdString));
         Assert.That(result.Player.Name, Is.EqualTo(UserDisplayName));
     }
 
     private void AssertCommonUserProperties(BunchModel bunch)
     {
         Assert.That(bunch.Name, Is.EqualTo(BunchDisplayName));
-        Assert.That(bunch.Id, Is.EqualTo(BunchSlug));
+        Assert.That(bunch.Id, Is.EqualTo(BunchId));
         Assert.That(bunch.DefaultBuyin, Is.EqualTo(0));
         Assert.That(bunch.CurrencySymbol, Is.EqualTo(CurrencySymbol));
         Assert.That(bunch.CurrencyLayout, Is.EqualTo(CurrencyLayout));
@@ -298,7 +321,7 @@ public class ApplicationTests
     private async Task AddLocation(string token)
     {
         var parameters = new LocationAddPostModel(BunchLocationName);
-        var url = new ApiLocationAddUrl(BunchSlug).Relative;
+        var url = new ApiLocationAddUrl(BunchId).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
@@ -310,7 +333,7 @@ public class ApplicationTests
 
     private async Task ListLocations(string token)
     {
-        var url = new ApiLocationListUrl(BunchSlug).Relative;
+        var url = new ApiLocationListUrl(BunchId).Relative;
         var content = await AuthorizedClient(token).GetStringAsync(url);
         var result = JsonSerializer.Deserialize<List<LocationModel>>(content);
         Assert.That(result, Is.Not.Null);
@@ -318,7 +341,7 @@ public class ApplicationTests
         var location = result[0];
         Assert.That(location.Id, Is.EqualTo(BunchLocationId));
         Assert.That(location.Name, Is.EqualTo(BunchLocationName));
-        Assert.That(location.Bunch, Is.EqualTo(BunchSlug));
+        Assert.That(location.Bunch, Is.EqualTo(BunchId));
     }
 
     private async Task GetLocation(string token)
@@ -329,21 +352,54 @@ public class ApplicationTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo(BunchLocationId));
         Assert.That(result.Name, Is.EqualTo(BunchLocationName));
-        Assert.That(result.Bunch, Is.EqualTo(BunchSlug));
+        Assert.That(result.Bunch, Is.EqualTo(BunchId));
     }
 
-    private async Task AddCashgame(string token)
+    private async Task AddCashgame(string token, string expectedCashgameId)
     {
         var parameters = new AddCashgamePostModel(BunchLocationId);
-        var url = new ApiCashgameAddUrl(BunchSlug).Relative;
+        var url = new ApiCashgameAddUrl(BunchId).Relative;
         var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("1"));
+        Assert.That(result.Id, Is.EqualTo(expectedCashgameId));
         Assert.That(result.IsRunning, Is.EqualTo(true));
+    }
+
+    private async Task CashgameBuyin(string token, string cashgameId, int playerId, int buyin, int leftInStack = 0)
+    {
+        var url = new ApiActionAddUrl(cashgameId).Relative;
+        var parameters = new AddCashgameActionPostModel("buyin", playerId, buyin, leftInStack);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task CashgameReport(string token, string cashgameId, int playerId, int stack)
+    {
+        var url = new ApiActionAddUrl(cashgameId).Relative;
+        var parameters = new AddCashgameActionPostModel("report", playerId, 0, stack);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task CashgameCashout(string token, string cashgameId, int playerId, int stack)
+    {
+        var url = new ApiActionAddUrl(cashgameId).Relative;
+        var parameters = new AddCashgameActionPostModel("cashout", playerId, 0, stack);
+        var response = await AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task GetCurrentCashgame(string token)
+    {
+        var url = new ApiBunchCashgamesCurrentUrl(BunchId).Relative;
+        var content = await AuthorizedClient(token).GetStringAsync(url);
+        var result = JsonSerializer.Deserialize<IEnumerable<ApiCurrentGame>>(content).ToList();
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(1));
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();

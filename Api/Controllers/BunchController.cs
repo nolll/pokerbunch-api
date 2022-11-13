@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Api.Auth;
 using Api.Models.BunchModels;
 using Api.Models.CommonModels;
@@ -56,20 +58,20 @@ public class BunchController : BaseController
     [Route(ApiRoutes.Bunch.List)]
     [HttpGet]
     [ApiAuthorize]
-    public BunchListModel List()
+    public IEnumerable<BunchModel> List()
     {
         var request = new GetBunchList.AllBunchesRequest(CurrentUserName);
         var bunchListResult = _getBunchList.Execute(request);
-        return new BunchListModel(bunchListResult);
+        return bunchListResult.Bunches.Select(o => new BunchModel(o));
     }
 
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
     [HttpGet]
     [ApiAuthorize]
-    public BunchListModel Bunches()
+    public IEnumerable<BunchModel> Bunches()
     {
         var bunchListResult = _getBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
-        return new BunchListModel(bunchListResult);
+        return bunchListResult.Bunches.Select(o => new BunchModel(o));
     }
 
     [Route(ApiRoutes.Bunch.List)]

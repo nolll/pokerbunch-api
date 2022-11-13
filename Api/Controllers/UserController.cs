@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Api.Auth;
@@ -66,10 +68,10 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.List)]
     [HttpGet]
     [ApiAuthorize]
-    public UserListModel List()
+    public IEnumerable<UserItemModel> List()
     {
         var userListResult = _userList.Execute(new UserList.Request(CurrentUserName));
-        return new UserListModel(userListResult, _urls);
+        return userListResult.Users.Select(o => new UserItemModel(o, _urls));
     }
 
     /// <summary>

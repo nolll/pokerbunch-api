@@ -12,6 +12,7 @@ public static class ApiRoutes
     {
         public const string Get = "cashgames/{cashgameId}/actions/{actionId}";
         public const string List = "cashgames/{cashgameId}/actions";
+        public const string Add = List;
     }
 
     public static class Admin

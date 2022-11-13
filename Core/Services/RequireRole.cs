@@ -32,7 +32,7 @@ public static class RequireRole
         if (!user.IsAdmin && playerId != player.Id)
             throw new AccessDeniedException();
     }
-
+    
     private static void Require(User user, Player player, Role role)
     {
         if (!RoleHandler.IsInRole(user, player, role))

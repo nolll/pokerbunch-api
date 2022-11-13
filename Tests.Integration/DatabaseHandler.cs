@@ -14,6 +14,7 @@ public class DatabaseHandler
             Database = "db",
             Username = "postgres",
             Password = "postgres",
+            Port = 49162
         })
         .Build();
 

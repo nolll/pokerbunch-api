@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Api.Auth;
 using Api.Models.CommonModels;
 using Api.Models.PlayerModels;
@@ -53,10 +55,10 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public PlayerListModel GetList(string bunchId)
+    public IEnumerable<PlayerListItemModel> GetList(string bunchId)
     {
         var playerListResult = _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
-        return new PlayerListModel(playerListResult);
+        return playerListResult.Players.Select(o => new PlayerListItemModel(o));
     }
 
     /// <summary>

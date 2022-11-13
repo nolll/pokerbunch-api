@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
@@ -62,37 +64,37 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public CashgameListModel List(string bunchId)
+    public IEnumerable<CashgameListItemModel> List(string bunchId)
     {
         var listResult = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
-        return new CashgameListModel(listResult);
+        return listResult.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
     [HttpGet]
     [ApiAuthorize]
-    public CashgameListModel List(string bunchId, int year)
+    public IEnumerable<CashgameListItemModel> List(string bunchId, int year)
     {
         var listResult = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
-        return new CashgameListModel(listResult);
+        return listResult.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.ListByEvent)]
     [HttpGet]
     [ApiAuthorize]
-    public CashgameListModel EventCashgameList(int eventId)
+    public IEnumerable<CashgameListItemModel> EventCashgameList(int eventId)
     {
         var listResult = _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
-        return new CashgameListModel(listResult);
+        return listResult.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
     [HttpGet]
     [ApiAuthorize]
-    public CashgameListModel PlayerCashgameList(int playerId)
+    public IEnumerable<CashgameListItemModel> PlayerCashgameList(int playerId)
     {
         var listResult = _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
-        return new CashgameListModel(listResult);
+        return listResult.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.Add)]
@@ -132,18 +134,18 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.ListCurrentByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public CurrentCashgameListModel Current(string bunchId)
+    public IEnumerable<ApiCurrentGame> Current(string bunchId)
     {
         var currentGamesResult = _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
-        return new CurrentCashgameListModel(currentGamesResult, _urls);
+        return currentGamesResult.Games.Select(o => new ApiCurrentGame(o, _urls));
     }
 
     [Route(ApiRoutes.Cashgame.YearsByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public CashgameYearListModel Years(string bunchId)
+    public IEnumerable<CashgameYearListItemModel> Years(string bunchId)
     {
         var listResult = _cashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
-        return new CashgameYearListModel(listResult, _urls);
+        return listResult.Years.Select(o => new CashgameYearListItemModel(listResult.Slug, o, _urls));
     }
 }

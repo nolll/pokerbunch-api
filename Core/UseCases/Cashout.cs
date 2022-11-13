@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
@@ -30,7 +31,9 @@ public class Cashout
         var cashgame = _cashgameRepository.Get(request.CashgameId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
+        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+            throw new AccessDeniedException();
+        
         var result = cashgame.GetResult(request.PlayerId);
 
         var existingCashoutCheckpoint = result.CashoutCheckpoint;

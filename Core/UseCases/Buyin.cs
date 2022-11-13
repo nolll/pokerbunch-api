@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
@@ -30,7 +31,8 @@ public class Buyin
         var cashgame = _cashgameRepository.Get(request.CashgameId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
+        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+            throw new AccessDeniedException();
             
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
         var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);

@@ -1,4 +1,6 @@
-﻿using Api.Auth;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Api.Auth;
 using Api.Models.EventModels;
 using Api.Routes;
 using Api.Settings;
@@ -36,10 +38,10 @@ public class EventController : BaseController
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public EventListModel List(string bunchId)
+    public IEnumerable<EventModel> List(string bunchId)
     {
         var eventListResult = _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
-        return new EventListModel(eventListResult);
+        return eventListResult.Events.Select(o => new EventModel(o));
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]

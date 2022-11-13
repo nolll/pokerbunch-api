@@ -34,7 +34,7 @@ public class ActionController : BaseController
         _deleteCheckpoint = deleteCheckpoint;
     }
 
-    [Route(ApiRoutes.Action.List)]
+    [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [ApiAuthorize]
     public MessageModel Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)

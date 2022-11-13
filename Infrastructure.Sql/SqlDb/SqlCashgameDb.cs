@@ -280,7 +280,7 @@ public class SqlCashgameDb
     private int AddCheckpoint(Checkpoint checkpoint)
     {
         const string sql = @"
-            INSERT INTO pb_cashgamecheckpoint (game_id, player_id, type, amount, stack, timestamp)
+            INSERT INTO pb_cashgame_checkpoint (game_id, player_id, type, amount, stack, timestamp)
             VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
 
         var parameters = new List<SimpleSqlParameter>

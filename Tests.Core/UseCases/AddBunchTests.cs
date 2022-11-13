@@ -63,7 +63,7 @@ class AddBunchTests : TestBase
         Assert.AreEqual(Description, Deps.Bunch.Added.Description);
         Assert.AreEqual("", Deps.Bunch.Added.HouseRules);
         Assert.AreEqual(TestData.TimeZoneLocal.Id, Deps.Bunch.Added.Timezone.Id);
-        Assert.AreEqual(200, Deps.Bunch.Added.DefaultBuyin);
+        Assert.AreEqual(0, Deps.Bunch.Added.DefaultBuyin);
         Assert.AreEqual(CurrencySymbol, Deps.Bunch.Added.Currency.Symbol);
         Assert.AreEqual(CurrencyLayout, Deps.Bunch.Added.Currency.Layout);
     }

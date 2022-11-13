@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using ValidationException = Core.Exceptions.ValidationException;
@@ -29,7 +30,8 @@ public class Report
         var cashgame = _cashgameRepository.Get(request.CashgameId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
+        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+            throw new AccessDeniedException();
 
         var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
         cashgame.AddCheckpoint(checkpoint);
