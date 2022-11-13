@@ -10,18 +10,25 @@ public class CashgameDetailsPlayerModel
 {
     [JsonPropertyName("id")]
     public string Id { get; }
+    
     [JsonPropertyName("name")]
     public string Name { get; }
+    
     [JsonPropertyName("color")]
     public string Color { get; }
+    
     [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }
+    
     [JsonPropertyName("updatedTime")]
     public DateTime UpdatedTime { get; }
+    
     [JsonPropertyName("buyin")]
     public int Buyin { get; }
+    
     [JsonPropertyName("stack")]
     public int Stack { get; }
+    
     [JsonPropertyName("actions")]
     public IList<CashgameDetailsActionModel> Actions { get; }
 

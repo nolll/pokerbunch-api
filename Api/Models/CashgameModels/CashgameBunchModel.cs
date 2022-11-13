@@ -7,18 +7,25 @@ public class CashgameBunchModel
 {
     [JsonPropertyName("id")]
     public string Id { get; }
+    
     [JsonPropertyName("timezone")]
     public string Timezone { get; }
+    
     [JsonPropertyName("currencyFormat")]
     public string CurrencyFormat { get; }
+    
     [JsonPropertyName("currencySymbol")]
     public string CurrencySymbol { get; }
+    
     [JsonPropertyName("currencyLayout")]
     public string CurrencyLayout { get; }
+    
     [JsonPropertyName("thousandSeparator")]
     public string ThousandSeparator { get; }
+    
     [JsonPropertyName("culture")]
     public string Culture { get; }
+    
     [JsonPropertyName("role")]
     public string Role { get; }
 

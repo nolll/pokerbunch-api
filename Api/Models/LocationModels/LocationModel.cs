@@ -7,8 +7,10 @@ public class LocationModel
 {
     [JsonPropertyName("id")]
     public int Id { get; }
+    
     [JsonPropertyName("name")]
     public string Name { get; }
+    
     [JsonPropertyName("bunch")]
     public string Bunch { get; }
 

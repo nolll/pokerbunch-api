@@ -9,12 +9,16 @@ public class CashgameDetailsActionModel
 {
     [JsonPropertyName("id")]
     public string Id { get; }
+    
     [JsonPropertyName("type")]
     public string Type { get; }
+    
     [JsonPropertyName("time")]
     public DateTime Time { get; }
+    
     [JsonPropertyName("stack")]
     public int Stack { get; }
+    
     [JsonPropertyName("added")]
     public int? Added { get; }
 

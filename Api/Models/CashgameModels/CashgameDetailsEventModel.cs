@@ -7,6 +7,7 @@ public class CashgameDetailsEventModel
 {
     [JsonPropertyName("id")]
     public string Id { get; }
+    
     [JsonPropertyName("name")]
     public string Name { get; }
 

@@ -11,18 +11,25 @@ public class CashgameDetailsModel
 {
     [JsonPropertyName("id")]
     public string Id { get; }
+    
     [JsonPropertyName("isRunning")]
     public bool IsRunning { get; }
+    
     [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }
+    
     [JsonPropertyName("updatedTime")]
     public DateTime UpdatedTime { get; }
+    
     [JsonPropertyName("bunch")]
     public CashgameBunchModel Bunch { get; }
+    
     [JsonPropertyName("location")]
     public SmallLocationModel Location { get; }
+    
     [JsonPropertyName("event")]
     public CashgameDetailsEventModel Event { get; }
+    
     [JsonPropertyName("players")]
     public IList<CashgameDetailsPlayerModel> Players { get; }
 
