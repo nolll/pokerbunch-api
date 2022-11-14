@@ -415,6 +415,27 @@ public class ApplicationTests
         Assert.That(result.Id, Is.EqualTo("1"));
         Assert.That(result.IsRunning, Is.True);
         Assert.That(result.Players.Count, Is.EqualTo(3));
+
+        Assert.That(result.Players[0].Name, Is.EqualTo("Player Name"));
+        Assert.That(result.Players[0].Actions[0].Type, Is.EqualTo("buyin"));
+        Assert.That(result.Players[0].Actions[0].Added, Is.EqualTo(100));
+        Assert.That(result.Players[0].Actions[1].Type, Is.EqualTo("report"));
+        Assert.That(result.Players[0].Actions[1].Stack, Is.EqualTo(175));
+
+        Assert.That(result.Players[1].Name, Is.EqualTo("User"));
+        Assert.That(result.Players[1].Actions[0].Type, Is.EqualTo("buyin"));
+        Assert.That(result.Players[1].Actions[0].Added, Is.EqualTo(200));
+        Assert.That(result.Players[1].Actions[1].Type, Is.EqualTo("report"));
+        Assert.That(result.Players[1].Actions[1].Stack, Is.EqualTo(265));
+
+        Assert.That(result.Players[2].Name, Is.EqualTo("Manager"));
+        Assert.That(result.Players[2].Actions[0].Type, Is.EqualTo("buyin"));
+        Assert.That(result.Players[2].Actions[0].Added, Is.EqualTo(100));
+        Assert.That(result.Players[2].Actions[1].Type, Is.EqualTo("buyin"));
+        Assert.That(result.Players[2].Actions[1].Added, Is.EqualTo(100));
+        Assert.That(result.Players[2].Actions[1].Stack, Is.EqualTo(150));
+        Assert.That(result.Players[2].Actions[2].Type, Is.EqualTo("report"));
+        Assert.That(result.Players[2].Actions[2].Stack, Is.EqualTo(75));
     }
 
     private async Task GetFinishedCashgame(string token, string cashgameId)
@@ -426,6 +447,18 @@ public class ApplicationTests
         Assert.That(result.Id, Is.EqualTo("1"));
         Assert.That(result.IsRunning, Is.False);
         Assert.That(result.Players.Count, Is.EqualTo(3));
+
+        Assert.That(result.Players[0].Name, Is.EqualTo("Player Name"));
+        Assert.That(result.Players[0].Actions[2].Type, Is.EqualTo("cashout"));
+        Assert.That(result.Players[0].Actions[2].Stack, Is.EqualTo(310));
+
+        Assert.That(result.Players[1].Name, Is.EqualTo("User"));
+        Assert.That(result.Players[1].Actions[2].Type, Is.EqualTo("cashout"));
+        Assert.That(result.Players[1].Actions[2].Stack, Is.EqualTo(255));
+
+        Assert.That(result.Players[2].Name, Is.EqualTo("Manager"));
+        Assert.That(result.Players[2].Actions[3].Type, Is.EqualTo("cashout"));
+        Assert.That(result.Players[2].Actions[3].Stack, Is.EqualTo(85));
     }
 
     private HttpClient Client => _webApplicationFactory.CreateClient();

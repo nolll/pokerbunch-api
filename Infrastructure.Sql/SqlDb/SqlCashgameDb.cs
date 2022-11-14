@@ -359,7 +359,7 @@ public class SqlCashgameDb
             SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
             FROM pb_cashgame_checkpoint cp
             WHERE cp.game_id IN (@cashgameIdList)
-            ORDER BY cp.player_id, cp.timestamp";
+            ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id DESC";
 
         var parameter = new ListSqlParameter("@cashgameIdList", cashgameIdList);
         var reader = _db.Query(sql, parameter);

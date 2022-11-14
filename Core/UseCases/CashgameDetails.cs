@@ -39,6 +39,7 @@ public class CashgameDetails
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
         RequireRole.Player(user, player);
+
         var players = _playerRepository.Get(GetPlayerIds(cashgame));
 
         var role = user.IsAdmin ? Role.Manager : player.Role;
