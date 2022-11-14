@@ -64,7 +64,6 @@ public class ApplicationTests
     //Admin.SendEmail
     //Bunch.List
     //Bunch.ListForCurrentUser
-    //Cashgame.Get
     //Cashgame.ListByBunch
     //Cashgame.ListByBunchAndYear
     //Cashgame.ListCurrentByBunch
@@ -95,7 +94,10 @@ public class ApplicationTests
         var adminToken = await Login(AdminUserName, AdminPassword);
         var managerToken = await Login(ManagerUserName, ManagerPassword);
         var userToken = await Login(UserUserName, UserPassword);
-        
+
+        await ClearCacheAsAdmin(adminToken);
+        await ClearCacheAsManager(managerToken);
+
         await CreateBunch(managerToken);
         await AddPlayerForUser(managerToken);
         var verificationCode = await InviteUserToBunch(managerToken);
@@ -193,6 +195,20 @@ public class ApplicationTests
         var result = JsonSerializer.Deserialize<UserModel>(content);
 
         return result;
+    }
+
+    private async Task ClearCacheAsAdmin(string token)
+    {
+        var url = new ApiAdminClearCacheUrl().Relative;
+        var response = await AuthorizedClient(token).PostAsync(url, null);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task ClearCacheAsManager(string token)
+    {
+        var url = new ApiAdminClearCacheUrl().Relative;
+        var response = await AuthorizedClient(token).PostAsync(url, null);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 
     private async Task CreateBunch(string token)

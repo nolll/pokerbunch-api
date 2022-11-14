@@ -78,7 +78,7 @@ public class AppConfig
     private void ConfigureSwagger()
     {
         _app.UseSwagger();
-        _app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+        _app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Version 1"); });
     }
 
     private void ConfigureAuth()
