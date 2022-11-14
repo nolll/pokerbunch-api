@@ -50,6 +50,6 @@ public class TestController : BaseController
     [HttpGet]
     public void ConflictException()
     {
-        throw new EmailExistsException();
+        throw new ConflictException("conflict");
     }
 }
