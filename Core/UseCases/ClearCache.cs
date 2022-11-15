@@ -1,10 +1,27 @@
-﻿using Core.Exceptions;
+﻿using System;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class ClearCache
+public abstract class UseCase<TResult, TRequest>
+{
+    protected abstract UseCaseResult<TResult> Work(TRequest request);
+
+    public UseCaseResult<TResult> Execute(TRequest request)
+    {
+        try
+        {
+            return Work(request);
+        }
+        catch (Exception e)
+        {
+            return new UseCaseResult<TResult>(new UseCaseError(e));
+        }
+    }
+}
+
+public class ClearCache : UseCase<ClearCache.Result, ClearCache.Request>
 {
     private readonly ICacheContainer _cache;
     private readonly IUserRepository _userRepository;
@@ -15,13 +32,15 @@ public class ClearCache
         _userRepository = userRepository;
     }
 
-    public void Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var user = _userRepository.Get(request.UserName);
         if (!AccessControl.CanClearCache(user))
-            throw new AccessDeniedException();
+            return new UseCaseResult<Result>(new AccessDeniedError());
 
         _cache.ClearAll();
+
+        return new UseCaseResult<Result>(new Result("The cache was cleared"));
     }
 
     public class Request
@@ -31,6 +50,16 @@ public class ClearCache
         public Request(string userName)
         {
             UserName = userName;
+        }
+    }
+
+    public class Result
+    {
+        public string Message { get; }
+
+        public Result(string message)
+        {
+            Message = message;
         }
     }
 }

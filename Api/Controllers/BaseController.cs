@@ -1,7 +1,10 @@
-﻿using Api.Services;
+﻿using Api.Models.CommonModels;
+using Api.Services;
 using Api.Settings;
+using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Api.Controllers;
 
@@ -30,5 +33,34 @@ public abstract class BaseController : Controller
                 return AppSettings.Auth.Override.PlayerUserName;
             return null;
         }
+    }
+
+    protected ObjectResult Success(object model)
+    {
+        return Ok(model);
+    }
+
+    protected ObjectResult Error(UseCaseError error)
+    {
+        return Error(error.Type, error.Message);
+    }
+
+    protected ObjectResult Error(ErrorType errorType, string errorMessage)
+    {
+        var statusCode = GetStatusCode(errorType);
+        var messageModel = new ErrorModel(errorMessage);
+
+        return StatusCode((int)statusCode, messageModel);
+    }
+
+    protected HttpStatusCode GetStatusCode(ErrorType errorType)
+    {
+        if (errorType == ErrorType.NotFound)
+            return HttpStatusCode.NotFound;
+
+        if (errorType == ErrorType.AccessDenied)
+            return HttpStatusCode.Forbidden;
+
+        return HttpStatusCode.InternalServerError;
     }
 }

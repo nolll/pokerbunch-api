@@ -1,3 +1,5 @@
+using System.Net;
+using System.Runtime.InteropServices.JavaScript;
 using Api.Auth;
 using Api.Models.AdminModels;
 using Api.Models.CommonModels;
@@ -30,10 +32,13 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [ApiAuthorize]
-    public MessageModel ClearCache()
+    public ObjectResult ClearCache()
     {
-        _clearCache.Execute(new ClearCache.Request(CurrentUserName));
-        return new CacheClearedModel();
+        var result = _clearCache.Execute(new ClearCache.Request(CurrentUserName));
+
+        return result.Success 
+            ? Success(new CacheClearedModel()) 
+            : Error(result.Error);
     }
 
     /// <summary>

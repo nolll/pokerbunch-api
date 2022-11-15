@@ -1,6 +1,7 @@
 using System;
 using Api.Settings;
 using Core.Exceptions;
+using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -20,9 +21,9 @@ public class TestController : BaseController
 
     [Route("test/notfound")]
     [HttpGet]
-    public void NotFoundException()
+    public ObjectResult NotFoundException()
     {
-        throw new NotFoundException("not found");
+        return Error(ErrorType.NotFound, "not found");
     }
 
     [Route("test/accessdenied")]
