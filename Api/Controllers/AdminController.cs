@@ -1,7 +1,4 @@
-using System.Net;
-using System.Runtime.InteropServices.JavaScript;
 using Api.Auth;
-using Api.Models.AdminModels;
 using Api.Models.CommonModels;
 using Api.Models.HomeModels;
 using Api.Routes;
@@ -37,7 +34,7 @@ public class AdminController : BaseController
         var result = _clearCache.Execute(new ClearCache.Request(CurrentUserName));
 
         return result.Success 
-            ? Success(new CacheClearedModel()) 
+            ? Success(new MessageModel(result.Data.Message)) 
             : Error(result.Error);
     }
 
@@ -47,10 +44,13 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [ApiAuthorize]
-    public MessageModel SendEmail()
+    public ObjectResult SendEmail()
     {
         var result = _testEmail.Execute(new TestEmail.Request(CurrentUserName));
-        return new EmailSentModel(result);
+        
+        return result.Success
+            ? Success(new MessageModel(result.Data.Message))
+            : Error(result.Error);
     }
 
     /// <summary>

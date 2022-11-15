@@ -1,25 +1,7 @@
-﻿using System;
-using Core.Repositories;
+﻿using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
-
-public abstract class UseCase<TResult, TRequest>
-{
-    protected abstract UseCaseResult<TResult> Work(TRequest request);
-
-    public UseCaseResult<TResult> Execute(TRequest request)
-    {
-        try
-        {
-            return Work(request);
-        }
-        catch (Exception e)
-        {
-            return new UseCaseResult<TResult>(new UseCaseError(e));
-        }
-    }
-}
 
 public class ClearCache : UseCase<ClearCache.Result, ClearCache.Request>
 {
@@ -40,7 +22,7 @@ public class ClearCache : UseCase<ClearCache.Result, ClearCache.Request>
 
         _cache.ClearAll();
 
-        return new UseCaseResult<Result>(new Result("The cache was cleared"));
+        return new UseCaseResult<Result>(new Result());
     }
 
     public class Request
@@ -57,9 +39,9 @@ public class ClearCache : UseCase<ClearCache.Result, ClearCache.Request>
     {
         public string Message { get; }
 
-        public Result(string message)
+        public Result()
         {
-            Message = message;
+            Message = "The cache was cleared";
         }
     }
 }

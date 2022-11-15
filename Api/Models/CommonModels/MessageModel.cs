@@ -2,8 +2,17 @@ using System.Text.Json.Serialization;
 
 namespace Api.Models.CommonModels;
 
-public abstract class MessageModel
+public class MessageModel
 {
     [JsonPropertyName("message")]
-    public abstract string Message { get; }
+    public virtual string Message { get; }
+
+    public MessageModel()
+    {
+    }
+
+    public MessageModel(string message)
+    {
+        Message = message;
+    }
 }
