@@ -17,4 +17,14 @@ public abstract class UseCase<TResult, TRequest>
             return new UseCaseResult<TResult>(new UseCaseError(e));
         }
     }
+
+    protected UseCaseResult<TResult> Success(TResult result)
+    {
+        return new UseCaseResult<TResult>(result);
+    }
+
+    protected UseCaseResult<TResult> Error(UseCaseError error)
+    {
+        return new UseCaseResult<TResult>(error);
+    }
 }

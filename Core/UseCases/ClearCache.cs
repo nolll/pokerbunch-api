@@ -18,11 +18,11 @@ public class ClearCache : UseCase<ClearCache.Result, ClearCache.Request>
     {
         var user = _userRepository.Get(request.UserName);
         if (!AccessControl.CanClearCache(user))
-            return new UseCaseResult<Result>(new AccessDeniedError());
+            return Error(new AccessDeniedError());
 
         _cache.ClearAll();
 
-        return new UseCaseResult<Result>(new Result());
+        return Success(new Result());
     }
 
     public class Request

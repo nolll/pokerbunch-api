@@ -1,4 +1,3 @@
-using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -19,13 +18,13 @@ public class TestEmail : UseCase<TestEmail.Result, TestEmail.Request>
     {
         var user = _userRepository.Get(request.UserName);
         if (!AccessControl.CanSendTestEmail(user))
-            return new UseCaseResult<Result>(new AccessDeniedError());
+            return Error(new AccessDeniedError());
 
         const string email = "henriks@gmail.com";
         var message = new TestMessage();
         _emailSender.Send(email, message);
 
-        return new UseCaseResult<Result>(new Result(email));
+        return Success(new Result(email));
     }
     
     public class Request
