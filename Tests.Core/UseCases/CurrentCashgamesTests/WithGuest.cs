@@ -1,12 +1,14 @@
-using Core.Exceptions;
+using Core.Errors;
 using NUnit.Framework;
 
 namespace Tests.Core.UseCases.CurrentCashgamesTests;
 
 public class WithGuest : Arrange
 {
-    protected override bool ExecuteAutomatically => false;
-
     [Test]
-    public void ReturnsListOfGames() => Assert.Throws<AccessDeniedException>(Execute);
+    public void ReturnsError()
+    {
+        Assert.That(Result.Success, Is.False);
+        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
+    }
 }

@@ -7,6 +7,8 @@ namespace Tests.Core.UseCases.ClearCacheTests;
 
 public abstract class Arrange : UseCaseTest<ClearCache>
 {
+    protected UseCaseResult<ClearCache.Result> Result;
+
     protected string UserName = "user-name-1";
     protected abstract Role Role { get; }
 
@@ -19,6 +21,6 @@ public abstract class Arrange : UseCaseTest<ClearCache>
 
     protected override void Execute()
     {
-        Sut.Execute(new ClearCache.Request(UserName));
+        Result = Sut.Execute(new ClearCache.Request(UserName));
     }
 }

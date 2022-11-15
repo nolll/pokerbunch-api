@@ -71,7 +71,7 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
             Id = player.Id;
             Color = player.Color;
             UserId = player.IsUser ? player.UserId.ToString() : null;
-            UserName = player.IsUser ? player.UserName.ToString() : null;
+            UserName = player.IsUser ? player.UserName : null;
         }
     }
 }

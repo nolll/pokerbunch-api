@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -156,6 +157,9 @@ public class ServiceConfig
     private string GetConnectionString()
     {
         var databaseUrl = _configuration.GetValue<string>("DATABASE_URL");
+        if (string.IsNullOrEmpty(databaseUrl))
+            throw new ConfigurationErrorsException("Database url is missing");
+
         var databaseUri = new Uri(databaseUrl);
         var userInfo = databaseUri.UserInfo.Split(':');
 

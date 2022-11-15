@@ -1,8 +1,6 @@
 ﻿using Npgsql;
 using System;
 using System.Data;
-using System.Globalization;
-using NpgsqlTypes;
 
 namespace Infrastructure.Sql;
 

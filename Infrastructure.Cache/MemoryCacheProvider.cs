@@ -6,7 +6,7 @@ namespace Infrastructure.Cache;
 
 public class MemoryCacheProvider : ICacheProvider
 {
-    private static MemoryCache Cache = new MemoryCache("memcache");
+    private static MemoryCache _cache = new("memcache");
 
     public MemoryCacheProvider()
     {
@@ -14,22 +14,22 @@ public class MemoryCacheProvider : ICacheProvider
 
     public object Get(string key)
     {
-        return Cache.Get(key);
+        return _cache.Get(key);
     }
 
     public void Put(string key, object obj, TimeSpan time)
     {
-        Cache.Set(key, obj, new SlidingExpirationPolicy(time));
+        _cache.Set(key, obj, new SlidingExpirationPolicy(time));
     }
 
     public void Remove(string key)
     {
-        Cache.Remove(key);
+        _cache.Remove(key);
     }
 
     public void ClearAll()
     {
-        Cache.Dispose();
-        Cache = new MemoryCache("memcache");
+        _cache.Dispose();
+        _cache = new MemoryCache("memcache");
     }
 }

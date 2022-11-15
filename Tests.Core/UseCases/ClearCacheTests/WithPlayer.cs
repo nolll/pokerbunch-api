@@ -1,17 +1,17 @@
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using NUnit.Framework;
 
 namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithPlayer : Arrange
 {
-    protected override bool ExecuteAutomatically => false;
     protected override Role Role => Role.Player;
 
     [Test]
-    public void ThrowsException()
+    public void ReturnsError()
     {
-        Assert.Throws<AccessDeniedException>(Execute);
+        Assert.That(Result.Success, Is.False);
+        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
     }
 }

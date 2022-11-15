@@ -1,5 +1,4 @@
 ﻿using Api.Models.CommonModels;
-using Api.Services;
 using Api.Settings;
 using Core.UseCases;
 using JetBrains.Annotations;
@@ -25,7 +24,7 @@ public abstract class BaseController : Controller
     {
         get
         {
-            if (User?.Identity == null)
+            if (User.Identity == null)
                 return null;
             if (User.Identity.IsAuthenticated)
                 return User.Identity.Name;

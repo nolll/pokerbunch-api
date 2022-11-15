@@ -6,7 +6,7 @@ public static class CacheKeyProvider
 {
     public static string GetKey<T>(int id)
     {
-        return ConstructCacheKey(typeof(T).ToString(), id); ;
+        return ConstructCacheKey(typeof(T).ToString(), id);
     }
 
     private static string ConstructCacheKey(string typeName, params object[] procedureParameters)

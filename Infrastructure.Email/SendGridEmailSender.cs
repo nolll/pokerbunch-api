@@ -19,6 +19,6 @@ public class SendGridEmailSender : EmailSender
         var fromAddress = new EmailAddress(FromEmail, FromName);
         var toAddress = new EmailAddress(to);
         var msg = MailHelper.CreateSingleEmail(fromAddress, toAddress, message.Subject, message.Body, message.Body);
-        var response = client.SendEmailAsync(msg).Result;
+        _ = client.SendEmailAsync(msg).Result;
     }
 }
