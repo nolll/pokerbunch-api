@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -56,10 +55,13 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public UserModel GetUser(string userName)
+    public ObjectResult GetUser(string userName)
     {
-        var userDetails = _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
-        return userDetails.Data.CanViewAll ? new FullUserModel(userDetails.Data) : new UserModel(userDetails.Data);
+        var result = _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
+        return Model(result, () => result.Data.CanViewAll 
+            ? new FullUserModel(result.Data) 
+            : new UserModel(result.Data)
+        );
     }
 
     /// <summary>
@@ -70,8 +72,8 @@ public class UserController : BaseController
     [ApiAuthorize]
     public ObjectResult List()
     {
-        var userListResult = _userList.Execute(new UserList.Request(CurrentUserName));
-        return Model(userListResult, () => userListResult.Data.Users.Select(o => new UserItemModel(o, _urls)));
+        var result = _userList.Execute(new UserList.Request(CurrentUserName));
+        return Model(result, () => result.Data.Users.Select(o => new UserItemModel(o, _urls)));
     }
 
     /// <summary>
@@ -80,12 +82,15 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.Get)]
     [HttpPut]
     [ApiAuthorize]
-    public UserModel Update(string userName, [FromBody] UpdateUserPostModel post)
+    public ObjectResult Update(string userName, [FromBody] UpdateUserPostModel post)
     {
-        var request = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
-        var editUserResult = _editUser.Execute(request);
-        var userDetails = _userDetails.Execute(new UserDetails.Request(editUserResult.Data.UserName));
-        return new FullUserModel(userDetails.Data);
+        var updateRequest = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
+        var updateResult = _editUser.Execute(updateRequest);
+        if (!updateResult.Success)
+            return Error(updateResult.Error);
+
+        var result = _userDetails.Execute(new UserDetails.Request(updateResult.Data.UserName));
+        return Model(result, () => new FullUserModel(result.Data));
     }
 
     /// <summary>
@@ -94,11 +99,11 @@ public class UserController : BaseController
     [Route(ApiRoutes.Profile.Password)]
     [HttpPut]
     [ApiAuthorize]
-    public MessageModel ChangePassword([FromBody] ChangePasswordPostModel post)
+    public ObjectResult ChangePassword([FromBody] ChangePasswordPostModel post)
     {
         var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
-        _changePassword.Execute(request);
-        return new OkModel();
+        var result = _changePassword.Execute(request);
+        return Model(result, () => new OkModel());
     }
 
     /// <summary>
@@ -106,11 +111,11 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.Profile.Password)]
     [HttpPost]
-    public MessageModel ResetPassword([FromBody] ResetPasswordPostModel post)
+    public ObjectResult ResetPassword([FromBody] ResetPasswordPostModel post)
     {
         var request = new ResetPassword.Request(post.Email, _urls.Site.Login);
-        _resetPassword.Execute(request);
-        return new OkModel();
+        var result = _resetPassword.Execute(request);
+        return Model(result, () => new OkModel());
     }
 
     /// <summary>
@@ -118,10 +123,10 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.User.List)]
     [HttpPost]
-    public MessageModel Add([FromBody] AddUserPostModel post)
+    public ObjectResult Add([FromBody] AddUserPostModel post)
     {
-        _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login));
-        return new OkModel();
+        var result = _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login));
+        return Model(result, () => new OkModel());
     }
 
     /// <summary>
@@ -131,10 +136,10 @@ public class UserController : BaseController
     [Route(ApiRoutes.Profile.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public UserModel Profile()
+    public ObjectResult Profile()
     {
-        var userDetails = _userDetails.Execute(new UserDetails.Request(CurrentUserName));
-        return new FullUserModel(userDetails.Data);
+        var result = _userDetails.Execute(new UserDetails.Request(CurrentUserName));
+        return Model(result, () => new FullUserModel(result.Data));
     }
 
     // https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api
@@ -146,8 +151,9 @@ public class UserController : BaseController
     /// <returns>A token that can be used for authentication</returns>
     [AllowAnonymous]
     [HttpPost]
+    [Obsolete]
     [Route(ApiRoutes.Auth.Token)]
-    public IActionResult Token([FromForm] string userName, [FromForm] string password)
+    public ObjectResult Token([FromForm] string userName, [FromForm] string password)
     {
         var post = new LoginPostModel(userName, password);
         var token = GetToken(post);
@@ -161,7 +167,7 @@ public class UserController : BaseController
     [AllowAnonymous]
     [HttpPost]
     [Route(ApiRoutes.Auth.Login)]
-    public IActionResult Login([FromBody] LoginPostModel post)
+    public ObjectResult Login([FromBody] LoginPostModel post)
     {
         var token = GetToken(post);
         return Ok(token);

@@ -10,6 +10,8 @@ namespace Tests.Core.UseCases.CashoutTests;
 
 public abstract class Arrange : UseCaseTest<Cashout>
 {
+    protected UseCaseResult<Cashout.Result> Result;
+
     private const int BunchId = 1;
     private const int CashgameId = 2;
     private const int LocationId = 3;
@@ -43,7 +45,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
 
     protected override void Execute()
     {
-        Sut.Execute(new Cashout.Request(UserName, CashgameId, PlayerId, CashoutStack, CashoutTime));
+        Result = Sut.Execute(new Cashout.Request(UserName, CashgameId, PlayerId, CashoutStack, CashoutTime));
     }
 
     private Cashgame CreateCashgame()

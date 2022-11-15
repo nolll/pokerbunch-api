@@ -72,19 +72,19 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Get)]
     [HttpPut]
     [ApiAuthorize]
-    public MessageModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
+    public ObjectResult UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
     {
-        _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
-        return new OkModel();
+        var result = _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
+        return Model(result, () => new OkModel());
     }
 
     [Route(ApiRoutes.Action.Get)]
     [HttpDelete]
     [ApiAuthorize]
-    public MessageModel DeleteAction(int cashgameId, int actionId)
+    public ObjectResult DeleteAction(int cashgameId, int actionId)
     {
-        _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
-        return new OkModel();
+        var result = _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+        return Model(result, () => new OkModel());
     }
 
     private static class ActionType

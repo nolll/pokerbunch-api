@@ -41,59 +41,59 @@ public class BunchController : BaseController
     [Route(ApiRoutes.Bunch.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public BunchModel Get(string bunchId)
+    public ObjectResult Get(string bunchId)
     {
         var request = new GetBunch.Request(CurrentUserName, bunchId);
-        var bunchResult = _getBunch.Execute(request);
-        return new BunchModel(bunchResult.Data);
+        var result = _getBunch.Execute(request);
+        return Model(result, () => new BunchModel(result.Data));
     }
 
     [Route(ApiRoutes.Bunch.Get)]
     [HttpPut]
     [ApiAuthorize]
-    public BunchModel Update(string bunchId, [FromBody] UpdateBunchPostModel post)
+    public ObjectResult Update(string bunchId, [FromBody] UpdateBunchPostModel post)
     {
         var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
-        var bunchResult = _editBunch.Execute(request);
-        return new BunchModel(bunchResult.Data);
+        var result = _editBunch.Execute(request);
+        return Model(result, () => new BunchModel(result.Data));
     }
 
     [Route(ApiRoutes.Bunch.List)]
     [HttpGet]
     [ApiAuthorize]
-    public IEnumerable<BunchModel> List()
+    public ObjectResult List()
     {
         var request = new GetBunchList.Request(CurrentUserName);
-        var bunchListResult = _getBunchList.Execute(request);
-        return bunchListResult.Data.Bunches.Select(o => new BunchModel(o));
+        var result = _getBunchList.Execute(request);
+        return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
     }
 
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
     [HttpGet]
     [ApiAuthorize]
-    public IEnumerable<BunchModel> Bunches()
+    public ObjectResult Bunches()
     {
-        var bunchListResult = _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
-        return bunchListResult.Data.Bunches.Select(o => new BunchModel(o));
+        var result = _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
+        return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
     }
 
     [Route(ApiRoutes.Bunch.List)]
     [HttpPost]
     [ApiAuthorize]
-    public BunchModel Add([FromBody] AddBunchPostModel post)
+    public ObjectResult Add([FromBody] AddBunchPostModel post)
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
-        var bunchResult = _addBunch.Execute(request);
-        return new BunchModel(bunchResult.Data);
+        var result = _addBunch.Execute(request);
+        return Model(result, () => new BunchModel(result.Data));
     }
 
     [Route(ApiRoutes.Bunch.Join)]
     [HttpPost]
     [ApiAuthorize]
-    public MessageModel Join(string bunchId, [FromBody] JoinBunchPostModel post)
+    public ObjectResult Join(string bunchId, [FromBody] JoinBunchPostModel post)
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
         var result = _joinBunch.Execute(request);
-        return new PlayerJoinedModel(result.Data.PlayerId);
+        return Model(result, () => new PlayerJoinedModel(result.Data.PlayerId));
     }
 }

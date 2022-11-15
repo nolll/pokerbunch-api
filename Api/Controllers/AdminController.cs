@@ -63,10 +63,9 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Settings)]
     [HttpGet]
     [ApiAuthorize]
-    public AppSettings Settings()
+    public ObjectResult Settings()
     {
-        _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
-
-        return _appSettings;
+        var result = _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
+        return Model(result, () => _appSettings);
     }
 }

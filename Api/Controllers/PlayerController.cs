@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
 using Api.Auth;
-using Api.Models.CommonModels;
 using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Settings;
@@ -43,10 +41,10 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public PlayerModel Get(int playerId)
+    public ObjectResult Get(int playerId)
     {
-        var getPlayerResult = _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
-        return new PlayerModel(getPlayerResult.Data);
+        var result = _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
+        return Model(result, () => new PlayerModel(result.Data));
     }
 
     /// <summary>
@@ -55,10 +53,10 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public IEnumerable<PlayerListItemModel> GetList(string bunchId)
+    public ObjectResult GetList(string bunchId)
     {
-        var playerListResult = _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
-        return playerListResult.Data.Players.Select(o => new PlayerListItemModel(o));
+        var result = _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
+        return Model(result, () => result.Data.Players.Select(o => new PlayerListItemModel(o)));
     }
 
     /// <summary>
@@ -67,10 +65,12 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.ListByBunch)]
     [HttpPost]
     [ApiAuthorize]
-    public PlayerModel Add(string bunchId, [FromBody] PlayerAddPostModel post)
+    public ObjectResult Add(string bunchId, [FromBody] PlayerAddPostModel post)
     {
         var result = _addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
-        return Get(result.Data.Id);
+        return result.Success 
+            ? Get(result.Data.Id) 
+            : Error(result.Error);
     }
 
     /// <summary>
@@ -79,11 +79,11 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Get)]
     [HttpDelete]
     [ApiAuthorize]
-    public MessageModel Delete(int playerId)
+    public ObjectResult Delete(int playerId)
     {
-        var deleteRequest = new DeletePlayer.Request(CurrentUserName, playerId);
-        _deletePlayer.Execute(deleteRequest);
-        return new PlayerDeletedModel(playerId);
+        var request = new DeletePlayer.Request(CurrentUserName, playerId);
+        var result = _deletePlayer.Execute(request);
+        return Model(result, () => new PlayerDeletedModel(playerId));
     }
 
     /// <summary>
@@ -92,13 +92,13 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Invite)]
     [HttpPost]
     [ApiAuthorize]
-    public MessageModel Invite(int playerId, [FromBody] PlayerInvitePostModel post)
+    public ObjectResult Invite(int playerId, [FromBody] PlayerInvitePostModel post)
     {
         var registerUrl = _urls.Site.AddUser;
         var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}");
         var joinBunchWithCodeUrlFormat = _urls.Site.JoinBunch("{0}", "{1}");
-        var deleteRequest = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
-        _invitePlayer.Execute(deleteRequest);
-        return new PlayerInvitedModel(playerId);
+        var request = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
+        var result = _invitePlayer.Execute(request);
+        return Model(result, () => new PlayerInvitedModel(playerId));
     }
 }

@@ -29,27 +29,27 @@ public class LocationController : BaseController
     [Route(ApiRoutes.Location.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public LocationModel Get(int locationId)
+    public ObjectResult Get(int locationId)
     {
         var result = _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
-        return new LocationModel(result.Data);
+        return Model(result, () => new LocationModel(result.Data));
     }
 
     [Route(ApiRoutes.Location.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public IEnumerable<LocationModel> GetList(string bunchId)
+    public ObjectResult GetList(string bunchId)
     {
-        var locationListResult = _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
-        return locationListResult.Data.Locations.Select(o => new LocationModel(o));
+        var result = _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
+        return Model(result, () => result.Data.Locations.Select(o => new LocationModel(o)));
     }
 
     [Route(ApiRoutes.Location.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)
+    public ObjectResult Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
         var result = _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
-        return new LocationModel(result.Data);
+        return Model(result, () => new LocationModel(result.Data));
     }
 }

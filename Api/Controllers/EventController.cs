@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Api.Auth;
 using Api.Models.EventModels;
 using Api.Routes;
@@ -29,27 +28,29 @@ public class EventController : BaseController
     [Route(ApiRoutes.Event.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public EventModel Get(int eventId)
+    public ObjectResult Get(int eventId)
     {
         var result = _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
-        return new EventModel(result.Data);
+        return Model(result, () => new EventModel(result.Data));
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public IEnumerable<EventModel> List(string bunchId)
+    public ObjectResult List(string bunchId)
     {
-        var eventListResult = _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
-        return eventListResult.Data.Events.Select(o => new EventModel(o));
+        var result = _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
+        return Model(result, () => result.Data.Events.Select(o => new EventModel(o)));
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpPost]
     [ApiAuthorize]
-    public EventModel Add(string bunchId, [FromBody] EventAddPostModel post)
+    public ObjectResult Add(string bunchId, [FromBody] EventAddPostModel post)
     {
         var result = _addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
-        return Get(result.Data.Id);
+        return result.Success 
+            ? Get(result.Data.Id) 
+            : Error(result.Error);
     }
 }
