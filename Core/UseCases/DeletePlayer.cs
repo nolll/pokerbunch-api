@@ -1,11 +1,11 @@
 using System.Linq;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeletePlayer
+public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -20,7 +20,7 @@ public class DeletePlayer
         _bunchRepository = bunchRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = _bunchRepository.Get(player.BunchId);
@@ -31,13 +31,13 @@ public class DeletePlayer
         var hasPlayed = cashgames.Any();
 
         if (hasPlayed)
-            throw new PlayerHasGamesException();
-            
+            return Error(new PlayerHasGamesError());
+
         _playerRepository.Delete(request.PlayerId);
 
-        return new Result(bunch.Slug, request.PlayerId);
+        return Success(new Result(bunch.Slug, request.PlayerId));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

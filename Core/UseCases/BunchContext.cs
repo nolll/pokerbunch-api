@@ -4,7 +4,7 @@ using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class BunchContext
+public class BunchContext : UseCase<BunchContext.Request, BunchContext.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -15,22 +15,24 @@ public class BunchContext
         _bunchRepository = bunchRepository;
     }
 
-    public Result Execute(BunchRequest request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var appContext = new CoreContext(_userRepository).Execute(new CoreContext.Request(request.UserName));
-        var bunch = GetBunch(appContext, request);
-        return GetResult(appContext, bunch);
+        if (!appContext.Success)
+            return Error(appContext.Error);
+
+        var bunch = GetBunch(appContext.Data, request);
+        return Success(GetResult(appContext.Data, bunch));
     }
 
     private Result GetResult(CoreContext.Result appContext, Bunch bunch)
     {
-        if (bunch == null)
-            return new Result(appContext);
-
-        return new Result(appContext, bunch.Slug, bunch.Id, bunch.DisplayName);
+        return bunch != null 
+            ? new Result(appContext, bunch.Slug, bunch.Id, bunch.DisplayName) 
+            : new Result(appContext);
     }
 
-    private Bunch GetBunch(CoreContext.Result appContext, BunchRequest request)
+    private Bunch GetBunch(CoreContext.Result appContext, Request request)
     {
         if (!appContext.IsLoggedIn)
             return null;
@@ -50,12 +52,12 @@ public class BunchContext
         return bunches.Count == 1 ? bunches[0] : null;
     }
 
-    public class BunchRequest
+    public class Request
     {
         public string UserName { get; }
         public string Slug { get; }
 
-        public BunchRequest(string userName, string slug = null)
+        public Request(string userName, string slug = null)
         {
             UserName = userName;
             Slug = slug;
@@ -64,11 +66,11 @@ public class BunchContext
 
     public class Result
     {
-        public int BunchId { get; private set; }
-        public string Slug { get; private set; }
-        public string BunchName { get; private set; }
-        public bool HasBunch { get; private set; }
-        public CoreContext.Result AppContext { get; private set; }
+        public int BunchId { get; }
+        public string Slug { get; }
+        public string BunchName { get; }
+        public bool HasBunch { get; }
+        public CoreContext.Result AppContext { get; }
 
         public Result(CoreContext.Result appContextResult)
         {

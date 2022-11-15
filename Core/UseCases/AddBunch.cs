@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddBunch
+public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -21,18 +21,18 @@ public class AddBunch
         _playerRepository = playerRepository;
     }
 
-    public BunchResult Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var slug = SlugGenerator.GetSlug(request.DisplayName);
 
         bool bunchExists;
         try
         {
-            var b = _bunchRepository.GetBySlug(slug);
+            _bunchRepository.GetBySlug(slug);
             bunchExists = true;
         }
         catch (BunchNotFoundException)
@@ -41,7 +41,7 @@ public class AddBunch
         }
 
         if (bunchExists)
-            throw new BunchExistsException(slug);
+            return Error(new BunchExistsError(slug));
 
         var bunch = CreateBunch(request);
         var id = _bunchRepository.Add(bunch);
@@ -50,9 +50,9 @@ public class AddBunch
         var playerId = _playerRepository.Add(player);
         var createdPlayer = _playerRepository.Get(playerId);
 
-        return new BunchResult(bunch, createdPlayer);
+        return Success(new Result(bunch, createdPlayer));
     }
-
+    
     private static Bunch CreateBunch(Request request)
     {
         return new Bunch(
@@ -87,6 +87,13 @@ public class AddBunch
             CurrencySymbol = currencySymbol;
             CurrencyLayout = currencyLayout;
             TimeZone = timeZone;
+        }
+    }
+
+    public class Result : BunchResult
+    {
+        public Result(Bunch b, Player p) : base(b, p)
+        {
         }
     }
 }

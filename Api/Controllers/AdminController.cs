@@ -32,10 +32,7 @@ public class AdminController : BaseController
     public ObjectResult ClearCache()
     {
         var result = _clearCache.Execute(new ClearCache.Request(CurrentUserName));
-
-        return result.Success 
-            ? Success(new MessageModel(result.Data.Message)) 
-            : Error(result.Error);
+        return Model(result, () => new MessageModel(result.Data.Message));
     }
 
     /// <summary>
@@ -47,10 +44,7 @@ public class AdminController : BaseController
     public ObjectResult SendEmail()
     {
         var result = _testEmail.Execute(new TestEmail.Request(CurrentUserName));
-        
-        return result.Success
-            ? Success(new MessageModel(result.Data.Message))
-            : Error(result.Error);
+        return Model(result, () => new MessageModel(result.Data.Message));
     }
 
     /// <summary>
@@ -58,9 +52,9 @@ public class AdminController : BaseController
     /// </summary>
     [Route(ApiRoutes.Version)]
     [HttpGet]
-    public VersionModel Version()
+    public ObjectResult Version()
     {
-        return new VersionModel(_appSettings.Version);
+        return Success(new VersionModel(_appSettings.Version));
     }
 
     /// <summary>

@@ -7,7 +7,7 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests;
 
 public abstract class Arrange : UseCaseTest<CurrentCashgames>
 {
-    protected CurrentCashgames.Result Result;
+    protected UseCaseResult<CurrentCashgames.Result> Result;
 
     private const string UserName = "default-current-user";
     private const int UserId = 1;

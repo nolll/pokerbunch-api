@@ -1,11 +1,10 @@
-using System;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventDetails
+public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
 {
     private readonly IEventRepository _eventRepository;
     private readonly IUserRepository _userRepository;
@@ -22,7 +21,7 @@ public class EventDetails
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var e = _eventRepository.Get(request.EventId);
         var location = e.LocationId > 0 ? _locationRepository.Get(e.LocationId) : null;
@@ -33,8 +32,8 @@ public class EventDetails
 
         var locationId = location?.Id ?? 0;
         var locationName = location?.Name;
-            
-        return new Result(e.Id, e.Name, bunch.Slug, locationId, locationName, e.StartDate);
+
+        return Success(new Result(e.Id, e.Name, bunch.Slug, locationId, locationName, e.StartDate));
     }
 
     public class Request

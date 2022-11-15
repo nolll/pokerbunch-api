@@ -1,11 +1,11 @@
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class Login
+public class Login : UseCase<Login.Request, Login.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,15 +14,15 @@ public class Login
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var user = GetLoggedInUser(request.LoginName, request.Password);
 
         if (user == null)
-            throw new LoginException("There was something wrong with your username or password. Please try again.");
-        return new Result(user.UserName);
+            return Error(new LoginError("There was something wrong with your username or password. Please try again."));
+        return Success(new Result(user.UserName));
     }
-
+    
     private User GetLoggedInUser(string loginName, string password)
     {
         var user = _userRepository.Get(loginName);

@@ -15,9 +15,9 @@ public class DeleteCheckpointTests : TestBase
 
         var deletedCheckpointIds = Deps.Cashgame.Updated.DeletedCheckpoints.Select(o => o.Id);
         Assert.IsTrue(deletedCheckpointIds.Contains(TestData.ReportCheckpointId));
-        Assert.AreEqual("bunch-a", result.Slug);
-        Assert.AreEqual(1, result.CashgameId);
-        Assert.IsFalse(result.GameIsRunning);
+        Assert.AreEqual("bunch-a", result.Data.Slug);
+        Assert.AreEqual(1, result.Data.CashgameId);
+        Assert.IsFalse(result.Data.GameIsRunning);
     }
 
     [Test]
@@ -30,9 +30,9 @@ public class DeleteCheckpointTests : TestBase
 
         var deletedCheckpointIds = Deps.Cashgame.Updated.DeletedCheckpoints.Select(o => o.Id);
         Assert.IsTrue(deletedCheckpointIds.Contains(12));
-        Assert.AreEqual("bunch-a", result.Slug);
-        Assert.AreEqual(3, result.CashgameId);
-        Assert.IsTrue(result.GameIsRunning);
+        Assert.AreEqual("bunch-a", result.Data.Slug);
+        Assert.AreEqual(3, result.Data.CashgameId);
+        Assert.IsTrue(result.Data.GameIsRunning);
     }
 
     private DeleteCheckpoint Sut => new DeleteCheckpoint(

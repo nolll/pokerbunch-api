@@ -6,7 +6,7 @@ namespace Tests.Core.UseCases.UserDetailsTests;
 
 public abstract class Arrange : UseCaseTest<UserDetails>
 {
-    protected UserDetails.Result Result;
+    protected UseCaseResult<UserDetails.Result> Result;
 
     private const int CurrentUserId = 1;
     private const int ViewUserId = 2;

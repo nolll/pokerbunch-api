@@ -32,7 +32,7 @@ public class LocationController : BaseController
     public LocationModel Get(int locationId)
     {
         var result = _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
-        return new LocationModel(result);
+        return new LocationModel(result.Data);
     }
 
     [Route(ApiRoutes.Location.ListByBunch)]
@@ -41,7 +41,7 @@ public class LocationController : BaseController
     public IEnumerable<LocationModel> GetList(string bunchId)
     {
         var locationListResult = _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
-        return locationListResult.Locations.Select(o => new LocationModel(o));
+        return locationListResult.Data.Locations.Select(o => new LocationModel(o));
     }
 
     [Route(ApiRoutes.Location.Add)]
@@ -50,6 +50,6 @@ public class LocationController : BaseController
     public LocationModel Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
         var result = _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
-        return new LocationModel(result);
+        return new LocationModel(result.Data);
     }
 }

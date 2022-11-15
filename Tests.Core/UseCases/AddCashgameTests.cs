@@ -14,7 +14,7 @@ public class AddCashgameTests : TestBase
         var request = CreateRequest(TestData.LocationIdA);
         var result = Sut.Execute(request);
 
-        Assert.AreEqual(TestData.SlugA, result.Slug);
+        Assert.AreEqual(TestData.SlugA, result.Data.Slug);
     }
 
     [Test]

@@ -69,7 +69,7 @@ public class EditBunchTests : TestBase
 
         var result = Sut.Execute(request);
 
-        Assert.AreEqual("bunch-a", result.Slug);
+        Assert.AreEqual("bunch-a", result.Data.Slug);
     }
 
     private EditBunch Sut => new EditBunch(

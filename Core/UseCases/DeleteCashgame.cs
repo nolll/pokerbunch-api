@@ -1,10 +1,10 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCashgame
+public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -19,7 +19,7 @@ public class DeleteCashgame
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var cashgame = _cashgameRepository.Get(request.Id);
         var bunch = _bunchRepository.Get(cashgame.BunchId);
@@ -28,13 +28,13 @@ public class DeleteCashgame
         RequireRole.Manager(user, player);
 
         if (cashgame.PlayerCount > 0)
-            throw new CashgameHasResultsException();
+            return Error(new CashgameHasResultsError());
 
         _cashgameRepository.DeleteGame(cashgame.Id);
 
-        return new Result(bunch.Slug);
+        return Success(new Result(bunch.Slug));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class EditBunch
+public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,11 +20,11 @@ public class EditBunch
         _playerRepository = playerRepository;
     }
 
-    public BunchResult Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -33,9 +33,9 @@ public class EditBunch
         var postedHomegame = CreateBunch(bunch, request);
         _bunchRepository.Update(postedHomegame);
 
-        return new BunchResult(bunch, player);
+        return Success(new Result(bunch, player));
     }
-
+    
     private static Bunch CreateBunch(Bunch bunch, Request request)
     {
         return new Bunch(
@@ -76,15 +76,10 @@ public class EditBunch
         }
     }
 
-    public class Result
+    public class Result : BunchResult
     {
-        public int BunchId { get; private set; }
-        public string Slug { get; private set; }
-
-        public Result(int bunchId, string slug)
+        public Result(Bunch b, Player p) : base(b, p)
         {
-            BunchId = bunchId;
-            Slug = slug;
         }
     }
 }

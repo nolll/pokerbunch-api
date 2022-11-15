@@ -6,7 +6,7 @@ namespace Tests.Core.UseCases.GetBunchTests;
 
 public abstract class Arrange : UseCaseTest<GetBunch>
 {
-    protected BunchResult Result;
+    protected UseCaseResult<GetBunch.Result> Result;
 
     private const int BunchId = 1;
     private const int UserId = 4;

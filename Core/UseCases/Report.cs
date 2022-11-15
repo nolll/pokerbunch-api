@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class Report
+public class Report : UseCase<Report.Request, Report.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,23 +20,25 @@ public class Report
         _userRepository = userRepository;
     }
 
-    public void Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.Get(request.CashgameId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
-            throw new AccessDeniedException();
+            return Error(new AccessDeniedError());
 
         var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
         cashgame.AddCheckpoint(checkpoint);
         _cashgameRepository.Update(cashgame);
-    }
 
+        return Success(new Result());
+    }
+    
     public class Request
     {
         public string UserName { get; }
@@ -55,5 +56,9 @@ public class Report
             Stack = stack;
             CurrentTime = currentTime;
         }
+    }
+
+    public class Result
+    {
     }
 }

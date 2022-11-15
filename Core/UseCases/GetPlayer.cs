@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayer
+public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,7 +21,7 @@ public class GetPlayer
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = _bunchRepository.Get(player.BunchId);
@@ -29,14 +29,14 @@ public class GetPlayer
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
-            throw new AccessDeniedException();
+            return Error(new AccessDeniedError());
 
         var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
         var cashgames = _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : string.Empty;
 
-        return new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl);
+        return Success(new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl));
     }
 
     public class Request

@@ -28,7 +28,7 @@ public class LoginTests : TestBase
     {
         var result = Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(TestData.UserA.UserName, result.UserName);
+        Assert.AreEqual(TestData.UserA.UserName, result.Data.UserName);
     }
       
     private static Login.Request CreateRequest()

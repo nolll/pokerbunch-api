@@ -11,7 +11,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual(TestData.PlayerNameA, result.DisplayName);
+        Assert.AreEqual(TestData.PlayerNameA, result.Data.DisplayName);
     }
 
     [Test]
@@ -19,7 +19,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual(1, result.PlayerId);
+        Assert.AreEqual(1, result.Data.PlayerId);
     }
 
     [Test]
@@ -27,7 +27,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.AreEqual("", result.AvatarUrl);
+        Assert.AreEqual("", result.Data.AvatarUrl);
     }
 
     [Test]
@@ -36,7 +36,7 @@ class PlayerDetailsTests : TestBase
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
         const string expected = "https://gravatar.com/avatar/0796c9df772de3f82c0c89377330471b?s=100&d=blank";
-        Assert.AreEqual(expected, result.AvatarUrl);
+        Assert.AreEqual(expected, result.Data.AvatarUrl);
     }
 
     [Test]
@@ -44,7 +44,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.AreEqual(string.Empty, result.UserName);
+        Assert.AreEqual(string.Empty, result.Data.UserName);
     }
 
     [Test]
@@ -52,7 +52,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual("user-name-a", result.UserName);
+        Assert.AreEqual("user-name-a", result.Data.UserName);
     }
 
     [Test]
@@ -60,7 +60,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.IsFalse(result.IsUser);
+        Assert.IsFalse(result.Data.IsUser);
     }
 
     [Test]
@@ -68,7 +68,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsTrue(result.IsUser);
+        Assert.IsTrue(result.Data.IsUser);
     }
 
     [Test]
@@ -76,7 +76,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsFalse(result.CanDelete);
+        Assert.IsFalse(result.Data.CanDelete);
     }
 
     [Test]
@@ -84,7 +84,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameC, TestData.PlayerIdD));
 
-        Assert.IsTrue(result.CanDelete);
+        Assert.IsTrue(result.Data.CanDelete);
     }
 
     [Test]
@@ -92,7 +92,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsFalse(result.CanDelete);
+        Assert.IsFalse(result.Data.CanDelete);
     }
 
     private static GetPlayer.Request CreateRequest(string userName, int playerId)

@@ -1,9 +1,10 @@
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class TestEmail : UseCase<TestEmail.Result, TestEmail.Request>
+public class TestEmail : UseCase<TestEmail.Request, TestEmail.Result>
 {
     private readonly IEmailSender _emailSender;
     private readonly IUserRepository _userRepository;

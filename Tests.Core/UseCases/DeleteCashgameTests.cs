@@ -36,7 +36,7 @@ public class DeleteCashgameTests : TestBase
 
         var result = Sut.Execute(request);
 
-        Assert.AreEqual(TestData.SlugA, result.Slug);
+        Assert.AreEqual(TestData.SlugA, result.Data.Slug);
     }
 
     private DeleteCashgame Sut => new DeleteCashgame(

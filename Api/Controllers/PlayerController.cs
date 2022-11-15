@@ -46,7 +46,7 @@ public class PlayerController : BaseController
     public PlayerModel Get(int playerId)
     {
         var getPlayerResult = _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
-        return new PlayerModel(getPlayerResult);
+        return new PlayerModel(getPlayerResult.Data);
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class PlayerController : BaseController
     public IEnumerable<PlayerListItemModel> GetList(string bunchId)
     {
         var playerListResult = _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
-        return playerListResult.Players.Select(o => new PlayerListItemModel(o));
+        return playerListResult.Data.Players.Select(o => new PlayerListItemModel(o));
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class PlayerController : BaseController
     public PlayerModel Add(string bunchId, [FromBody] PlayerAddPostModel post)
     {
         var result = _addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
-        return Get(result.Id);
+        return Get(result.Data.Id);
     }
 
     /// <summary>

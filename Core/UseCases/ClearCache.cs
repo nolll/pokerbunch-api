@@ -1,9 +1,10 @@
-﻿using Core.Repositories;
+﻿using Core.Errors;
+using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class ClearCache : UseCase<ClearCache.Result, ClearCache.Request>
+public class ClearCache : UseCase<ClearCache.Request, ClearCache.Result>
 {
     private readonly ICacheContainer _cache;
     private readonly IUserRepository _userRepository;

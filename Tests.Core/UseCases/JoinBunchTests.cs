@@ -33,7 +33,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
         var result = Sut.Execute(request);
-        Assert.AreEqual("bunch-a", result.Slug);
+        Assert.AreEqual("bunch-a", result.Data.Slug);
     }
 
     [Test]

@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CurrentCashgames
+public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -23,7 +23,7 @@ public class CurrentCashgames
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -35,10 +35,10 @@ public class CurrentCashgames
         var gameList = new List<Game>();
         if (cashgame != null)
             gameList.Add(new Game(bunch.Slug, cashgame.Id));
-            
-        return new Result(gameList);
-    }
 
+        return Success(new Result(gameList));
+    }
+    
     public class Request
     {
         public string UserName { get; }

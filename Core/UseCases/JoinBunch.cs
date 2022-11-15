@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class JoinBunch
+public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,24 +20,24 @@ public class JoinBunch
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var players = _playerRepository.List(bunch.Id);
         var player = GetMatchedPlayer(players, request.Code);
-            
+
         if (player == null)
-            throw new InvalidJoinCodeException();
+            return Error(new InvalidJoinCodeError());
 
         var user = _userRepository.Get(request.UserName);
         _playerRepository.JoinBunch(player, bunch, user.Id);
-        return new Result(bunch.Slug, player.Id);
+        return Success(new Result(bunch.Slug, player.Id));
     }
-        
+    
     private static Player GetMatchedPlayer(IEnumerable<Player> players, string postedCode)
     {
         foreach (var player in players)

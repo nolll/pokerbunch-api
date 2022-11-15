@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
-using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class CashgameDetails
+public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -28,14 +27,10 @@ public class CashgameDetails
         _eventRepository = eventRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var cashgame = _cashgameRepository.Get(request.Id);
         var bunch = _bunchRepository.Get(cashgame.BunchId);
-
-        if (cashgame == null)
-            throw new CashgameNotRunningException();
-
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
         RequireRole.Player(user, player);
@@ -43,14 +38,14 @@ public class CashgameDetails
         var players = _playerRepository.Get(GetPlayerIds(cashgame));
 
         var role = user.IsAdmin ? Role.Manager : player.Role;
-            
+
         var location = _locationRepository.Get(cashgame.LocationId);
         var @event = cashgame.EventId != 0 ? _eventRepository.Get(cashgame.EventId) : null;
         var eventName = @event?.Name;
         var eventId = @event?.Id ?? 0;
 
         var playerItems = GetPlayerItems(cashgame, players);
-            
+
         var defaultBuyin = bunch.DefaultBuyin;
         var currencyFormat = bunch.Currency.Format;
         var currencySymbol = bunch.Currency.Symbol;
@@ -61,7 +56,7 @@ public class CashgameDetails
         var startTime = GetStartTime(playerItems, request.CurrentUtc);
         var updatedTime = GetUpdatedTime(playerItems, cashgame.Status, request.CurrentUtc);
 
-        return new Result(
+        var result = new Result(
             bunch.Slug,
             bunch.Timezone.Id,
             player.Id,
@@ -81,8 +76,10 @@ public class CashgameDetails
             culture,
             role,
             cashgame.Status == GameStatus.Running);
-    }
 
+        return Success(result);
+    }
+    
     private DateTime GetStartTime(IList<RunningCashgamePlayerItem> playerItems, DateTime currentUtc)
     {
         if (playerItems.Any())

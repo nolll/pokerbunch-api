@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
@@ -7,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventList
+public class EventList : UseCase<EventList.Request, EventList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IEventRepository _eventRepository;
@@ -24,7 +23,7 @@ public class EventList
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -36,7 +35,7 @@ public class EventList
 
         var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
 
-        return new Result(eventItems);
+        return Success(new Result(eventItems));
     }
 
     private static Event CreateEventItem(Entities.Event e, IList<Location> locations, string slug)

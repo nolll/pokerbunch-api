@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocationList
+public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,7 +20,7 @@ public class GetLocationList
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -30,7 +30,7 @@ public class GetLocationList
 
         var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 
-        return new Result(locationItems);
+        return Success(new Result(locationItems));
     }
 
     private static Location CreateLocationItem(Entities.Location location, string slug)

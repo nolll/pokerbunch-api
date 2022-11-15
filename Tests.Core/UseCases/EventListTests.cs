@@ -12,7 +12,7 @@ class EventListTests : TestBase
     {
         var result = Sut.Execute(CreateInput());
 
-        Assert.AreEqual(2, result.Events.Count);
+        Assert.AreEqual(2, result.Data.Events.Count);
     }
 
     [Test]
@@ -20,8 +20,8 @@ class EventListTests : TestBase
     {
         var result = Sut.Execute(CreateInput());
 
-        Assert.AreEqual(TestData.EventNameB, result.Events[0].Name);
-        Assert.AreEqual(TestData.EventNameA, result.Events[1].Name);
+        Assert.AreEqual(TestData.EventNameB, result.Data.Events[0].Name);
+        Assert.AreEqual(TestData.EventNameA, result.Data.Events[1].Name);
     }
 
     [Test]
@@ -29,8 +29,8 @@ class EventListTests : TestBase
     {
         var result = Sut.Execute(CreateInput());
 
-        Assert.AreEqual(new Date(2002, 2, 2), result.Events[0].StartDate);
-        Assert.AreEqual(new Date(2001, 1, 1), result.Events[1].StartDate);
+        Assert.AreEqual(new Date(2002, 2, 2), result.Data.Events[0].StartDate);
+        Assert.AreEqual(new Date(2001, 1, 1), result.Data.Events[1].StartDate);
     }
 
     [Test]
@@ -38,8 +38,8 @@ class EventListTests : TestBase
     {
         var result = Sut.Execute(CreateInput());
 
-        Assert.AreEqual(2, result.Events[0].EventId);
-        Assert.AreEqual(1, result.Events[1].EventId);
+        Assert.AreEqual(2, result.Data.Events[0].EventId);
+        Assert.AreEqual(1, result.Data.Events[1].EventId);
     }
 
     private EventList Sut => new EventList(

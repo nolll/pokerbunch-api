@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddCashgame
+public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -23,12 +23,12 @@ public class AddCashgame
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
         var user = _userRepository.Get(request.UserName);
         var bunch = _bunchRepository.GetBySlug(request.Slug);
@@ -38,9 +38,9 @@ public class AddCashgame
         var cashgame = new Cashgame(bunch.Id, location.Id, 0, GameStatus.Running);
         var cashgameId = _cashgameRepository.Add(bunch, cashgame);
 
-        return new Result(request.Slug, cashgameId);
+        return Success(new Result(request.Slug, cashgameId));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

@@ -12,9 +12,9 @@ public class LocationDetailsTests : TestBase
         var request = new GetLocation.Request(TestData.UserA.UserName, TestData.LocationIdA);
         var result = Sut.Execute(request);
 
-        Assert.AreEqual(TestData.BunchA.Id, result.Id);
-        Assert.AreEqual(TestData.LocationNameA, result.Name);
-        Assert.AreEqual(TestData.BunchA.Slug, result.Slug);
+        Assert.AreEqual(TestData.BunchA.Id, result.Data.Id);
+        Assert.AreEqual(TestData.LocationNameA, result.Data.Name);
+        Assert.AreEqual(TestData.BunchA.Slug, result.Data.Slug);
     }
 
     private GetLocation Sut => new GetLocation(

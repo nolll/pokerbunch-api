@@ -5,6 +5,9 @@ using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Core.Errors;
+using System;
+using Environment = Api.Services.Environment;
 
 namespace Api.Controllers;
 
@@ -33,6 +36,13 @@ public abstract class BaseController : Controller
                 return AppSettings.Auth.Override.PlayerUserName;
             return null;
         }
+    }
+
+    protected ObjectResult Model<T>(UseCaseResult<T> result, Func<object> create)
+    {
+        return result.Success
+            ? Success(create())
+            : Error(result.Error);
     }
 
     protected ObjectResult Success(object model)

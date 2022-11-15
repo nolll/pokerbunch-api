@@ -12,8 +12,8 @@ class AppContextTests : TestBase
     {
         var result = Sut.Execute(new CoreContext.Request(null));
 
-        Assert.IsFalse(result.IsLoggedIn);
-        Assert.IsEmpty(result.UserDisplayName);
+        Assert.IsFalse(result.Data.IsLoggedIn);
+        Assert.IsEmpty(result.Data.UserDisplayName);
     }
 
     [Test]
@@ -21,9 +21,9 @@ class AppContextTests : TestBase
     {
         var result = Sut.Execute(new CoreContext.Request(TestData.UserA.UserName));
 
-        Assert.IsTrue(result.IsLoggedIn);
-        Assert.AreEqual(TestData.UserDisplayNameA, result.UserDisplayName);
-        Assert.AreEqual("user-name-a", result.UserName);
+        Assert.IsTrue(result.Data.IsLoggedIn);
+        Assert.AreEqual(TestData.UserDisplayNameA, result.Data.UserDisplayName);
+        Assert.AreEqual("user-name-a", result.Data.UserName);
     }
 
     [Test]

@@ -113,6 +113,7 @@ public class ServiceConfig
 
         // Bunch
         _services.AddSingleton<GetBunchList>();
+        _services.AddSingleton<GetBunchListForUser>();
         _services.AddSingleton<GetBunch>();
         _services.AddSingleton<AddBunch>();
         _services.AddSingleton<EditBunch>();

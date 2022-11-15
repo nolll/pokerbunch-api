@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class ResetPassword
+public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IEmailSender _emailSender;
@@ -19,16 +18,16 @@ public class ResetPassword
         _randomizer = randomizer;
     }
 
-    public void Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
         var user = _userRepository.Get(request.Email);
-        if(user == null)
-            throw new UserNotFoundException(request.Email);
+        if (user == null)
+            return Error(new UserNotFoundError(request.Email));
 
         var password = PasswordService.CreatePassword(_randomizer.GetAllowedChars());
         var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
@@ -37,9 +36,11 @@ public class ResetPassword
         user.SetPassword(encryptedPassword, salt);
 
         _userRepository.Update(user);
-            
+
         var message = new ResetPasswordMessage(password, request.LoginUrl);
         _emailSender.Send(request.Email, message);
+
+        return Success(new Result());
     }
 
     public class Request
@@ -54,6 +55,10 @@ public class ResetPassword
             Email = email;
             LoginUrl = loginUrl;
         }
+    }
+
+    public class Result
+    {
     }
 
     private class ResetPasswordMessage : IMessage

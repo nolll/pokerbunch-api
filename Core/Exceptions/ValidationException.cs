@@ -16,6 +16,6 @@ public class ValidationException : PokerBunchException
 
     public ValidationException(string message)
     {
-        Messages = new List<string> {message};
+        Messages = new List<string> { message };
     }
 }

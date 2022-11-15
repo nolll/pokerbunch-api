@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunchList
+public class GetBunchList : UseCase<GetBunchList.Request, GetBunchList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -18,65 +18,54 @@ public class GetBunchList
         _userRepository = userRepository;
     }
 
-    public Result Execute(AllBunchesRequest request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var user = _userRepository.Get(request.UserName);
         if (!AccessControl.CanListBunches(user))
-            throw new AccessDeniedException();
+            return Error(new AccessDeniedError());
 
         var bunches = _bunchRepository.List();
-        return new Result(bunches);
+        return Success(new Result(bunches));
     }
-
-    public Result Execute(UserBunchesRequest request)
-    {
-        var user = _userRepository.Get(request.UserName);
-        var bunches = user != null ? _bunchRepository.List(user.Id) : new List<Bunch>();
-            
-        return new Result(bunches);
-    }
-
-    public class AllBunchesRequest
+    
+    public class Request
     {
         public string UserName { get; }
 
-        public AllBunchesRequest(string userName)
+        public Request(string userName)
         {
             UserName = userName;
         }
     }
 
-    public class UserBunchesRequest
+    public class Result : BunchListResult
     {
-        public string UserName { get; }
-
-        public UserBunchesRequest(string userName)
+        public Result(IEnumerable<Bunch> bunches) : base(bunches)
         {
-            UserName = userName;
         }
     }
+}
 
-    public class Result
+public class BunchListResult
+{
+    public IList<BunchListResultItem> Bunches { get; }
+
+    public BunchListResult(IEnumerable<Bunch> bunches)
     {
-        public IList<ResultItem> Bunches { get; private set; }
-
-        public Result(IEnumerable<Bunch> bunches)
-        {
-            Bunches = bunches.Select(o => new ResultItem(o)).ToList();
-        }
+        Bunches = bunches.Select(o => new BunchListResultItem(o)).ToList();
     }
+}
 
-    public class ResultItem
+public class BunchListResultItem
+{
+    public string Slug { get; }
+    public string Name { get; }
+    public string Description { get; }
+
+    public BunchListResultItem(Bunch bunch)
     {
-        public string Slug { get; }
-        public string Name { get; }
-        public string Description { get; }
-
-        public ResultItem(Bunch bunch)
-        {
-            Slug = bunch.Slug;
-            Name = bunch.DisplayName;
-            Description = bunch.Description;
-        }
+        Slug = bunch.Slug;
+        Name = bunch.DisplayName;
+        Description = bunch.Description;
     }
 }

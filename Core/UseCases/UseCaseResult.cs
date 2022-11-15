@@ -1,4 +1,6 @@
-﻿namespace Core.UseCases;
+﻿using Core.Errors;
+
+namespace Core.UseCases;
 
 public class UseCaseResult<T>
 {

@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventCashgameList
+public class EventCashgameList : UseCase<EventCashgameList.Request, EventCashgameList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -26,7 +26,7 @@ public class EventCashgameList
         _eventRepository = eventRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var @event = _eventRepository.Get(request.EventId);
         var bunch = _bunchRepository.Get(@event.BunchId);
@@ -39,7 +39,7 @@ public class EventCashgameList
         var players = _playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
-        return new Result(items.ToList());
+        return Success(new Result(items.ToList()));
     }
 
     private Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations)

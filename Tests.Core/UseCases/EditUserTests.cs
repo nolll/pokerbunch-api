@@ -42,7 +42,7 @@ public class EditUserTests : TestBase
 
         var result = Sut.Execute(request);
 
-        Assert.AreEqual("user-name-a", result.UserName);
+        Assert.AreEqual("user-name-a", result.Data.UserName);
     }
 
     [Test]

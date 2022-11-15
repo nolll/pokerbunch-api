@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocation
+public class GetLocation : UseCase<GetLocation.Request, GetLocation.Result>
 {
     private readonly ILocationRepository _locationRepository;
     private readonly IUserRepository _userRepository;
@@ -20,7 +18,7 @@ public class GetLocation
         _bunchRepository = bunchRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var location = _locationRepository.Get(request.LocationId);
         var bunch = _bunchRepository.Get(location.BunchId);
@@ -28,9 +26,9 @@ public class GetLocation
         var player = _playerRepository.Get(location.BunchId, user.Id);
         RequireRole.Player(user, player);
 
-        return new Result(location.Id, location.Name, bunch.Slug);
+        return Success(new Result(location.Id, location.Name, bunch.Slug));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

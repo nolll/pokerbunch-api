@@ -1,9 +1,9 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
 using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class CoreContext
+public class CoreContext : UseCase<CoreContext.Request, CoreContext.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -12,23 +12,26 @@ public class CoreContext
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var isAuthenticated = !string.IsNullOrEmpty(request.UserName);
         var userName = isAuthenticated ? request.UserName : string.Empty;
         var user = isAuthenticated ? _userRepository.Get(userName) : null;
         if (isAuthenticated && user == null)
-            throw new NotLoggedInException();
+            return Error(new NotLoggedInError());
+
         var userId = isAuthenticated ? user.Id : 0;
         var userDisplayName = isAuthenticated ? user.DisplayName : string.Empty;
         var isAdmin = isAuthenticated && user.IsAdmin;
 
-        return new Result(
+        var result = new Result(
             isAuthenticated,
             isAdmin,
             userId,
             userName,
             userDisplayName);
+
+        return Success(result);
     }
 
     public class Request

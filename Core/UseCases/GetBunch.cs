@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunch
+public class GetBunch : UseCase<GetBunch.Request, GetBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -18,14 +18,14 @@ public class GetBunch
         _playerRepository = playerRepository;
     }
 
-    public BunchResult Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
         RequireRole.Player(user, player);
-            
-        return new BunchResult(bunch, player);
+
+        return Success(new Result(bunch, player));
     }
 
     public class Request
@@ -37,6 +37,13 @@ public class GetBunch
         {
             UserName = userName;
             Slug = slug;
+        }
+    }
+
+    public class Result : BunchResult
+    {
+        public Result(Bunch b, Player p) : base(b, p)
+        {
         }
     }
 }

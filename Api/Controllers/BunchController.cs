@@ -16,14 +16,16 @@ public class BunchController : BaseController
     private readonly GetBunch _getBunch;
     private readonly EditBunch _editBunch;
     private readonly GetBunchList _getBunchList;
+    private readonly GetBunchListForUser _getBunchListForUser;
     private readonly AddBunch _addBunch;
     private readonly JoinBunch _joinBunch;
 
     public BunchController(
         AppSettings appSettings, 
         GetBunch getBunch, 
-        EditBunch editBunch, 
+        EditBunch editBunch,
         GetBunchList getBunchList,
+        GetBunchListForUser getBunchListForUser,
         AddBunch addBunch,
         JoinBunch joinBunch)
         : base(appSettings)
@@ -31,6 +33,7 @@ public class BunchController : BaseController
         _getBunch = getBunch;
         _editBunch = editBunch;
         _getBunchList = getBunchList;
+        _getBunchListForUser = getBunchListForUser;
         _addBunch = addBunch;
         _joinBunch = joinBunch;
     }
@@ -42,7 +45,7 @@ public class BunchController : BaseController
     {
         var request = new GetBunch.Request(CurrentUserName, bunchId);
         var bunchResult = _getBunch.Execute(request);
-        return new BunchModel(bunchResult);
+        return new BunchModel(bunchResult.Data);
     }
 
     [Route(ApiRoutes.Bunch.Get)]
@@ -52,7 +55,7 @@ public class BunchController : BaseController
     {
         var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
         var bunchResult = _editBunch.Execute(request);
-        return new BunchModel(bunchResult);
+        return new BunchModel(bunchResult.Data);
     }
 
     [Route(ApiRoutes.Bunch.List)]
@@ -60,9 +63,9 @@ public class BunchController : BaseController
     [ApiAuthorize]
     public IEnumerable<BunchModel> List()
     {
-        var request = new GetBunchList.AllBunchesRequest(CurrentUserName);
+        var request = new GetBunchList.Request(CurrentUserName);
         var bunchListResult = _getBunchList.Execute(request);
-        return bunchListResult.Bunches.Select(o => new BunchModel(o));
+        return bunchListResult.Data.Bunches.Select(o => new BunchModel(o));
     }
 
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
@@ -70,8 +73,8 @@ public class BunchController : BaseController
     [ApiAuthorize]
     public IEnumerable<BunchModel> Bunches()
     {
-        var bunchListResult = _getBunchList.Execute(new GetBunchList.UserBunchesRequest(CurrentUserName));
-        return bunchListResult.Bunches.Select(o => new BunchModel(o));
+        var bunchListResult = _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
+        return bunchListResult.Data.Bunches.Select(o => new BunchModel(o));
     }
 
     [Route(ApiRoutes.Bunch.List)]
@@ -81,7 +84,7 @@ public class BunchController : BaseController
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
         var bunchResult = _addBunch.Execute(request);
-        return new BunchModel(bunchResult);
+        return new BunchModel(bunchResult.Data);
     }
 
     [Route(ApiRoutes.Bunch.Join)]
@@ -91,6 +94,6 @@ public class BunchController : BaseController
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
         var result = _joinBunch.Execute(request);
-        return new PlayerJoinedModel(result.PlayerId);
+        return new PlayerJoinedModel(result.Data.PlayerId);
     }
 }

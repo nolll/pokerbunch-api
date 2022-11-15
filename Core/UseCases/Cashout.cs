@@ -2,14 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Entities.Checkpoints;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class Cashout
+public class Cashout : UseCase<Cashout.Request, Cashout.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -22,18 +21,18 @@ public class Cashout
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.Get(request.CashgameId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
-            throw new AccessDeniedException();
-        
+            return Error(new AccessDeniedError());
+
         var result = cashgame.GetResult(request.PlayerId);
 
         var existingCashoutCheckpoint = result.CashoutCheckpoint;
@@ -56,9 +55,9 @@ public class Cashout
 
         _cashgameRepository.Update(cashgame);
 
-        return new Result(cashgame.Id);
+        return Success(new Result(cashgame.Id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
@@ -80,7 +79,7 @@ public class Cashout
 
     public class Result
     {
-        public int CashgameId { get; private set; }
+        public int CashgameId { get; }
 
         public Result(int cashgameId)
         {

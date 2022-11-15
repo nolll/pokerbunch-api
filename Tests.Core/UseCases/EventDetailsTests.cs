@@ -12,7 +12,7 @@ class EventDetailsTests : TestBase
         var input = new EventDetails.Request(TestData.UserNameA, 1);
         var result = Sut.Execute(input);
 
-        Assert.AreEqual(TestData.EventNameA, result.Name);
+        Assert.AreEqual(TestData.EventNameA, result.Data.Name);
     }
 
     private EventDetails Sut => new EventDetails(

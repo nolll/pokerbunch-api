@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CashgameYearList
+public class CashgameYearList : UseCase<CashgameYearList.Request, CashgameYearList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -20,7 +20,7 @@ public class CashgameYearList
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -28,11 +28,9 @@ public class CashgameYearList
         RequireRole.Player(user, player);
         var years = _cashgameRepository.GetYears(bunch.Id);
 
-        return new Result(
-            request.Slug,
-            years.ToList());
+        return Success(new Result(request.Slug, years.ToList()));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

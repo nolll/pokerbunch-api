@@ -1,5 +1,6 @@
 using System;
 using Api.Settings;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;

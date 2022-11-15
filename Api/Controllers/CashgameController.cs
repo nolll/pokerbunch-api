@@ -58,7 +58,7 @@ public class CashgameController : BaseController
     {
         var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
         var detailsResult = _cashgameDetails.Execute(detailsRequest);
-        return new CashgameDetailsModel(detailsResult);
+        return new CashgameDetailsModel(detailsResult.Data);
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunch)]
@@ -67,7 +67,7 @@ public class CashgameController : BaseController
     public IEnumerable<CashgameListItemModel> List(string bunchId)
     {
         var listResult = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
-        return listResult.Items.Select(o => new CashgameListItemModel(o));
+        return listResult.Data.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
@@ -76,7 +76,7 @@ public class CashgameController : BaseController
     public IEnumerable<CashgameListItemModel> List(string bunchId, int year)
     {
         var listResult = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
-        return listResult.Items.Select(o => new CashgameListItemModel(o));
+        return listResult.Data.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.ListByEvent)]
@@ -85,7 +85,7 @@ public class CashgameController : BaseController
     public IEnumerable<CashgameListItemModel> EventCashgameList(int eventId)
     {
         var listResult = _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
-        return listResult.Items.Select(o => new CashgameListItemModel(o));
+        return listResult.Data.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
@@ -94,7 +94,7 @@ public class CashgameController : BaseController
     public IEnumerable<CashgameListItemModel> PlayerCashgameList(int playerId)
     {
         var listResult = _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
-        return listResult.Items.Select(o => new CashgameListItemModel(o));
+        return listResult.Data.Items.Select(o => new CashgameListItemModel(o));
     }
 
     [Route(ApiRoutes.Cashgame.Add)]
@@ -104,9 +104,9 @@ public class CashgameController : BaseController
     {
         var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
         var result = _addCashgame.Execute(addRequest);
-        var detailsRequest = new CashgameDetails.Request(CurrentUserName, result.CashgameId, DateTime.UtcNow);
+        var detailsRequest = new CashgameDetails.Request(CurrentUserName, result.Data.CashgameId, DateTime.UtcNow);
         var detailsResult = _cashgameDetails.Execute(detailsRequest);
-        return new CashgameDetailsModel(detailsResult);
+        return new CashgameDetailsModel(detailsResult.Data);
     }
 
     [Route(ApiRoutes.Cashgame.Update)]
@@ -118,7 +118,7 @@ public class CashgameController : BaseController
         _editCashgame.Execute(listRequest);
         var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
         var detailsResult = _cashgameDetails.Execute(detailsRequest);
-        return new CashgameDetailsModel(detailsResult);
+        return new CashgameDetailsModel(detailsResult.Data);
     }
 
     [Route(ApiRoutes.Cashgame.Delete)]
@@ -137,7 +137,7 @@ public class CashgameController : BaseController
     public IEnumerable<ApiCurrentGame> Current(string bunchId)
     {
         var currentGamesResult = _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
-        return currentGamesResult.Games.Select(o => new ApiCurrentGame(o, _urls));
+        return currentGamesResult.Data.Games.Select(o => new ApiCurrentGame(o, _urls));
     }
 
     [Route(ApiRoutes.Cashgame.YearsByBunch)]
@@ -146,6 +146,6 @@ public class CashgameController : BaseController
     public IEnumerable<CashgameYearListItemModel> Years(string bunchId)
     {
         var listResult = _cashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
-        return listResult.Years.Select(o => new CashgameYearListItemModel(listResult.Slug, o, _urls));
+        return listResult.Data.Years.Select(o => new CashgameYearListItemModel(listResult.Data.Slug, o, _urls));
     }
 }

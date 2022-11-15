@@ -59,7 +59,7 @@ public class UserController : BaseController
     public UserModel GetUser(string userName)
     {
         var userDetails = _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
-        return userDetails.CanViewAll ? new FullUserModel(userDetails) : new UserModel(userDetails);
+        return userDetails.Data.CanViewAll ? new FullUserModel(userDetails.Data) : new UserModel(userDetails.Data);
     }
 
     /// <summary>
@@ -68,10 +68,10 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.List)]
     [HttpGet]
     [ApiAuthorize]
-    public IEnumerable<UserItemModel> List()
+    public ObjectResult List()
     {
         var userListResult = _userList.Execute(new UserList.Request(CurrentUserName));
-        return userListResult.Users.Select(o => new UserItemModel(o, _urls));
+        return Model(userListResult, () => userListResult.Data.Users.Select(o => new UserItemModel(o, _urls)));
     }
 
     /// <summary>
@@ -84,8 +84,8 @@ public class UserController : BaseController
     {
         var request = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
         var editUserResult = _editUser.Execute(request);
-        var userDetails = _userDetails.Execute(new UserDetails.Request(editUserResult.UserName));
-        return new FullUserModel(userDetails);
+        var userDetails = _userDetails.Execute(new UserDetails.Request(editUserResult.Data.UserName));
+        return new FullUserModel(userDetails.Data);
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ public class UserController : BaseController
     public UserModel Profile()
     {
         var userDetails = _userDetails.Execute(new UserDetails.Request(CurrentUserName));
-        return new FullUserModel(userDetails);
+        return new FullUserModel(userDetails.Data);
     }
 
     // https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api
@@ -170,7 +170,7 @@ public class UserController : BaseController
     private string GetToken(LoginPostModel loginPostModel)
     {
         var result = _login.Execute(new Login.Request(loginPostModel.UserName, loginPostModel.Password));
-        return CreateToken(result.UserName);
+        return CreateToken(result.Data.UserName);
     }
     
     private string CreateToken(string userName)

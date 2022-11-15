@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class InvitePlayer
+public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -20,12 +20,12 @@ public class InvitePlayer
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = _bunchRepository.Get(player.BunchId);
@@ -39,7 +39,7 @@ public class InvitePlayer
         var message = new InvitationMessage(bunch.DisplayName, invitationCode, request.RegisterUrl, joinUrl, joinWithCodeUrl);
         _emailSender.Send(request.Email, message);
 
-        return new Result(player.Id);
+        return Success(new Result(player.Id));
     }
 
     public class Request

@@ -2,14 +2,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.Entities;
+using Core.Errors;
 using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddPlayer
+public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -22,12 +22,12 @@ public class AddPlayer
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
@@ -35,15 +35,15 @@ public class AddPlayer
         RequireRole.Manager(currentUser, currentPlayer);
         var existingPlayers = _playerRepository.List(bunch.Id);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
-        if(player != null)
+        if (player != null)
             throw new PlayerExistsException();
 
         player = Player.New(bunch.Id, request.Name);
         var id = _playerRepository.Add(player);
 
-        return new Result(id);
+        return Success(new Result(id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

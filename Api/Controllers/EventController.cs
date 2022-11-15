@@ -32,7 +32,7 @@ public class EventController : BaseController
     public EventModel Get(int eventId)
     {
         var result = _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
-        return new EventModel(result);
+        return new EventModel(result.Data);
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
@@ -41,7 +41,7 @@ public class EventController : BaseController
     public IEnumerable<EventModel> List(string bunchId)
     {
         var eventListResult = _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
-        return eventListResult.Events.Select(o => new EventModel(o));
+        return eventListResult.Data.Events.Select(o => new EventModel(o));
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
@@ -50,6 +50,6 @@ public class EventController : BaseController
     public EventModel Add(string bunchId, [FromBody] EventAddPostModel post)
     {
         var result = _addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
-        return Get(result.Id);
+        return Get(result.Data.Id);
     }
 }

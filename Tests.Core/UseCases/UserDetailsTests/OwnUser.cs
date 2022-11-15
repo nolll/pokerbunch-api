@@ -7,5 +7,5 @@ public class OwnUser : Arrange
     protected override bool ViewingOwnUser => true;
 
     [Test]
-    public void CanViewAllIsTrue() => Assert.IsTrue(Result.CanViewAll);
+    public void CanViewAllIsTrue() => Assert.IsTrue(Result.Data.CanViewAll);
 }

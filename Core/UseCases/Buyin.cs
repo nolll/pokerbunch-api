@@ -1,14 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class Buyin
+public class Buyin : UseCase<Buyin.Request, Buyin.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,25 +20,27 @@ public class Buyin
         _userRepository = userRepository;
     }
 
-    public void Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.Get(request.CashgameId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
-            throw new AccessDeniedException();
-            
+            return Error(new AccessDeniedError());
+
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
         var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
         cashgame.AddCheckpoint(checkpoint);
         _cashgameRepository.Update(cashgame);
-    }
 
+        return Success(new Result());
+    }
+    
     public class Request
     {
         public string UserName { get; }
@@ -60,5 +61,9 @@ public class Buyin
             StackAmount = stackAmount;
             CurrentTime = currentTime;
         }
+    }
+
+    public class Result
+    {
     }
 }

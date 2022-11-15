@@ -55,7 +55,7 @@ public class BunchModel
         Role = r.Role.ToString().ToLower();
     }
 
-    public BunchModel(GetBunchList.ResultItem r)
+    public BunchModel(BunchListResultItem r)
         : this(r.Slug, r.Name, r.Description)
     {
     }

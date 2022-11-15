@@ -1,10 +1,10 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class RequireAppsettingsAccess
+public class RequireAppsettingsAccess : UseCase<RequireAppsettingsAccess.Request, RequireAppsettingsAccess.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -13,13 +13,15 @@ public class RequireAppsettingsAccess
         _userRepository = userRepository;
     }
 
-    public void Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var user = _userRepository.Get(request.UserName);
         if (!AccessControl.CanSeeAppSettings(user))
-            throw new AccessDeniedException();
-    }
+            return Error(new AccessDeniedError());
 
+        return Success(new Result());
+    }
+    
     public class Request
     {
         public string UserName { get; }
@@ -28,5 +30,9 @@ public class RequireAppsettingsAccess
         {
             UserName = userName;
         }
+    }
+
+    public class Result
+    {
     }
 }

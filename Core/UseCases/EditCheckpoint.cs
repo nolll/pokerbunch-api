@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class EditCheckpoint
+public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -22,20 +22,19 @@ public class EditCheckpoint
         _cashgameRepository = cashgameRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        //var existingCheckpoint = _cashgameService.GetCheckpoint(request.CheckpointId);
         var bunch = _bunchRepository.Get(cashgame.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
         RequireRole.Manager(currentUser, currentPlayer);
-            
+
         var postedCheckpoint = Checkpoint.Create(
             existingCheckpoint.CashgameId,
             existingCheckpoint.PlayerId,
@@ -48,9 +47,9 @@ public class EditCheckpoint
         cashgame.UpdateCheckpoint(postedCheckpoint);
         _cashgameRepository.Update(cashgame);
 
-        return new Result(cashgame.Id, existingCheckpoint.PlayerId);
+        return Success(new Result(cashgame.Id, existingCheckpoint.PlayerId));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

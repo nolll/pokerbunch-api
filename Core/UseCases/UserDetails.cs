@@ -1,11 +1,11 @@
 ﻿using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class UserDetails
+public class UserDetails : UseCase<UserDetails.Request, UserDetails.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,15 +14,15 @@ public class UserDetails
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var currentUser = _userRepository.Get(request.CurrentUserName);
         var displayUser = _userRepository.Get(request.UserName);
 
-        if(displayUser == null)
-            throw new UserNotFoundException(request.UserName);
+        if (displayUser == null)
+            return Error(new UserNotFoundError(request.UserName));
+        
         var isViewingCurrentUser = displayUser.UserName == currentUser.UserName;
-
         var userName = displayUser.UserName;
         var displayName = displayUser.DisplayName;
         var realName = displayUser.RealName;
@@ -31,9 +31,9 @@ public class UserDetails
         var role = displayUser.GlobalRole;
         var canViewAll = currentUser.IsAdmin || isViewingCurrentUser;
 
-        return new Result(userName, displayName, realName, email, avatarUrl, role, canViewAll);
+        return Success(new Result(userName, displayName, realName, email, avatarUrl, role, canViewAll));
     }
-
+    
     public class Request
     {
         public string CurrentUserName { get; }

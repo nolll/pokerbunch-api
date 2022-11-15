@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddLocation
+public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,12 +21,12 @@ public class AddLocation
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
@@ -36,9 +36,9 @@ public class AddLocation
         var location = new Location(0, request.Name, bunch.Id);
         var id = _locationRepository.Add(location);
 
-        return new Result(bunch.Slug, id, location.Name);
+        return Success(new Result(bunch.Slug, id, location.Name));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

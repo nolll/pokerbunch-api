@@ -12,9 +12,9 @@ public class UserListTests : TestBase
     {
         var result = Sut.Execute(new UserList.Request(TestData.AdminUser.UserName));
 
-        Assert.AreEqual(4, result.Users.Count);
-        Assert.AreEqual(TestData.UserDisplayNameA, result.Users.First().DisplayName);
-        Assert.AreEqual("user-name-a", result.Users.First().UserName);
+        Assert.AreEqual(4, result.Data.Users.Count);
+        Assert.AreEqual(TestData.UserDisplayNameA, result.Data.Users.First().DisplayName);
+        Assert.AreEqual("user-name-a", result.Data.Users.First().UserName);
     }
 
     private UserList Sut => new UserList(Deps.User);

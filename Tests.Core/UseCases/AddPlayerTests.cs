@@ -18,7 +18,7 @@ class AddPlayerTests : TestBase
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
         var result = Sut.Execute(request);
 
-        Assert.AreEqual(1, result.Id);
+        Assert.AreEqual(1, result.Data.Id);
     }
 
     [Test]

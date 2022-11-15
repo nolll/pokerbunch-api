@@ -4,7 +4,7 @@ using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
 using Api.Routes;
 using Api.Settings;
-using Core.Exceptions;
+using Core.Errors;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +37,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public MessageModel Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
+    public ObjectResult Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
         if(post.Type == ActionType.Buyin)
             return Buyin(cashgameId, post);
@@ -46,25 +46,27 @@ public class ActionController : BaseController
         if(post.Type == ActionType.Cashout)
             return Cashout(cashgameId, post);
 
-        throw new NotFoundException($"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]");
+        return Error(
+            ErrorType.NotFound,
+            $"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]");
     }
 
-    private MessageModel Buyin(int cashgameId, AddCashgameActionPostModel post)
+    private ObjectResult Buyin(int cashgameId, AddCashgameActionPostModel post)
     {
-        _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
-        return new OkModel();
+        var result = _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+        return Model(result, () => new OkModel());
     }
 
-    private MessageModel Report(int cashgameId, AddCashgameActionPostModel post)
+    private ObjectResult Report(int cashgameId, AddCashgameActionPostModel post)
     {
-        _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
-        return new OkModel();
+        var result = _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        return Model(result, () => new OkModel());
     }
 
-    private MessageModel Cashout(int cashgameId, AddCashgameActionPostModel post)
+    private ObjectResult Cashout(int cashgameId, AddCashgameActionPostModel post)
     {
-        _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
-        return new OkModel();
+        var result = _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        return Model(result, () => new OkModel());
     }
 
     [Route(ApiRoutes.Action.Get)]

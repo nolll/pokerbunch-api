@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class EditCashgame
+public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IUserRepository _userRepository;
@@ -23,11 +23,11 @@ public class EditCashgame
         _eventRepository = eventRepository;
     }
 
-    public void Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.Get(request.Id);
         var user = _userRepository.Get(request.UserName);
@@ -43,6 +43,8 @@ public class EditCashgame
         {
             _eventRepository.AddCashgame(request.EventId, cashgame.Id);
         }
+
+        return Success(new Result());
     }
 
     public class Request
@@ -60,5 +62,9 @@ public class EditCashgame
             LocationId = locationId;
             EventId = eventId;
         }
+    }
+
+    public class Result
+    {
     }
 }

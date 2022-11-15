@@ -12,7 +12,7 @@ public class WithGames : Arrange
     [Test]
     public void ReturnsListOfGames()
     {
-        var games = Result.Games;
+        var games = Result.Data.Games;
         Assert.AreEqual(1, games.Count);
         var game = games.First();
         Assert.AreEqual(Slug, game.Slug);

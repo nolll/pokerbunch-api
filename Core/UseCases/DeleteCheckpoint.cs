@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCheckpoint
+public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -19,7 +19,7 @@ public class DeleteCheckpoint
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
@@ -31,9 +31,9 @@ public class DeleteCheckpoint
         _cashgameRepository.Update(cashgame);
 
         var gameIsRunning = cashgame.Status == GameStatus.Running;
-        return new Result(bunch.Slug, gameIsRunning, cashgame.Id);
+        return Success(new Result(bunch.Slug, gameIsRunning, cashgame.Id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }

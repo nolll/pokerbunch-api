@@ -8,7 +8,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Actions
+public class Actions : UseCase<Actions.Request, Actions.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -23,13 +23,13 @@ public class Actions
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override UseCaseResult<Result> Work(Request request)
     {
         var player = _playerRepository.Get(request.PlayerId);
         var user = _userRepository.Get(request.CurrentUserName);
         var bunch = _bunchRepository.Get(player.BunchId);
         var cashgame = _cashgameRepository.Get(request.CashgameId);
-            
+
         RequireRole.Player(user, player);
         var playerResult = cashgame.GetResult(player.Id);
         var currentPlayer = _playerRepository.Get(bunch.Id, user.Id);
@@ -39,9 +39,9 @@ public class Actions
         var playerName = player.DisplayName;
         var checkpointItems = playerResult.Checkpoints.Select(o => CreateCheckpointItem(bunch, canEdit, o)).ToList();
 
-        return new Result(date, playerName, bunch.Slug, checkpointItems);
+        return Success(new Result(date, playerName, bunch.Slug, checkpointItems));
     }
-
+    
     private static CheckpointItem CreateCheckpointItem(Bunch bunch, bool canEdit, Checkpoint checkpoint)
     {
         var type = checkpoint.Description;
@@ -53,9 +53,9 @@ public class Actions
 
     private static int GetDisplayAmount(Checkpoint checkpoint)
     {
-        if (checkpoint.Type == CheckpointType.Buyin)
-            return checkpoint.Amount;
-        return checkpoint.Stack;
+        return checkpoint.Type == CheckpointType.Buyin
+            ? checkpoint.Amount
+            : checkpoint.Stack;
     }
 
     public class Request
