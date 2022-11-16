@@ -1,3 +1,4 @@
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -24,11 +25,12 @@ public class AddLocationTests : TestBase
         const string addedEventName = "";
 
         var request = new AddLocation.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
-    private AddLocation Sut => new AddLocation(
+    private AddLocation Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.User,

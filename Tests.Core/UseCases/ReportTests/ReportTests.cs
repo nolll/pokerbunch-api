@@ -9,6 +9,8 @@ namespace Tests.Core.UseCases.ReportTests;
 
 public class Arrange : UseCaseTest<Report>
 {
+    protected UseCaseResult<Report.Result> Result;
+
     private const string Username = "username";
     private const int UserId = 1;
     private const int CashgameId = 2;
@@ -33,6 +35,6 @@ public class Arrange : UseCaseTest<Report>
     protected override void Execute()
     {
         var request = new Report.Request(Username, CashgameId, PlayerId, Stack, CurrentTime);
-        Sut.Execute(request);
+        Result = Sut.Execute(request);
     }
 }

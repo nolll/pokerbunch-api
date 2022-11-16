@@ -1,3 +1,4 @@
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -19,13 +20,14 @@ public class AddEventTests : TestBase
     }
 
     [Test]
-    public void AddEvent_InvalidName_ThrowsValidationException()
+    public void AddEvent_InvalidName_ReturnsValidationError()
     {
         const string addedEventName = "";
 
         var request = new AddEvent.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     private AddEvent Sut => new AddEvent(

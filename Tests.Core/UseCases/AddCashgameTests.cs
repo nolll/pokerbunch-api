@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -30,9 +31,8 @@ public class AddCashgameTests : TestBase
     public void AddCashgame_WithoutLocation_ThrowsValidationException()
     {
         var request = CreateRequest();
-
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        var result = Sut.Execute(request);
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     private static AddCashgame.Request CreateRequest(int locationId = 0)

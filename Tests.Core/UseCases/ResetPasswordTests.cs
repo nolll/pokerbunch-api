@@ -1,6 +1,9 @@
 ﻿using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
+using NuGet.Frameworks;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -16,15 +19,16 @@ class ResetPasswordTests : TestBase
     public void ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
     {
         var request = CreateRequest(InvalidEmail);
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void ResetPassword_UserNotFound_ThrowsException()
+    public void ResetPassword_UserNotFound_ReturnsError()
     {
-        Assert.Throws<UserNotFoundException>(() => Sut.Execute(CreateRequest(NonExistingEmail)));
+        var result = Sut.Execute(CreateRequest(NonExistingEmail));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.NotFound));
     }
 
     [Test]

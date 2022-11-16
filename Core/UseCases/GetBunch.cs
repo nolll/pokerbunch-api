@@ -1,5 +1,6 @@
 using System;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -23,7 +24,8 @@ public class GetBunch : UseCase<GetBunch.Request, GetBunch.Result>
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+        if (!AccessControl.CanGetBunch(user, player))
+            return Error(new AccessDeniedError());
 
         return Success(new Result(bunch, player));
     }

@@ -32,11 +32,13 @@ public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
+        if (!AccessControl.CanAddPlayer(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         var existingPlayers = _playerRepository.List(bunch.Id);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
         if (player != null)
-            throw new PlayerExistsException();
+            return Error(new PlayerExistsError());
 
         player = Player.New(bunch.Id, request.Name);
         var id = _playerRepository.Add(player);

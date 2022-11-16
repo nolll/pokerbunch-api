@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -28,7 +29,8 @@ public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgam
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+        if (!AccessControl.CanListCurrentGames(user, player))
+            return Error(new AccessDeniedError());
 
         var cashgame = _cashgameRepository.GetRunning(bunch.Id);
 

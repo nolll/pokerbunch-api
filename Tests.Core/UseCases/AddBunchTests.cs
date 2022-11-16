@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -23,33 +23,38 @@ class AddBunchTests : TestBase
     }
         
     [Test]
-    public void AddBunch_WithEmptyDisplayName_ThrowsValidationException()
+    public void AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest("")));
+        var result = Sut.Execute(CreateRequest(""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyCurrencySymbol_ThrowsValidationException()
+    public void AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest(currencySymbol: "")));
+        var result = Sut.Execute(CreateRequest(currencySymbol: ""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyCurrencyLayout_ThrowsValidationException()
+    public void AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest(currencyLayout: "")));
+        var result = Sut.Execute(CreateRequest(currencyLayout: ""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyTimeZone_ThrowsValidationException()
+    public void AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest(timeZone: "")));
+        var result = Sut.Execute(CreateRequest(timeZone: ""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithExistingSlug_ThrowsException()
+    public void AddBunch_WithExistingSlug_ReturnsConflictError()
     {
-        Assert.Throws<BunchExistsException>(() => Sut.Execute(CreateRequest(_existingDisplayName)));
+        var result = Sut.Execute(CreateRequest(_existingDisplayName));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]

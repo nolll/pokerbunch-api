@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -22,12 +21,11 @@ class AddPlayerTests : TestBase
     }
 
     [Test]
-    public void AddPlayer_EmptyName_ThrowsException()
+    public void AddPlayer_EmptyName_ReturnsError()
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, EmptyName);
-
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        var result = Sut.Execute(request);
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -40,13 +38,15 @@ class AddPlayerTests : TestBase
     }
 
     [Test]
-    public void AddPlayer_ValidNameButNameExists_ThrowsException()
+    public void AddPlayer_ValidNameButNameExists_ReturnsError()
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, ExistingName);
-        Assert.Throws<PlayerExistsException>(() => Sut.Execute(request));
+        var result = Sut.Execute(request);
+
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
-    private AddPlayer Sut => new AddPlayer(
+    private AddPlayer Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.User);
