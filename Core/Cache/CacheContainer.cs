@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Services;
 
@@ -41,6 +42,22 @@ public class CacheContainer : ICacheContainer
         return cachedObject;
     }
 
+    public async Task<T> GetAndStoreAsync<T>(Func<Task<T>> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
+    {
+        var foundInCache = TryGet(cacheKey, out T cachedObject);
+
+        if (foundInCache)
+        {
+            return cachedObject;
+        }
+        cachedObject = await sourceExpression();
+        if (cachedObject != null)
+        {
+            Insert(cacheKey, cachedObject, cacheTime);
+        }
+        return cachedObject;
+    }
+
     public T GetAndStore<T>(Func<int, T> sourceExpression, int id, TimeSpan cacheTime) where T : class, IEntity
     {
         var cacheKey = CacheKeyProvider.GetKey<T>(id);
@@ -51,6 +68,23 @@ public class CacheContainer : ICacheContainer
             return cachedObject;
         }
         cachedObject = sourceExpression(id);
+        if (cachedObject != null)
+        {
+            Insert(cacheKey, cachedObject, cacheTime);
+        }
+        return cachedObject;
+    }
+
+    public async Task<T> GetAndStoreAsync<T>(Func<int, Task<T>> sourceExpression, int id, TimeSpan cacheTime) where T : class, IEntity
+    {
+        var cacheKey = CacheKeyProvider.GetKey<T>(id);
+        var foundInCache = TryGet(cacheKey, out T cachedObject);
+
+        if (foundInCache)
+        {
+            return cachedObject;
+        }
+        cachedObject = await sourceExpression(id);
         if (cachedObject != null)
         {
             Insert(cacheKey, cachedObject, cacheTime);
@@ -79,6 +113,39 @@ public class CacheContainer : ICacheContainer
             foreach (var sourceItem in sourceItems)
             {
                 if (sourceItem != null) //Om något id inte har hämtats så stoppar vi inte in det i vårt resultat eller i cachen.
+                {
+                    var cacheKey = CacheKeyProvider.GetKey<T>(sourceItem.Id);
+                    Insert(cacheKey, sourceItem, cacheTime);
+                }
+            }
+
+            list = list.Concat(sourceItems.Where(o => o != null)).ToList();
+            return OrderItemsByIdList(ids, list);
+        }
+        return list;
+    }
+
+    public async Task<IList<T>> GetAndStoreAsync<T>(Func<IList<int>, Task<IList<T>>> sourceExpression, IList<int> ids, TimeSpan cacheTime) where T : class, IEntity
+    {
+        var list = new List<T>();
+        var notInCache = new List<int>();
+        foreach (var id in ids)
+        {
+            var cacheKey = CacheKeyProvider.GetKey<T>(id);
+            var foundInCache = TryGet(cacheKey, out T cachedObject);
+            if (foundInCache)
+                list.Add(cachedObject);
+            else
+            {
+                notInCache.Add(id);
+            }
+        }
+        if (notInCache.Any())
+        {
+            var sourceItems = await sourceExpression(notInCache);
+            foreach (var sourceItem in sourceItems)
+            {
+                if (sourceItem != null)
                 {
                     var cacheKey = CacheKeyProvider.GetKey<T>(sourceItem.Id);
                     Insert(cacheKey, sourceItem, cacheTime);
