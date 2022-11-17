@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.LocationModels;
 using Api.Routes;
@@ -28,27 +29,27 @@ public class LocationController : BaseController
     [Route(ApiRoutes.Location.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Get(int locationId)
+    public async Task<ObjectResult> Get(int locationId)
     {
-        var result = _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
+        var result = await _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
         return Model(result, () => new LocationModel(result.Data));
     }
 
     [Route(ApiRoutes.Location.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult GetList(string bunchId)
+    public async Task<ObjectResult> GetList(string bunchId)
     {
-        var result = _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
+        var result = await _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
         return Model(result, () => result.Data.Locations.Select(o => new LocationModel(o)));
     }
 
     [Route(ApiRoutes.Location.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult Add(string bunchId, [FromBody] LocationAddPostModel post)
+    public async Task<ObjectResult> Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
-        var result = _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
+        var result = await _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
         return Model(result, () => new LocationModel(result.Data));
     }
 }

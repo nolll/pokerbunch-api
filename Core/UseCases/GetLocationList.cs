@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.Result>
+public class GetLocationList : AsyncUseCase<GetLocationList.Request, GetLocationList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,13 +21,13 @@ public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.
         _locationRepository = locationRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
         RequireRole.Player(user, player);
-        var locations = _locationRepository.List(bunch.Id);
+        var locations = await _locationRepository.List(bunch.Id);
 
         var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 

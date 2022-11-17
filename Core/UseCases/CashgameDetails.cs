@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Core.Repositories;
@@ -8,7 +9,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.Result>
+public class CashgameDetails : AsyncUseCase<CashgameDetails.Request, CashgameDetails.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -27,7 +28,7 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         _eventRepository = eventRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = _cashgameRepository.Get(request.Id);
         var bunch = _bunchRepository.Get(cashgame.BunchId);
@@ -39,7 +40,7 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
 
         var role = user.IsAdmin ? Role.Manager : player.Role;
 
-        var location = _locationRepository.Get(cashgame.LocationId);
+        var location = await _locationRepository.Get(cashgame.LocationId);
         var @event = cashgame.EventId != 0 ? _eventRepository.Get(cashgame.EventId) : null;
         var eventName = @event?.Name;
         var eventId = @event?.Id ?? 0;

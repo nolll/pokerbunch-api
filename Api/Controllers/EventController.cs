@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.EventModels;
 using Api.Routes;
@@ -28,29 +29,29 @@ public class EventController : BaseController
     [Route(ApiRoutes.Event.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Get(int eventId)
+    public async Task<ObjectResult> Get(int eventId)
     {
-        var result = _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
+        var result = await _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
         return Model(result, () => new EventModel(result.Data));
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult List(string bunchId)
+    public async Task<ObjectResult> List(string bunchId)
     {
-        var result = _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
+        var result = await _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
         return Model(result, () => result.Data.Events.Select(o => new EventModel(o)));
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult Add(string bunchId, [FromBody] EventAddPostModel post)
+    public async Task<ObjectResult> Add(string bunchId, [FromBody] EventAddPostModel post)
     {
         var result = _addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
         return result.Success 
-            ? Get(result.Data.Id) 
+            ? await Get(result.Data.Id) 
             : Error(result.Error);
     }
 }

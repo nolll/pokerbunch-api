@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -19,34 +20,34 @@ public class LocationRepository : ILocationRepository
         _cacheContainer = cacheContainer;
     }
 
-    public Location Get(int id)
+    public async Task<Location> Get(int id)
     {
-        return GetAndCache(id);
+        return await GetAndCache(id);
     }
 
-    public IList<Location> List(IList<int> ids)
+    public async Task<IList<Location>> List(IList<int> ids)
     {
-        return GetAndCache(ids);
+        return await GetAndCache(ids);
     }
 
-    public IList<Location> List(int bunchId)
+    public async Task<IList<Location>> List(int bunchId)
     {
-        var ids = _locationDb.Find(bunchId);
-        return GetAndCache(ids).OrderBy(o => o.Name).ToList();
+        var ids = await _locationDb.Find(bunchId);
+        return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
-    public int Add(Location location)
+    public async Task<int> Add(Location location)
     {
-        return _locationDb.Add(location);
+        return await _locationDb.Add(location);
     }
 
-    private Location GetAndCache(int id)
+    private async Task<Location> GetAndCache(int id)
     {
-        return _cacheContainer.GetAndStore(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    private IList<Location> GetAndCache(IList<int> ids)
+    private async Task<IList<Location>> GetAndCache(IList<int> ids)
     {
-        return _cacheContainer.GetAndStore(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 }

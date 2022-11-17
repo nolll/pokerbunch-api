@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventList : UseCase<EventList.Request, EventList.Result>
+public class EventList : AsyncUseCase<EventList.Request, EventList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IEventRepository _eventRepository;
@@ -23,7 +24,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
         _locationRepository = locationRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -31,7 +32,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
         RequireRole.Player(user, player);
         var events = _eventRepository.List(bunch.Id);
         var locationIds = events.Select(o => o.LocationId).Distinct().ToList();
-        var locations = _locationRepository.List(locationIds);
+        var locations = await _locationRepository.List(locationIds);
 
         var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
 
@@ -62,7 +63,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
 
     public class Result
     {
-        public IList<Event> Events { get; private set; }
+        public IList<Event> Events { get; }
 
         public Result(IList<Event> events)
         {

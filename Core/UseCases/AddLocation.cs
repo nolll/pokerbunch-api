@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -6,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
+public class AddLocation : AsyncUseCase<AddLocation.Request, AddLocation.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,7 +22,7 @@ public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
         _locationRepository = locationRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
@@ -34,7 +35,7 @@ public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
         RequireRole.Player(currentUser, currentPlayer);
 
         var location = new Location(0, request.Name, bunch.Id);
-        var id = _locationRepository.Add(location);
+        var id = await _locationRepository.Add(location);
 
         return Success(new Result(bunch.Slug, id, location.Name));
     }

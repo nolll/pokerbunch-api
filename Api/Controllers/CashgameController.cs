@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Routes;
@@ -52,53 +53,53 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Get(int cashgameId)
+    public async Task<ObjectResult> Get(int cashgameId)
     {
         var request = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
-        var result = _cashgameDetails.Execute(request);
+        var result = await _cashgameDetails.Execute(request);
         return Model(result, () => new CashgameDetailsModel(result.Data));
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult List(string bunchId)
+    public async Task<ObjectResult> List(string bunchId)
     {
-        var result = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
+        var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult List(string bunchId, int year)
+    public async Task<ObjectResult> List(string bunchId, int year)
     {
-        var result = _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
+        var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
     }
 
     [Route(ApiRoutes.Cashgame.ListByEvent)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult EventCashgameList(int eventId)
+    public async Task<ObjectResult> EventCashgameList(int eventId)
     {
-        var result = _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
+        var result = await _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
     }
 
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult PlayerCashgameList(int playerId)
+    public async Task<ObjectResult> PlayerCashgameList(int playerId)
     {
-        var result = _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
+        var result = await _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
     }
 
     [Route(ApiRoutes.Cashgame.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult Add(string bunchId, [FromBody] AddCashgamePostModel post)
+    public async Task<ObjectResult> Add(string bunchId, [FromBody] AddCashgamePostModel post)
     {
         var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
         var addResult = _addCashgame.Execute(addRequest);
@@ -106,14 +107,14 @@ public class CashgameController : BaseController
             return Error(addResult.Error);
 
         var detailsRequest = new CashgameDetails.Request(CurrentUserName, addResult.Data.CashgameId, DateTime.UtcNow);
-        var detailsResult = _cashgameDetails.Execute(detailsRequest);
+        var detailsResult = await _cashgameDetails.Execute(detailsRequest);
         return Model(detailsResult, () => new CashgameDetailsModel(detailsResult.Data));
     }
 
     [Route(ApiRoutes.Cashgame.Update)]
     [HttpPut]
     [ApiAuthorize]
-    public ObjectResult Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
+    public async Task<ObjectResult> Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
     {
         var updateRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
         var updateResult = _editCashgame.Execute(updateRequest);
@@ -121,7 +122,7 @@ public class CashgameController : BaseController
             return Error(updateResult.Error);
 
         var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
-        var detailsResult = _cashgameDetails.Execute(detailsRequest);
+        var detailsResult = await _cashgameDetails.Execute(detailsRequest);
         return Model(detailsResult, () => new CashgameDetailsModel(detailsResult.Data));
     }
 

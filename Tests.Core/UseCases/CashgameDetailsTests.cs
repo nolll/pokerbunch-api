@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.UseCases;
 using NUnit.Framework;
@@ -17,12 +18,12 @@ public class CashgameDetailsTests : TestBase
     }
 
     [Test]
-    public void CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
+    public async Task CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual(TestData.PlayerIdA, result.Data.PlayerId);
         Assert.AreEqual(TestData.LocationNameC, result.Data.LocationName);
@@ -31,23 +32,23 @@ public class CashgameDetailsTests : TestBase
     }
 
     [Test]
-    public void CashgameDetails_CashgameRunning_SlugIsSet()
+    public async Task CashgameDetails_CashgameRunning_SlugIsSet()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual("bunch-a", result.Data.Slug);
     }
 
     [Test]
-    public void CashgameDetails_CashgameRunning_PlayerItemsAreSet()
+    public async Task CashgameDetails_CashgameRunning_PlayerItemsAreSet()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual(2, result.Data.PlayerItems.Count);
         Assert.AreEqual(1, result.Data.PlayerItems[0].Checkpoints.Count);

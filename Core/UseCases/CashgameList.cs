@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
+public class CashgameList : AsyncUseCase<CashgameList.Request, CashgameList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -24,7 +25,7 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
         _locationRepository = locationRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
@@ -32,7 +33,7 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
         RequireRole.Player(user, player);
         var cashgames = _cashgameRepository.GetFinished(bunch.Id, request.Year);
         cashgames = SortItems(cashgames, request.SortOrder).ToList();
-        var locations = _locationRepository.List(bunch.Id);
+        var locations = await _locationRepository.List(bunch.Id);
         var players = _playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations), players));
 

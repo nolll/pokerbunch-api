@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 
@@ -15,22 +16,22 @@ public class FakeLocationRepository : ILocationRepository
         _list = CreateLocationList();
     }
 
-    public Location Get(int id)
+    public async Task<Location> Get(int id)
     {
         return _list.FirstOrDefault(o => o.Id == id);
     }
 
-    public IList<Location> List(IList<int> ids)
+    public async Task<IList<Location>> List(IList<int> ids)
     {
         return _list.Where(o => ids.Contains(o.Id)).ToList();
     }
 
-    public IList<Location> List(int bunchId)
+    public async Task<IList<Location>> List(int bunchId)
     {
         return _list.Where(o => o.BunchId == bunchId).ToList();
     }
         
-    public int Add(Location location)
+    public async Task<int> Add(Location location)
     {
         Added = location;
         const int id = 1000;
