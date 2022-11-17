@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -29,7 +30,9 @@ public class EventDetails : AsyncUseCase<EventDetails.Request, EventDetails.Resu
         var bunch = _bunchRepository.Get(e.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(e.BunchId, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanSeeEventDetails(user, player))
+            return Error(new AccessDeniedError());
 
         var locationId = location?.Id ?? 0;
         var locationName = location?.Name;

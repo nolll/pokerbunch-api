@@ -1,3 +1,4 @@
+using System;
 using Api.Settings;
 using Core.Errors;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,13 @@ public class TestController : BaseController
 {
     public TestController(AppSettings appSettings) : base(appSettings)
     {
+    }
+
+    [Route("test/exception")]
+    [HttpGet]
+    public ObjectResult Exception()
+    {
+        throw new Exception("exception");
     }
 
     [Route("test/unexpected")]
@@ -49,6 +57,6 @@ public class TestController : BaseController
     [HttpGet]
     public ObjectResult ConflictException()
     {
-        return Error(ErrorType.Conflict, "conflict");
+        return Error(ErrorType.Conflict, "conflict");
     }
 }

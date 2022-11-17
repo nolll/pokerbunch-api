@@ -10,14 +10,6 @@ namespace Tests.Core.UseCases;
 public class CashgameDetailsTests : TestBase
 {
     [Test]
-    public void RunningCashgame_CashgameNotRunning_ThrowsException()
-    {
-        //var request = new CashgameDetails2.Request(TestData.UserNameA, TestData.CashgameIdC);
-
-        //Assert.Throws<CashgameNotRunningException>(() => Sut.Execute(request));
-    }
-
-    [Test]
     public async Task CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
     {
         Deps.Cashgame.SetupRunningGame();

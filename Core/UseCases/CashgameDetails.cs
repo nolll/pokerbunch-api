@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -34,7 +35,9 @@ public class CashgameDetails : AsyncUseCase<CashgameDetails.Request, CashgameDet
         var bunch = _bunchRepository.Get(cashgame.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanSeeCashgame(user, player))
+            return Error(new AccessDeniedError());
 
         var players = _playerRepository.Get(GetPlayerIds(cashgame));
 

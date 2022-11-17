@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -26,7 +27,10 @@ public class GetLocationList : AsyncUseCase<GetLocationList.Request, GetLocation
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanListLocations(user, player))
+            return Error(new AccessDeniedError());
+
         var locations = await _locationRepository.List(bunch.Id);
 
         var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();

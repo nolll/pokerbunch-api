@@ -5,11 +5,6 @@ namespace Core.Services;
 
 public static class RequireRole
 {
-    public static void Player(User user, Player player)
-    {
-        Require(user, player, Role.Player);
-    }
-
     public static void Manager(User user, Player player)
     {
         Require(user, player, Role.Manager);

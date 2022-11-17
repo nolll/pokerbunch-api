@@ -33,7 +33,10 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
         var user = _userRepository.Get(request.UserName);
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanAddCashgame(user, player))
+            return Error(new AccessDeniedError()); 
+
         var location = _locationRepository.Get(request.LocationId);
         var cashgame = new Cashgame(bunch.Id, location.Id, 0, GameStatus.Running);
         var cashgameId = _cashgameRepository.Add(bunch, cashgame);

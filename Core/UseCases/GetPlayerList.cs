@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -24,7 +25,10 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanListPlayers(user, player))
+            return Error(new AccessDeniedError());
+
         var players = _playerRepository.List(bunch.Id);
         var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
 

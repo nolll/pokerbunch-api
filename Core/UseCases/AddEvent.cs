@@ -31,7 +31,9 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Player(currentUser, currentPlayer);
+
+        if (!AccessControl.CanAddEvent(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
         var e = new Event(0, bunch.Id, request.Name);
         var id = _eventRepository.Add(e);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -30,7 +31,10 @@ public class CashgameList : AsyncUseCase<CashgameList.Request, CashgameList.Resu
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanListCashgames(user, player))
+            return Error(new AccessDeniedError());
+        
         var cashgames = _cashgameRepository.GetFinished(bunch.Id, request.Year);
         cashgames = SortItems(cashgames, request.SortOrder).ToList();
         var locations = await _locationRepository.List(bunch.Id);

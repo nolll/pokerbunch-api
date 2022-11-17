@@ -25,26 +25,6 @@ public class ExceptionLoggingMiddleware
         {
             await _next(httpContext);
         }
-        catch (NotFoundException)
-        {
-            throw;
-        }
-        catch (AccessDeniedException)
-        {
-            throw;
-        }
-        catch (AuthException)
-        {
-            throw;
-        }
-        catch (ValidationException)
-        {
-            throw;
-        }
-        catch (ConflictException)
-        {
-            throw;
-        }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);

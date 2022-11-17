@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -29,7 +30,10 @@ public class EventList : AsyncUseCase<EventList.Request, EventList.Result>
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanListEvents(user, player))
+            return Error(new AccessDeniedError());
+
         var events = _eventRepository.List(bunch.Id);
         var locationIds = events.Select(o => o.LocationId).Distinct().ToList();
         var locations = await _locationRepository.List(locationIds);

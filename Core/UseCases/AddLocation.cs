@@ -32,7 +32,9 @@ public class AddLocation : AsyncUseCase<AddLocation.Request, AddLocation.Result>
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Player(currentUser, currentPlayer);
+
+        if (!AccessControl.CanAddLocation(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
         var location = new Location(0, request.Name, bunch.Id);
         var id = await _locationRepository.Add(location);

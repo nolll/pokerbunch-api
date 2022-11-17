@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -25,7 +26,10 @@ public class CashgameYearList : UseCase<CashgameYearList.Request, CashgameYearLi
         var bunch = _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanListCashgameYears(user, player))
+            return Error(new AccessDeniedError());
+        
         var years = _cashgameRepository.GetYears(bunch.Id);
 
         return Success(new Result(request.Slug, years.ToList()));

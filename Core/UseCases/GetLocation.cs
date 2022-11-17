@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -25,11 +26,13 @@ public class GetLocation : AsyncUseCase<GetLocation.Request, GetLocation.Result>
         var bunch = _bunchRepository.Get(location.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(location.BunchId, user.Id);
-        RequireRole.Player(user, player);
+
+        if (!AccessControl.CanSeeLocation(user, player))
+            return Error(new AccessDeniedError());
 
         return Success(new Result(location.Id, location.Name, bunch.Slug));
     }
-    
+
     public class Request
     {
         public string UserName { get; }

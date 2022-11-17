@@ -20,7 +20,7 @@ public class AddLocationTests : TestBase
     }
 
     [Test]
-    public async Task AddEvent_InvalidName_ThrowsValidationException()
+    public async Task AddEvent_InvalidName_ReturnsError()
     {
         const string addedEventName = "";
 

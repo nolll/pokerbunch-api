@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Core.Errors;
-using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -28,7 +26,7 @@ public class AddCashgameTests : TestBase
     }
 
     [Test]
-    public void AddCashgame_WithoutLocation_ThrowsValidationException()
+    public void AddCashgame_WithoutLocation_ReturnsError()
     {
         var request = CreateRequest();
         var result = Sut.Execute(request);
