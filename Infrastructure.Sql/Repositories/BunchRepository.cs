@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using Infrastructure.Sql.SqlDb;
@@ -30,7 +29,7 @@ public class BunchRepository : IBunchRepository
         var ids = Search(slug);
         if (ids.Any())
             return Get(ids.First());
-        throw new BunchNotFoundException(slug);
+        return null;
     }
 
     private IList<Bunch> List(IList<int> ids)

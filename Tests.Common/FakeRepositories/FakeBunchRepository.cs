@@ -31,7 +31,7 @@ public class FakeBunchRepository : IBunchRepository
     {
         var bunch = _list.FirstOrDefault(o => o.Slug == slug);
         if(bunch == null)
-            throw new BunchNotFoundException(slug);
+            return null;
         return bunch;
     }
 

@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Errors;
-using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 
@@ -28,17 +27,8 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
             return Error(new ValidationError(validator));
 
         var slug = SlugGenerator.GetSlug(request.DisplayName);
-
-        bool bunchExists;
-        try
-        {
-            _bunchRepository.GetBySlug(slug);
-            bunchExists = true;
-        }
-        catch (BunchNotFoundException)
-        {
-            bunchExists = false;
-        }
+        var existingBunch = _bunchRepository.GetBySlug(slug);
+        var bunchExists = existingBunch != null;
 
         if (bunchExists)
             return Error(new BunchExistsError(slug));
