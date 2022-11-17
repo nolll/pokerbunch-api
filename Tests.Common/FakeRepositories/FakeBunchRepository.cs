@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
 using Core.Repositories;
 
 namespace Tests.Common.FakeRepositories;

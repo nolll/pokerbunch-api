@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
-using Core.Errors;
-using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
-using NuGet.Frameworks;
 using NUnit.Framework;
 using Tests.Common;
 

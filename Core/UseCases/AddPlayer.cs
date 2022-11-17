@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.Entities;
 using Core.Errors;
-using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 

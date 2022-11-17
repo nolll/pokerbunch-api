@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core.Exceptions;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
