@@ -1,4 +1,4 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -8,19 +8,21 @@ namespace Tests.Core.UseCases;
 public class EditCashgameTests : TestBase
 {
     [Test]
-    public void EditCashgame_EmptyLocation_ThrowsException()
+    public void EditCashgame_EmptyLocation_ReturnsError()
     {
         var request = new EditCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA, 0, 0);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditCashgame_ValidLocation_NoException()
+    public void EditCashgame_ValidLocation_NoError()
     {
         var request = new EditCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA, TestData.ChangedLocationId, 0);
 
-        Sut.Execute(request);
+        var result = Sut.Execute(request);
+        Assert.That(result.Success, Is.True);
     }
 
     [Test]
@@ -43,7 +45,7 @@ public class EditCashgameTests : TestBase
         Assert.AreEqual(1, Deps.Event.AddedCashgameId);
     }
 
-    private EditCashgame Sut => new EditCashgame(
+    private EditCashgame Sut => new(
         Deps.Cashgame,
         Deps.User,
         Deps.Player,

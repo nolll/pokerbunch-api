@@ -44,7 +44,7 @@ class BunchContextTests : TestBase
         Assert.IsInstanceOf<CoreContext.Result>(result.Data.AppContext);
     }
 
-    private BunchContext Sut => new BunchContext(
+    private BunchContext Sut => new(
         Deps.User,
         Deps.Bunch);
 }

@@ -7,7 +7,6 @@ public abstract class UseCaseTest<T> where T : class
 {
     private Mocker _mocker;
     protected T Sut { get; private set; }
-    protected virtual bool ExecuteAutomatically => true;
 
     [SetUp]
     public void UseCaseSetup()
@@ -15,7 +14,7 @@ public abstract class UseCaseTest<T> where T : class
         _mocker = new Mocker();
         Sut = _mocker.New<T>();
         Setup();
-        if (ExecuteAutomatically) Execute();
+        Execute();
     }
 
     protected Mock<TM> Mock<TM>() where TM : class => _mocker.MockOf<TM>();

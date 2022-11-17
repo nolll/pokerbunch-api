@@ -1,4 +1,5 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
+using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -30,8 +31,10 @@ class AppContextTests : TestBase
     public void AppContext_WithInvalidUserName_LoggedInPropertiesAreSet()
     {
         var request = new CoreContext.Request("1");
-        Assert.Throws<NotLoggedInException>(() => Sut.Execute(request));
+        var result = Sut.Execute(request);
+
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Auth));
     }
 
-    private CoreContext Sut => new CoreContext(Deps.User);
+    private CoreContext Sut => new(Deps.User);
 }

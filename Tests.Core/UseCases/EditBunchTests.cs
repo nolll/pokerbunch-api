@@ -1,4 +1,5 @@
 using System;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -16,35 +17,40 @@ public class EditBunchTests : TestBase
     private const int DefaultBuyin = 1;
 
     [Test]
-    public void EditBunch_EmptyCurrencySymbol_ThrowsValidationException()
+    public void EditBunch_EmptyCurrencySymbol_ReturnsError()
     {
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, "", ValidCurrencyLayout, ValidTimeZone, HouseRules, DefaultBuyin);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditBunch_EmptyCurrencyLayout_ThrowsValidationException()
+    public void EditBunch_EmptyCurrencyLayout_ReturnsError()
     {
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, "", ValidTimeZone, HouseRules, DefaultBuyin);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditBunch_EmptyTimeZone_ThrowsValidationException()
+    public void EditBunch_EmptyTimeZone_ReturnsError()
     {
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "", HouseRules, DefaultBuyin);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
+    // todo: Have a look at this test. Unknown error can't be good
     [Test]
-    public void EditBunch_InvalidTimeZone_ThrowsValidationException()
+    public void EditBunch_InvalidTimeZone_ReturnsError()
     {
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "a", HouseRules, DefaultBuyin);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<TimeZoneNotFoundException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Unknown));
     }
 
     [Test]
@@ -72,7 +78,7 @@ public class EditBunchTests : TestBase
         Assert.AreEqual("bunch-a", result.Data.Slug);
     }
 
-    private EditBunch Sut => new EditBunch(
+    private EditBunch Sut => new(
         Deps.Bunch,
         Deps.User,
         Deps.Player);

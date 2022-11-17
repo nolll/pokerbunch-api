@@ -1,5 +1,5 @@
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
@@ -22,22 +22,24 @@ public class ChangePasswordTests : MockBase
     }
 
     [Test]
-    public void ChangePassword_EmptyPassword_ThrowsValidationException()
+    public void ChangePassword_EmptyPassword_ReturnsError()
     {
         var request = new ChangePassword.Request(TestData.UserNameA, "", "b");
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void ChangePassword_CurrentPasswordIsWrong_ThrowsAuthException()
+    public void ChangePassword_CurrentPasswordIsWrong_ReturnsError()
     {
         var user = new User(1, TestData.UserNameA, salt: "123456", encryptedPassword: "abcdef");
         _userRepositoryMock.Setup(o => o.Get(TestData.UserNameA)).Returns(user);
 
         var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
+        var result = Sut.Execute(request);
 
-        Assert.Throws<AuthException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Auth));
     }
 
     [Test]
@@ -57,7 +59,7 @@ public class ChangePasswordTests : MockBase
         Assert.That(savedUser.EncryptedPassword, Is.EqualTo("cebb55b2a2b59b692bf5c81c9359b59c3244fe86"));
     }
         
-    private ChangePassword Sut => new ChangePassword(
+    private ChangePassword Sut => new(
         _userRepositoryMock.Object,
         _randomizerMock.Object);
 }

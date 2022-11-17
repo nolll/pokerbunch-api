@@ -17,5 +17,5 @@ public class UserListTests : TestBase
         Assert.AreEqual("user-name-a", result.Data.Users.First().UserName);
     }
 
-    private UserList Sut => new UserList(Deps.User);
+    private UserList Sut => new(Deps.User);
 }

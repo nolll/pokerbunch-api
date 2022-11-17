@@ -61,7 +61,7 @@ Please sign in here: loginUrl";
         return new ResetPassword.Request(email, "loginUrl");
     }
 
-    private ResetPassword Sut => new ResetPassword(
+    private ResetPassword Sut => new(
         Deps.User,
         Deps.EmailSender,
         Deps.Randomizer);

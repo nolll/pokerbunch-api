@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Core.Entities;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -17,55 +18,57 @@ class AddUserTests : TestBase
     private readonly string _existingEmail = TestData.UserA.Email;
         
     [Test]
-    public void AddUser_WithEmptyUserName_ThrowsValidationError()
+    public void AddUser_WithEmptyUserName_ReturnsError()
     {
         var request = new AddUser.Request("", ValidDisplayName, ValidEmail, ValidPassword, "/");
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_WithEmptyDisplayName_ThrowsValidationError()
+    public void AddUser_WithEmptyDisplayName_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, "", ValidEmail, ValidPassword, "/");
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_WithEmptyEmail_ThrowsValidationError()
+    public void AddUser_WithEmptyEmail_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, "", ValidPassword, "/");
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_WithEmptyPAssword_ThrowsValidationError()
+    public void AddUser_WithEmptyPAssword_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, "", "/");
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_UserNameAlreadyInUse_ThrowsException()
+    public void AddUser_UserNameAlreadyInUse_ReturnsError()
     {
         var request = new AddUser.Request(_existingUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
+        var result = Sut.Execute(request);
 
-        Assert.Throws<UserExistsException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
-    public void AddUser_EmailAlreadyInUse_ThrowsException()
+    public void AddUser_EmailAlreadyInUse_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, _existingEmail, ValidPassword, "/");
+        var result = Sut.Execute(request);
 
-        Assert.Throws<EmailExistsException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
@@ -105,7 +108,7 @@ Please sign in here: /loginUrl";
         Assert.AreEqual(body, Deps.EmailSender.Message.Body);
     }
 
-    private AddUser Sut => new AddUser(
+    private AddUser Sut => new(
         Deps.User,
         Deps.Randomizer,
         Deps.EmailSender);

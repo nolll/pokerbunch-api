@@ -17,7 +17,7 @@ public class LocationDetailsTests : TestBase
         Assert.AreEqual(TestData.BunchA.Slug, result.Data.Slug);
     }
 
-    private GetLocation Sut => new GetLocation(
+    private GetLocation Sut => new(
         Deps.Location,
         Deps.User,
         Deps.Player,

@@ -18,5 +18,7 @@ public class BunchListTests : TestBase
         Assert.AreEqual(TestData.BunchB.DisplayName, result.Data.Bunches[1].Name);
     }
 
-    private GetBunchList Sut => new GetBunchList(Deps.Bunch, Deps.User);
+    private GetBunchList Sut => new(
+        Deps.Bunch,
+        Deps.User);
 }

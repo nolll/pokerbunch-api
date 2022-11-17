@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -13,19 +14,21 @@ public class EditCheckpointTests : TestBase
     private const int ChangedAmount = 2;
 
     [Test]
-    public void EditCheckpoint_InvalidStack_ThrowsException()
+    public void EditCheckpoint_InvalidStack_ReturnsError()
     {
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditCheckpoint_InvalidAmount_ThrowsException()
+    public void EditCheckpoint_InvalidAmount_ReturnsError()
     {
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -53,7 +56,7 @@ public class EditCheckpointTests : TestBase
         Assert.AreEqual(ChangedAmount, updatedCheckpoint.Amount);
     }
 
-    private EditCheckpoint Sut => new EditCheckpoint(
+    private EditCheckpoint Sut => new(
         Deps.Bunch,
         Deps.User,
         Deps.Player,

@@ -42,7 +42,7 @@ class EventListTests : TestBase
         Assert.AreEqual(1, result.Data.Events[1].EventId);
     }
 
-    private EventList Sut => new EventList(
+    private EventList Sut => new(
         Deps.Bunch,
         Deps.Event,
         Deps.User,

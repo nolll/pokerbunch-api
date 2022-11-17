@@ -35,7 +35,7 @@ public class DeleteCheckpointTests : TestBase
         Assert.IsTrue(result.Data.GameIsRunning);
     }
 
-    private DeleteCheckpoint Sut => new DeleteCheckpoint(
+    private DeleteCheckpoint Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
         Deps.User,

@@ -100,7 +100,7 @@ class PlayerDetailsTests : TestBase
         return new GetPlayer.Request(userName, playerId);
     }
 
-    private GetPlayer Sut => new GetPlayer(
+    private GetPlayer Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.Cashgame,

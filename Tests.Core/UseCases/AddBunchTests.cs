@@ -88,7 +88,7 @@ class AddBunchTests : TestBase
         return new AddBunch.Request(TestData.UserNameC, displayName, Description, currencySymbol, currencyLayout, timeZone ?? _timeZone);
     }
 
-    private AddBunch Sut => new AddBunch(
+    private AddBunch Sut => new(
         Deps.User,
         Deps.Bunch,
         Deps.Player);

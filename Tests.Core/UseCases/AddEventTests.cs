@@ -30,7 +30,7 @@ public class AddEventTests : TestBase
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
-    private AddEvent Sut => new AddEvent(
+    private AddEvent Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.User,

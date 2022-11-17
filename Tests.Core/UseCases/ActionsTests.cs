@@ -48,7 +48,7 @@ class ActionsTests : TestBase
         Assert.IsTrue(result.Data.CheckpointItems[0].CanEdit);
     }
 
-    private Actions Sut => new Actions(
+    private Actions Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
         Deps.Player,

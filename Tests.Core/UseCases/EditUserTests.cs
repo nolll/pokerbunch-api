@@ -1,4 +1,5 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
+using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -12,27 +13,30 @@ public class EditUserTests : TestBase
     private const string ChangedEmail = "email@example.com";
 
     [Test]
-    public void EditUser_EmptyDisplayName_ThrowsException()
+    public void EditUser_EmptyDisplayName_ReturnsError()
     {
         var request = new EditUser.Request(TestData.UserNameA, "", RealName, ChangedEmail);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditUser_EmptyEmail_ThrowsException()
+    public void EditUser_EmptyEmail_ReturnsError()
     {
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, "");
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditUser_InvalidEmail_ThrowsException()
+    public void EditUser_InvalidEmail_ReturnsError()
     {
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, "a");
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -57,5 +61,5 @@ public class EditUserTests : TestBase
         Assert.AreEqual(ChangedEmail, Deps.User.Saved.Email);
     }
 
-    private EditUser Sut => new EditUser(Deps.User);
+    private EditUser Sut => new(Deps.User);
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
 using NUnit.Framework;
 using Tests.Common;
@@ -19,12 +18,12 @@ public class InvitePlayerTests : TestBase
 
     [TestCase("")]
     [TestCase("a")]
-    public void InvitePlayer_InvalidEmail_ThrowsException(string email)
+    public void InvitePlayer_InvalidEmail_ReturnsError(string email)
     {
         var request = CreateRequest(email);
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -51,7 +50,7 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
         return new InvitePlayer.Request(TestData.UserNameC, TestData.PlayerIdA, email, TestData.TestUrl, "https://pokerbunch.com/fakejoin/{0}", "https://pokerbunch.com/fakejoin/{0}/{1}");
     }
 
-    private InvitePlayer Sut => new InvitePlayer(
+    private InvitePlayer Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.EmailSender,

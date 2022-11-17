@@ -15,7 +15,7 @@ class EventDetailsTests : TestBase
         Assert.AreEqual(TestData.EventNameA, result.Data.Name);
     }
 
-    private EventDetails Sut => new EventDetails(
+    private EventDetails Sut => new(
         Deps.Event,
         Deps.User,
         Deps.Player,

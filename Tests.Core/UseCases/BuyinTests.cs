@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -19,18 +20,18 @@ class BuyinTests : TestBase
     public void Buyin_InvalidBuyin_ReturnsError()
     {
         var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public void Buyin_InvalidStackSize_ReturnsError()
     {
         var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
+        var result = Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -53,7 +54,7 @@ class BuyinTests : TestBase
         Assert.AreEqual(savedStack, result.Stack);
     }
 
-    private Buyin Sut => new Buyin(
+    private Buyin Sut => new(
         Deps.Cashgame,
         Deps.Player,
         Deps.User);

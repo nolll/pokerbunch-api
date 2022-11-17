@@ -27,7 +27,7 @@ public class DeletePlayerTests : TestBase
     //    var result = Sut.Execute(request);
     //}
 
-    private DeletePlayer Sut => new DeletePlayer(
+    private DeletePlayer Sut => new(
         Deps.Player,
         Deps.Cashgame,
         Deps.User,

@@ -64,7 +64,7 @@ public class CashgameDetailsTests : TestBase
         Assert.AreEqual(2, result.Data.PlayerItems[1].PlayerId);
     }
 
-    private CashgameDetails Sut => new CashgameDetails(
+    private CashgameDetails Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
         Deps.Player,

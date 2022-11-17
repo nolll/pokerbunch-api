@@ -23,5 +23,5 @@ class DateTests
         Assert.AreEqual("2000-02-03", Sut.IsoString);
     }
 
-    private Date Sut => new Date(Year, Month, Day);
+    private Date Sut => new(Year, Month, Day);
 }

@@ -1,3 +1,4 @@
+using Core.Errors;
 using Core.Exceptions;
 using Core.UseCases;
 using NUnit.Framework;
@@ -10,21 +11,23 @@ public class JoinBunchTests : TestBase
     private const string ValidCode = "d643c7857f8c3bffb1e9e7017a5448d09ef59d33";
 
     [Test]
-    public void JoinBunch_EmptyCode_ThrowsValidationException()
+    public void JoinBunch_EmptyCode_ReturnsError()
     {
         const string code = "";
         var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, code);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void JoinBunch_InvalidCode_InvalidJoinCodeException()
+    public void JoinBunch_InvalidCode_ReturnsError()
     {
         const string code = "abc";
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, code);
+        var result = Sut.Execute(request);
 
-        Assert.Throws<InvalidJoinCodeException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -47,7 +50,7 @@ public class JoinBunchTests : TestBase
         Assert.AreEqual(TestData.UserA.Id, Deps.Player.Joined.UserId);
     }
 
-    private JoinBunch Sut => new JoinBunch(
+    private JoinBunch Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.User);

@@ -89,7 +89,7 @@ class CashgameListTests : TestBase
         return new CashgameList.Request(TestData.UserNameA, TestData.SlugA, orderBy, year);
     }
 
-    private CashgameList Sut => new CashgameList(
+    private CashgameList Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
         Deps.User,

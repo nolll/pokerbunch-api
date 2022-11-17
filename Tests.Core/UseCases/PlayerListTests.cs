@@ -41,7 +41,7 @@ class PlayerListTests : TestBase
         Assert.IsTrue(result.Data.CanAddPlayer);
     }
 
-    private GetPlayerList Sut => new GetPlayerList(
+    private GetPlayerList Sut => new(
         Deps.Bunch,
         Deps.User,
         Deps.Player);
