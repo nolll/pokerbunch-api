@@ -34,7 +34,7 @@ public class EventList : AsyncUseCase<EventList.Request, EventList.Result>
         if (!AccessControl.CanListEvents(user, player))
             return Error(new AccessDeniedError());
 
-        var events = _eventRepository.List(bunch.Id);
+        var events = await _eventRepository.List(bunch.Id);
         var locationIds = events.Select(o => o.LocationId).Distinct().ToList();
         var locations = await _locationRepository.List(locationIds);
 

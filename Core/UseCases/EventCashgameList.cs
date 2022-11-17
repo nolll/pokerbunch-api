@@ -30,7 +30,7 @@ public class EventCashgameList : AsyncUseCase<EventCashgameList.Request, EventCa
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var @event = _eventRepository.Get(request.EventId);
+        var @event = await _eventRepository.Get(request.EventId);
         var bunch = _bunchRepository.Get(@event.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);

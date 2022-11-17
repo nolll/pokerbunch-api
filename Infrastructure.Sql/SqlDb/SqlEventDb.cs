@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
@@ -23,7 +24,7 @@ public class SqlEventDb
         _db = db;
     }
 
-    public Event Get(int id)
+    public async Task<Event> Get(int id)
     {
         const string whereClause = "WHERE e.event_id = @id";
         var sql = string.Format(EventSql, whereClause);
@@ -31,23 +32,23 @@ public class SqlEventDb
         {
             new("@id", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
         var rawEvent = rawEvents.FirstOrDefault();
         return rawEvent != null ? CreateEvent(rawEvent) : null;
     }
 
-    public IList<Event> Get(IList<int> ids)
+    public async Task<IList<Event>> Get(IList<int> ids)
     {
         const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
         var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+        var reader = await _db.QueryAsync(sql, parameter);
         var rawEvents = CreateRawEvents(reader);
         return rawEvents.Select(CreateEvent).ToList();
     }
 
-    public IList<int> FindByBunchId(int bunchId)
+    public async Task<IList<int>> FindByBunchId(int bunchId)
     {
         const string sql = @"
             SELECT e.event_id
@@ -58,11 +59,11 @@ public class SqlEventDb
         {
             new("@id", bunchId)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("event_id");
     }
 
-    public IList<int> FindByCashgameId(int cashgameId)
+    public async Task<IList<int>> FindByCashgameId(int cashgameId)
     {
         const string sql = @"
             SELECT ecg.event_id
@@ -73,11 +74,11 @@ public class SqlEventDb
         {
             new("@id", cashgameId)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("event_id");
     }
 
-    public int Add(Event e)
+    public async Task<int> Add(Event e)
     {
         const string sql = @"
             INSERT INTO pb_event (name, bunch_id)
@@ -88,10 +89,10 @@ public class SqlEventDb
             new("@name", e.Name),
             new("@bunchId", e.BunchId)
         };
-        return _db.ExecuteInsert(sql, parameters);
+        return await _db.ExecuteInsertAsync(sql, parameters);
     }
 
-    public void AddCashgame(int eventId, int cashgameId)
+    public async Task AddCashgame(int eventId, int cashgameId)
     {
         const string sql = @"
             INSERT INTO pb_event_cashgame (event_id, game_id)
@@ -101,7 +102,7 @@ public class SqlEventDb
             new("@eventId", eventId),
             new("@cashgameId", cashgameId)
         };
-        _db.ExecuteInsert(sql, parameters);
+        await _db.ExecuteInsertAsync(sql, parameters);
     }
 
     private static Event CreateEvent(RawEvent rawEvent)

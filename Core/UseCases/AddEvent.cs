@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -6,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
+public class AddEvent : AsyncUseCase<AddEvent.Request, AddEvent.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,7 +22,7 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
         _eventRepository = eventRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
@@ -36,7 +37,7 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
             return Error(new AccessDeniedError());
 
         var e = new Event(0, bunch.Id, request.Name);
-        var id = _eventRepository.Add(e);
+        var id = await _eventRepository.Add(e);
 
         return Success(new Result(bunch.Slug, id));
     }

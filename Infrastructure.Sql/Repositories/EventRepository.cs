@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -19,35 +20,35 @@ public class EventRepository : IEventRepository
         _cacheContainer = cacheContainer;
     }
 
-    public Event Get(int id)
+    public async Task<Event> Get(int id)
     {
-        return _cacheContainer.GetAndStore(_eventDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_eventDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Event> Get(IList<int> ids)
+    public async Task<IList<Event>> Get(IList<int> ids)
     {
-        return _cacheContainer.GetAndStore(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Event> List(int bunchId)
+    public async Task<IList<Event>> List(int bunchId)
     {
-        var ids = _eventDb.FindByBunchId(bunchId);
-        return Get(ids);
+        var ids = await _eventDb.FindByBunchId(bunchId);
+        return await Get(ids);
     }
 
-    public Event GetByCashgame(int cashgameId)
+    public async Task<Event> GetByCashgame(int cashgameId)
     {
-        var ids = _eventDb.FindByBunchId(cashgameId);
-        return Get(ids).FirstOrDefault();
+        var ids = await _eventDb.FindByBunchId(cashgameId);
+        return (await Get(ids)).FirstOrDefault();
     }
 
-    public int Add(Event e)
+    public async Task<int> Add(Event e)
     {
-        return _eventDb.Add(e);
+        return await _eventDb.Add(e);
     }
 
-    public void AddCashgame(int eventId, int cashgameId)
+    public async Task AddCashgame(int eventId, int cashgameId)
     {
-        _eventDb.AddCashgame(eventId, cashgameId);
+        await _eventDb.AddCashgame(eventId, cashgameId);
     }
 }

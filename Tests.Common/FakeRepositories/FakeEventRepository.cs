@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 
@@ -17,35 +18,36 @@ public class FakeEventRepository : IEventRepository
         _list = CreateEventList();
     }
 
-    public Event Get(int id)
+    public Task<Event> Get(int id)
     {
-        return _list.FirstOrDefault(o => o.Id == id);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
         
-    public IList<Event> Get(IList<int> ids)
+    public Task<IList<Event>> Get(IList<int> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Event>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public IList<Event> List(int bunchId)
+    public Task<IList<Event>> List(int bunchId)
     {
-        return _list.Where(o => o.BunchId == bunchId).ToList();
+        return Task.FromResult<IList<Event>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Event GetByCashgame(int cashgameId)
+    public Task<Event> GetByCashgame(int cashgameId)
     {
-        return _list.First();
+        return Task.FromResult(_list.First());
     }
 
-    public int Add(Event e)
+    public Task<int> Add(Event e)
     {
         Added = e;
-        return 1;
+        return Task.FromResult(1);
     }
 
-    public void AddCashgame(int eventId, int cashgameId)
+    public Task AddCashgame(int eventId, int cashgameId)
     {
         AddedCashgameId = cashgameId;
+        return Task.CompletedTask;
     }
 
     private IList<Event> CreateEventList()

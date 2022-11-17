@@ -44,7 +44,7 @@ public class CashgameDetails : AsyncUseCase<CashgameDetails.Request, CashgameDet
         var role = user.IsAdmin ? Role.Manager : player.Role;
 
         var location = await _locationRepository.Get(cashgame.LocationId);
-        var @event = cashgame.EventId != 0 ? _eventRepository.Get(cashgame.EventId) : null;
+        var @event = cashgame.EventId != 0 ? await _eventRepository.Get(cashgame.EventId) : null;
         var eventName = @event?.Name;
         var eventId = @event?.Id ?? 0;
 
