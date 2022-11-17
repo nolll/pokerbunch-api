@@ -19,6 +19,7 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 
     private const string UserName = "user-name-1";
 
+    // todo: Move email to config
     protected readonly string Email = "henriks@gmail.com";
 
     protected override void Setup()

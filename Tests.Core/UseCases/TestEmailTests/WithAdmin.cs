@@ -10,6 +10,7 @@ public class WithAdmin : Arrange
     [Test]
     public void MessageIsSent()
     {
+        // todo: Move email to config
         Assert.AreEqual("henriks@gmail.com", To);
         Assert.AreEqual("Test Email", Subject);
         Assert.AreEqual("This is a test email from pokerbunch.com", Body);

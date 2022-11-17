@@ -21,6 +21,7 @@ public class TestEmail : UseCase<TestEmail.Request, TestEmail.Result>
         if (!AccessControl.CanSendTestEmail(user))
             return Error(new AccessDeniedError());
 
+        // todo: Move email to config
         const string email = "henriks@gmail.com";
         var message = new TestMessage();
         _emailSender.Send(email, message);
