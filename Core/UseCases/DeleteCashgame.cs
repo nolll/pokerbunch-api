@@ -23,9 +23,11 @@ public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Res
     {
         var cashgame = _cashgameRepository.Get(request.Id);
         var bunch = _bunchRepository.Get(cashgame.BunchId);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Manager(user, player);
+        var currentUser = _userRepository.Get(request.UserName);
+        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+
+        if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
         if (cashgame.PlayerCount > 0)
             return Error(new CashgameHasResultsError());

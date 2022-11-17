@@ -27,13 +27,16 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
             return Error(new ValidationError(validator));
 
         var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Manager(user, player);
+        var currentUser = _userRepository.Get(request.UserName);
+        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+
+        if (!AccessControl.CanEditBunch(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         var postedHomegame = CreateBunch(bunch, request);
         _bunchRepository.Update(postedHomegame);
 
-        return Success(new Result(bunch, player));
+        return Success(new Result(bunch, currentPlayer));
     }
     
     private static Bunch CreateBunch(Bunch bunch, Request request)

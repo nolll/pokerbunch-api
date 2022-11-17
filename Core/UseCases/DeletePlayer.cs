@@ -26,7 +26,10 @@ public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
         var bunch = _bunchRepository.Get(player.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
+
+        if (!AccessControl.CanDeletePlayer(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         var cashgames = _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
 

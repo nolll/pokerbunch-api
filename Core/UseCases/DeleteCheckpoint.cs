@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
@@ -26,7 +27,10 @@ public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoi
         var bunch = _bunchRepository.Get(cashgame.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
+
+        if (!AccessControl.CanDeleteCheckpoint(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         cashgame.DeleteCheckpoint(checkpoint);
         _cashgameRepository.Update(cashgame);
 

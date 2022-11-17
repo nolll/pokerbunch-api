@@ -23,16 +23,16 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
     protected override UseCaseResult<Result> Work(Request request)
     {
         var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var currentUser = _userRepository.Get(request.UserName);
+        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
-        if (!AccessControl.CanListPlayers(user, player))
+        if (!AccessControl.CanListPlayers(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         var players = _playerRepository.List(bunch.Id);
-        var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
+        var canAddPlayer = AccessControl.CanAddPlayer(currentUser, currentPlayer);
 
-        return Success(new Result(bunch, players, isManager));
+        return Success(new Result(bunch, players, canAddPlayer));
     }
 
     public class Request
@@ -53,10 +53,10 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
         public bool CanAddPlayer { get; }
         public string Slug { get; }
 
-        public Result(Bunch bunch, IEnumerable<Player> players, bool isManager)
+        public Result(Bunch bunch, IEnumerable<Player> players, bool canAddPlayer)
         {
             Players = players.Select(o => new ResultItem(o)).OrderBy(o => o.Name).ToList();
-            CanAddPlayer = isManager;
+            CanAddPlayer = canAddPlayer;
             Slug = bunch.Slug;
         }
     }

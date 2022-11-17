@@ -31,7 +31,9 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
         var bunch = _bunchRepository.Get(player.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
+
+        if (!AccessControl.CanInvitePlayer(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
         var invitationCode = InvitationCodeCreator.GetCode(player);
         var joinUrl = string.Format(request.JoinUrlFormat, bunch.Slug);

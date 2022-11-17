@@ -33,7 +33,9 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
         var bunch = _bunchRepository.Get(cashgame.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
+
+        if (!AccessControl.CanEditCheckpoint(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
         var postedCheckpoint = Checkpoint.Create(
             existingCheckpoint.CashgameId,
