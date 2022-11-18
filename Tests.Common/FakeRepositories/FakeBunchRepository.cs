@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 
@@ -49,15 +50,15 @@ public class FakeBunchRepository : IBunchRepository
         return _list;
     }
 
-    public int Add(Bunch bunch)
+    public Task<int> Add(Bunch bunch)
     {
         Added = bunch;
-        return 1;
+        return Task.FromResult(1);
     }
 
-    public void Update(Bunch bunch)
+    public async Task Update(Bunch bunch)
     {
-        Saved = bunch;
+        Saved = await Task.FromResult(bunch);
     }
 
     public void SetupDefaultList()

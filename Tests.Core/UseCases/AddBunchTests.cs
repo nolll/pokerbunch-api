@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using System.Threading.Tasks;
+using Core.Entities;
 using Core.Errors;
 using Core.UseCases;
 using NUnit.Framework;
@@ -23,44 +24,44 @@ class AddBunchTests : TestBase
     }
         
     [Test]
-    public void AddBunch_WithEmptyDisplayName_ReturnsValidationError()
+    public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
-        var result = Sut.Execute(CreateRequest(""));
+        var result = await Sut.Execute(CreateRequest(""));
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
+    public async Task AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
-        var result = Sut.Execute(CreateRequest(currencySymbol: ""));
+        var result = await Sut.Execute(CreateRequest(currencySymbol: ""));
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
+    public async Task AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
-        var result = Sut.Execute(CreateRequest(currencyLayout: ""));
+        var result = await Sut.Execute(CreateRequest(currencyLayout: ""));
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyTimeZone_ReturnsValidationError()
+    public async Task AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
-        var result = Sut.Execute(CreateRequest(timeZone: ""));
+        var result = await Sut.Execute(CreateRequest(timeZone: ""));
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithExistingSlug_ReturnsConflictError()
+    public async Task AddBunch_WithExistingSlug_ReturnsConflictError()
     {
-        var result = Sut.Execute(CreateRequest(_existingDisplayName));
+        var result = await Sut.Execute(CreateRequest(_existingDisplayName));
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
-    public void AddBunch_WithGoodInput_CreatesBunch()
+    public async Task AddBunch_WithGoodInput_CreatesBunch()
     {
-        Sut.Execute(CreateRequest());
+        await Sut.Execute(CreateRequest());
 
         Assert.AreEqual(0, Deps.Bunch.Added.Id);
         Assert.AreEqual("a-display-name", Deps.Bunch.Added.Slug);
@@ -74,9 +75,9 @@ class AddBunchTests : TestBase
     }
 
     [Test]
-    public void AddBunch_WithGoodInput_CreatesPlayer()
+    public async Task AddBunch_WithGoodInput_CreatesPlayer()
     {
-        Sut.Execute(CreateRequest());
+        await Sut.Execute(CreateRequest());
 
         Assert.AreEqual(1, Deps.Player.Added.BunchId);
         Assert.AreEqual(3, Deps.Player.Added.UserId);

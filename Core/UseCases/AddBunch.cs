@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -7,7 +8,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
+public class AddBunch : AsyncUseCase<AddBunch.Request, AddBunch.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -20,7 +21,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
         _playerRepository = playerRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
@@ -34,7 +35,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
             return Error(new BunchExistsError(slug));
 
         var bunch = CreateBunch(request);
-        var id = _bunchRepository.Add(bunch);
+        var id = await _bunchRepository.Add(bunch);
         var user = _userRepository.Get(request.UserName);
         var player = Player.New(id, user.Id, user.UserName, Role.Manager);
         var playerId = _playerRepository.Add(player);

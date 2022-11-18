@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
@@ -74,7 +75,7 @@ public class SqlBunchDb
         return reader.ReadIntList("bunch_id");
     }
         
-    public int Add(Bunch bunch)
+    public async Task<int> Add(Bunch bunch)
     {
         var rawBunch = RawBunch.Create(bunch);
         const string sql = @"
@@ -94,10 +95,10 @@ public class SqlBunchDb
             new("@videosEnabled", rawBunch.VideosEnabled),
             new("@houseRules", rawBunch.HouseRules)
         };
-        return _db.ExecuteInsert(sql, parameters);
+        return await _db.ExecuteInsertAsync(sql, parameters);
     }
 
-    public void Update(Bunch bunch)
+    public async Task Update(Bunch bunch)
     {
         var rawBunch = RawBunch.Create(bunch);
         const string sql = @"
@@ -131,7 +132,7 @@ public class SqlBunchDb
             new("@id", rawBunch.Id)
         };
 
-        _db.Execute(sql, parameters);
+        await _db.ExecuteAsync(sql, parameters);
     }
         
     private static Bunch CreateBunch(RawBunch rawBunch)

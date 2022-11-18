@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Core.Entities;
 
 namespace Core.Repositories;
@@ -9,6 +10,6 @@ public interface IBunchRepository
     Bunch GetBySlug(string slug);
     IList<Bunch> List();
     IList<Bunch> List(int userId);
-    int Add(Bunch bunch);
-    void Update(Bunch bunch);
+    Task<int> Add(Bunch bunch);
+    Task Update(Bunch bunch);
 }

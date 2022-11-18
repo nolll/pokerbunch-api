@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
@@ -78,10 +79,10 @@ public class BunchController : BaseController
     [Route(ApiRoutes.Bunch.List)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult Add([FromBody] AddBunchPostModel post)
+    public async Task<ObjectResult> Add([FromBody] AddBunchPostModel post)
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
-        var result = _addBunch.Execute(request);
+        var result = await _addBunch.Execute(request);
         return Model(result, () => new BunchModel(result.Data));
     }
 

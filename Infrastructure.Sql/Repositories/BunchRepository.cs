@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -54,14 +55,14 @@ public class BunchRepository : IBunchRepository
         return List(ids);
     }
 
-    public int Add(Bunch bunch)
+    public async Task<int> Add(Bunch bunch)
     {
-        return _bunchDb.Add(bunch);
+        return await _bunchDb.Add(bunch);
     }
 
-    public void Update(Bunch bunch)
+    public async Task Update(Bunch bunch)
     {
-        _bunchDb.Update(bunch);
+        await _bunchDb.Update(bunch);
         _cacheContainer.Remove<Bunch>(bunch.Id);
     }
 }
