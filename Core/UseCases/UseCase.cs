@@ -29,30 +29,3 @@ public abstract class UseCase<TRequest, TResult>
         return new UseCaseResult<TResult>(error);
     }
 }
-
-public abstract class UseCase<TResult>
-{
-    protected abstract Task<UseCaseResult<TResult>> Work();
-
-    public async Task<UseCaseResult<TResult>> Execute()
-    {
-        try
-        {
-            return await Work();
-        }
-        catch (Exception e)
-        {
-            return new UseCaseResult<TResult>(new UnknownError(e));
-        }
-    }
-
-    protected UseCaseResult<TResult> Success(TResult result)
-    {
-        return new UseCaseResult<TResult>(result);
-    }
-
-    protected UseCaseResult<TResult> Error(UseCaseError error)
-    {
-        return new UseCaseResult<TResult>(error);
-    }
-}
