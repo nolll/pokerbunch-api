@@ -30,7 +30,7 @@ public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanAddLocation(currentUser, currentPlayer))
             return Error(new AccessDeniedError());

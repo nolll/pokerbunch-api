@@ -23,16 +23,16 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = _playerRepository.Get(request.PlayerId);
+        var player = await _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
         var user = await _userRepository.Get(player.UserId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
-        var cashgames = _cashgameRepository.GetByPlayer(player.Id);
+        var cashgames = await _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : string.Empty;
 

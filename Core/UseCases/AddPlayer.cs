@@ -30,17 +30,17 @@ public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanAddPlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var existingPlayers = _playerRepository.List(bunch.Id);
+        var existingPlayers = await _playerRepository.List(bunch.Id);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
         if (player != null)
             return Error(new PlayerExistsError());
 
         player = Player.New(bunch.Id, request.Name);
-        var id = _playerRepository.Add(player);
+        var id = await _playerRepository.Add(player);
 
         return Success(new Result(id));
     }

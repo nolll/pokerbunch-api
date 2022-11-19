@@ -22,17 +22,17 @@ public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoi
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
+        var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanDeleteCheckpoint(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         cashgame.DeleteCheckpoint(checkpoint);
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
         var gameIsRunning = cashgame.Status == GameStatus.Running;
         return Success(new Result(bunch.Slug, gameIsRunning, cashgame.Id));

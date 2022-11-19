@@ -30,7 +30,7 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanAddEvent(currentUser, currentPlayer))
             return Error(new AccessDeniedError());

@@ -29,22 +29,22 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.Get(request.Id);
+        var cashgame = await _cashgameRepository.Get(request.Id);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanEditCashgame(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var location = _locationRepository.Get(request.LocationId);
+        var location = await _locationRepository.Get(request.LocationId);
         var @event = request.EventId != 0 ? _eventRepository.Get(request.EventId) : null;
         var eventId = @event?.Id ?? 0;
         cashgame = new Cashgame(cashgame.BunchId, location.Id, eventId, cashgame.Status, cashgame.Id);
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
         if (request.EventId > 0)
         {
-            _eventRepository.AddCashgame(request.EventId, cashgame.Id);
+            await _eventRepository.AddCashgame(request.EventId, cashgame.Id);
         }
 
         return Success(new Result());

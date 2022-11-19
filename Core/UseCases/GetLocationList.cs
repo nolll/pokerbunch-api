@@ -24,7 +24,7 @@ public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListLocations(user, player))
             return Error(new AccessDeniedError());

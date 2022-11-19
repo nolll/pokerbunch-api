@@ -25,7 +25,7 @@ public abstract class Arrange : UseCaseTest<GetBunch>
         var user = new User(UserId, UserName);
 
         Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult(bunch));
-        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
+        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult(player));
         Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(Task.FromResult(user));
     }
 

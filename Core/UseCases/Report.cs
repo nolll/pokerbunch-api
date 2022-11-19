@@ -26,15 +26,15 @@ public class Report : UseCase<Report.Request, Report.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.Get(request.CashgameId);
+        var cashgame = await _cashgameRepository.Get(request.CashgameId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
         cashgame.AddCheckpoint(checkpoint);
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
         return Success(new Result());
     }

@@ -21,10 +21,10 @@ public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Res
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var cashgame = _cashgameRepository.Get(request.Id);
+        var cashgame = await _cashgameRepository.Get(request.Id);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
@@ -32,7 +32,7 @@ public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Res
         if (cashgame.PlayerCount > 0)
             return Error(new CashgameHasResultsError());
 
-        _cashgameRepository.DeleteGame(cashgame.Id);
+        await _cashgameRepository.DeleteGame(cashgame.Id);
 
         return Success(new Result(bunch.Slug));
     }

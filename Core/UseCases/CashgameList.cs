@@ -28,15 +28,15 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListCashgames(user, player))
             return Error(new AccessDeniedError());
         
-        var cashgames = _cashgameRepository.GetFinished(bunch.Id, request.Year);
+        var cashgames = await _cashgameRepository.GetFinished(bunch.Id, request.Year);
         cashgames = SortItems(cashgames, request.SortOrder).ToList();
         var locations = await _locationRepository.List(bunch.Id);
-        var players = _playerRepository.List(bunch.Id);
+        var players = await _playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations), players));
 
         return Success(new Result(request.Slug, items.ToList()));

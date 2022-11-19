@@ -31,15 +31,15 @@ public class EventCashgameList : UseCase<EventCashgameList.Request, EventCashgam
         var @event = await _eventRepository.Get(request.EventId);
         var bunch = await _bunchRepository.Get(@event.BunchId);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListEventCashgames(user, player))
             return Error(new AccessDeniedError());
 
-        var cashgames = _cashgameRepository.GetByEvent(request.EventId);
+        var cashgames = await _cashgameRepository.GetByEvent(request.EventId);
         cashgames = SortItems(cashgames).ToList();
         var locations = await _locationRepository.List(bunch.Id);
-        var players = _playerRepository.List(bunch.Id);
+        var players = await _playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));

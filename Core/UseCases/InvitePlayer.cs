@@ -27,10 +27,10 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var player = _playerRepository.Get(request.PlayerId);
+        var player = await _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanInvitePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());

@@ -27,11 +27,11 @@ public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgam
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
         if (!AccessControl.CanListCurrentGames(user, player))
             return Error(new AccessDeniedError());
 
-        var cashgame = _cashgameRepository.GetRunning(bunch.Id);
+        var cashgame = await _cashgameRepository.GetRunning(bunch.Id);
 
         var gameList = new List<Game>();
         if (cashgame != null)

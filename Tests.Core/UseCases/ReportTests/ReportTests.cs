@@ -26,9 +26,9 @@ public class Arrange : UseCaseTest<Report>
         var player = new PlayerInTest(id: PlayerId);
         var user = new UserInTest(id: UserId);
 
-        Mock<ICashgameRepository>().Setup(o => o.Get(CashgameId)).Returns(cashgame);
+        Mock<ICashgameRepository>().Setup(o => o.Get(CashgameId)).Returns(Task.FromResult<Cashgame>(cashgame));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame cg) => UpdatedCashgame = cg);
-        Mock<IPlayerRepository>().Setup(o => o.Get(BunchId, UserId)).Returns(player);
+        Mock<IPlayerRepository>().Setup(o => o.Get(BunchId, UserId)).Returns(Task.FromResult<Player>(player));
         Mock<IUserRepository>().Setup(o => o.Get(Username)).Returns(Task.FromResult<User>(user));
     }
 

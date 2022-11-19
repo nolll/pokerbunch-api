@@ -23,12 +23,12 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayers(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var players = _playerRepository.List(bunch.Id);
+        var players = await _playerRepository.List(bunch.Id);
         var canAddPlayer = AccessControl.CanAddPlayer(currentUser, currentPlayer);
 
         return Success(new Result(bunch, players, canAddPlayer));

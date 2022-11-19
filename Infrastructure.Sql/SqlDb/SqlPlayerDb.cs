@@ -23,19 +23,19 @@ public class SqlPlayerDb
         _db = db;
     }
 
-    public IList<int> Find(int bunchId)
+    public async Task<IList<int>> Find(int bunchId)
     {
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@bunchId", bunchId)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("player_id");
 
     }
 
-    public IList<int> Find(int bunchId, string name)
+    public async Task<IList<int>> Find(int bunchId, string name)
     {
         var sql = string.Concat(SearchSql, "LEFT JOIN pb_user u on p.user_id = u.user_id WHERE p.bunch_id = @bunchId AND (p.player_name = @playerName OR u.display_name = @playerName)");
         var parameters = new List<SimpleSqlParameter>
@@ -43,12 +43,12 @@ public class SqlPlayerDb
             new("@bunchId", bunchId),
             new("@playerName", name)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("player_id");
 
     }
 
-    public IList<int> Find(int bunchId, int userId)
+    public async Task<IList<int>> Find(int bunchId, int userId)
     {
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId AND p.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
@@ -56,34 +56,34 @@ public class SqlPlayerDb
             new("@bunchId", bunchId),
             new("@userId", userId)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("player_id");
     }
 
-    public IList<Player> Get(IList<int> ids)
+    public async Task<IList<Player>> Get(IList<int> ids)
     {
         if(!ids.Any())
             return new List<Player>();
         var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
         var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+        var reader = await _db.QueryAsync(sql, parameter);
         var rawPlayers = reader.ReadList(CreateRawPlayer);
         return rawPlayers.Select(CreatePlayer).ToList();
     }
 
-    public Player Get(int id)
+    public async Task<Player> Get(int id)
     {
         var sql = string.Concat(DataSql, "WHERE p.player_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@id", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         var rawPlayer = reader.ReadOne(CreateRawPlayer);
         return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
     }
 
-    public int Add(Player player)
+    public async Task<int> Add(Player player)
     {
         if (player.IsUser)
         {
@@ -98,7 +98,7 @@ public class SqlPlayerDb
                 new("@approved", true),
                 new("@color", player.Color)
             };
-            return _db.ExecuteInsert(sql, parameters);
+            return await _db.ExecuteInsertAsync(sql, parameters);
         }
         else
         {
@@ -113,11 +113,11 @@ public class SqlPlayerDb
                 new("@playerName", player.DisplayName),
                 new("@color", player.Color)
             };
-            return _db.ExecuteInsert(sql, parameters);
+            return await _db.ExecuteInsertAsync(sql, parameters);
         }
     }
 
-    public bool JoinBunch(Player player, Bunch bunch, int userId)
+    public async Task<bool> JoinBunch(Player player, Bunch bunch, int userId)
     {
         const string sql = @"
             UPDATE pb_player
@@ -135,11 +135,11 @@ public class SqlPlayerDb
             new("@approved", true),
             new("@playerId", player.Id)
         };
-        var rowCount = _db.Execute(sql, parameters);
+        var rowCount = await _db.ExecuteAsync(sql, parameters);
         return rowCount > 0;
     }
 
-    public void Delete(int playerId)
+    public async Task Delete(int playerId)
     {
         const string sql = @"
             DELETE FROM pb_player
@@ -148,7 +148,7 @@ public class SqlPlayerDb
         {
             new("@playerId", playerId)
         };
-        _db.Execute(sql, parameters);
+        await _db.ExecuteAsync(sql, parameters);
     }
 
     private Player CreatePlayer(RawPlayer rawPlayer)

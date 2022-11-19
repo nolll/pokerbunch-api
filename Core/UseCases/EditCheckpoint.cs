@@ -28,11 +28,11 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
+        var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanEditCheckpoint(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
@@ -47,7 +47,7 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
             existingCheckpoint.Id);
 
         cashgame.UpdateCheckpoint(postedCheckpoint);
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
         return Success(new Result(cashgame.Id, existingCheckpoint.PlayerId));
     }

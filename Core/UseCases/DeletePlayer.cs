@@ -22,21 +22,21 @@ public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = _playerRepository.Get(request.PlayerId);
+        var player = await _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanDeletePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var cashgames = _cashgameRepository.GetByPlayer(player.Id);
+        var cashgames = await _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
 
         if (hasPlayed)
             return Error(new PlayerHasGamesError());
 
-        _playerRepository.Delete(request.PlayerId);
+        await _playerRepository.Delete(request.PlayerId);
 
         return Success(new Result(bunch.Slug, request.PlayerId));
     }

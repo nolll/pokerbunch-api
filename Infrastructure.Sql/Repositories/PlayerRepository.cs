@@ -17,44 +17,44 @@ public class PlayerRepository : IPlayerRepository
         _cacheContainer = cacheContainer;
     }
 
-    public Player Get(int id)
+    public async Task<Player> Get(int id)
     {
-        return _cacheContainer.GetAndStore(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Player> Get(IList<int> ids)
+    public async Task<IList<Player>> Get(IList<int> ids)
     {
-        return _cacheContainer.GetAndStore(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Player> List(int bunchId)
+    public async Task<IList<Player>> List(int bunchId)
     {
-        var ids = _playerDb.Find(bunchId);
-        return Get(ids);
+        var ids = await _playerDb.Find(bunchId);
+        return await Get(ids);
     }
 
-    public Player Get(int bunchId, int userId)
+    public async Task<Player> Get(int bunchId, int userId)
     {
-        var ids = _playerDb.Find(bunchId, userId);
+        var ids = await _playerDb.Find(bunchId, userId);
         if (!ids.Any())
             return null;
-        return Get(ids).First();
+        return (await Get(ids)).First();
 
     }
 
-    public int Add(Player player)
+    public async Task<int> Add(Player player)
     {
-        return _playerDb.Add(player);
+        return await _playerDb.Add(player);
     }
 
-    public bool JoinBunch(Player player, Bunch bunch, int userId)
+    public async Task<bool> JoinBunch(Player player, Bunch bunch, int userId)
     {
-        return _playerDb.JoinBunch(player, bunch, userId);
+        return await _playerDb.JoinBunch(player, bunch, userId);
     }
 
-    public void Delete(int playerId)
+    public async Task Delete(int playerId)
     {
-        _playerDb.Delete(playerId);
+        await _playerDb.Delete(playerId);
         _cacheContainer.Remove<Player>(playerId);
     }
 }

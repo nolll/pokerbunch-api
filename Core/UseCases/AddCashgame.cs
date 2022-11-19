@@ -32,14 +32,14 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
 
         var user = await _userRepository.Get(request.UserName);
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanAddCashgame(user, player))
             return Error(new AccessDeniedError()); 
 
-        var location = _locationRepository.Get(request.LocationId);
+        var location = await _locationRepository.Get(request.LocationId);
         var cashgame = new Cashgame(bunch.Id, location.Id, 0, GameStatus.Running);
-        var cashgameId = _cashgameRepository.Add(bunch, cashgame);
+        var cashgameId = await _cashgameRepository.Add(bunch, cashgame);
 
         return Success(new Result(request.Slug, cashgameId));
     }

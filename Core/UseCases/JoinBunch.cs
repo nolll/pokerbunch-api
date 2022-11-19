@@ -26,14 +26,14 @@ public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
             return Error(new ValidationError(validator));
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var players = _playerRepository.List(bunch.Id);
+        var players = await _playerRepository.List(bunch.Id);
         var player = GetMatchedPlayer(players, request.Code);
 
         if (player == null)
             return Error(new InvalidJoinCodeError());
 
         var user = await _userRepository.Get(request.UserName);
-        _playerRepository.JoinBunch(player, bunch, user.Id);
+        await _playerRepository.JoinBunch(player, bunch, user.Id);
         return Success(new Result(bunch.Slug, player.Id));
     }
     

@@ -29,15 +29,15 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var cashgame = _cashgameRepository.Get(request.Id);
+        var cashgame = await _cashgameRepository.Get(request.Id);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanSeeCashgame(user, player))
             return Error(new AccessDeniedError());
 
-        var players = _playerRepository.Get(GetPlayerIds(cashgame));
+        var players = await _playerRepository.Get(GetPlayerIds(cashgame));
 
         var role = user.IsAdmin ? Role.Manager : player.Role;
 

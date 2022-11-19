@@ -4,17 +4,14 @@ namespace Core.Repositories;
 
 public interface ICashgameRepository
 {
-    Cashgame Get(int cashgameId);
-
-    IList<Cashgame> GetFinished(int bunchId, int? year = null);
-    IList<Cashgame> GetByEvent(int eventId);
-    IList<Cashgame> GetByPlayer(int playerId);
-    Cashgame GetRunning(int bunchId);
-    Cashgame GetByCheckpoint(int checkpointId);
-        
-    void DeleteGame(int id);
-    int Add(Bunch bunch, Cashgame cashgame);
-    void Update(Cashgame cashgame);
-
-    IList<int> GetYears(int bunchId);
+    Task<Cashgame> Get(int cashgameId);
+    Task<IList<Cashgame>> GetFinished(int bunchId, int? year = null);
+    Task<IList<Cashgame>> GetByEvent(int eventId);
+    Task<IList<Cashgame>> GetByPlayer(int playerId);
+    Task<Cashgame> GetRunning(int bunchId);
+    Task<Cashgame> GetByCheckpoint(int checkpointId);
+    Task DeleteGame(int id);
+    Task<int> Add(Bunch bunch, Cashgame cashgame);
+    Task Update(Cashgame cashgame);
+    Task<IList<int>> GetYears(int bunchId);
 }

@@ -15,41 +15,42 @@ public class FakePlayerRepository : IPlayerRepository
         _list = CreateList();
     }
 
-    public IList<Player> List(int bunchId)
+    public Task<IList<Player>> List(int bunchId)
     {
-        return _list.Where(o => o.BunchId == bunchId).ToList();
+        return Task.FromResult<IList<Player>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Player Get(int bunchId, int userId)
+    public Task<Player> Get(int bunchId, int userId)
     {
-        return _list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId);
+        return Task.FromResult(_list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId));
     }
 
-    public IList<Player> Get(IList<int> ids)
+    public Task<IList<Player>> Get(IList<int> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Player>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public Player Get(int id)
+    public Task<Player> Get(int id)
     {
-        return _list.FirstOrDefault(o => o.Id == id);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
 
-    public int Add(Player player)
+    public Task<int> Add(Player player)
     {
         Added = player;
-        return 1;
+        return Task.FromResult(1);
     }
 
-    public bool JoinBunch(Player player, Bunch bunch, int userId)
+    public Task<bool> JoinBunch(Player player, Bunch bunch, int userId)
     {
         Joined = new JoinedData(player.Id, bunch.Id, userId);
-        return true;
+        return Task.FromResult(true);
     }
 
-    public void Delete(int playerId)
+    public Task Delete(int playerId)
     {
         Deleted = playerId;
+        return Task.CompletedTask;
     }
 
     private IList<Player> CreateList()
@@ -72,8 +73,8 @@ public class FakePlayerRepository : IPlayerRepository
             UserId = userId;
         }
 
-        public int PlayerId { get; private set; }
-        public int BunchId { get; private set; }
-        public int UserId { get; private set; }
+        public int PlayerId { get; }
+        public int BunchId { get; }
+        public int UserId { get; }
     }
 }

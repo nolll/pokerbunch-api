@@ -27,9 +27,9 @@ public class Cashout : UseCase<Cashout.Request, Cashout.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.Get(request.CashgameId);
+        var cashgame = await _cashgameRepository.Get(request.CashgameId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
@@ -53,7 +53,7 @@ public class Cashout : UseCase<Cashout.Request, Cashout.Result>
         if (cashgame.IsReadyToEnd)
             cashgame.ChangeStatus(GameStatus.Finished);
 
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
         return Success(new Result(cashgame.Id));
     }

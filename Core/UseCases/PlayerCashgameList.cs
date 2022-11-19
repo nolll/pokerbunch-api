@@ -26,18 +26,18 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = _playerRepository.Get(request.PlayerId);
+        var player = await _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
         var currentUser = await _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayerCashgames(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var cashgames = _cashgameRepository.GetByPlayer(request.PlayerId);
+        var cashgames = await _cashgameRepository.GetByPlayer(request.PlayerId);
         cashgames = SortItems(cashgames).ToList();
         var locations = await _locationRepository.List(bunch.Id);
-        var players = _playerRepository.List(bunch.Id);
+        var players = await _playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));

@@ -24,12 +24,12 @@ public class CashgameYearList : UseCase<CashgameYearList.Request, CashgameYearLi
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListCashgameYears(user, player))
             return Error(new AccessDeniedError());
         
-        var years = _cashgameRepository.GetYears(bunch.Id);
+        var years = await _cashgameRepository.GetYears(bunch.Id);
 
         return Success(new Result(request.Slug, years.ToList()));
     }

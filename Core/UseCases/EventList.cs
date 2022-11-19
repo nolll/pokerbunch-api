@@ -27,7 +27,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListEvents(user, player))
             return Error(new AccessDeniedError());

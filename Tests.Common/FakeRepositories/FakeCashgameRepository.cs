@@ -17,70 +17,68 @@ public class FakeCashgameRepository : ICashgameRepository
         SetupMultiYear();
     }
 
-    public Cashgame Get(int cashgameId)
+    public Task<Cashgame> Get(int cashgameId)
     {
-        return _list.FirstOrDefault(o => o.Id == cashgameId);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == cashgameId));
     }
 
-    public IList<Cashgame> Get(IList<int> ids)
+    public Task<IList<Cashgame>> Get(IList<int> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Cashgame>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public IList<Cashgame> GetFinished(int bunchId, int? year = null)
+    public Task<IList<Cashgame>> GetFinished(int bunchId, int? year = null)
     {
-        if (year.HasValue)
-            return _list.Where(o => o.StartTime.HasValue && o.StartTime.Value.Year == year && o.Status == GameStatus.Finished).ToList();
-        return _list.Where(o => o.Status == GameStatus.Finished).ToList();
+        var games = year.HasValue 
+            ? _list.Where(o => o.StartTime.HasValue && o.StartTime.Value.Year == year && o.Status == GameStatus.Finished).ToList()
+            : _list.Where(o => o.Status == GameStatus.Finished).ToList();
+
+        return Task.FromResult<IList<Cashgame>>(games);
     }
 
-    public IList<Cashgame> GetByEvent(int eventId)
+    public Task<IList<Cashgame>> GetByEvent(int eventId)
     {
         throw new NotImplementedException();
     }
 
-    public IList<Cashgame> GetByPlayer(int playerId)
+    public Task<IList<Cashgame>> GetByPlayer(int playerId)
     {
-        var ids = new List<Cashgame>();
-        foreach (var game in _list)
-        {
-            if (game.GetResult(playerId) != null)
-            {
-                ids.Add(game);
-            }
-        }
-        return ids;
+        var games = _list.Where(game => game.GetResult(playerId) != null).ToList();
+        return Task.FromResult<IList<Cashgame>>(games);
     }
 
-    public Cashgame GetRunning(int bunchId)
+    public Task<Cashgame> GetRunning(int bunchId)
     {
-        return _list.FirstOrDefault(o => o.Status == GameStatus.Running);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Status == GameStatus.Running));
     }
 
-    public Cashgame GetByCheckpoint(int checkpointId)
+    public Task<Cashgame> GetByCheckpoint(int checkpointId)
     {
-        return _list.FirstOrDefault(o => o.Checkpoints.Any(p => p.Id == checkpointId));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Checkpoints.Any(p => p.Id == checkpointId)));
     }
 
-    public IList<int> GetYears(int bunchId)
+    public Task<IList<int>> GetYears(int bunchId)
     {
-        return _list.Where(o => o.StartTime.HasValue && o.Status == GameStatus.Finished).Select(o => o.StartTime.Value.Year).ToList();
+        var years = _list.Where(o => o.StartTime.HasValue && o.Status == GameStatus.Finished).Select(o => o.StartTime.Value.Year).ToList();
+        return Task.FromResult<IList<int>>(years);
     }
 
-    public void DeleteGame(int id)
+    public Task DeleteGame(int id)
     {
         Deleted = id;
+        return Task.CompletedTask;
     }
 
-    public int Add(Bunch bunch, Cashgame cashgame)
+    public Task<int> Add(Bunch bunch, Cashgame cashgame)
     {
         Added = cashgame;
-        return 1;
+        return Task.FromResult(1);
     }
 
-    public void Update(Cashgame cashgame)
+    public Task Update(Cashgame cashgame)
     {
         Updated = cashgame;
+        return Task.CompletedTask;
     }
 
     public void SetupMultiYear()

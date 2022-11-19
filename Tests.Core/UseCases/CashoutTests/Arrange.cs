@@ -37,9 +37,9 @@ public abstract class Arrange : UseCaseTest<Cashout>
         CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
         UpdatedCashgame = null;
 
-        Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(CreateCashgame());
+        Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(Task.FromResult(CreateCashgame()));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
-        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
+        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult(player));
         Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(Task.FromResult(user));
     }
 

@@ -23,7 +23,7 @@ public class GetBunch : UseCase<GetBunch.Request, GetBunch.Result>
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = await _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
         if (!AccessControl.CanGetBunch(user, player))
             return Error(new AccessDeniedError());
 
