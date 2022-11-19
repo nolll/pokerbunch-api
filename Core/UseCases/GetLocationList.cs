@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocationList : AsyncUseCase<GetLocationList.Request, GetLocationList.Result>
+public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;

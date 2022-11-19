@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventDetails : AsyncUseCase<EventDetails.Request, EventDetails.Result>
+public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
 {
     private readonly IEventRepository _eventRepository;
     private readonly IUserRepository _userRepository;

@@ -8,7 +8,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Cashout : AsyncUseCase<Cashout.Request, Cashout.Result>
+public class Cashout : UseCase<Cashout.Request, Cashout.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;

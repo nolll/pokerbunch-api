@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddUser : AsyncUseCase<AddUser.Request, AddUser.Result>
+public class AddUser : UseCase<AddUser.Request, AddUser.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRandomizer _randomizer;

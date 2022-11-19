@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditCheckpoint : AsyncUseCase<EditCheckpoint.Request, EditCheckpoint.Result>
+public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;

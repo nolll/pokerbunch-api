@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ResetPassword : AsyncUseCase<ResetPassword.Request, ResetPassword.Result>
+public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IEmailSender _emailSender;

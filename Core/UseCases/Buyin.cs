@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Buyin : AsyncUseCase<Buyin.Request, Buyin.Result>
+public class Buyin : UseCase<Buyin.Request, Buyin.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;

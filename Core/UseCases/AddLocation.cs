@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddLocation : AsyncUseCase<AddLocation.Request, AddLocation.Result>
+public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;

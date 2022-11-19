@@ -3,7 +3,7 @@ using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class GetBunchListForUser : AsyncUseCase<GetBunchListForUser.Request, GetBunchListForUser.Result>
+public class GetBunchListForUser : UseCase<GetBunchListForUser.Request, GetBunchListForUser.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;

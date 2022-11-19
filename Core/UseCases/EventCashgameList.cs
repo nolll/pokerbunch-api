@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventCashgameList : AsyncUseCase<EventCashgameList.Request, EventCashgameList.Result>
+public class EventCashgameList : UseCase<EventCashgameList.Request, EventCashgameList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;

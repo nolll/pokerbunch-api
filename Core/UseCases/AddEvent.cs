@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddEvent : AsyncUseCase<AddEvent.Request, AddEvent.Result>
+public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;

@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Login : AsyncUseCase<Login.Request, Login.Result>
+public class Login : UseCase<Login.Request, Login.Result>
 {
     private readonly IUserRepository _userRepository;
 

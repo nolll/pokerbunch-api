@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayer : AsyncUseCase<GetPlayer.Request, GetPlayer.Result>
+public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;

@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class RequireAppsettingsAccess : AsyncUseCase<RequireAppsettingsAccess.Request, RequireAppsettingsAccess.Result>
+public class RequireAppsettingsAccess : UseCase<RequireAppsettingsAccess.Request, RequireAppsettingsAccess.Result>
 {
     private readonly IUserRepository _userRepository;
 

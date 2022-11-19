@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class JoinBunch : AsyncUseCase<JoinBunch.Request, JoinBunch.Result>
+public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;

@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCashgame : AsyncUseCase<DeleteCashgame.Request, DeleteCashgame.Result>
+public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IBunchRepository _bunchRepository;

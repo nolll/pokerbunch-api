@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditCashgame : AsyncUseCase<EditCashgame.Request, EditCashgame.Result>
+public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IUserRepository _userRepository;

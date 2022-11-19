@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class TestEmail : AsyncUseCase<TestEmail.Request, TestEmail.Result>
+public class TestEmail : UseCase<TestEmail.Request, TestEmail.Result>
 {
     private readonly IEmailSender _emailSender;
     private readonly IUserRepository _userRepository;

@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayerList : AsyncUseCase<GetPlayerList.Request, GetPlayerList.Result>
+public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;

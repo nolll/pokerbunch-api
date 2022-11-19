@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeletePlayer : AsyncUseCase<DeletePlayer.Request, DeletePlayer.Result>
+public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly ICashgameRepository _cashgameRepository;

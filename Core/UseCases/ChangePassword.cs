@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ChangePassword : AsyncUseCase<ChangePassword.Request, ChangePassword.Result>
+public class ChangePassword : UseCase<ChangePassword.Request, ChangePassword.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRandomizer _randomizer;

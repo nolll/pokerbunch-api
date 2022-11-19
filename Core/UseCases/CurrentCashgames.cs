@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CurrentCashgames : AsyncUseCase<CurrentCashgames.Request, CurrentCashgames.Result>
+public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;

@@ -5,7 +5,7 @@ using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class EditUser : AsyncUseCase<EditUser.Request, EditUser.Result>
+public class EditUser : UseCase<EditUser.Request, EditUser.Result>
 {
     private readonly IUserRepository _userRepository;
 

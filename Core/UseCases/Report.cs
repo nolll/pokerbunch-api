@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Report : AsyncUseCase<Report.Request, Report.Result>
+public class Report : UseCase<Report.Request, Report.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;

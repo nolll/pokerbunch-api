@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventList : AsyncUseCase<EventList.Request, EventList.Result>
+public class EventList : UseCase<EventList.Request, EventList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IEventRepository _eventRepository;

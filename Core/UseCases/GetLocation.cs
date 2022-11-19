@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocation : AsyncUseCase<GetLocation.Request, GetLocation.Result>
+public class GetLocation : UseCase<GetLocation.Request, GetLocation.Result>
 {
     private readonly ILocationRepository _locationRepository;
     private readonly IUserRepository _userRepository;

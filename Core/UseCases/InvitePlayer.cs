@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class InvitePlayer : AsyncUseCase<InvitePlayer.Request, InvitePlayer.Result>
+public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;

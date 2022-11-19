@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditBunch : AsyncUseCase<EditBunch.Request, EditBunch.Result>
+public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;

@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ClearCache : AsyncUseCase<ClearCache.Request, ClearCache.Result>
+public class ClearCache : UseCase<ClearCache.Request, ClearCache.Result>
 {
     private readonly ICacheContainer _cache;
     private readonly IUserRepository _userRepository;

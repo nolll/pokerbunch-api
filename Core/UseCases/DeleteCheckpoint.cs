@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCheckpoint : AsyncUseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
+public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
