@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
@@ -40,39 +39,39 @@ public class BunchController : BaseController
     [Route(ApiRoutes.Bunch.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Get(string bunchId)
+    public async Task<ObjectResult> Get(string bunchId)
     {
         var request = new GetBunch.Request(CurrentUserName, bunchId);
-        var result = _getBunch.Execute(request);
+        var result = await _getBunch.Execute(request);
         return Model(result, () => new BunchModel(result.Data));
     }
 
     [Route(ApiRoutes.Bunch.Get)]
     [HttpPut]
     [ApiAuthorize]
-    public ObjectResult Update(string bunchId, [FromBody] UpdateBunchPostModel post)
+    public async Task<ObjectResult> Update(string bunchId, [FromBody] UpdateBunchPostModel post)
     {
         var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
-        var result = _editBunch.Execute(request);
+        var result = await _editBunch.Execute(request);
         return Model(result, () => new BunchModel(result.Data));
     }
 
     [Route(ApiRoutes.Bunch.List)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult List()
+    public async Task<ObjectResult> List()
     {
         var request = new GetBunchList.Request(CurrentUserName);
-        var result = _getBunchList.Execute(request);
+        var result = await _getBunchList.Execute(request);
         return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
     }
 
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Bunches()
+    public async Task<ObjectResult> Bunches()
     {
-        var result = _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
+        var result = await _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
         return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
     }
 
@@ -89,10 +88,10 @@ public class BunchController : BaseController
     [Route(ApiRoutes.Bunch.Join)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult Join(string bunchId, [FromBody] JoinBunchPostModel post)
+    public async Task<ObjectResult> Join(string bunchId, [FromBody] JoinBunchPostModel post)
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
-        var result = _joinBunch.Execute(request);
+        var result = await _joinBunch.Execute(request);
         return Model(result, () => new PlayerJoinedModel(result.Data.PlayerId));
     }
 }

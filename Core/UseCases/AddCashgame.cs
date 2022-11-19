@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
+public class AddCashgame : AsyncUseCase<AddCashgame.Request, AddCashgame.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -23,7 +23,7 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
         _locationRepository = locationRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
@@ -31,7 +31,7 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
             return Error(new ValidationError(validator));
 
         var user = _userRepository.Get(request.UserName);
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var player = _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanAddCashgame(user, player))

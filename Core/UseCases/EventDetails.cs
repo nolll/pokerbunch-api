@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -27,7 +26,7 @@ public class EventDetails : AsyncUseCase<EventDetails.Request, EventDetails.Resu
     {
         var e = await _eventRepository.Get(request.EventId);
         var location = e.LocationId > 0 ? await _locationRepository.Get(e.LocationId) : null;
-        var bunch = _bunchRepository.Get(e.BunchId);
+        var bunch = await _bunchRepository.Get(e.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(e.BunchId, user.Id);
 

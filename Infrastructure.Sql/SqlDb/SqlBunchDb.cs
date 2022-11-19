@@ -26,52 +26,52 @@ public class SqlBunchDb
         _db = db;
     }
 
-    public IList<Bunch> Get(IList<int> ids)
+    public async Task<IList<Bunch>> Get(IList<int> ids)
     {
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
         var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+        var reader = await _db.QueryAsync(sql, parameter);
         var rawHomegames = reader.ReadList(CreateRawBunch);
         return rawHomegames.Select(CreateBunch).ToList();
     }
 
-    public Bunch Get(int id)
+    public async Task<Bunch> Get(int id)
     {
         var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@id", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         var rawHomegame = reader.ReadOne(CreateRawBunch);
         return rawHomegame != null ? CreateBunch(rawHomegame) : null;
     }
 
-    public IList<int> Search()
+    public async Task<IList<int>> Search()
     {
-        var reader = _db.Query(SearchSql);
+        var reader = await _db.QueryAsync(SearchSql);
         return reader.ReadIntList("bunch_id");
     }
 
-    public IList<int> Search(string slug)
+    public async Task<IList<int>> Search(string slug)
     {
         var sql = string.Concat(SearchSql, " WHERE b.name = @slug");
         var parameters = new SqlParameters(new SimpleSqlParameter("@slug", slug));
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         var id = reader.ReadInt("bunch_id");
         if(id.HasValue)
             return new List<int>{id.Value};
         return new List<int>();
     }
 
-    public IList<int> Search(int userId)
+    public async Task<IList<int>> Search(int userId)
     {
         var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@userId", userId)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("bunch_id");
     }
         

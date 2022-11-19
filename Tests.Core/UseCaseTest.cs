@@ -1,5 +1,4 @@
 ﻿using Moq;
-using NUnit.Framework;
 
 namespace Tests.Core;
 
@@ -15,10 +14,20 @@ public abstract class UseCaseTest<T> where T : class
         Sut = _mocker.New<T>();
         Setup();
         Execute();
+        ExecuteAsync();
     }
 
     protected Mock<TM> Mock<TM>() where TM : class => _mocker.MockOf<TM>();
 
     protected abstract void Setup();
-    protected abstract void Execute();
+
+    protected virtual void Execute()
+    {
+
+    }
+
+    protected virtual Task ExecuteAsync()
+    {
+        return Task.CompletedTask;
+    }
 }

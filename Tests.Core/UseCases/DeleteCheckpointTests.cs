@@ -1,6 +1,5 @@
 using System.Linq;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -8,10 +7,10 @@ namespace Tests.Core.UseCases;
 public class DeleteCheckpointTests : TestBase
 {
     [Test]
-    public void DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues()
+    public async Task DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues()
     {
         var request = new DeleteCheckpoint.Request(TestData.ManagerUser.UserName, TestData.ReportCheckpointId);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         var deletedCheckpointIds = Deps.Cashgame.Updated.DeletedCheckpoints.Select(o => o.Id);
         Assert.IsTrue(deletedCheckpointIds.Contains(TestData.ReportCheckpointId));
@@ -21,12 +20,12 @@ public class DeleteCheckpointTests : TestBase
     }
 
     [Test]
-    public void DeleteCheckpoint_RunningGame_DeletesCheckpointAndReturnsCorrectValues()
+    public async Task DeleteCheckpoint_RunningGame_DeletesCheckpointAndReturnsCorrectValues()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new DeleteCheckpoint.Request(TestData.ManagerUser.UserName, 12);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         var deletedCheckpointIds = Deps.Cashgame.Updated.DeletedCheckpoints.Select(o => o.Id);
         Assert.IsTrue(deletedCheckpointIds.Contains(12));

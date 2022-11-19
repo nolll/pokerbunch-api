@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -7,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
+public class JoinBunch : AsyncUseCase<JoinBunch.Request, JoinBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -20,13 +19,13 @@ public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var players = _playerRepository.List(bunch.Id);
         var player = GetMatchedPlayer(players, request.Code);
 

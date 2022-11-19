@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -29,7 +27,7 @@ public class PlayerCashgameList : AsyncUseCase<PlayerCashgameList.Request, Playe
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = _playerRepository.Get(request.PlayerId);
-        var bunch = _bunchRepository.Get(player.BunchId);
+        var bunch = await _bunchRepository.Get(player.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 

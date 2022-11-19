@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Core.Errors;
 
 namespace Core.UseCases;

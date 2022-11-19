@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -29,7 +28,7 @@ public class AddEvent : AsyncUseCase<AddEvent.Request, AddEvent.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 

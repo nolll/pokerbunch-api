@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -7,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunchList : UseCase<GetBunchList.Request, GetBunchList.Result>
+public class GetBunchList : AsyncUseCase<GetBunchList.Request, GetBunchList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -18,13 +17,13 @@ public class GetBunchList : UseCase<GetBunchList.Request, GetBunchList.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var user = _userRepository.Get(request.UserName);
         if (!AccessControl.CanListBunches(user))
             return Error(new AccessDeniedError());
 
-        var bunches = _bunchRepository.List();
+        var bunches = await _bunchRepository.List();
         return Success(new Result(bunches));
     }
     

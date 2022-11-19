@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -7,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result>
+public class GetPlayerList : AsyncUseCase<GetPlayerList.Request, GetPlayerList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,9 +19,9 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
         _playerRepository = playerRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 

@@ -1,7 +1,5 @@
 ﻿using Core.Entities;
 using Core.UseCases;
-using NUnit.Framework;
-using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;

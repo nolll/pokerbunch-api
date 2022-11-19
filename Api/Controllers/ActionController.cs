@@ -1,4 +1,3 @@
-using System;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
@@ -72,18 +71,18 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Get)]
     [HttpPut]
     [ApiAuthorize]
-    public ObjectResult UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
+    public async Task<ObjectResult> UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
     {
-        var result = _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
+        var result = await _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
         return Model(result, () => new OkModel());
     }
 
     [Route(ApiRoutes.Action.Get)]
     [HttpDelete]
     [ApiAuthorize]
-    public ObjectResult DeleteAction(int cashgameId, int actionId)
+    public async Task<ObjectResult> DeleteAction(int cashgameId, int actionId)
     {
-        var result = _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+        var result = await _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
         return Model(result, () => new OkModel());
     }
 

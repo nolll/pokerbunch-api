@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Api.Extensions;
+﻿namespace Api.Extensions;
 
 public static class SwaggerSchema
 {

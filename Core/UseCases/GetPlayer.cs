@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
+public class GetPlayer : AsyncUseCase<GetPlayer.Request, GetPlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,10 +21,10 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = _playerRepository.Get(request.PlayerId);
-        var bunch = _bunchRepository.Get(player.BunchId);
+        var bunch = await _bunchRepository.Get(player.BunchId);
         var user = _userRepository.Get(player.UserId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);

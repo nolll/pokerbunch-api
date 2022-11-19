@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.LocationModels;
 using Api.Routes;

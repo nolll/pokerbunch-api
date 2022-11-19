@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using Api.Models.CommonModels;
 using Api.Routes;

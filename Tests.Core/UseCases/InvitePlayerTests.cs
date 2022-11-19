@@ -1,6 +1,5 @@
 ﻿using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -8,26 +7,26 @@ namespace Tests.Core.UseCases;
 public class InvitePlayerTests : TestBase
 {
     [Test]
-    public void InvitePlayer_ReturnUrlIsSet()
+    public async Task InvitePlayer_ReturnUrlIsSet()
     {
         var request = CreateRequest();
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual(1, result.Data.PlayerId);
     }
 
     [TestCase("")]
     [TestCase("a")]
-    public void InvitePlayer_InvalidEmail_ReturnsError(string email)
+    public async Task InvitePlayer_InvalidEmail_ReturnsError(string email)
     {
         var request = CreateRequest(email);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void InvitePlayer_ValidEmail_SendsInvitationEmail()
+    public async Task InvitePlayer_ValidEmail_SendsInvitationEmail()
     {
         const string subject = "Invitation to Poker Bunch: Bunch A";
         const string body = @"You have been invited to join the poker game: Bunch A.
@@ -38,7 +37,7 @@ use this link instead, https://pokerbunch.com/fakejoin/bunch-a, and enter this v
 If you don't have an account, you can register at https://pokerbunch.com/test";
         var request = CreateRequest();
 
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
         Assert.AreEqual(TestData.UserEmailA, Deps.EmailSender.To);
         Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);

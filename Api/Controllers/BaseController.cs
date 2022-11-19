@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Core.Errors;
-using System;
 using Environment = Api.Services.Environment;
 
 namespace Api.Controllers;

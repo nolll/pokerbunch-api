@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
+public class DeletePlayer : AsyncUseCase<DeletePlayer.Request, DeletePlayer.Result>
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -20,10 +20,10 @@ public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
         _bunchRepository = bunchRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = _playerRepository.Get(request.PlayerId);
-        var bunch = _bunchRepository.Get(player.BunchId);
+        var bunch = await _bunchRepository.Get(player.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 

@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
+public class EditBunch : AsyncUseCase<EditBunch.Request, EditBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,13 +20,13 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
         _playerRepository = playerRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
@@ -34,7 +34,7 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
             return Error(new AccessDeniedError());
 
         var postedHomegame = CreateBunch(bunch, request);
-        _bunchRepository.Update(postedHomegame);
+        await _bunchRepository.Update(postedHomegame);
 
         return Success(new Result(bunch, currentPlayer));
     }

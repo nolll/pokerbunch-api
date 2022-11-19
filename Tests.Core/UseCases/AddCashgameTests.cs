@@ -1,6 +1,5 @@
 ﻿using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -8,28 +7,28 @@ namespace Tests.Core.UseCases;
 public class AddCashgameTests : TestBase
 {
     [Test]
-    public void AddCashgame_SlugIsSet()
+    public async Task AddCashgame_SlugIsSet()
     {
         var request = CreateRequest(TestData.LocationIdA);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual(TestData.SlugA, result.Data.Slug);
     }
 
     [Test]
-    public void AddCashgame_WithLocation_GameIsAdded()
+    public async Task AddCashgame_WithLocation_GameIsAdded()
     {
         var request = CreateRequest(TestData.LocationIdA);
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
         Assert.IsNotNull(Deps.Cashgame.Added);
     }
 
     [Test]
-    public void AddCashgame_WithoutLocation_ReturnsError()
+    public async Task AddCashgame_WithoutLocation_ReturnsError()
     {
         var request = CreateRequest();
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 

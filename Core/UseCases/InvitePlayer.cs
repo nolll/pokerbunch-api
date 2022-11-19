@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
+public class InvitePlayer : AsyncUseCase<InvitePlayer.Request, InvitePlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -20,7 +20,7 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
@@ -28,7 +28,7 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
             return Error(new ValidationError(validator));
 
         var player = _playerRepository.Get(request.PlayerId);
-        var bunch = _bunchRepository.Get(player.BunchId);
+        var bunch = await _bunchRepository.Get(player.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 

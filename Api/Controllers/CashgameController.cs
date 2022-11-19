@@ -1,6 +1,4 @@
-using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Routes;
@@ -102,7 +100,7 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> Add(string bunchId, [FromBody] AddCashgamePostModel post)
     {
         var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
-        var addResult = _addCashgame.Execute(addRequest);
+        var addResult = await _addCashgame.Execute(addRequest);
         if (!addResult.Success)
             return Error(addResult.Error);
 
@@ -129,28 +127,28 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.Delete)]
     [HttpDelete]
     [ApiAuthorize]
-    public ObjectResult Delete(int cashgameId)
+    public async Task<ObjectResult> Delete(int cashgameId)
     {
         var request = new DeleteCashgame.Request(CurrentUserName, cashgameId);
-        var result = _deleteCashgame.Execute(request);
+        var result = await _deleteCashgame.Execute(request);
         return Model(result, () => new CashgameDeletedModel(cashgameId));
     }
 
     [Route(ApiRoutes.Cashgame.ListCurrentByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Current(string bunchId)
+    public async Task<ObjectResult> Current(string bunchId)
     {
-        var result = _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
+        var result = await _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
         return Model(result, () => result.Data.Games.Select(o => new ApiCurrentGame(o, _urls)));
     }
 
     [Route(ApiRoutes.Cashgame.YearsByBunch)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Years(string bunchId)
+    public async Task<ObjectResult> Years(string bunchId)
     {
-        var result = _cashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
+        var result = await _cashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
         return Model(result, () => result.Data.Years.Select(o => new CashgameYearListItemModel(result.Data.Slug, o, _urls)));
     }
 }

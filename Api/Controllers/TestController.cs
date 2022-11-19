@@ -1,4 +1,3 @@
-using System;
 using Api.Settings;
 using Core.Errors;
 using Microsoft.AspNetCore.Mvc;

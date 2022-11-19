@@ -1,7 +1,6 @@
 using System;
 using Core.Entities;
 using Core.Services;
-using NUnit.Framework;
 
 namespace Tests.Core.Services;
 

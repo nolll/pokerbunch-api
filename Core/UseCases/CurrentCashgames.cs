@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
+public class CurrentCashgames : AsyncUseCase<CurrentCashgames.Request, CurrentCashgames.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -24,9 +23,9 @@ public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgam
         _playerRepository = playerRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
         if (!AccessControl.CanListCurrentGames(user, player))

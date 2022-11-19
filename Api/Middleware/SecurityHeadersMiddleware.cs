@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Api.Extensions;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Core.Errors;
@@ -32,7 +30,7 @@ public class CashgameDetails : AsyncUseCase<CashgameDetails.Request, CashgameDet
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = _cashgameRepository.Get(request.Id);
-        var bunch = _bunchRepository.Get(cashgame.BunchId);
+        var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
 

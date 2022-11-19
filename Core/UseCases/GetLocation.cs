@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Core.Errors;
 using Core.Repositories;
 using Core.Services;
@@ -23,7 +22,7 @@ public class GetLocation : AsyncUseCase<GetLocation.Request, GetLocation.Result>
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var location = await _locationRepository.Get(request.LocationId);
-        var bunch = _bunchRepository.Get(location.BunchId);
+        var bunch = await _bunchRepository.Get(location.BunchId);
         var user = _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(location.BunchId, user.Id);
 

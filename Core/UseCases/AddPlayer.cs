@@ -8,7 +8,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
+public class AddPlayer : AsyncUseCase<AddPlayer.Request, AddPlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,14 +21,14 @@ public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanAddPlayer(currentUser, currentPlayer))
@@ -62,7 +62,7 @@ public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
 
     public class Result
     {
-        public int Id { get; private set; }
+        public int Id { get; }
 
         public Result(int id)
         {

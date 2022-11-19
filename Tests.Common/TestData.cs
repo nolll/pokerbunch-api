@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Tests.Common.Builders;

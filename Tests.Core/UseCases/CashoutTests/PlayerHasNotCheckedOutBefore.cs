@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Core.Entities.Checkpoints;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.CashoutTests;
 

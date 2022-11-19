@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;

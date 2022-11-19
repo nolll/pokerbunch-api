@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -28,7 +27,7 @@ public class AddBunch : AsyncUseCase<AddBunch.Request, AddBunch.Result>
             return Error(new ValidationError(validator));
 
         var slug = SlugGenerator.GetSlug(request.DisplayName);
-        var existingBunch = _bunchRepository.GetBySlug(slug);
+        var existingBunch = await _bunchRepository.GetBySlug(slug);
         var bunchExists = existingBunch != null;
 
         if (bunchExists)

@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
+public class DeleteCheckpoint : AsyncUseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -20,11 +20,11 @@ public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoi
         _playerRepository = playerRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunch = _bunchRepository.Get(cashgame.BunchId);
+        var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 

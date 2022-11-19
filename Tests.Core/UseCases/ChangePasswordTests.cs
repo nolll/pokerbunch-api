@@ -4,7 +4,6 @@ using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using Moq;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;

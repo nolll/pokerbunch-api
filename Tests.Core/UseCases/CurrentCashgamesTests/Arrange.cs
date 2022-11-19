@@ -25,13 +25,13 @@ public abstract class Arrange : UseCaseTest<CurrentCashgames>
         var cashgame = GameCount > 0 ? new CashgameInTest(id: CashgameId) : null;
 
         Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(user);
-        Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(bunch);
+        Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult<Bunch>(bunch));
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
         Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(cashgame);
     }
 
-    protected override void Execute()
+    protected override async Task ExecuteAsync()
     {
-        Result = Sut.Execute(new CurrentCashgames.Request(UserName, Slug));
+        Result = await Sut.Execute(new CurrentCashgames.Request(UserName, Slug));
     }
 }

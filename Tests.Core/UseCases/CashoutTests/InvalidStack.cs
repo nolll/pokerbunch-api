@@ -1,5 +1,4 @@
 ﻿using Core.Errors;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.CashoutTests;
 

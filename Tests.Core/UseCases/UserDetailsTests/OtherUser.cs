@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace Tests.Core.UseCases.UserDetailsTests;
 
 public class OtherUser : Arrange

@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Result>
+public class EditCheckpoint : AsyncUseCase<EditCheckpoint.Request, EditCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -22,7 +22,7 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
         _cashgameRepository = cashgameRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
@@ -30,7 +30,7 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
 
         var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunch = _bunchRepository.Get(cashgame.BunchId);
+        var bunch = await _bunchRepository.Get(cashgame.BunchId);
         var currentUser = _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 

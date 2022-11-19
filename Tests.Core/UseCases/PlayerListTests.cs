@@ -1,5 +1,4 @@
 ﻿using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,11 +6,11 @@ namespace Tests.Core.UseCases;
 class PlayerListTests : TestBase
 {
     [Test]
-    public void Execute_WithSlug_SlugAndPlayersAreSet()
+    public async Task Execute_WithSlug_SlugAndPlayersAreSet()
     {
         var request = new GetPlayerList.Request(TestData.UserNameA, TestData.SlugA);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual("bunch-a", result.Data.Slug);
         Assert.AreEqual(4, result.Data.Players.Count);
@@ -21,22 +20,22 @@ class PlayerListTests : TestBase
     }
 
     [Test]
-    public void Execute_PlayersAreSortedAlphabetically()
+    public async Task Execute_PlayersAreSortedAlphabetically()
     {
         var request = new GetPlayerList.Request(TestData.UserNameA, TestData.SlugA);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.AreEqual(TestData.PlayerNameA, result.Data.Players[0].Name);
         Assert.AreEqual(TestData.PlayerNameB, result.Data.Players[1].Name);
     }
 
     [Test]
-    public void Execute_PlayerIsManager_CanAddPlayerIsTrue()
+    public async Task Execute_PlayerIsManager_CanAddPlayerIsTrue()
     {
         var request = new GetPlayerList.Request(TestData.UserNameC, TestData.SlugA);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.IsTrue(result.Data.CanAddPlayer);
     }
