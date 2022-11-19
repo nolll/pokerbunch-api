@@ -29,7 +29,7 @@ public class InvitePlayer : AsyncUseCase<InvitePlayer.Request, InvitePlayer.Resu
 
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanInvitePlayer(currentUser, currentPlayer))

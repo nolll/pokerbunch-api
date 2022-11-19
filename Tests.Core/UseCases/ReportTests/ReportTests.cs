@@ -29,12 +29,12 @@ public class Arrange : UseCaseTest<Report>
         Mock<ICashgameRepository>().Setup(o => o.Get(CashgameId)).Returns(cashgame);
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame cg) => UpdatedCashgame = cg);
         Mock<IPlayerRepository>().Setup(o => o.Get(BunchId, UserId)).Returns(player);
-        Mock<IUserRepository>().Setup(o => o.Get(Username)).Returns(user);
+        Mock<IUserRepository>().Setup(o => o.Get(Username)).Returns(Task.FromResult<User>(user));
     }
 
-    protected override void Execute()
+    protected override async Task ExecuteAsync()
     {
         var request = new Report.Request(Username, CashgameId, PlayerId, Stack, CurrentTime);
-        Result = Sut.Execute(request);
+        Result = await Sut.Execute(request);
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Infrastructure.Sql;
 
 public class SqlParameters : List<SimpleSqlParameter>

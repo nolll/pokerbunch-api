@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Core.Entities.Checkpoints;
+﻿using Core.Entities.Checkpoints;
 using Core.Errors;
 using Core.UseCases;
 using Tests.Common;

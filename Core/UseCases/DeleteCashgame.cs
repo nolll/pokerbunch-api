@@ -23,7 +23,7 @@ public class DeleteCashgame : AsyncUseCase<DeleteCashgame.Request, DeleteCashgam
     {
         var cashgame = _cashgameRepository.Get(request.Id);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))

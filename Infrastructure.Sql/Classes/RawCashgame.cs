@@ -1,5 +1,3 @@
-using System;
-
 namespace Infrastructure.Sql.Classes;
 
 public class RawCashgame

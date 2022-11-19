@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -18,43 +16,43 @@ public class UserRepository : IUserRepository
         _cacheContainer = cacheContainer;
     }
 
-    public User Get(int id)
+    public async Task<User> Get(int id)
     {
-        return GetAndCache(id);
+        return await GetAndCache(id);
     }
 
-    public IList<User> List()
+    public async Task<IList<User>> List()
     {
-        var ids = _userDb.Find();
-        return GetAndCache(ids);
+        var ids = await _userDb.Find();
+        return await GetAndCache(ids);
     }
 
-    public User Get(string nameOrEmail)
+    public async Task<User> Get(string nameOrEmail)
     {
-        var id = _userDb.Find(nameOrEmail);
+        var id = await _userDb.Find(nameOrEmail);
         if (id == 0)
             return null;
-        return GetAndCache(id);
+        return await GetAndCache(id);
     }
 
-    public void Update(User user)
+    public async Task Update(User user)
     {
-        _userDb.Update(user);
+        await _userDb.Update(user);
         _cacheContainer.Remove<User>(user.Id);
     }
 
-    public int Add(User user)
+    public async Task<int> Add(User user)
     {
-        return _userDb.Add(user);
+        return await _userDb.Add(user);
     }
 
-    private User GetAndCache(int id)
+    private async Task<User> GetAndCache(int id)
     {
-        return _cacheContainer.GetAndStore(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    private IList<User> GetAndCache(IList<int> ids)
+    private async Task<IList<User>> GetAndCache(IList<int> ids)
     {
-        return _cacheContainer.GetAndStore(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 }

@@ -28,7 +28,7 @@ public class PlayerCashgameList : AsyncUseCase<PlayerCashgameList.Request, Playe
     {
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayerCashgames(currentUser, currentPlayer))

@@ -26,7 +26,7 @@ public abstract class Arrange : UseCaseTest<GetBunch>
 
         Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult(bunch));
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(player);
-        Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(user);
+        Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(Task.FromResult(user));
     }
 
     protected override async Task ExecuteAsync()

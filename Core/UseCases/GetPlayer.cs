@@ -25,8 +25,8 @@ public class GetPlayer : AsyncUseCase<GetPlayer.Request, GetPlayer.Result>
     {
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var user = _userRepository.Get(player.UserId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(player.UserId);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());

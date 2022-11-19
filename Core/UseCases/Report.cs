@@ -7,7 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Report : UseCase<Report.Request, Report.Result>
+public class Report : AsyncUseCase<Report.Request, Report.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -20,14 +20,14 @@ public class Report : UseCase<Report.Request, Report.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.Get(request.CashgameId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());

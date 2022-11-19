@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class UserDetails : UseCase<UserDetails.Request, UserDetails.Result>
+public class UserDetails : AsyncUseCase<UserDetails.Request, UserDetails.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,10 +14,10 @@ public class UserDetails : UseCase<UserDetails.Request, UserDetails.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var currentUser = _userRepository.Get(request.CurrentUserName);
-        var displayUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.CurrentUserName);
+        var displayUser = await _userRepository.Get(request.UserName);
 
         if (displayUser == null)
             return Error(new UserNotFoundError(request.UserName));

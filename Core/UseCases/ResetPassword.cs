@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result>
+public class ResetPassword : AsyncUseCase<ResetPassword.Request, ResetPassword.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IEmailSender _emailSender;
@@ -18,14 +18,14 @@ public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result
         _randomizer = randomizer;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = _userRepository.Get(request.Email);
+        var user = await _userRepository.Get(request.Email);
         if (user == null)
             return Error(new UserNotFoundError(request.Email));
 
@@ -35,7 +35,7 @@ public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result
 
         user.SetPassword(encryptedPassword, salt);
 
-        _userRepository.Update(user);
+        await _userRepository.Update(user);
 
         var message = new ResetPasswordMessage(password, request.LoginUrl);
         _emailSender.Send(request.Email, message);

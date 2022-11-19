@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Core.UseCases;
+﻿using Core.UseCases;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,9 +6,9 @@ namespace Tests.Core.UseCases;
 public class UserListTests : TestBase
 {
     [Test]
-    public void UserList_ReturnsListOfUserItems()
+    public async Task UserList_ReturnsListOfUserItems()
     {
-        var result = Sut.Execute(new UserList.Request(TestData.AdminUser.UserName));
+        var result = await Sut.Execute(new UserList.Request(TestData.AdminUser.UserName));
 
         Assert.AreEqual(4, result.Data.Users.Count);
         Assert.AreEqual(TestData.UserDisplayNameA, result.Data.Users.First().DisplayName);

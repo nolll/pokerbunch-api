@@ -115,7 +115,7 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
     {
         var updateRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
-        var updateResult = _editCashgame.Execute(updateRequest);
+        var updateResult = await _editCashgame.Execute(updateRequest);
         if(!updateResult.Success)
             return Error(updateResult.Error);
 

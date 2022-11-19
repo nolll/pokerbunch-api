@@ -30,13 +30,13 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 
         var user = new UserInTest(globalRole: Role);
 
-        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
+        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(Task.FromResult<User>(user));
         Mock<IEmailSender>().Setup(o => o.Send(It.IsAny<string>(), It.IsAny<IMessage>()))
             .Callback((string to, IMessage message) => { To = to; Subject = message.Subject; Body = message.Body; });
     }
 
-    protected override void Execute()
+    protected override async Task ExecuteAsync()
     {
-        Result = Sut.Execute(new TestEmail.Request(UserName));
+        Result = await Sut.Execute(new TestEmail.Request(UserName));
     }
 }

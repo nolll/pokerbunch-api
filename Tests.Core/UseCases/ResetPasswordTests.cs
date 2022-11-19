@@ -11,30 +11,30 @@ class ResetPasswordTests : TestBase
     private const string NonExistingEmail = "a@b.com";
 
     [Test]
-    public void ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
+    public async Task ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
     {
         var request = CreateRequest(InvalidEmail);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void ResetPassword_UserNotFound_ReturnsError()
+    public async Task ResetPassword_UserNotFound_ReturnsError()
     {
-        var result = Sut.Execute(CreateRequest(NonExistingEmail));
+        var result = await Sut.Execute(CreateRequest(NonExistingEmail));
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.NotFound));
     }
 
     [Test]
-    public void ResetPassword_SendsPasswordEmail()
+    public async Task ResetPassword_SendsPasswordEmail()
     {
         const string subject = "Poker Bunch Password Recovery";
         const string body = @"Here is your new password for Poker Bunch:
 aaaaaaaa
 
 Please sign in here: loginUrl";
-        Sut.Execute(CreateRequest());
+        await Sut.Execute(CreateRequest());
 
         Assert.AreEqual(ValidEmail, Deps.EmailSender.To);
         Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);
@@ -42,9 +42,9 @@ Please sign in here: loginUrl";
     }
 
     [Test]
-    public void ResetPassword_SavesUserWithNewPassword()
+    public async Task ResetPassword_SavesUserWithNewPassword()
     {
-        Sut.Execute(CreateRequest());
+        await Sut.Execute(CreateRequest());
 
         var savedUser = Deps.User.Saved;
         Assert.AreEqual("0478095c8ece0bbc11f94663ac2c4f10b29666de", savedUser.EncryptedPassword);

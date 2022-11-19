@@ -5,7 +5,7 @@ using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class EditUser : UseCase<EditUser.Request, EditUser.Result>
+public class EditUser : AsyncUseCase<EditUser.Request, EditUser.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,16 +14,16 @@ public class EditUser : UseCase<EditUser.Request, EditUser.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var userToSave = GetUser(user, request);
 
-        _userRepository.Update(userToSave);
+        await _userRepository.Update(userToSave);
 
         return Success(new Result(userToSave.UserName));
     }

@@ -29,7 +29,7 @@ public class AddEvent : AsyncUseCase<AddEvent.Request, AddEvent.Result>
             return Error(new ValidationError(validator));
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanAddEvent(currentUser, currentPlayer))

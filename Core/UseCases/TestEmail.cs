@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class TestEmail : UseCase<TestEmail.Request, TestEmail.Result>
+public class TestEmail : AsyncUseCase<TestEmail.Request, TestEmail.Result>
 {
     private readonly IEmailSender _emailSender;
     private readonly IUserRepository _userRepository;
@@ -15,9 +15,9 @@ public class TestEmail : UseCase<TestEmail.Request, TestEmail.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         if (!AccessControl.CanSendTestEmail(user))
             return Error(new AccessDeniedError());
 

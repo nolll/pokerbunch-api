@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
@@ -23,39 +22,39 @@ public class SqlUserDb
         _db = db;
     }
 
-    public User Get(int id)
+    public async Task<User> Get(int id)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@userId", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         var rawUser = reader.ReadOne(CreateRawUser);
         return rawUser != null ? RawUser.CreateReal(rawUser) : null;
     }
 
-    public IList<User> Get(IList<int> ids)
+    public async Task<IList<User>> Get(IList<int> ids)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
         var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+        var reader = await _db.QueryAsync(sql, parameter);
         var rawUsers = reader.ReadList(CreateRawUser);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
     }
 
-    public IList<int> Find()
+    public async Task<IList<int>> Find()
     {
-        return GetIds();
+        return await GetIds();
     }
 
-    public int Find(string nameOrEmail)
+    public async Task<int> Find(string nameOrEmail)
     {
-        var userId = GetIdByNameOrEmail(nameOrEmail);
+        var userId = await GetIdByNameOrEmail(nameOrEmail);
         return userId ?? 0;
     }
 
-    public void Update(User user)
+    public async Task Update(User user)
     {
         const string sql = @"
             UPDATE pb_user 
@@ -74,10 +73,10 @@ public class SqlUserDb
             new("@salt", user.Salt),
             new("@userId", user.Id)
         };
-        _db.Execute(sql, parameters);
+        await _db.ExecuteAsync(sql, parameters);
     }
 
-    public int Add(User user)
+    public async Task<int> Add(User user)
     {
         const string sql = @"
             INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
@@ -90,10 +89,10 @@ public class SqlUserDb
             new("@password", user.EncryptedPassword),
             new("@salt", user.Salt)
         };
-        return _db.ExecuteInsert(sql, parameters);
+        return await _db.ExecuteInsertAsync(sql, parameters);
     }
         
-    private int? GetIdByNameOrEmail(string nameOrEmail)
+    private async Task<int?> GetIdByNameOrEmail(string nameOrEmail)
     {
         if (string.IsNullOrEmpty(nameOrEmail))
             return null;
@@ -103,18 +102,18 @@ public class SqlUserDb
         {
             new("@query", nameOrEmail)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadInt("user_id");
     }
 
-    private IList<int> GetIds()
+    private async Task<IList<int>> GetIds()
     {
         var sql = string.Concat(SearchSql, "ORDER BY u.display_name");
-        var reader = _db.Query(sql);
+        var reader = await _db.QueryAsync(sql);
         return reader.ReadIntList("user_id");
     }
 
-    public bool DeleteUser(int userId)
+    public async Task<bool> DeleteUser(int userId)
     {
         const string sql = @"
             DELETE FROM pb_user
@@ -123,7 +122,7 @@ public class SqlUserDb
         {
             new("@userId", userId)
         };
-        var rowCount = _db.Execute(sql, parameters);
+        var rowCount = await _db.ExecuteAsync(sql, parameters);
         return rowCount > 0;
     }
 

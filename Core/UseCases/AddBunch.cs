@@ -35,7 +35,7 @@ public class AddBunch : AsyncUseCase<AddBunch.Request, AddBunch.Result>
 
         var bunch = CreateBunch(request);
         var id = await _bunchRepository.Add(bunch);
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var player = Player.New(id, user.Id, user.UserName, Role.Manager);
         var playerId = _playerRepository.Add(player);
         var createdPlayer = _playerRepository.Get(playerId);

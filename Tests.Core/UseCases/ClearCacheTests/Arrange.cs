@@ -16,11 +16,11 @@ public abstract class Arrange : UseCaseTest<ClearCache>
     {
         var user = new UserInTest(globalRole: Role);
 
-        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(user);
+        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(Task.FromResult<User>(user));
     }
 
-    protected override void Execute()
+    protected override async Task ExecuteAsync()
     {
-        Result = Sut.Execute(new ClearCache.Request(UserName));
+        Result = await Sut.Execute(new ClearCache.Request(UserName));
     }
 }

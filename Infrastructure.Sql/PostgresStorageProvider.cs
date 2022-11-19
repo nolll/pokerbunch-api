@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.Sql.Interfaces;
 using Npgsql;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Sql;
 

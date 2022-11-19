@@ -29,9 +29,9 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult ClearCache()
+    public async Task<ObjectResult> ClearCache()
     {
-        var result = _clearCache.Execute(new ClearCache.Request(CurrentUserName));
+        var result = await _clearCache.Execute(new ClearCache.Request(CurrentUserName));
         return Model(result, () => new MessageModel(result.Data.Message));
     }
 
@@ -41,9 +41,9 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult SendEmail()
+    public async Task<ObjectResult> SendEmail()
     {
-        var result = _testEmail.Execute(new TestEmail.Request(CurrentUserName));
+        var result = await _testEmail.Execute(new TestEmail.Request(CurrentUserName));
         return Model(result, () => new MessageModel(result.Data.Message));
     }
 
@@ -63,9 +63,9 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Settings)]
     [HttpGet]
     [ApiAuthorize]
-    public ObjectResult Settings()
+    public async Task<ObjectResult> Settings()
     {
-        var result = _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
+        var result = await _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
         return Model(result, () => _appSettings);
     }
 }

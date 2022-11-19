@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ClearCache : UseCase<ClearCache.Request, ClearCache.Result>
+public class ClearCache : AsyncUseCase<ClearCache.Request, ClearCache.Result>
 {
     private readonly ICacheContainer _cache;
     private readonly IUserRepository _userRepository;
@@ -15,9 +15,9 @@ public class ClearCache : UseCase<ClearCache.Request, ClearCache.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         if (!AccessControl.CanClearCache(user))
             return Error(new AccessDeniedError());
 

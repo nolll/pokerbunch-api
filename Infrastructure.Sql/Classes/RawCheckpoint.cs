@@ -1,4 +1,3 @@
-using System;
 using Core.Entities.Checkpoints;
 
 namespace Infrastructure.Sql.Classes;

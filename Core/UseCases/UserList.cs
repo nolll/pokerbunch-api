@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class UserList : UseCase<UserList.Request, UserList.Result>
+public class UserList : AsyncUseCase<UserList.Request, UserList.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,13 +14,13 @@ public class UserList : UseCase<UserList.Request, UserList.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         if (!AccessControl.CanListUsers(user))
             return Error(new AccessDeniedError());
 
-        var users = _userRepository.List();
+        var users = await _userRepository.List();
         var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();
 
         return Success(new Result(userItems));

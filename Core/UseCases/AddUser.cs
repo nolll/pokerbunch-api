@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddUser : UseCase<AddUser.Request, AddUser.Result>
+public class AddUser : AsyncUseCase<AddUser.Request, AddUser.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRandomizer _randomizer;
@@ -22,24 +22,26 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
         _emailSender = emailSender;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        if (_userRepository.Get(request.UserName) != null)
+        var userByName = await _userRepository.Get(request.UserName);
+        if (userByName != null)
             return Error(new UserExistsError());
 
-        if (_userRepository.Get(request.Email) != null)
+        var userByEmail = await _userRepository.Get(request.Email);
+        if (userByEmail != null)
             return Error(new EmailExistsError());
 
         var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
         var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
         var user = CreateUser(request, encryptedPassword, salt);
 
-        _userRepository.Add(user);
+        await _userRepository.Add(user);
 
         var message = new RegistrationMessage(request.LoginUrl);
         _emailSender.Send(request.Email, message);

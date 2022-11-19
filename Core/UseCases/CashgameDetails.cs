@@ -31,7 +31,7 @@ public class CashgameDetails : AsyncUseCase<CashgameDetails.Request, CashgameDet
     {
         var cashgame = _cashgameRepository.Get(request.Id);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanSeeCashgame(user, player))

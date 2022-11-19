@@ -27,7 +27,7 @@ public class EditBunch : AsyncUseCase<EditBunch.Request, EditBunch.Result>
             return Error(new ValidationError(validator));
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanEditBunch(currentUser, currentPlayer))

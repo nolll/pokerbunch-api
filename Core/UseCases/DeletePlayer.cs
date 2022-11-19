@@ -24,7 +24,7 @@ public class DeletePlayer : AsyncUseCase<DeletePlayer.Request, DeletePlayer.Resu
     {
         var player = _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanDeletePlayer(currentUser, currentPlayer))

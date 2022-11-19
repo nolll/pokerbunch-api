@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Tests.Core.UseCases.ReportTests;
 
 public class WithValidStack : Arrange

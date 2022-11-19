@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Core.Entities;
+﻿using Core.Entities;
 
 namespace Tests.Core.UseCases.CurrentCashgamesTests;
 

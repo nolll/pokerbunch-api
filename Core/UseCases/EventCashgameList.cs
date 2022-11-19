@@ -30,7 +30,7 @@ public class EventCashgameList : AsyncUseCase<EventCashgameList.Request, EventCa
     {
         var @event = await _eventRepository.Get(request.EventId);
         var bunch = await _bunchRepository.Get(@event.BunchId);
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListEventCashgames(user, player))

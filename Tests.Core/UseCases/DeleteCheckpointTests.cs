@@ -1,4 +1,3 @@
-using System.Linq;
 using Core.UseCases;
 using Tests.Common;
 

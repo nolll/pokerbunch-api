@@ -19,7 +19,7 @@ public class GetBunchList : AsyncUseCase<GetBunchList.Request, GetBunchList.Resu
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         if (!AccessControl.CanListBunches(user))
             return Error(new AccessDeniedError());
 

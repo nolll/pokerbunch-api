@@ -23,7 +23,7 @@ public class GetLocation : AsyncUseCase<GetLocation.Request, GetLocation.Result>
     {
         var location = await _locationRepository.Get(request.LocationId);
         var bunch = await _bunchRepository.Get(location.BunchId);
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(location.BunchId, user.Id);
 
         if (!AccessControl.CanSeeLocation(user, player))

@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
+public class EditCashgame : AsyncUseCase<EditCashgame.Request, EditCashgame.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IUserRepository _userRepository;
@@ -23,14 +23,14 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
         _eventRepository = eventRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
         var cashgame = _cashgameRepository.Get(request.Id);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanEditCashgame(currentUser, currentPlayer))

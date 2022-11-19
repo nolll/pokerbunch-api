@@ -4,9 +4,9 @@ namespace Core.Repositories;
 
 public interface IUserRepository
 {
-    User Get(int id);
-    User Get(string nameOrEmail);
-    IList<User> List();
-    void Update(User user);
-    int Add(User user);
+    Task<User> Get(int id);
+    Task<User> Get(string nameOrEmail);
+    Task<IList<User>> List();
+    Task Update(User user);
+    Task<int> Add(User user);
 }

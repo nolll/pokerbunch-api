@@ -15,67 +15,67 @@ class AddUserTests : TestBase
     private readonly string _existingEmail = TestData.UserA.Email;
         
     [Test]
-    public void AddUser_WithEmptyUserName_ReturnsError()
+    public async Task AddUser_WithEmptyUserName_ReturnsError()
     {
         var request = new AddUser.Request("", ValidDisplayName, ValidEmail, ValidPassword, "/");
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_WithEmptyDisplayName_ReturnsError()
+    public async Task AddUser_WithEmptyDisplayName_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, "", ValidEmail, ValidPassword, "/");
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_WithEmptyEmail_ReturnsError()
+    public async Task AddUser_WithEmptyEmail_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, "", ValidPassword, "/");
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_WithEmptyPAssword_ReturnsError()
+    public async Task AddUser_WithEmptyPAssword_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, "", "/");
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddUser_UserNameAlreadyInUse_ReturnsError()
+    public async Task AddUser_UserNameAlreadyInUse_ReturnsError()
     {
         var request = new AddUser.Request(_existingUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
-    public void AddUser_EmailAlreadyInUse_ReturnsError()
+    public async Task AddUser_EmailAlreadyInUse_ReturnsError()
     {
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, _existingEmail, ValidPassword, "/");
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
-    public void AddUser_WithValidInput_UserWithCorrectPropertiesIsAdded()
+    public async Task AddUser_WithValidInput_UserWithCorrectPropertiesIsAdded()
     {
         const string expectedEncryptedPassword = "1cb313748ba4b822b78fe05de42558539efd9156";
         const string expectedSalt = "aaaaaaaaaa";
 
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
         var user = Deps.User.Added;
 
@@ -90,7 +90,7 @@ class AddUserTests : TestBase
     }
 
     [Test]
-    public void AddUser_WithValidInput_SendsRegistrationEmail()
+    public async Task AddUser_WithValidInput_SendsRegistrationEmail()
     {
         const string subject = "Poker Bunch Registration";
         const string body = @"Thanks for registering with Poker Bunch.
@@ -98,7 +98,7 @@ class AddUserTests : TestBase
 Please sign in here: /loginUrl";
 
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/loginUrl");
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
         Assert.AreEqual(ValidEmail, Deps.EmailSender.To);
         Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);

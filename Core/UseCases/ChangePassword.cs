@@ -6,7 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ChangePassword : UseCase<ChangePassword.Request, ChangePassword.Result>
+public class ChangePassword : AsyncUseCase<ChangePassword.Request, ChangePassword.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRandomizer _randomizer;
@@ -17,13 +17,13 @@ public class ChangePassword : UseCase<ChangePassword.Request, ChangePassword.Res
         _randomizer = randomizer;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
         if (!isCurrentPwdValid)
             return Error(new AuthError("The old password was not correct"));

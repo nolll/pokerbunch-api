@@ -4,7 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class RequireAppsettingsAccess : UseCase<RequireAppsettingsAccess.Request, RequireAppsettingsAccess.Result>
+public class RequireAppsettingsAccess : AsyncUseCase<RequireAppsettingsAccess.Request, RequireAppsettingsAccess.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -13,9 +13,9 @@ public class RequireAppsettingsAccess : UseCase<RequireAppsettingsAccess.Request
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         if (!AccessControl.CanSeeAppSettings(user))
             return Error(new AccessDeniedError());
 

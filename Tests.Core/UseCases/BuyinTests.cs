@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
@@ -15,19 +14,19 @@ class BuyinTests : TestBase
     private const int InvalidStack = -1;
 
     [Test]
-    public void Buyin_InvalidBuyin_ReturnsError()
+    public async Task Buyin_InvalidBuyin_ReturnsError()
     {
         var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void Buyin_InvalidStackSize_ReturnsError()
+    public async Task Buyin_InvalidStackSize_ReturnsError()
     {
         var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }

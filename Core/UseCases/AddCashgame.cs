@@ -30,7 +30,7 @@ public class AddCashgame : AsyncUseCase<AddCashgame.Request, AddCashgame.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var player = _playerRepository.Get(bunch.Id, user.Id);
 

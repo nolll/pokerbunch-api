@@ -23,7 +23,7 @@ public class CashgameYearList : AsyncUseCase<CashgameYearList.Request, CashgameY
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.Get(request.UserName);
         var player = _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListCashgameYears(user, player))

@@ -5,7 +5,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Login : UseCase<Login.Request, Login.Result>
+public class Login : AsyncUseCase<Login.Request, Login.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,18 +14,18 @@ public class Login : UseCase<Login.Request, Login.Result>
         _userRepository = userRepository;
     }
 
-    protected override UseCaseResult<Result> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = GetLoggedInUser(request.LoginName, request.Password);
+        var user = await GetLoggedInUser(request.LoginName, request.Password);
 
         if (user == null)
             return Error(new LoginError("There was something wrong with your username or password. Please try again."));
         return Success(new Result(user.UserName));
     }
     
-    private User GetLoggedInUser(string loginName, string password)
+    private async Task<User> GetLoggedInUser(string loginName, string password)
     {
-        var user = _userRepository.Get(loginName);
+        var user = await _userRepository.Get(loginName);
         if (user == null)
             return null;
 

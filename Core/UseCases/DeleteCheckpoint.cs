@@ -25,7 +25,7 @@ public class DeleteCheckpoint : AsyncUseCase<DeleteCheckpoint.Request, DeleteChe
         var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.Get(request.UserName);
         var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanDeleteCheckpoint(currentUser, currentPlayer))

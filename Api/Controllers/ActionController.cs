@@ -36,35 +36,33 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public ObjectResult Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
+    public async Task<ObjectResult> Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
-        if(post.Type == ActionType.Buyin)
-            return Buyin(cashgameId, post);
-        if (post.Type == ActionType.Report)
-            return Report(cashgameId, post);
-        if(post.Type == ActionType.Cashout)
-            return Cashout(cashgameId, post);
-
-        return Error(
-            ErrorType.NotFound,
-            $"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]");
+        return post.Type switch
+        {
+            ActionType.Buyin => await Buyin(cashgameId, post),
+            ActionType.Report => await Report(cashgameId, post),
+            ActionType.Cashout => await Cashout(cashgameId, post),
+            _ => Error(ErrorType.NotFound,
+                $"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]")
+        };
     }
 
-    private ObjectResult Buyin(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Buyin(int cashgameId, AddCashgameActionPostModel post)
     {
-        var result = _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+        var result = await _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
-    private ObjectResult Report(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Report(int cashgameId, AddCashgameActionPostModel post)
     {
-        var result = _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
-    private ObjectResult Cashout(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Cashout(int cashgameId, AddCashgameActionPostModel post)
     {
-        var result = _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
