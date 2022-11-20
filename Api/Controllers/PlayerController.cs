@@ -62,7 +62,7 @@ public class PlayerController : BaseController
     /// <summary>
     /// Adds a player to a bunch.
     /// </summary>
-    [Route(ApiRoutes.Player.ListByBunch)]
+    [Route(ApiRoutes.Player.Add)]
     [HttpPost]
     [ApiAuthorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] PlayerAddPostModel post)
@@ -76,7 +76,7 @@ public class PlayerController : BaseController
     /// <summary>
     /// Deletes a specific player.
     /// </summary>
-    [Route(ApiRoutes.Player.Get)]
+    [Route(ApiRoutes.Player.Delete)]
     [HttpDelete]
     [ApiAuthorize]
     public async Task<ObjectResult> Delete(int playerId)

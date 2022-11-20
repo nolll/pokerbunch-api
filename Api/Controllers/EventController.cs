@@ -43,7 +43,7 @@ public class EventController : BaseController
         return Model(result, () => result.Data.Events.Select(o => new EventModel(o)));
     }
 
-    [Route(ApiRoutes.Event.ListByBunch)]
+    [Route(ApiRoutes.Event.Add)]
     [HttpPost]
     [ApiAuthorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] EventAddPostModel post)

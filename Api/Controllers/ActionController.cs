@@ -66,7 +66,7 @@ public class ActionController : BaseController
         return Model(result, () => new OkModel());
     }
 
-    [Route(ApiRoutes.Action.Get)]
+    [Route(ApiRoutes.Action.Update)]
     [HttpPut]
     [ApiAuthorize]
     public async Task<ObjectResult> UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
@@ -75,7 +75,7 @@ public class ActionController : BaseController
         return Model(result, () => new OkModel());
     }
 
-    [Route(ApiRoutes.Action.Get)]
+    [Route(ApiRoutes.Action.Delete)]
     [HttpDelete]
     [ApiAuthorize]
     public async Task<ObjectResult> DeleteAction(int cashgameId, int actionId)

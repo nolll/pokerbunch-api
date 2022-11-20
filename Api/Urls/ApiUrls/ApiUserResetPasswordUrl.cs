@@ -4,5 +4,5 @@ namespace Api.Urls.ApiUrls;
 
 public class ApiUserResetPasswordUrl : ApiUrl
 {
-    protected override string Input => ApiRoutes.Profile.Password;
+    protected override string Input => ApiRoutes.Profile.ResetPassword;
 }

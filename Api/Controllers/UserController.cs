@@ -78,7 +78,7 @@ public class UserController : BaseController
     /// <summary>
     /// Update user.
     /// </summary>
-    [Route(ApiRoutes.User.Get)]
+    [Route(ApiRoutes.User.Update)]
     [HttpPut]
     [ApiAuthorize]
     public async Task<ObjectResult> Update(string userName, [FromBody] UpdateUserPostModel post)
@@ -95,7 +95,7 @@ public class UserController : BaseController
     /// <summary>
     /// Change password.
     /// </summary>
-    [Route(ApiRoutes.Profile.Password)]
+    [Route(ApiRoutes.Profile.ChangePassword)]
     [HttpPut]
     [ApiAuthorize]
     public async Task<ObjectResult> ChangePassword([FromBody] ChangePasswordPostModel post)
@@ -108,7 +108,7 @@ public class UserController : BaseController
     /// <summary>
     /// Reset password.
     /// </summary>
-    [Route(ApiRoutes.Profile.Password)]
+    [Route(ApiRoutes.Profile.ResetPassword)]
     [HttpPost]
     public async Task<ObjectResult> ResetPassword([FromBody] ResetPasswordPostModel post)
     {
@@ -120,7 +120,7 @@ public class UserController : BaseController
     /// <summary>
     /// Add user.
     /// </summary>
-    [Route(ApiRoutes.User.List)]
+    [Route(ApiRoutes.User.Add)]
     [HttpPost]
     public async Task<ObjectResult> Add([FromBody] AddUserPostModel post)
     {

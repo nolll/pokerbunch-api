@@ -46,7 +46,7 @@ public class BunchController : BaseController
         return Model(result, () => new BunchModel(result.Data));
     }
 
-    [Route(ApiRoutes.Bunch.Get)]
+    [Route(ApiRoutes.Bunch.Update)]
     [HttpPut]
     [ApiAuthorize]
     public async Task<ObjectResult> Update(string bunchId, [FromBody] UpdateBunchPostModel post)
@@ -75,7 +75,7 @@ public class BunchController : BaseController
         return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
     }
 
-    [Route(ApiRoutes.Bunch.List)]
+    [Route(ApiRoutes.Bunch.Add)]
     [HttpPost]
     [ApiAuthorize]
     public async Task<ObjectResult> Add([FromBody] AddBunchPostModel post)

@@ -12,5 +12,5 @@ public class ApiPlayerAddUrl : ApiUrl
         _bunchId = bunchId;
     }
 
-    protected override string Input => RouteParams.Replace(ApiRoutes.Player.AddToBunch, RouteReplace.BunchId(_bunchId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Player.Add, RouteReplace.BunchId(_bunchId));
 }
