@@ -8,5 +8,7 @@ public static class TestOrder
     public const int Login = 4;
     public const int User = 5;
     public const int Admin = 6;
-    public const int Application = 100;
+    public const int BunchAndPlayer = 7;
+    public const int Location = 8;
+    public const int CashgamePlay = 9;
 }
