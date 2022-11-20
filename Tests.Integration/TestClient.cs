@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Api.Models.EventModels;
 using Api.Urls.ApiUrls;
-using Tests.Integration.Tests;
 
 namespace Tests.Integration;
 
@@ -10,6 +9,11 @@ public static class TestClient
     public static async Task<TestClientResult<EventModel>> GetEvent(string token, string eventId)
     {
         return await Get<EventModel>(token, new ApiEventUrl(eventId));
+    }
+
+    public static async Task<TestClientResult<List<EventModel>>> ListEvents(string token, string bunchId)
+    {
+        return await Get<List<EventModel>>(token, new ApiEventListUrl(bunchId));
     }
 
     private static async Task<TestClientResult<T>> Get<T>(string token, ApiUrl url) where T : class
