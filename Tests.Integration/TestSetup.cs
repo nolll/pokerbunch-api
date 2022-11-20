@@ -2,11 +2,13 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
 
 [SetUpFixture]
-public class DatabaseHandler
+public class TestSetup
 {
     private static readonly TestcontainerDatabase Testcontainers = new TestcontainersBuilder<PostgreSqlTestcontainer>()
         .WithDatabase(new PostgreSqlTestcontainerConfiguration
@@ -19,11 +21,15 @@ public class DatabaseHandler
         .Build();
 
     public static string ConnectionString => Testcontainers.ConnectionString;
+    public static FakeEmailSender EmailSender;
+    public static WebApplicationFactoryInTest WebApplicationFactory;
 
     [OneTimeSetUp]
     public async Task SetUp()
     {
         await Testcontainers.StartAsync();
+        EmailSender = new FakeEmailSender();
+        WebApplicationFactory = new WebApplicationFactoryInTest(ConnectionString, EmailSender);
         CreateTables();
         AddMasterData();
     }
@@ -32,6 +38,14 @@ public class DatabaseHandler
     public async Task TearDown()
     {
         await Testcontainers.DisposeAsync().AsTask();
+    }
+
+    public static HttpClient Client => WebApplicationFactory.CreateClient();
+    public static HttpClient AuthorizedClient(string token)
+    {
+        var client = WebApplicationFactory.CreateClient();
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        return client;
     }
 
     private static void CreateTables()
