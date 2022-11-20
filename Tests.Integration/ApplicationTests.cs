@@ -60,7 +60,6 @@ public class ApplicationTests
     //Swagger
     //Action.Get
     //Action.List
-    //Admin.ClearCache
     //Admin.SendEmail
     //Bunch.List
     //Bunch.ListForCurrentUser
@@ -77,7 +76,6 @@ public class ApplicationTests
     //Profile.Get
     //Profile.Password
     //Auth.Token
-    //User.List
 
     [Test]
     public async Task TestApplication()
@@ -94,6 +92,11 @@ public class ApplicationTests
         var adminToken = await Login(AdminUserName, AdminPassword);
         var managerToken = await Login(ManagerUserName, ManagerPassword);
         var userToken = await Login(UserUserName, UserPassword);
+
+        await GetUserAsAdmin(adminToken, AdminUserName);
+        await GetUserAsUser(userToken, AdminUserName);
+
+        await ListUsersAsAdmin(adminToken);
 
         await ClearCacheAsAdmin(adminToken);
         await ClearCacheAsManager(managerToken);
@@ -172,7 +175,26 @@ public class ApplicationTests
         var response = await Client.PostAsJsonAsync(new ApiUserAddUrl().Relative, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-    
+
+    private async Task ListUsersAsAdmin(string adminToken)
+    {
+        var response = await AuthorizedClient(adminToken).GetAsync(new ApiUserListUrl().Relative);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<List<UserItemModel>>(content);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(3));
+
+        Assert.That(result[0].UserName, Is.EqualTo(AdminUserName));
+        Assert.That(result[0].DisplayName, Is.EqualTo(AdminDisplayName));
+        Assert.That(result[1].UserName, Is.EqualTo(ManagerUserName));
+        Assert.That(result[1].DisplayName, Is.EqualTo(ManagerDisplayName));
+        Assert.That(result[2].UserName, Is.EqualTo(UserUserName));
+        Assert.That(result[2].DisplayName, Is.EqualTo(UserDisplayName));
+    }
+
     private async Task<string> Login(string userName, string password)
     {
         var parameters = new LoginPostModel(userName, password);
@@ -184,8 +206,22 @@ public class ApplicationTests
 
         return token;
     }
-    
-    private async Task<UserModel> GetUser(string token, string userName)
+
+    private async Task GetUserAsAdmin(string token, string userName)
+    {
+        var url = new ApiUserUrl(userName).Relative;
+        var response = await AuthorizedClient(token).GetAsync(url);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<FullUserModel>(content);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.UserName, Is.EqualTo(AdminUserName));
+        Assert.That(result.DisplayName, Is.EqualTo(AdminDisplayName));
+    }
+
+    private async Task GetUserAsUser(string token, string userName)
     {
         var url = new ApiUserUrl(userName).Relative;
         var response = await AuthorizedClient(token).GetAsync(url);
@@ -194,7 +230,9 @@ public class ApplicationTests
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<UserModel>(content);
 
-        return result;
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.UserName, Is.EqualTo(AdminUserName));
+        Assert.That(result.DisplayName, Is.EqualTo(AdminDisplayName));
     }
 
     private async Task ClearCacheAsAdmin(string token)

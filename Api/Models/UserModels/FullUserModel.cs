@@ -23,8 +23,8 @@ public class FullUserModel : UserModel
     }
 
     [JsonConstructor]
-    public FullUserModel(string userName, string displayName, string avatarUrl, string role, string realName, string email)
-        : base(userName, displayName, avatarUrl)
+    public FullUserModel(string userName, string displayName, string avatar, string role, string realName, string email)
+        : base(userName, displayName, avatar)
     {
         Role = role;
         RealName = realName;

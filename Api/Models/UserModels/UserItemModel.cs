@@ -21,7 +21,7 @@ public class UserItemModel
     }
 
     [JsonConstructor]
-    private UserItemModel(string userName, string displayName, string url)
+    public UserItemModel(string userName, string displayName, string url)
     {
         UserName = userName;
         DisplayName = displayName;

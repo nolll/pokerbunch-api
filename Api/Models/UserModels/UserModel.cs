@@ -23,10 +23,10 @@ public class UserModel
     }
 
     [JsonConstructor]
-    public UserModel(string userName, string displayName, string avatarUrl)
+    public UserModel(string userName, string displayName, string avatar)
     {
         UserName = userName;
         DisplayName = displayName;
-        Avatar = avatarUrl;
+        Avatar = avatar;
     }
 }
