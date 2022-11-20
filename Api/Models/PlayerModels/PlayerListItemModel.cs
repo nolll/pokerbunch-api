@@ -29,6 +29,7 @@ public class PlayerListItemModel
         UserName = r.UserName;
     }
 
+    [JsonConstructor]
     public PlayerListItemModel(int id, string name, string userId, string userName, string color)
     {
         Id = id;

@@ -9,6 +9,7 @@ public static class TestData
 
     public const string ManagerUserName = "manager";
     public const string ManagerDisplayName = "Manager";
+    public const string ManagerUserId = "2";
     public const string ManagerEmail = "manager@example.org";
     public const string ManagerPassword = "managerpassword";
     public const int ManagerPlayerIdInt = 1;
@@ -16,6 +17,7 @@ public static class TestData
 
     public const string UserUserName = "user";
     public const string UserDisplayName = "User";
+    public const string UserUserId = "3";
     public const string UserPlayerName = "User Player Name";
     public const string UserEmail = "user@example.org";
     public const string UserPassword = "userpassword";

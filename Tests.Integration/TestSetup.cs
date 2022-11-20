@@ -16,7 +16,7 @@ public class TestSetup
             Database = "db",
             Username = "postgres",
             Password = "postgres",
-            Port = 49162
+            Port = 49262
         })
         .Build();
 

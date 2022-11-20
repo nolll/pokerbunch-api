@@ -24,6 +24,9 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = await _playerRepository.Get(request.PlayerId);
+        if (player == null)
+            return Error(new PlayerNotFoundError(request.PlayerId));
+
         var bunch = await _bunchRepository.Get(player.BunchId);
         var user = await _userRepository.Get(player.UserId);
         var currentUser = await _userRepository.Get(request.UserName);

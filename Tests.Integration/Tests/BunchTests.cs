@@ -10,8 +10,8 @@ namespace Tests.Integration.Tests;
 
 [TestFixture]
 [NonParallelizable]
-[Order(TestOrder.BunchAndPlayer)]
-public class BunchAndPlayerTests
+[Order(TestOrder.Bunch)]
+public class BunchTests
 {
     [Test]
     [Order(1)]
@@ -122,17 +122,6 @@ public class BunchAndPlayerTests
         var url = new ApiPlayerAddUrl(TestData.BunchId).Relative;
         var response = await TestSetup.AuthorizedClient(token).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<PlayerModel>(content);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Name, Is.EqualTo(playerName));
-        Assert.That(result.Id, Is.EqualTo(expectedId));
-        Assert.That(result.Slug, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(result.AvatarUrl, Is.EqualTo(""));
-        Assert.That(result.UserId, Is.EqualTo(""));
-        Assert.That(result.UserName, Is.EqualTo(""));
     }
 
     private void AssertCommonProperties(BunchModel bunch)
