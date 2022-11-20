@@ -10,14 +10,14 @@ public class WithAdmin : Arrange
     public void MessageIsSent()
     {
         // todo: Move email to config
-        Assert.AreEqual("henriks@gmail.com", To);
-        Assert.AreEqual("Test Email", Subject);
-        Assert.AreEqual("This is a test email from pokerbunch.com", Body);
+        Assert.That(To, Is.EqualTo("henriks@gmail.com"));
+        Assert.That(Subject, Is.EqualTo("Test Email"));
+        Assert.That(Body, Is.EqualTo("This is a test email from pokerbunch.com"));
     }
 
     [Test]
     public void EmailIsSet()
     {
-        Assert.AreEqual(Email, Result.Data.Email);
+        Assert.That(Result.Data.Email, Is.EqualTo(Email));
     }
 }

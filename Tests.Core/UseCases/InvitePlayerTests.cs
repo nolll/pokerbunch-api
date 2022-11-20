@@ -12,7 +12,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest();
         var result = await Sut.Execute(request);
 
-        Assert.AreEqual(1, result.Data.PlayerId);
+        Assert.That(result.Data.PlayerId, Is.EqualTo(1));
     }
 
     [TestCase("")]
@@ -39,9 +39,9 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
 
         await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.UserEmailA, Deps.EmailSender.To);
-        Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);
-        Assert.AreEqual(body, Deps.EmailSender.Message.Body);
+        Assert.That(Deps.EmailSender.To, Is.EqualTo(TestData.UserEmailA));
+        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
     }
 
     private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)

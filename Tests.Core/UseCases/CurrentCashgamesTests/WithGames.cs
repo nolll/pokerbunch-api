@@ -11,9 +11,9 @@ public class WithGames : Arrange
     public void ReturnsListOfGames()
     {
         var games = Result.Data.Games;
-        Assert.AreEqual(1, games.Count);
+        Assert.That(games.Count, Is.EqualTo(1));
         var game = games.First();
-        Assert.AreEqual(Slug, game.Slug);
-        Assert.AreEqual(CashgameId, game.Id);
+        Assert.That(game.Slug, Is.EqualTo(Slug));
+        Assert.That(game.Id, Is.EqualTo(CashgameId));
     }
 }

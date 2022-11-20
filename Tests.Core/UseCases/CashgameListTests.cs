@@ -13,7 +13,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(TestData.SlugA, result.Data.Slug);
+        Assert.That(result.Data.Slug, Is.EqualTo(TestData.SlugA));
     }
 
     [Test]
@@ -23,7 +23,7 @@ class CashgameListTests : TestBase
 
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(0, result.Data.Items.Count);
+        Assert.That(result.Data.Items.Count, Is.EqualTo(0));
     }
 
     [Test]
@@ -31,7 +31,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(TestData.LocationNameB, result.Data.Items[0].LocationName);
+        Assert.That(result.Data.Items[0].LocationName, Is.EqualTo(TestData.LocationNameB));
     }
 
     [Test]
@@ -39,7 +39,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(2, result.Data.Items[0].CashgameId);
+        Assert.That(result.Data.Items[0].CashgameId, Is.EqualTo(2));
     }
 
     [Test]
@@ -47,7 +47,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(92, result.Data.Items[0].Duration.Minutes);
+        Assert.That(result.Data.Items[0].Duration.Minutes, Is.EqualTo(92));
     }
 
     [Test]
@@ -56,7 +56,7 @@ class CashgameListTests : TestBase
         var result = await Sut.Execute(CreateRequest());
 
         var expected = new Date(2002, 2, 2);
-        Assert.AreEqual(expected, result.Data.Items[0].Date);
+        Assert.That(result.Data.Items[0].Date, Is.EqualTo(expected));
     }
 
     [Test]
@@ -64,7 +64,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(2, result.Data.Items[0].PlayerCount);
+        Assert.That(result.Data.Items[0].PlayerCount, Is.EqualTo(2));
     }
 
     [Test]
@@ -72,7 +72,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(600, result.Data.Items[0].Turnover.Amount);
+        Assert.That(result.Data.Items[0].Turnover.Amount, Is.EqualTo(600));
     }
 
     [Test]
@@ -80,7 +80,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(300, result.Data.Items[0].AverageBuyin.Amount);
+        Assert.That(result.Data.Items[0].AverageBuyin.Amount, Is.EqualTo(300));
     }
 
     private CashgameList.Request CreateRequest(CashgameList.SortOrder orderBy = CashgameList.SortOrder.Date, int? year = null)

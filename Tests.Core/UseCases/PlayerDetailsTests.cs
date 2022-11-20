@@ -10,7 +10,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual(TestData.PlayerNameA, result.Data.DisplayName);
+        Assert.That(result.Data.DisplayName, Is.EqualTo(TestData.PlayerNameA));
     }
 
     [Test]
@@ -18,7 +18,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual(1, result.Data.PlayerId);
+        Assert.That(result.Data.PlayerId, Is.EqualTo(1));
     }
 
     [Test]
@@ -26,7 +26,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.AreEqual("", result.Data.AvatarUrl);
+        Assert.That(result.Data.AvatarUrl, Is.EqualTo(""));
     }
 
     [Test]
@@ -35,7 +35,7 @@ class PlayerDetailsTests : TestBase
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
         const string expected = "https://gravatar.com/avatar/0796c9df772de3f82c0c89377330471b?s=100&d=blank";
-        Assert.AreEqual(expected, result.Data.AvatarUrl);
+        Assert.That(result.Data.AvatarUrl, Is.EqualTo(expected));
     }
 
     [Test]
@@ -43,7 +43,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.AreEqual(string.Empty, result.Data.UserName);
+        Assert.That(result.Data.UserName, Is.EqualTo(string.Empty));
     }
 
     [Test]
@@ -51,7 +51,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual("user-name-a", result.Data.UserName);
+        Assert.That(result.Data.UserName, Is.EqualTo("user-name-a"));
     }
 
     [Test]
@@ -59,7 +59,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.IsFalse(result.Data.IsUser);
+        Assert.That(result.Data.IsUser, Is.False);
     }
 
     [Test]
@@ -67,7 +67,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsTrue(result.Data.IsUser);
+        Assert.That(result.Data.IsUser, Is.True);
     }
 
     [Test]
@@ -75,7 +75,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsFalse(result.Data.CanDelete);
+        Assert.That(result.Data.CanDelete, Is.False);
     }
 
     [Test]
@@ -83,7 +83,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameC, TestData.PlayerIdD));
 
-        Assert.IsTrue(result.Data.CanDelete);
+        Assert.That(result.Data.CanDelete, Is.True);
     }
 
     [Test]
@@ -91,7 +91,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsFalse(result.Data.CanDelete);
+        Assert.That(result.Data.CanDelete, Is.False);
     }
 
     private static GetPlayer.Request CreateRequest(string userName, int playerId)

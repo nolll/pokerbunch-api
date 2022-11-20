@@ -57,12 +57,12 @@ public class EditBunchTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.AreEqual(Description, Deps.Bunch.Saved.Description);
-        Assert.AreEqual(ValidCurrencySymbol, Deps.Bunch.Saved.Currency.Symbol);
-        Assert.AreEqual(ValidCurrencyLayout, Deps.Bunch.Saved.Currency.Layout);
-        Assert.AreEqual(ValidTimeZone, Deps.Bunch.Saved.Timezone.Id);
-        Assert.AreEqual(HouseRules, Deps.Bunch.Saved.HouseRules);
-        Assert.AreEqual(DefaultBuyin, Deps.Bunch.Saved.DefaultBuyin);
+        Assert.That(Deps.Bunch.Saved.Description, Is.EqualTo(Description));
+        Assert.That(Deps.Bunch.Saved.Currency.Symbol, Is.EqualTo(ValidCurrencySymbol));
+        Assert.That(Deps.Bunch.Saved.Currency.Layout, Is.EqualTo(ValidCurrencyLayout));
+        Assert.That(Deps.Bunch.Saved.Timezone.Id, Is.EqualTo(ValidTimeZone));
+        Assert.That(Deps.Bunch.Saved.HouseRules, Is.EqualTo(HouseRules));
+        Assert.That(Deps.Bunch.Saved.DefaultBuyin, Is.EqualTo(DefaultBuyin));
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class EditBunchTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.AreEqual("bunch-a", result.Data.Slug);
+        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
     }
 
     private EditBunch Sut => new(

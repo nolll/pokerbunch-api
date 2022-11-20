@@ -12,11 +12,11 @@ class PlayerListTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.AreEqual("bunch-a", result.Data.Slug);
-        Assert.AreEqual(4, result.Data.Players.Count);
-        Assert.AreEqual(1, result.Data.Players[0].Id);
-        Assert.AreEqual(TestData.PlayerNameA, result.Data.Players[0].Name);
-        Assert.IsFalse(result.Data.CanAddPlayer);
+        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data.Players.Count, Is.EqualTo(4));
+        Assert.That(result.Data.Players[0].Id, Is.EqualTo(1));
+        Assert.That(result.Data.Players[0].Name, Is.EqualTo(TestData.PlayerNameA));
+        Assert.That(result.Data.CanAddPlayer, Is.False);
     }
 
     [Test]
@@ -26,8 +26,8 @@ class PlayerListTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.PlayerNameA, result.Data.Players[0].Name);
-        Assert.AreEqual(TestData.PlayerNameB, result.Data.Players[1].Name);
+        Assert.That(result.Data.Players[0].Name, Is.EqualTo(TestData.PlayerNameA));
+        Assert.That(result.Data.Players[1].Name, Is.EqualTo(TestData.PlayerNameB));
     }
 
     [Test]
@@ -37,7 +37,7 @@ class PlayerListTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.IsTrue(result.Data.CanAddPlayer);
+        Assert.That(result.Data.CanAddPlayer, Is.True);
     }
 
     private GetPlayerList Sut => new(

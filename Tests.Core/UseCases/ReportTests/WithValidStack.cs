@@ -6,6 +6,6 @@ public class WithValidStack : Arrange
     public void AddsCheckpoint()
     {
         var addedCheckpoint = UpdatedCashgame.AddedCheckpoints.First();
-        Assert.AreEqual(Stack, addedCheckpoint.Stack);
+        Assert.That(addedCheckpoint.Stack, Is.EqualTo(Stack));
     }
 }

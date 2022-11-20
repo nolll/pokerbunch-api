@@ -11,7 +11,7 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(2, result.Data.Events.Count);
+        Assert.That(result.Data.Events.Count, Is.EqualTo(2));
     }
 
     [Test]
@@ -19,8 +19,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(TestData.EventNameB, result.Data.Events[0].Name);
-        Assert.AreEqual(TestData.EventNameA, result.Data.Events[1].Name);
+        Assert.That(result.Data.Events[0].Name, Is.EqualTo(TestData.EventNameB));
+        Assert.That(result.Data.Events[1].Name, Is.EqualTo(TestData.EventNameA));
     }
 
     [Test]
@@ -28,8 +28,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(new Date(2002, 2, 2), result.Data.Events[0].StartDate);
-        Assert.AreEqual(new Date(2001, 1, 1), result.Data.Events[1].StartDate);
+        Assert.That(result.Data.Events[0].StartDate, Is.EqualTo(new Date(2002, 2, 2)));
+        Assert.That(result.Data.Events[1].StartDate, Is.EqualTo(new Date(2001, 1, 1)));
     }
 
     [Test]
@@ -37,8 +37,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(2, result.Data.Events[0].EventId);
-        Assert.AreEqual(1, result.Data.Events[1].EventId);
+        Assert.That(result.Data.Events[0].EventId, Is.EqualTo(2));
+        Assert.That(result.Data.Events[1].EventId, Is.EqualTo(1));
     }
 
     private EventList Sut => new(

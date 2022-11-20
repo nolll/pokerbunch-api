@@ -33,7 +33,7 @@ class AddPlayerTests : TestBase
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
         await Sut.Execute(request);
 
-        Assert.IsNotNull(Deps.Player.Added);
+        Assert.That(Deps.Player.Added, Is.Not.Null);
     }
 
     [Test]

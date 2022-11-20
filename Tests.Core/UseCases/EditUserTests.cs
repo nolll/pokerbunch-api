@@ -43,7 +43,7 @@ public class EditUserTests : TestBase
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, ChangedEmail);
         var result = await Sut.Execute(request);
 
-        Assert.AreEqual("user-name-a", result.Data.UserName);
+        Assert.That(result.Data.UserName, Is.EqualTo("user-name-a"));
     }
 
     [Test]
@@ -53,9 +53,9 @@ public class EditUserTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.UserNameA, Deps.User.Saved.UserName);
-        Assert.AreEqual(ChangedDisplayName, Deps.User.Saved.DisplayName);
-        Assert.AreEqual(ChangedEmail, Deps.User.Saved.Email);
+        Assert.That(Deps.User.Saved.UserName, Is.EqualTo(TestData.UserNameA));
+        Assert.That(Deps.User.Saved.DisplayName, Is.EqualTo(ChangedDisplayName));
+        Assert.That(Deps.User.Saved.Email, Is.EqualTo(ChangedEmail));
     }
 
     private EditUser Sut => new(Deps.User);
