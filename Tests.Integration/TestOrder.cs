@@ -11,4 +11,57 @@ public static class TestOrder
     public const int BunchAndPlayer = 7;
     public const int Location = 8;
     public const int CashgamePlay = 9;
+    public const int Event = 10;
 }
+
+/* ---- Routes left to test ----
+Action.Update
+Action.Delete
+Action.List
+Bunch.Update
+Bunch.List
+Bunch.ListForCurrentUser
+Cashgame.ListByBunch
+Cashgame.Update
+Cashgame.Delete
+Cashgame.ListByBunchAndYear
+Cashgame.ListCurrentByBunch
+Cashgame.ListByEvent
+Cashgame.ListByPlayer
+Cashgame.YearsByBunch
+Player.Get
+Player.Delete
+Player.ListByBunch
+Profile.Get
+Profile.ChangePassword
+Profile.ResetPassword
+Auth.Token
+User.Update
+*/
+
+/* ---- Routes with tests ----
+Error (no tests needed)
+Root
+Settings
+Version
+Action.Add
+Admin.ClearCache
+Admin.SendEmail
+Auth.Login
+Bunch.Add
+Bunch.Get
+Bunch.Join
+Cashgame.Add
+Cashgame.Get
+Event.Add
+Event.Get
+Event.ListByBunch
+Location.Get
+Location.ListByBunch
+Location.Add
+Player.Add
+Player.Invite
+User.Add
+User.Get
+User.List
+*/

@@ -43,4 +43,22 @@ public class AdminTests
         var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).PostAsync(url, null);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
+    
+    [Test]
+    [Order(5)]
+    public async Task SettingsAsAdmin()
+    {
+        var url = new ApiSettingsUrl().Relative;
+        var response = await TestSetup.AuthorizedClient(TestData.AdminToken).GetAsync(url);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    [Test]
+    [Order(6)]
+    public async Task SettingsAsManager()
+    {
+        var url = new ApiSettingsUrl().Relative;
+        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).GetAsync(url);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+    }
 }

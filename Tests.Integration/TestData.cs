@@ -35,6 +35,10 @@ public static class TestData
     public const string CurrencyLayout = "{SYMBOL}{AMOUNT}";
     public const string TimeZone = "Europe/Stockholm";
 
+    public const string EventName = "Event 1";
+    public const int EventIdInt = 1;
+    public const string EventIdString = "1";
+
     public const string CashgameId = "1";
 
     public static string AdminToken { get; set; }
