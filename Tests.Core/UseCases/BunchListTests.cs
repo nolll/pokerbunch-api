@@ -10,11 +10,11 @@ public class BunchListTests : TestBase
     {
         var result = await Sut.Execute(new GetBunchList.Request(TestData.AdminUser.UserName));
 
-        Assert.AreEqual(2, result.Data.Bunches.Count);
-        Assert.AreEqual("bunch-a", result.Data.Bunches[0].Slug);
-        Assert.AreEqual(TestData.BunchA.DisplayName, result.Data.Bunches[0].Name);
-        Assert.AreEqual("bunch-b", result.Data.Bunches[1].Slug);
-        Assert.AreEqual(TestData.BunchB.DisplayName, result.Data.Bunches[1].Name);
+        Assert.That(result.Data.Bunches.Count, Is.EqualTo(2));
+        Assert.That(result.Data.Bunches[0].Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data.Bunches[0].Name, Is.EqualTo(TestData.BunchA.DisplayName));
+        Assert.That(result.Data.Bunches[1].Slug, Is.EqualTo("bunch-b"));
+        Assert.That(result.Data.Bunches[1].Name, Is.EqualTo(TestData.BunchB.DisplayName));
     }
 
     private GetBunchList Sut => new(

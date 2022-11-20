@@ -32,7 +32,7 @@ class BuyinTests : TestBase
     }
 
     [Test]
-    public void Buyin_StartedCashgame_AddsCheckpointWithCorrectValues()
+    public async Task Buyin_StartedCashgame_AddsCheckpointWithCorrectValues()
     {
         var timestamp = DateTime.UtcNow;
         const int buyin = 1;
@@ -42,13 +42,13 @@ class BuyinTests : TestBase
         Deps.Cashgame.SetupRunningGame();
 
         var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, buyin, stack, timestamp);
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
         var result = Deps.Cashgame.Updated.AddedCheckpoints.First();
 
-        Assert.AreEqual(timestamp, result.Timestamp);
-        Assert.AreEqual(buyin, result.Amount);
-        Assert.AreEqual(savedStack, result.Stack);
+        Assert.That(result.Timestamp, Is.EqualTo(timestamp));
+        Assert.That(result.Amount, Is.EqualTo(buyin));
+        Assert.That(result.Stack, Is.EqualTo(savedStack));
     }
 
     private Buyin Sut => new(

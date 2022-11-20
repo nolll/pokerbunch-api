@@ -12,7 +12,7 @@ public class AddCashgameTests : TestBase
         var request = CreateRequest(TestData.LocationIdA);
         var result = await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.SlugA, result.Data.Slug);
+        Assert.That(result.Data.Slug, Is.EqualTo(TestData.SlugA));
     }
 
     [Test]
@@ -21,7 +21,7 @@ public class AddCashgameTests : TestBase
         var request = CreateRequest(TestData.LocationIdA);
         await Sut.Execute(request);
 
-        Assert.IsNotNull(Deps.Cashgame.Added);
+        Assert.That(Deps.Cashgame.Added, Is.Not.Null);
     }
 
     [Test]

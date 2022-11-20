@@ -14,7 +14,7 @@ public class AddEventTests : TestBase
         var request = new AddEvent.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
-        Assert.AreEqual(addedEventName, Deps.Event.Added.Name);
+        Assert.That(Deps.Event.Added.Name, Is.EqualTo(addedEventName));
     }
 
     [Test]

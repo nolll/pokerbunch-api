@@ -79,14 +79,14 @@ class AddUserTests : TestBase
 
         var user = Deps.User.Added;
 
-        Assert.AreEqual(0, user.Id);
-        Assert.AreEqual(ValidUserName, user.UserName);
-        Assert.AreEqual(ValidDisplayName, user.DisplayName);
-        Assert.AreEqual("", user.RealName);
-        Assert.AreEqual(ValidEmail, user.Email);
-        Assert.AreEqual(Role.Player, user.GlobalRole);
-        Assert.AreEqual(expectedEncryptedPassword, user.EncryptedPassword);
-        Assert.AreEqual(expectedSalt, user.Salt);
+        Assert.That(user.Id, Is.EqualTo(0));
+        Assert.That(user.UserName, Is.EqualTo(ValidUserName));
+        Assert.That(user.DisplayName, Is.EqualTo(ValidDisplayName));
+        Assert.That(user.RealName, Is.EqualTo(""));
+        Assert.That(user.Email, Is.EqualTo(ValidEmail));
+        Assert.That(user.GlobalRole, Is.EqualTo(Role.Player));
+        Assert.That(user.EncryptedPassword, Is.EqualTo(expectedEncryptedPassword));
+        Assert.That(user.Salt, Is.EqualTo(expectedSalt));
     }
 
     [Test]
@@ -100,9 +100,9 @@ Please sign in here: /loginUrl";
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/loginUrl");
         await Sut.Execute(request);
 
-        Assert.AreEqual(ValidEmail, Deps.EmailSender.To);
-        Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);
-        Assert.AreEqual(body, Deps.EmailSender.Message.Body);
+        Assert.That(Deps.EmailSender.To, Is.EqualTo(ValidEmail));
+        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
     }
 
     private AddUser Sut => new(
