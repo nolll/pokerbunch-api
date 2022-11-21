@@ -49,13 +49,13 @@ public class BunchTests
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
         var inviteUrl = new ApiPlayerInviteUrl(TestData.UserPlayerIdString).Relative;
-        await TestSetup.AuthorizedClient(TestData.ManagerToken).PostAsJsonAsync(inviteUrl, inviteParameters);
+        await TestClient.Post(TestData.ManagerToken, inviteUrl, inviteParameters);
         var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage);
         Assert.That(verificationCode, Is.Not.Null);
 
         var joinParameters = new JoinBunchPostModel(verificationCode);
         var joinUrl = new ApiBunchJoinUrl(TestData.BunchId).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.UserToken).PostAsJsonAsync(joinUrl, joinParameters);
+        var response = await TestClient.Post(TestData.UserToken, joinUrl, joinParameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 

@@ -15,7 +15,7 @@ public class UserTests
     public async Task GetUserAsAdmin()
     {
         var url = new ApiUserUrl(TestData.AdminUserName).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.AdminToken).GetAsync(url);
+        var response = await TestClient.Get(TestData.AdminToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -31,7 +31,7 @@ public class UserTests
     public async Task GetUserAsUser()
     {
         var url = new ApiUserUrl(TestData.AdminUserName).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.UserToken).GetAsync(url);
+        var response = await TestClient.Get(TestData.UserToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -46,7 +46,7 @@ public class UserTests
     [Order(3)]
     public async Task ListUsersAsAdmin()
     {
-        var response = await TestSetup.AuthorizedClient(TestData.AdminToken).GetAsync(new ApiUserListUrl().Relative);
+        var response = await TestClient.Get(TestData.AdminToken, new ApiUserListUrl().Relative);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -67,7 +67,7 @@ public class UserTests
     [Order(4)]
     public async Task ListUsersAsUser()
     {
-        var response = await TestSetup.AuthorizedClient(TestData.UserToken).GetAsync(new ApiUserListUrl().Relative);
+        var response = await TestClient.Get(TestData.UserToken, new ApiUserListUrl().Relative);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 }

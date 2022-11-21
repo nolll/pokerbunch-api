@@ -66,6 +66,42 @@ public static class TestClient
         }
     }
 
+    public static async Task<HttpResponseMessage> Get(string url)
+    {
+        return await Get(null, url);
+    }
+
+    public static async Task<HttpResponseMessage> Get(string token, string url)
+    {
+        return await GetClient(token).GetAsync(url);
+    }
+
+    public static async Task<string> GetString(string url)
+    {
+        return await GetString(null, url);
+    }
+
+    public static async Task<string> GetString(string token, string url)
+    {
+        var response = await GetClient(token).GetAsync(url);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public static async Task<HttpResponseMessage> Post(string url, object parameters)
+    {
+        return await Post(null, url, parameters);
+    }
+
+    public static async Task<HttpResponseMessage> Post(string token, string url, object parameters = null)
+    {
+        return await GetClient(token).PostAsJsonAsync(url, parameters);
+    }
+
+    public static async Task<HttpResponseMessage> Delete(string token, string url)
+    {
+        return await GetClient(token).DeleteAsync(url);
+    }
+
     private static async Task<TestClientResult<T>> Get<T>(string token, ApiUrl url) where T : class
     {
         var response = await GetClient(token).GetAsync(url.Relative);
@@ -78,12 +114,9 @@ public static class TestClient
         return await HandleResponse<T>(response);
     }
 
-    private static HttpClient Client => GetClient();
     private static HttpClient GetClient(string token = null)
     {
-        return token != null
-            ? TestSetup.AuthorizedClient(token)
-            : TestSetup.Client;
+        return TestSetup.GetClient(token);
     }
 
     private static async Task<TestClientResult<T>> HandleResponse<T>(HttpResponseMessage response) where T : class

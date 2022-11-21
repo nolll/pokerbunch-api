@@ -12,7 +12,7 @@ public class GeneralTests
     [Order(1)]
     public async Task Root()
     {
-        var response = await TestSetup.Client.GetAsync(new ApiRootUrl().Relative);
+        var response = await TestClient.Get(new ApiRootUrl().Relative);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -20,7 +20,7 @@ public class GeneralTests
     [Order(2)]
     public async Task Version()
     {
-        var response = await TestSetup.Client.GetAsync(new ApiVersionUrl().Relative);
+        var response = await TestClient.Get(new ApiVersionUrl().Relative);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -28,7 +28,7 @@ public class GeneralTests
     [Order(3)]
     public async Task Swagger()
     {
-        var response = await TestSetup.Client.GetAsync(new ApiSwaggerUrl().Relative);
+        var response = await TestClient.Get(new ApiSwaggerUrl().Relative);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 }

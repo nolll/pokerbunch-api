@@ -13,7 +13,7 @@ public class AdminTests
     public async Task ClearCacheAsAdmin()
     {
         var url = new ApiAdminClearCacheUrl().Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.AdminToken).PostAsync(url, null);
+        var response = await TestClient.Post(TestData.AdminToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -22,7 +22,7 @@ public class AdminTests
     public async Task ClearCacheAsManager()
     {
         var url = new ApiAdminClearCacheUrl().Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).PostAsync(url, null);
+        var response = await TestClient.Post(TestData.ManagerToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 
@@ -31,7 +31,7 @@ public class AdminTests
     public async Task SendTestEmailAsAdmin()
     {
         var url = new ApiAdminSendEmailUrl().Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.AdminToken).PostAsync(url, null);
+        var response = await TestClient.Post(TestData.AdminToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -40,7 +40,7 @@ public class AdminTests
     public async Task SendTestEmailAsManager()
     {
         var url = new ApiAdminSendEmailUrl().Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).PostAsync(url, null);
+        var response = await TestClient.Post(TestData.ManagerToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
     
@@ -49,7 +49,7 @@ public class AdminTests
     public async Task SettingsAsAdmin()
     {
         var url = new ApiSettingsUrl().Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.AdminToken).GetAsync(url);
+        var response = await TestClient.Get(TestData.AdminToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -58,7 +58,7 @@ public class AdminTests
     public async Task SettingsAsManager()
     {
         var url = new ApiSettingsUrl().Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).GetAsync(url);
+        var response = await TestClient.Get(TestData.ManagerToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 }

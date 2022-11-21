@@ -22,14 +22,14 @@ public class TestSetup
 
     public static string ConnectionString => Testcontainers.ConnectionString;
     public static FakeEmailSender EmailSender;
-    public static WebApplicationFactoryInTest WebApplicationFactory;
+    private static WebApplicationFactoryInTest _webApplicationFactory;
 
     [OneTimeSetUp]
     public async Task SetUp()
     {
         await Testcontainers.StartAsync();
         EmailSender = new FakeEmailSender();
-        WebApplicationFactory = new WebApplicationFactoryInTest(ConnectionString, EmailSender);
+        _webApplicationFactory = new WebApplicationFactoryInTest(ConnectionString, EmailSender);
         CreateTables();
         AddMasterData();
     }
@@ -40,14 +40,14 @@ public class TestSetup
         await Testcontainers.DisposeAsync().AsTask();
     }
 
-    public static HttpClient Client => WebApplicationFactory.CreateClient();
-    public static HttpClient AuthorizedClient(string token)
+    public static HttpClient GetClient(string token = null)
     {
-        var client = WebApplicationFactory.CreateClient();
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        var client = _webApplicationFactory.CreateClient();
+        if(token != null)
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         return client;
     }
-
+    
     private static void CreateTables()
     {
         var db = new PostgresStorageProvider(ConnectionString);

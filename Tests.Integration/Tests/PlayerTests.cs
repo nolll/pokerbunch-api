@@ -20,7 +20,7 @@ public class PlayerTests
     {
         var parameters = new PlayerAddPostModel(TempPlayerName);
         var url = new ApiPlayerAddUrl(TestData.BunchId).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).PostAsJsonAsync(url, parameters);
+        var response = await TestClient.Post(TestData.ManagerToken, url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -40,7 +40,7 @@ public class PlayerTests
     public async Task GetPlayer()
     {
         var url = new ApiPlayerUrl(TempPlayerIdString).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).GetAsync(url);
+        var response = await TestClient.Get(TestData.ManagerToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -60,7 +60,7 @@ public class PlayerTests
     public async Task ListPlayers()
     {
         var url = new ApiPlayerListUrl(TestData.BunchId).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).GetAsync(url);
+        var response = await TestClient.Get(TestData.ManagerToken, url);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -102,11 +102,11 @@ public class PlayerTests
     public async Task DeletePlayer()
     {
         var deleteUrl = new ApiPlayerDeleteUrl(TempPlayerIdString).Relative;
-        var deleteResponse = await TestSetup.AuthorizedClient(TestData.ManagerToken).DeleteAsync(deleteUrl);
+        var deleteResponse = await TestClient.Delete(TestData.ManagerToken, deleteUrl);
         Assert.That(deleteResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var getUrl = new ApiPlayerUrl(TempPlayerIdString).Relative;
-        var getResponse = await TestSetup.AuthorizedClient(TestData.ManagerToken).GetAsync(getUrl);
+        var getResponse = await TestClient.Get(TestData.ManagerToken, getUrl);
         Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
 }

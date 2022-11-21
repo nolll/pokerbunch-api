@@ -16,7 +16,7 @@ public class CashgamePlayTests
     {
         var parameters = new AddCashgamePostModel(TestData.BunchLocationIdInt);
         var url = new ApiCashgameAddUrl(TestData.BunchId).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.UserToken).PostAsJsonAsync(url, parameters);
+        var response = await TestClient.Post(TestData.UserToken, url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
         var content = await response.Content.ReadAsStringAsync();
@@ -50,7 +50,7 @@ public class CashgamePlayTests
     public async Task GetCurrentCashgameId()
     {
         var url = new ApiBunchCashgamesCurrentUrl(TestData.BunchId).Relative;
-        var content = await TestSetup.AuthorizedClient(TestData.UserToken).GetStringAsync(url);
+        var content = await TestClient.GetString(TestData.UserToken, url);
         var result = JsonSerializer.Deserialize<IEnumerable<ApiCurrentGame>>(content)!.ToList();
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Count, Is.EqualTo(1));
@@ -62,7 +62,7 @@ public class CashgamePlayTests
     public async Task GetRunningCashgame()
     {
         var url = new ApiCashgameUrl(TestData.CashgameId).Relative;
-        var content = await TestSetup.AuthorizedClient(TestData.UserToken).GetStringAsync(url);
+        var content = await TestClient.GetString(TestData.UserToken, url);
         var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo("1"));
@@ -105,7 +105,7 @@ public class CashgamePlayTests
     public async Task GetFinishedCashgame()
     {
         var url = new ApiCashgameUrl(TestData.CashgameId).Relative;
-        var content = await TestSetup.AuthorizedClient(TestData.UserToken).GetStringAsync(url);
+        var content = await TestClient.GetString(TestData.UserToken, url);
         var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo("1"));
@@ -129,7 +129,7 @@ public class CashgamePlayTests
     {
         var url = new ApiActionAddUrl(cashgameId).Relative;
         var parameters = new AddCashgameActionPostModel("buyin", playerId, buyin, leftInStack);
-        var response = await TestSetup.AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        var response = await TestClient.Post(token, url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -137,7 +137,7 @@ public class CashgamePlayTests
     {
         var url = new ApiActionAddUrl(cashgameId).Relative;
         var parameters = new AddCashgameActionPostModel("report", playerId, 0, stack);
-        var response = await TestSetup.AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        var response = await TestClient.Post(token, url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
@@ -145,7 +145,7 @@ public class CashgamePlayTests
     {
         var url = new ApiActionAddUrl(cashgameId).Relative;
         var parameters = new AddCashgameActionPostModel("cashout", playerId, 0, stack);
-        var response = await TestSetup.AuthorizedClient(token).PostAsJsonAsync(url, parameters);
+        var response = await TestClient.Post(token, url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 }
