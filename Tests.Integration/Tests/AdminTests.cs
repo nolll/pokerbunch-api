@@ -1,5 +1,4 @@
 using System.Net;
-using Api.Urls.ApiUrls;
 
 namespace Tests.Integration.Tests;
 
@@ -12,36 +11,32 @@ public class AdminTests
     [Order(1)]
     public async Task ClearCacheAsAdmin()
     {
-        var url = new ApiAdminClearCacheUrl().Relative;
-        var response = await TestClient.LegacyPost(TestData.AdminToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.General.ClearCache(TestData.AdminToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]
     [Order(2)]
     public async Task ClearCacheAsManager()
     {
-        var url = new ApiAdminClearCacheUrl().Relative;
-        var response = await TestClient.LegacyPost(TestData.ManagerToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        var result = await TestClient.General.ClearCache(TestData.ManagerToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 
     [Test]
     [Order(3)]
     public async Task SendTestEmailAsAdmin()
     {
-        var url = new ApiAdminSendEmailUrl().Relative;
-        var response = await TestClient.LegacyPost(TestData.AdminToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.General.TestEmail(TestData.AdminToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]
     [Order(4)]
     public async Task SendTestEmailAsManager()
     {
-        var url = new ApiAdminSendEmailUrl().Relative;
-        var response = await TestClient.LegacyPost(TestData.ManagerToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        var result = await TestClient.General.TestEmail(TestData.ManagerToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
     
     [Test]

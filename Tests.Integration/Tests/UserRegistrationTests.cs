@@ -1,6 +1,5 @@
 using System.Net;
 using Api.Models.UserModels;
-using Api.Urls.ApiUrls;
 using Infrastructure.Sql;
 
 namespace Tests.Integration.Tests;
@@ -14,8 +13,9 @@ public class UserRegistrationTests
     [Order(1)]
     public async Task RegisterAdminReturns200()
     {
-        var response = await RegisterUser(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
+        var result = await TestClient.User.Add(parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var db = new PostgresStorageProvider(TestSetup.ConnectionString);
         await db.ExecuteAsync("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
     }
@@ -24,21 +24,17 @@ public class UserRegistrationTests
     [Order(2)]
     public async Task RegisterManagerReturns200()
     {
-        var response = await RegisterUser(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var parameters = new AddUserPostModel(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
+        var result = await TestClient.User.Add(parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]
     [Order(3)]
     public async Task RegisterRegularUserReturns200()
     {
-        var response = await RegisterUser(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var parameters = new AddUserPostModel(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
+        var result = await TestClient.User.Add(parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-
-    private async Task<HttpResponseMessage> RegisterUser(string userName, string displayName, string email, string password)
-    {
-        var parameters = new AddUserPostModel(userName, displayName, email, password);
-        return await TestClient.LegacyPost(new ApiUserAddUrl().Relative, parameters);
     }
-}

@@ -1,7 +1,4 @@
 using System.Net;
-using System.Text.Json;
-using Api.Models.UserModels;
-using Api.Urls.ApiUrls;
 
 namespace Tests.Integration.Tests;
 

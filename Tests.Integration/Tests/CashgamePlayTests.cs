@@ -1,7 +1,5 @@
 using System.Net;
-using System.Text.Json;
 using Api.Models.CashgameModels;
-using Api.Urls.ApiUrls;
 
 namespace Tests.Integration.Tests;
 
@@ -15,15 +13,11 @@ public class CashgamePlayTests
     public async Task AddCashgame()
     {
         var parameters = new AddCashgamePostModel(TestData.BunchLocationIdInt);
-        var url = new ApiCashgameAddUrl(TestData.BunchId).Relative;
-        var response = await TestClient.LegacyPost(TestData.UserToken, url, parameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<CashgameDetailsModel>(content);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo(TestData.CashgameId));
-        Assert.That(result.IsRunning, Is.EqualTo(true));
+        var result = await TestClient.Cashgame.Add(TestData.UserToken, TestData.BunchId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.Id, Is.EqualTo(TestData.CashgameId));
+        Assert.That(result.Model.IsRunning, Is.EqualTo(true));
     }
 
     [Test]
@@ -121,25 +115,22 @@ public class CashgamePlayTests
 
     private async Task Buyin(string token, string cashgameId, int playerId, int buyin, int leftInStack = 0)
     {
-        var url = new ApiActionAddUrl(cashgameId).Relative;
         var parameters = new AddCashgameActionPostModel("buyin", playerId, buyin, leftInStack);
-        var response = await TestClient.LegacyPost(token, url, parameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.Action.Add(token, cashgameId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     private async Task Report(string token, string cashgameId, int playerId, int stack)
     {
-        var url = new ApiActionAddUrl(cashgameId).Relative;
         var parameters = new AddCashgameActionPostModel("report", playerId, 0, stack);
-        var response = await TestClient.LegacyPost(token, url, parameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.Action.Add(token, cashgameId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     private async Task Cashout(string token, string cashgameId, int playerId, int stack)
     {
-        var url = new ApiActionAddUrl(cashgameId).Relative;
         var parameters = new AddCashgameActionPostModel("cashout", playerId, 0, stack);
-        var response = await TestClient.LegacyPost(token, url, parameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.Action.Add(token, cashgameId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 }

@@ -2,7 +2,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
-using Api.Urls.ApiUrls;
 using Core;
 
 namespace Tests.Integration.Tests;
@@ -47,15 +46,14 @@ public class BunchTests
     public async Task InviteAndJoin()
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
-        var inviteUrl = new ApiPlayerInviteUrl(TestData.UserPlayerIdString).Relative;
-        await TestClient.LegacyPost(TestData.ManagerToken, inviteUrl, inviteParameters);
+        var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerIdString, inviteParameters);
         var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage);
+        Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(verificationCode, Is.Not.Null);
 
         var joinParameters = new JoinBunchPostModel(verificationCode);
-        var joinUrl = new ApiBunchJoinUrl(TestData.BunchId).Relative;
-        var response = await TestClient.LegacyPost(TestData.UserToken, joinUrl, joinParameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var joinResult = await TestClient.Bunch.Join(TestData.UserToken, TestData.BunchId, joinParameters);
+        Assert.That(joinResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]

@@ -1,6 +1,5 @@
 using System.Net;
 using Api.Models.UserModels;
-using Api.Urls.ApiUrls;
 
 namespace Tests.Integration.Tests;
 
@@ -13,49 +12,36 @@ public class LoginTests
     [Order(1)]
     public async Task LoginAdminReturns200()
     {
-        var response = await Login(TestData.AdminUserName, TestData.AdminPassword);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var token = await GetToken(response);
-        Assert.That(token, Is.Not.Empty);
-
-        TestData.AdminToken = token;
+        var result = await Login(TestData.AdminUserName, TestData.AdminPassword);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Empty);
+        TestData.AdminToken = result.Model;
     }
 
     [Test]
     [Order(2)]
     public async Task LoginManagerReturns200()
     {
-        var response = await Login(TestData.ManagerUserName, TestData.ManagerPassword);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await Login(TestData.ManagerUserName, TestData.ManagerPassword);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Empty);
 
-        var token = await GetToken(response);
-        Assert.That(token, Is.Not.Empty);
-
-        TestData.ManagerToken = token;
+        TestData.ManagerToken = result.Model;
     }
 
     [Test]
     [Order(3)]
     public async Task LoginRegularUserReturns200()
     {
-        var response = await Login(TestData.UserUserName, TestData.UserPassword);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var token = await GetToken(response);
-        Assert.That(token, Is.Not.Empty);
-
-        TestData.UserToken = token;
+        var result = await Login(TestData.UserUserName, TestData.UserPassword);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Empty);
+        TestData.UserToken = result.Model;
     }
 
-    private async Task<HttpResponseMessage> Login(string userName, string password)
+    private async Task<TestClientResult<string>> Login(string userName, string password)
     {
         var parameters = new LoginPostModel(userName, password);
-        return await TestClient.LegacyPost(new ApiLoginUrl().Relative, parameters);
-    }
-
-    private async Task<string> GetToken(HttpResponseMessage response)
-    {
-        return await response.Content.ReadAsStringAsync();
+        return await TestClient.Auth.Login(parameters);
     }
 }
