@@ -51,7 +51,7 @@ public class LoginTests
     private async Task<HttpResponseMessage> Login(string userName, string password)
     {
         var parameters = new LoginPostModel(userName, password);
-        return await TestClient.Post(new ApiLoginUrl().Relative, parameters);
+        return await TestClient.LegacyPost(new ApiLoginUrl().Relative, parameters);
     }
 
     private async Task<string> GetToken(HttpResponseMessage response)

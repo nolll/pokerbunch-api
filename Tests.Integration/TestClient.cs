@@ -1,8 +1,11 @@
 using System.Text.Json;
 using Api.Models.BunchModels;
+using Api.Models.CashgameModels;
 using Api.Models.EventModels;
+using Api.Models.HomeModels;
 using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
+using Api.Models.UserModels;
 using Api.Urls.ApiUrls;
 
 namespace Tests.Integration;
@@ -22,6 +25,19 @@ public static class TestClient
         }
     }
 
+    public static class Cashgame
+    {
+        public static async Task<TestClientResult<IEnumerable<ApiCurrentGame>>> Current(string token, string bunchId)
+        {
+            return await Get<IEnumerable<ApiCurrentGame>>(token, new ApiBunchCashgamesCurrentUrl(bunchId));
+        }
+
+        public static async Task<TestClientResult<CashgameDetailsModel>> Get(string token, string cashgameId)
+        {
+            return await Get<CashgameDetailsModel>(token, new ApiCashgameUrl(cashgameId));
+        }
+    }
+
     public static class Event
     {
         public static async Task<TestClientResult<EventModel>> Add(string token, string bunchId, EventAddPostModel parameters)
@@ -37,6 +53,29 @@ public static class TestClient
         public static async Task<TestClientResult<List<EventModel>>> List(string token, string bunchId)
         {
             return await Get<List<EventModel>>(token, new ApiEventListUrl(bunchId));
+        }
+    }
+
+    public static class General
+    {
+        public static async Task<TestClientResult<HomeModel>> Root()
+        {
+            return await Get<HomeModel>(new ApiRootUrl());
+        }
+
+        public static async Task<TestClientResult> Settings(string token)
+        {
+            return await Get(token, new ApiSettingsUrl());
+        }
+
+        public static async Task<TestClientResult> Swagger()
+        {
+            return await Get(new ApiSwaggerUrl());
+        }
+
+        public static async Task<TestClientResult<VersionModel>> Version()
+        {
+            return await Get<VersionModel>(new ApiVersionUrl());
         }
     }
 
@@ -64,42 +103,65 @@ public static class TestClient
         {
             return await Post<PlayerModel>(token, new ApiPlayerAddUrl(bunchId), parameters);
         }
+
+        public static async Task<TestClientResult> Delete(string token, string playerId)
+        {
+            return await TestClient.Delete(token, new ApiPlayerDeleteUrl(playerId));
+        }
+
+        public static async Task<TestClientResult<PlayerModel>> Get(string token, string playerId)
+        {
+            return await Get<PlayerModel>(token, new ApiPlayerUrl(playerId));
+        }
+
+        public static async Task<TestClientResult<List<PlayerListItemModel>>> List(string token, string bunchId)
+        {
+            return await Get<List<PlayerListItemModel>>(token, new ApiPlayerListUrl(bunchId));
+        }
     }
 
-    public static async Task<HttpResponseMessage> Get(string url)
+    public static class User
     {
-        return await Get(null, url);
-    }
+        public static async Task<TestClientResult<FullUserModel>> GetAsAdmin(string userName)
+        {
+            return await Get<FullUserModel>(TestData.AdminToken, new ApiUserUrl(userName));
+        }
 
-    public static async Task<HttpResponseMessage> Get(string token, string url)
+        public static async Task<TestClientResult<UserModel>> GetAsUser(string userName)
+        {
+            return await Get<UserModel>(TestData.UserToken, new ApiUserUrl(userName));
+        }
+
+        public static async Task<TestClientResult<List<UserModel>>> List(string token)
+        {
+            return await Get<List<UserModel>>(token, new ApiUserListUrl());
+        }
+    }
+    
+    public static async Task<HttpResponseMessage> LegacyPost(string url, object parameters)
     {
-        return await GetClient(token).GetAsync(url);
+        return await LegacyPost(null, url, parameters);
     }
 
-    public static async Task<string> GetString(string url)
-    {
-        return await GetString(null, url);
-    }
-
-    public static async Task<string> GetString(string token, string url)
-    {
-        var response = await GetClient(token).GetAsync(url);
-        return await response.Content.ReadAsStringAsync();
-    }
-
-    public static async Task<HttpResponseMessage> Post(string url, object parameters)
-    {
-        return await Post(null, url, parameters);
-    }
-
-    public static async Task<HttpResponseMessage> Post(string token, string url, object parameters = null)
+    public static async Task<HttpResponseMessage> LegacyPost(string token, string url, object parameters = null)
     {
         return await GetClient(token).PostAsJsonAsync(url, parameters);
     }
 
-    public static async Task<HttpResponseMessage> Delete(string token, string url)
+    private static async Task<TestClientResult> Get(ApiUrl url)
     {
-        return await GetClient(token).DeleteAsync(url);
+        return await Get(null, url);
+    }
+
+    private static async Task<TestClientResult> Get(string token, ApiUrl url)
+    {
+        var response = await GetClient(token).GetAsync(url.Relative);
+        return await HandleResponse(response);
+    }
+
+    private static async Task<TestClientResult<T>> Get<T>(ApiUrl url) where T : class
+    {
+        return await Get<T>(null, url);
     }
 
     private static async Task<TestClientResult<T>> Get<T>(string token, ApiUrl url) where T : class
@@ -112,6 +174,12 @@ public static class TestClient
     {
         var response = await GetClient(token).PostAsJsonAsync(url.Relative, parameters);
         return await HandleResponse<T>(response);
+    }
+
+    private static async Task<TestClientResult> Delete(string token, ApiUrl url)
+    {
+        var response = await GetClient(token).DeleteAsync(url.Relative);
+        return await HandleResponse(response);
     }
 
     private static HttpClient GetClient(string token = null)
@@ -128,5 +196,10 @@ public static class TestClient
         var result = JsonSerializer.Deserialize<T>(content);
 
         return new TestClientResult<T>(true, response.StatusCode, result);
+    }
+
+    private static async Task<TestClientResult> HandleResponse(HttpResponseMessage response)
+    {
+        return new TestClientResult(response.IsSuccessStatusCode, response.StatusCode);
     }
 }

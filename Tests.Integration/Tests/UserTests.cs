@@ -14,60 +14,45 @@ public class UserTests
     [Order(1)]
     public async Task GetUserAsAdmin()
     {
-        var url = new ApiUserUrl(TestData.AdminUserName).Relative;
-        var response = await TestClient.Get(TestData.AdminToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<FullUserModel>(content);
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        var result = await TestClient.User.GetAsAdmin(TestData.AdminUserName);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.UserName, Is.EqualTo(TestData.AdminUserName));
+        Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
     }
 
     [Test]
     [Order(2)]
     public async Task GetUserAsUser()
     {
-        var url = new ApiUserUrl(TestData.AdminUserName).Relative;
-        var response = await TestClient.Get(TestData.UserToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<UserModel>(content);
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        var result = await TestClient.User.GetAsUser(TestData.AdminUserName);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.UserName, Is.EqualTo(TestData.AdminUserName));
+        Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
     }
 
     [Test]
     [Order(3)]
     public async Task ListUsersAsAdmin()
     {
-        var response = await TestClient.Get(TestData.AdminToken, new ApiUserListUrl().Relative);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<List<UserItemModel>>(content);
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Count, Is.EqualTo(3));
-
-        Assert.That(result[0].UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result[0].DisplayName, Is.EqualTo(TestData.AdminDisplayName));
-        Assert.That(result[1].UserName, Is.EqualTo(TestData.ManagerUserName));
-        Assert.That(result[1].DisplayName, Is.EqualTo(TestData.ManagerDisplayName));
-        Assert.That(result[2].UserName, Is.EqualTo(TestData.UserUserName));
-        Assert.That(result[2].DisplayName, Is.EqualTo(TestData.UserDisplayName));
+        var result = await TestClient.User.List(TestData.AdminToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.Count, Is.EqualTo(3));
+        Assert.That(result.Model[0].UserName, Is.EqualTo(TestData.AdminUserName));
+        Assert.That(result.Model[0].DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        Assert.That(result.Model[1].UserName, Is.EqualTo(TestData.ManagerUserName));
+        Assert.That(result.Model[1].DisplayName, Is.EqualTo(TestData.ManagerDisplayName));
+        Assert.That(result.Model[2].UserName, Is.EqualTo(TestData.UserUserName));
+        Assert.That(result.Model[2].DisplayName, Is.EqualTo(TestData.UserDisplayName));
     }
 
     [Test]
     [Order(4)]
     public async Task ListUsersAsUser()
     {
-        var response = await TestClient.Get(TestData.UserToken, new ApiUserListUrl().Relative);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        var result = await TestClient.User.List(TestData.UserToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 }

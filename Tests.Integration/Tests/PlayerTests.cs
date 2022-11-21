@@ -1,7 +1,5 @@
 using System.Net;
-using System.Text.Json;
 using Api.Models.PlayerModels;
-using Api.Urls.ApiUrls;
 
 namespace Tests.Integration.Tests;
 
@@ -19,77 +17,65 @@ public class PlayerTests
     public async Task AddPlayer()
     {
         var parameters = new PlayerAddPostModel(TempPlayerName);
-        var url = new ApiPlayerAddUrl(TestData.BunchId).Relative;
-        var response = await TestClient.Post(TestData.ManagerToken, url, parameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<PlayerModel>(content);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Name, Is.EqualTo(TempPlayerName));
-        Assert.That(result.Id, Is.Not.Empty);
-        Assert.That(result.Slug, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(result.AvatarUrl, Is.EqualTo(""));
-        Assert.That(result.UserId, Is.EqualTo(""));
-        Assert.That(result.UserName, Is.EqualTo(""));
+        var result = await TestClient.Player.Add(TestData.ManagerToken, TestData.BunchId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.Name, Is.EqualTo(TempPlayerName));
+        Assert.That(result.Model.Id, Is.Not.Empty);
+        Assert.That(result.Model.Slug, Is.EqualTo(TestData.BunchId));
+        Assert.That(result.Model.Color, Is.EqualTo("#9e9e9e"));
+        Assert.That(result.Model.AvatarUrl, Is.EqualTo(""));
+        Assert.That(result.Model.UserId, Is.EqualTo(""));
+        Assert.That(result.Model.UserName, Is.EqualTo(""));
     }
 
     [Test]
     [Order(2)]
     public async Task GetPlayer()
     {
-        var url = new ApiPlayerUrl(TempPlayerIdString).Relative;
-        var response = await TestClient.Get(TestData.ManagerToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<PlayerModel>(content);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Name, Is.EqualTo(TempPlayerName));
-        Assert.That(result.Id, Is.Not.Empty);
-        Assert.That(result.Slug, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(result.AvatarUrl, Is.EqualTo(""));
-        Assert.That(result.UserId, Is.EqualTo(""));
-        Assert.That(result.UserName, Is.EqualTo(""));
+        var result = await TestClient.Player.Get(TestData.ManagerToken, TempPlayerIdString);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.Name, Is.EqualTo(TempPlayerName));
+        Assert.That(result.Model.Id, Is.Not.Empty);
+        Assert.That(result.Model.Slug, Is.EqualTo(TestData.BunchId));
+        Assert.That(result.Model.Color, Is.EqualTo("#9e9e9e"));
+        Assert.That(result.Model.AvatarUrl, Is.EqualTo(""));
+        Assert.That(result.Model.UserId, Is.EqualTo(""));
+        Assert.That(result.Model.UserName, Is.EqualTo(""));
     }
 
     [Test]
     [Order(2)]
     public async Task ListPlayers()
     {
-        var url = new ApiPlayerListUrl(TestData.BunchId).Relative;
-        var response = await TestClient.Get(TestData.ManagerToken, url);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.Player.List(TestData.ManagerToken, TestData.BunchId);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.Count, Is.EqualTo(4));
 
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<List<PlayerListItemModel>>(content);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Count, Is.EqualTo(4));
-
-        var player1 = result[0];
+        var player1 = result.Model[0];
         Assert.That(player1.Name, Is.EqualTo(TestData.ManagerDisplayName));
         Assert.That(player1.Id, Is.EqualTo(TestData.ManagerPlayerIdInt));
         Assert.That(player1.Color, Is.EqualTo("#9e9e9e"));
         Assert.That(player1.UserId, Is.EqualTo(TestData.ManagerUserId));
         Assert.That(player1.UserName, Is.EqualTo("manager"));
 
-        var player2 = result[1];
+        var player2 = result.Model[1];
         Assert.That(player2.Name, Is.EqualTo(TestData.PlayerName));
         Assert.That(player2.Id, Is.EqualTo(TestData.PlayerPlayerIdInt));
         Assert.That(player2.Color, Is.EqualTo("#9e9e9e"));
         Assert.That(player2.UserId, Is.Null);
         Assert.That(player2.UserName, Is.Null);
 
-        var player3 = result[2];
+        var player3 = result.Model[2];
         Assert.That(player3.Name, Is.EqualTo(TempPlayerName));
         Assert.That(player3.Id, Is.EqualTo(TempPlayerIdInt));
         Assert.That(player3.Color, Is.EqualTo("#9e9e9e"));
         Assert.That(player3.UserId, Is.Null);
         Assert.That(player3.UserName, Is.Null);
 
-        var player4 = result[3];
+        var player4 = result.Model[3];
         Assert.That(player4.Name, Is.EqualTo(TestData.UserDisplayName));
         Assert.That(player4.Id, Is.EqualTo(TestData.UserPlayerIdInt));
         Assert.That(player4.Color, Is.EqualTo("#9e9e9e"));
@@ -101,12 +87,10 @@ public class PlayerTests
     [Order(4)]
     public async Task DeletePlayer()
     {
-        var deleteUrl = new ApiPlayerDeleteUrl(TempPlayerIdString).Relative;
-        var deleteResponse = await TestClient.Delete(TestData.ManagerToken, deleteUrl);
-        Assert.That(deleteResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var deleteResult = await TestClient.Player.Delete(TestData.ManagerToken, TempPlayerIdString);
+        Assert.That(deleteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        var getUrl = new ApiPlayerUrl(TempPlayerIdString).Relative;
-        var getResponse = await TestClient.Get(TestData.ManagerToken, getUrl);
-        Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        var getResult = await TestClient.Player.Get(TestData.ManagerToken, TempPlayerIdString);
+        Assert.That(getResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
 }

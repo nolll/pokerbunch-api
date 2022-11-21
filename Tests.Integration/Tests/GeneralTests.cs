@@ -1,5 +1,4 @@
 using System.Net;
-using Api.Urls.ApiUrls;
 
 namespace Tests.Integration.Tests;
 
@@ -12,23 +11,23 @@ public class GeneralTests
     [Order(1)]
     public async Task Root()
     {
-        var response = await TestClient.Get(new ApiRootUrl().Relative);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.General.Root();
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]
     [Order(2)]
     public async Task Version()
     {
-        var response = await TestClient.Get(new ApiVersionUrl().Relative);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.General.Version();
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]
     [Order(3)]
     public async Task Swagger()
     {
-        var response = await TestClient.Get(new ApiSwaggerUrl().Relative);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = await TestClient.General.Swagger();
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 }

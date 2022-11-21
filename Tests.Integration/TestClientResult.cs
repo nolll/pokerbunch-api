@@ -15,3 +15,15 @@ public class TestClientResult<T> where T : class
         Model = model;
     }
 }
+
+public class TestClientResult
+{
+    public bool Success { get; }
+    public HttpStatusCode StatusCode { get; }
+
+    public TestClientResult(bool success, HttpStatusCode statusCode)
+    {
+        Success = success;
+        StatusCode = statusCode;
+    }
+}

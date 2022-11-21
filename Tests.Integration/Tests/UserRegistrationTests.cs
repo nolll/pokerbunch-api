@@ -39,6 +39,6 @@ public class UserRegistrationTests
     private async Task<HttpResponseMessage> RegisterUser(string userName, string displayName, string email, string password)
     {
         var parameters = new AddUserPostModel(userName, displayName, email, password);
-        return await TestClient.Post(new ApiUserAddUrl().Relative, parameters);
+        return await TestClient.LegacyPost(new ApiUserAddUrl().Relative, parameters);
     }
 }

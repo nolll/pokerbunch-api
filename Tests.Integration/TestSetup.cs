@@ -2,7 +2,6 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;

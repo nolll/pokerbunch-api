@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
@@ -49,13 +48,13 @@ public class BunchTests
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
         var inviteUrl = new ApiPlayerInviteUrl(TestData.UserPlayerIdString).Relative;
-        await TestClient.Post(TestData.ManagerToken, inviteUrl, inviteParameters);
+        await TestClient.LegacyPost(TestData.ManagerToken, inviteUrl, inviteParameters);
         var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage);
         Assert.That(verificationCode, Is.Not.Null);
 
         var joinParameters = new JoinBunchPostModel(verificationCode);
         var joinUrl = new ApiBunchJoinUrl(TestData.BunchId).Relative;
-        var response = await TestClient.Post(TestData.UserToken, joinUrl, joinParameters);
+        var response = await TestClient.LegacyPost(TestData.UserToken, joinUrl, joinParameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
