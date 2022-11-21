@@ -1,8 +1,5 @@
 using System.Net;
-using System.Text.Json;
 using Api.Models.EventModels;
-using Api.Urls.ApiUrls;
-using Microsoft.Extensions.Logging;
 
 namespace Tests.Integration.Tests;
 
@@ -16,21 +13,17 @@ public class EventTests
     public async Task AddEvent()
     {
         var parameters = new EventAddPostModel(TestData.EventName);
-        var url = new ApiEventAddUrl(TestData.BunchId).Relative;
-        var response = await TestSetup.AuthorizedClient(TestData.ManagerToken).PostAsJsonAsync(url, parameters);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<EventModel>(content);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo(TestData.EventIdInt));
+        var result = await TestClient.Event.Add(TestData.ManagerToken, TestData.BunchId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.Id, Is.EqualTo(TestData.EventIdInt));
     }
 
     [Test]
     [Order(2)]
     public async Task ListEvents()
     {
-        var result = await TestClient.ListEvents(TestData.ManagerToken, TestData.BunchId);
+        var result = await TestClient.Event.List(TestData.ManagerToken, TestData.BunchId);
 
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model.Count, Is.EqualTo(1));
@@ -44,7 +37,7 @@ public class EventTests
     [Order(3)]
     public async Task GetEvent()
     {
-        var result = await TestClient.GetEvent(TestData.ManagerToken, TestData.EventIdString);
+        var result = await TestClient.Event.Get(TestData.ManagerToken, TestData.EventIdString);
 
         Assert.That(result.Success, Is.True);
         Assert.That(result.Model, Is.Not.Null);

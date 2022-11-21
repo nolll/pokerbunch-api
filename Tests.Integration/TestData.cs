@@ -31,7 +31,8 @@ public static class TestData
     public const string BunchDisplayName = "Bunch 1";
     public const string BunchId = "bunch-1";
     public const string BunchDescription = "Bunch Description 1";
-    public const int BunchLocationId = 1;
+    public const int BunchLocationIdInt = 1;
+    public const string BunchLocationIdString = "1";
     public const string BunchLocationName = "Bunch Location 1";
     public const string CurrencySymbol = "$";
     public const string CurrencyLayout = "{SYMBOL}{AMOUNT}";

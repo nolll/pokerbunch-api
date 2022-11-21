@@ -14,7 +14,7 @@ public class CashgamePlayTests
     [Order(1)]
     public async Task AddCashgame()
     {
-        var parameters = new AddCashgamePostModel(TestData.BunchLocationId);
+        var parameters = new AddCashgamePostModel(TestData.BunchLocationIdInt);
         var url = new ApiCashgameAddUrl(TestData.BunchId).Relative;
         var response = await TestSetup.AuthorizedClient(TestData.UserToken).PostAsJsonAsync(url, parameters);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
