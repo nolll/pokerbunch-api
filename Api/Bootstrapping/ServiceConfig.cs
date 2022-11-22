@@ -130,7 +130,6 @@ public class ServiceConfig
 
         // Cashgame
         _services.AddSingleton<CashgameList>();
-        _services.AddSingleton<CashgameYearList>();
         _services.AddSingleton<EventCashgameList>();
         _services.AddSingleton<PlayerCashgameList>();
         _services.AddSingleton<CurrentCashgames>();

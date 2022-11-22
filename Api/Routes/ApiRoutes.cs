@@ -10,9 +10,8 @@ public static class ApiRoutes
 
     public static class Action
     {
-        public const string Add = List;
+        public const string Add = "cashgames/{cashgameId}/actions";
         public const string Delete = Update;
-        public const string List = "cashgames/{cashgameId}/actions";
         public const string Update = "cashgames/{cashgameId}/actions/{actionId}";
     }
 
@@ -43,9 +42,8 @@ public static class ApiRoutes
         public const string ListByEvent = "events/{eventId}/cashgames";
         public const string ListByPlayer = "players/{playerId}/cashgames";
         public const string ListCurrentByBunch = "bunches/{bunchId}/cashgames/current";
-        public const string YearsByBunch = "years/cashgames/{bunchId}";
     }
-        
+
     public static class Event
     {
         public const string Add = ListByBunch;
@@ -59,7 +57,7 @@ public static class ApiRoutes
         public const string Get = "locations/{locationId}";
         public const string ListByBunch = "bunches/{bunchId}/locations";
     }
-    
+
     public static class Player
     {
         public const string Add = ListByBunch;

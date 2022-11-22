@@ -57,12 +57,6 @@ public class FakeCashgameRepository : ICashgameRepository
         return Task.FromResult(_list.FirstOrDefault(o => o.Checkpoints.Any(p => p.Id == checkpointId)));
     }
 
-    public Task<IList<int>> GetYears(int bunchId)
-    {
-        var years = _list.Where(o => o.StartTime.HasValue && o.Status == GameStatus.Finished).Select(o => o.StartTime.Value.Year).ToList();
-        return Task.FromResult<IList<int>>(years);
-    }
-
     public Task DeleteGame(int id)
     {
         Deleted = id;

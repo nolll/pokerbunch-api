@@ -57,11 +57,6 @@ public class CashgameRepository : ICashgameRepository
         return (await Get(ids)).FirstOrDefault();
     }
 
-    public async Task<IList<int>> GetYears(int bunchId)
-    {
-        return await _cashgameDb.GetYears(bunchId);
-    }
-
     public async Task DeleteGame(int id)
     {
         await _cashgameDb.DeleteGame(id);

@@ -120,23 +120,6 @@ public class SqlCashgameDb
         return new RawCashgame(id, bunchId, locationId, eventId, status, date);
     }
 
-    public async Task<IList<int>> GetYears(int bunchId)
-    {
-        const string sql = @"
-            SELECT DISTINCT YEAR(g.date) as 'Year'
-            FROM pb_cashgame g
-            WHERE g.bunch_id = @bunchId
-            AND g.status = @status
-            ORDER BY 'Year' DESC";
-        var parameters = new List<SimpleSqlParameter>
-        {
-            new("@bunchId", bunchId),
-            new("@status", (int) GameStatus.Finished)
-        };
-        var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("year");
-    }
-
     public async Task DeleteGame(int id){
         const string sql = @"
             DELETE FROM pb_cashgame WHERE cashgame_id = @cashgameId";

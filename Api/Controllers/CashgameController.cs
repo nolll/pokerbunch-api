@@ -20,7 +20,6 @@ public class CashgameController : BaseController
     private readonly EditCashgame _editCashgame;
     private readonly DeleteCashgame _deleteCashgame;
     private readonly CurrentCashgames _currentCashgames;
-    private readonly CashgameYearList _cashgameYearList;
 
     public CashgameController(
         AppSettings appSettings,
@@ -32,8 +31,7 @@ public class CashgameController : BaseController
         AddCashgame addCashgame,
         EditCashgame editCashgame,
         DeleteCashgame deleteCashgame,
-        CurrentCashgames currentCashgames,
-        CashgameYearList cashgameYearList) 
+        CurrentCashgames currentCashgames) 
         : base(appSettings)
     {
         _urls = urls;
@@ -45,7 +43,6 @@ public class CashgameController : BaseController
         _editCashgame = editCashgame;
         _deleteCashgame = deleteCashgame;
         _currentCashgames = currentCashgames;
-        _cashgameYearList = cashgameYearList;
     }
 
     [Route(ApiRoutes.Cashgame.Get)]
@@ -141,14 +138,5 @@ public class CashgameController : BaseController
     {
         var result = await _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
         return Model(result, () => result.Data.Games.Select(o => new ApiCurrentGame(o, _urls)));
-    }
-
-    [Route(ApiRoutes.Cashgame.YearsByBunch)]
-    [HttpGet]
-    [ApiAuthorize]
-    public async Task<ObjectResult> Years(string bunchId)
-    {
-        var result = await _cashgameYearList.Execute(new CashgameYearList.Request(CurrentUserName, bunchId));
-        return Model(result, () => result.Data.Years.Select(o => new CashgameYearListItemModel(result.Data.Slug, o, _urls)));
     }
 }

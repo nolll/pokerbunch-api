@@ -24,7 +24,6 @@ public static class AccessControl
     public static bool CanListPlayers(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListPlayerCashgames(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListEvents(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanListCashgameYears(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListEventCashgames(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddPlayer(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanDeletePlayer(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);

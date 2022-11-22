@@ -13,5 +13,4 @@ public interface ICashgameRepository
     Task DeleteGame(int id);
     Task<int> Add(Bunch bunch, Cashgame cashgame);
     Task Update(Cashgame cashgame);
-    Task<IList<int>> GetYears(int bunchId);
 }
