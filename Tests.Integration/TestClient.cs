@@ -183,6 +183,11 @@ public static class TestClient
         {
             return await Get<List<UserModel>>(token, new ApiUserListUrl());
         }
+
+        public static async Task<TestClientResult<FullUserModel>> Profile(string token)
+        {
+            return await Get<FullUserModel>(token, new ApiUserProfileUrl());
+        }
     }
     
     private static async Task<TestClientResult> Get(ApiUrl url)

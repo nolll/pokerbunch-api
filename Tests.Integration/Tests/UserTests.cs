@@ -52,4 +52,15 @@ public class UserTests
         var result = await TestClient.User.List(TestData.UserToken);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
+
+    [Test]
+    [Order(5)]
+    public async Task Profile()
+    {
+        var result = await TestClient.User.Profile(TestData.UserToken);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.Model, Is.Not.Null);
+        Assert.That(result.Model.UserName, Is.EqualTo(TestData.UserUserName));
+        Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.UserDisplayName));
+    }
 }

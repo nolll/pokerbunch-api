@@ -30,7 +30,6 @@ Cashgame.ListCurrentByBunch
 Cashgame.ListByEvent
 Cashgame.ListByPlayer
 Cashgame.YearsByBunch
-Profile.Get
 Profile.ChangePassword
 Profile.ResetPassword
 Auth.Token
@@ -62,6 +61,7 @@ Player.Delete
 Player.Get
 Player.Invite
 Player.ListByBunch
+Profile.Get
 User.Add
 User.Get
 User.List
