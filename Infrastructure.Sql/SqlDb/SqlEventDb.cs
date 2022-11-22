@@ -11,7 +11,7 @@ public class SqlEventDb
         SELECT e.event_id, e.bunch_id, e.name, g.location_id, g.date
         FROM pb_event e
         LEFT JOIN pb_event_cashgame ecg on e.event_id = ecg.event_id
-        LEFT JOIN pb_game g on ecg.game_id = g.game_id
+        LEFT JOIN pb_cashgame g on ecg.cashgame_id = g.cashgame_id
         {0}
         ORDER BY e.event_id, g.date";
 
@@ -24,11 +24,11 @@ public class SqlEventDb
 
     public async Task<Event> Get(int id)
     {
-        const string whereClause = "WHERE e.event_id = @id";
+        const string whereClause = "WHERE e.event_id = @cashgameId";
         var sql = string.Format(EventSql, whereClause);
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", id)
+            new("@cashgameId", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
@@ -93,7 +93,7 @@ public class SqlEventDb
     public async Task AddCashgame(int eventId, int cashgameId)
     {
         const string sql = @"
-            INSERT INTO pb_event_cashgame (event_id, game_id)
+            INSERT INTO pb_event_cashgame (event_id, cashgame_id)
             VALUES (@eventId, @cashgameId)";
         var parameters = new List<SimpleSqlParameter>
         {

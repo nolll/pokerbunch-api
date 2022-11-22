@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS pb_app;
 DROP TABLE IF EXISTS pb_cashgame_checkpoint;
 DROP TABLE IF EXISTS pb_cashgame_comment;
 DROP TABLE IF EXISTS pb_event_cashgame;
-DROP TABLE IF EXISTS pb_game;
+DROP TABLE IF EXISTS pb_cashgame;
 DROP TABLE IF EXISTS pb_location;
 DROP TABLE IF EXISTS pb_tournament_comment;
 DROP TABLE IF EXISTS pb_tournament_payout;

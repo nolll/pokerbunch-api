@@ -10,16 +10,16 @@ namespace Infrastructure.Sql.SqlDb;
 public class SqlCashgameDb
 {
     private const string DataSql = @"
-        SELECT g.game_id, g.bunch_id, g.location_id, ecg.event_id, g.status, g.date
-        FROM pb_game g
-        LEFT JOIN pb_event_cashgame ecg ON ecg.game_id = g.game_id ";
+        SELECT g.cashgame_id, g.bunch_id, g.location_id, ecg.event_id, g.status, g.date
+        FROM pb_cashgame g
+        LEFT JOIN pb_event_cashgame ecg ON ecg.cashgame_id = g.cashgame_id ";
 
     private const string SearchSql = @"
-        SELECT g.game_id
-        FROM pb_game g ";
+        SELECT g.cashgame_id
+        FROM pb_cashgame g ";
 
     private const string SearchByCheckpointSql = @"
-        SELECT cp.game_id
+        SELECT cp.cashgame_id
         FROM pb_cashgame_checkpoint cp ";
         
     private readonly PostgresStorageProvider _db;
@@ -31,7 +31,7 @@ public class SqlCashgameDb
 
     public async Task<Cashgame> Get(int cashgameId)
     {
-        var sql = string.Concat(DataSql, "WHERE g.game_id = @cashgameId ORDER BY g.game_id");
+        var sql = string.Concat(DataSql, "WHERE g.cashgame_id = @cashgameId ORDER BY g.cashgame_id");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@cashgameId", cashgameId)
@@ -47,7 +47,7 @@ public class SqlCashgameDb
     {
         if(ids.Count == 0)
             return new List<Cashgame>();
-        var sql = string.Concat(DataSql, "WHERE g.game_id IN (@idList) ORDER BY g.game_id");
+        var sql = string.Concat(DataSql, "WHERE g.cashgame_id IN (@idList) ORDER BY g.cashgame_id");
         var parameter = new ListSqlParameter("@idList", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawCashgames = reader.ReadList(CreateRawCashgame);
@@ -70,18 +70,18 @@ public class SqlCashgameDb
             parameters.Add(new SimpleSqlParameter("@year", year.Value));
         }
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("game_id");
+        return reader.ReadIntList("cashgame_id");
     }
 
     public async Task<IList<int>> FindByEvent(int eventId)
     {
-        var sql = string.Concat(SearchSql, "WHERE g.game_id IN (SELECT ecg.game_id FROM pb_event_cashgame ecg WHERE ecg.event_id = @eventId)");
+        var sql = string.Concat(SearchSql, "WHERE g.cashgame_id IN (SELECT ecg.cashgame_id FROM pb_event_cashgame ecg WHERE ecg.event_id = @eventId)");
         var parameters = new List<SimpleSqlParameter>
         {
             new("@eventId", eventId),
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("game_id");
+        return reader.ReadIntList("cashgame_id");
     }
 
     public async Task<IList<int>> FindRunning(int bunchId)
@@ -94,7 +94,7 @@ public class SqlCashgameDb
             new("@status", status)
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("game_id");
+        return reader.ReadIntList("cashgame_id");
     }
 
     public async Task<IList<int>> FindByCheckpoint(int checkpointId)
@@ -105,12 +105,12 @@ public class SqlCashgameDb
             new("@checkpointId", checkpointId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("game_id");
+        return reader.ReadIntList("cashgame_id");
     }
 
     private RawCashgame CreateRawCashgame(IStorageDataReader reader)
     {
-        var id = reader.GetIntValue("game_id");
+        var id = reader.GetIntValue("cashgame_id");
         var bunchId = reader.GetIntValue("bunch_id");
         var locationId = reader.GetIntValue("location_id");
         var eventId = reader.GetIntValue("event_id");
@@ -124,7 +124,7 @@ public class SqlCashgameDb
     {
         const string sql = @"
             SELECT DISTINCT YEAR(g.date) as 'Year'
-            FROM pb_game g
+            FROM pb_cashgame g
             WHERE g.bunch_id = @bunchId
             AND g.status = @status
             ORDER BY 'Year' DESC";
@@ -139,7 +139,7 @@ public class SqlCashgameDb
 
     public async Task DeleteGame(int id){
         const string sql = @"
-            DELETE FROM pb_game WHERE game_id = @cashgameId";
+            DELETE FROM pb_cashgame WHERE cashgame_id = @cashgameId";
 
         var parameters = new List<SimpleSqlParameter>
         {
@@ -152,8 +152,8 @@ public class SqlCashgameDb
     {
         var rawCashgame = CreateRawCashgame(cashgame);
         const string sql = @"
-            INSERT INTO pb_game (bunch_id, location_id, status, date)
-            VALUES (@bunchId, @locationId, @status, @date) RETURNING game_id";
+            INSERT INTO pb_cashgame (bunch_id, location_id, status, date)
+            VALUES (@bunchId, @locationId, @status, @date) RETURNING cashgame_id";
 
         var timezoneAdjustedDate = TimeZoneInfo.ConvertTime(rawCashgame.Date, bunch.Timezone);
         var parameters = new List<SimpleSqlParameter>
@@ -169,11 +169,11 @@ public class SqlCashgameDb
     public async Task UpdateGame(Cashgame cashgame)
     {
         const string sql = @"
-            UPDATE pb_game
+            UPDATE pb_cashgame
             SET location_id = @locationId,
                 date = @date,
                 status = @status
-            WHERE game_id = @cashgameId";
+            WHERE cashgame_id = @cashgameId";
 
         var rawCashgame = CreateRawCashgame(cashgame);
         var parameters = new List<SimpleSqlParameter>
@@ -210,7 +210,7 @@ public class SqlCashgameDb
     public async Task<IList<int>> FindByPlayerId(int playerId)
     {
         const string sql = @"
-            SELECT DISTINCT game_id
+            SELECT DISTINCT cashgame_id
             FROM pb_cashgame_checkpoint
             WHERE player_id = @playerId";
 
@@ -219,7 +219,7 @@ public class SqlCashgameDb
             new("@playerId", playerId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("game_id");
+        return reader.ReadIntList("cashgame_id");
     }
 
     private RawCashgame CreateRawCashgame(Cashgame cashgame, GameStatus? status = null)
@@ -276,12 +276,12 @@ public class SqlCashgameDb
     private async Task<int> AddCheckpoint(Checkpoint checkpoint)
     {
         const string sql = @"
-            INSERT INTO pb_cashgame_checkpoint (game_id, player_id, type, amount, stack, timestamp)
-            VALUES (@gameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
+            INSERT INTO pb_cashgame_checkpoint (cashgame_id, player_id, type, amount, stack, timestamp)
+            VALUES (@cashgameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@gameId", checkpoint.CashgameId),
+            new("@cashgameId", checkpoint.CashgameId),
             new("@playerId", checkpoint.PlayerId),
             new("@type", (int)checkpoint.Type),
             new("@amount", checkpoint.Amount),
@@ -325,9 +325,9 @@ public class SqlCashgameDb
     private async Task<IList<RawCheckpoint>> GetCheckpoints(int cashgameId)
     {
         const string sql = @"
-            SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
+            SELECT cp.cashgame_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
             FROM pb_cashgame_checkpoint cp
-            WHERE cp.game_id = @cashgameId
+            WHERE cp.cashgame_id = @cashgameId
             ORDER BY cp.player_id, cp.timestamp";
         var parameters = new List<SimpleSqlParameter>
         {
@@ -340,7 +340,7 @@ public class SqlCashgameDb
     private static RawCheckpoint CreateRawCheckpoint(IStorageDataReader reader)
     {
         return new RawCheckpoint(
-            reader.GetIntValue("game_id"),
+            reader.GetIntValue("cashgame_id"),
             reader.GetIntValue("player_id"),
             reader.GetIntValue("amount"),
             reader.GetIntValue("stack"),
@@ -352,9 +352,9 @@ public class SqlCashgameDb
     private async Task<IList<RawCheckpoint>> GetCheckpoints(IList<int> cashgameIdList)
     {
         const string sql = @"
-            SELECT cp.game_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
+            SELECT cp.cashgame_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
             FROM pb_cashgame_checkpoint cp
-            WHERE cp.game_id IN (@cashgameIdList)
+            WHERE cp.cashgame_id IN (@cashgameIdList)
             ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id DESC";
 
         var parameter = new ListSqlParameter("@cashgameIdList", cashgameIdList);
