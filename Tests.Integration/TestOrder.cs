@@ -16,9 +16,6 @@ public static class TestOrder
 }
 
 /* ---- Routes left to test ----
-Action.Update
-Action.Delete
-Action.List
 Bunch.Update
 Bunch.List
 Bunch.ListForCurrentUser

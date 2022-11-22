@@ -41,6 +41,16 @@ public class CashgamePlayTests
 
     [Test]
     [Order(4)]
+    public async Task AddUpdateAndDeleteAction()
+    {
+        const string actionId = "8";
+        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerIdInt, 5000);
+        await Update(TestData.ManagerToken, TestData.CashgameId, actionId, 5001);
+        await Delete(TestData.ManagerToken, TestData.CashgameId, actionId);
+    }
+
+    [Test]
+    [Order(5)]
     public async Task GetCurrentCashgameId()
     {
         var result1 = await TestClient.Cashgame.Current(TestData.UserToken, TestData.BunchId);
@@ -50,7 +60,7 @@ public class CashgamePlayTests
     }
 
     [Test]
-    [Order(5)]
+    [Order(6)]
     public async Task GetRunningCashgame()
     {
         var result1 = await TestClient.Cashgame.Get(TestData.UserToken, TestData.CashgameId);
@@ -82,7 +92,7 @@ public class CashgamePlayTests
     }
 
     [Test]
-    [Order(6)]
+    [Order(7)]
     public async Task Cashout()
     {
         await Cashout(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerIdInt, 255);
@@ -91,7 +101,7 @@ public class CashgamePlayTests
     }
 
     [Test]
-    [Order(7)]
+    [Order(8)]
     public async Task GetFinishedCashgame()
     {
         var result = await TestClient.Cashgame.Get(TestData.UserToken, TestData.CashgameId);
@@ -131,6 +141,19 @@ public class CashgamePlayTests
     {
         var parameters = new AddCashgameActionPostModel("cashout", playerId, 0, stack);
         var result = await TestClient.Action.Add(token, cashgameId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task Update(string token, string cashgameId, string actionId, int stack)
+    {
+        var parameters = new UpdateActionPostModel(DateTimeOffset.Now, stack, null);
+        var result = await TestClient.Action.Update(token, cashgameId, actionId, parameters);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private async Task Delete(string token, string cashgameId, string actionId)
+    {
+        var result = await TestClient.Action.Delete(token, cashgameId, actionId);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 }

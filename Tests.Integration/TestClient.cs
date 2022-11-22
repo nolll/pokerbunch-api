@@ -18,6 +18,16 @@ public static class TestClient
         {
             return await Post(token, new ApiActionAddUrl(cashgameId), parameters);
         }
+
+        public static async Task<TestClientResult> Delete(string token, string cashgameId, string actionId)
+        {
+            return await Del(token, new ApiActionUpdateUrl(cashgameId, actionId));
+        }
+
+        public static async Task<TestClientResult> Update(string token, string cashgameId, string actionId, UpdateActionPostModel parameters)
+        {
+            return await Put(token, new ApiActionUpdateUrl(cashgameId, actionId), parameters);
+        }
     }
 
     public static class Auth
@@ -143,7 +153,7 @@ public static class TestClient
 
         public static async Task<TestClientResult> Delete(string token, string playerId)
         {
-            return await TestClient.Delete(token, new ApiPlayerDeleteUrl(playerId));
+            return await Del(token, new ApiPlayerDeleteUrl(playerId));
         }
 
         public static async Task<TestClientResult<PlayerModel>> Get(string token, string playerId)
@@ -223,6 +233,12 @@ public static class TestClient
         return HandleEmptyResponse(response);
     }
 
+    private static async Task<TestClientResult> Put(string token, ApiUrl url, object parameters = null)
+    {
+        var response = await GetClient(token).PutAsJsonAsync(url.Relative, parameters);
+        return HandleEmptyResponse(response);
+    }
+
     private static async Task<TestClientResult<T>> Post<T>(ApiUrl url, object parameters) where T : class
     {
         return await Post<T>(null, url, parameters);
@@ -234,7 +250,7 @@ public static class TestClient
         return await HandleJsonResponse<T>(response);
     }
 
-    private static async Task<TestClientResult> Delete(string token, ApiUrl url)
+    private static async Task<TestClientResult> Del(string token, ApiUrl url)
     {
         var response = await GetClient(token).DeleteAsync(url.Relative);
         return HandleEmptyResponse(response);

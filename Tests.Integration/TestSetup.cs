@@ -59,8 +59,8 @@ public class TestSetup
         db.Execute(GetMasterDataSql);
     }
 
-    private static string CreateScript => ReadSqlFile("db-create.sql");
-    private static string GetMasterDataSql => ReadSqlFile("db-add-master-data.sql");
+    private static string CreateScript => ReadSqlFile("data/db-create.sql");
+    private static string GetMasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
 
     private static string ReadSqlFile(string fileName)
     {
