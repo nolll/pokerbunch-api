@@ -187,21 +187,21 @@ public class SqlCashgameDb
         {
             foreach (var checkpoint in cashgame.AddedCheckpoints)
             {
-                AddCheckpoint(checkpoint);
+                await AddCheckpoint(checkpoint);
             }
         }
         if (cashgame.UpdatedCheckpoints.Any())
         {
             foreach (var checkpoint in cashgame.UpdatedCheckpoints)
             {
-                UpdateCheckpoint(checkpoint);
+                await UpdateCheckpoint(checkpoint);
             }
         }
         if (cashgame.DeletedCheckpoints.Any())
         {
             foreach (var checkpoint in cashgame.DeletedCheckpoints)
             {
-                DeleteCheckpoint(checkpoint);
+                await DeleteCheckpoint(checkpoint);
             }
         }
         await _db.ExecuteAsync(sql, parameters);
