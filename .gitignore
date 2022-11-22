@@ -21,3 +21,5 @@ Web/Assets
 **/appsettings.Development.json
 *.user
 .env.dev
+data/postgresql.sql
+data/sqlserver.sql
