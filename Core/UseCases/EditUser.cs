@@ -20,7 +20,7 @@ public class EditUser : UseCase<EditUser.Request, EditUser.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = await _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var userToSave = GetUser(user, request);
 
         await _userRepository.Update(userToSave);

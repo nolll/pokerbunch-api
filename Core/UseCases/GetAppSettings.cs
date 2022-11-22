@@ -15,7 +15,7 @@ public class RequireAppsettingsAccess : UseCase<RequireAppsettingsAccess.Request
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         if (!AccessControl.CanSeeAppSettings(user))
             return Error(new AccessDeniedError());
 

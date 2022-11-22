@@ -10,10 +10,10 @@ public abstract class Arrange : UseCaseTest<CurrentCashgames>
     protected UseCaseResult<CurrentCashgames.Result> Result;
 
     private const string UserName = "default-current-user";
-    private const int UserId = 1;
+    private const string UserId = "1";
     protected const string Slug = "default-slug";
-    private const int BunchId = 2;
-    protected const int CashgameId = 3;
+    private const string BunchId = "2";
+    protected const string CashgameId = "3";
     protected virtual Role Role => Role.Guest;
     protected virtual int GameCount => 0;
 
@@ -24,7 +24,7 @@ public abstract class Arrange : UseCaseTest<CurrentCashgames>
         var player = new PlayerInTest(role: Role);
         var cashgame = GameCount > 0 ? new CashgameInTest(id: CashgameId) : null;
 
-        Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(Task.FromResult<User>(user));
+        Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(UserName)).Returns(Task.FromResult<User>(user));
         Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult<Bunch>(bunch));
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult<Player>(player));
         Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(Task.FromResult<Cashgame>(cashgame));

@@ -79,7 +79,7 @@ class AddUserTests : TestBase
 
         var user = Deps.User.Added;
 
-        Assert.That(user.Id, Is.EqualTo(0));
+        Assert.That(user.Id, Is.Null);
         Assert.That(user.UserName, Is.EqualTo(ValidUserName));
         Assert.That(user.DisplayName, Is.EqualTo(ValidDisplayName));
         Assert.That(user.RealName, Is.EqualTo(""));

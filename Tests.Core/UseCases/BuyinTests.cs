@@ -7,7 +7,7 @@ namespace Tests.Core.UseCases;
 
 class BuyinTests : TestBase
 {
-    private const int PlayerId = 1;
+    private const string PlayerId = "1";
     private const int ValidBuyin = 1;
     private const int InvalidBuyin = 0;
     private const int ValidStack = 0;

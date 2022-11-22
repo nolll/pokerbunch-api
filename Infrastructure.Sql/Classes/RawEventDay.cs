@@ -2,13 +2,13 @@ namespace Infrastructure.Sql.Classes;
 
 public class RawEventDay
 {
-    public int Id { get; }
-    public int BunchId { get; }
+    public string Id { get; }
+    public string BunchId { get; }
     public string Name { get; }
-    public int LocationId { get; }
+    public string LocationId { get; }
     public DateTime Date { get; }
 
-    public RawEventDay(int id, int bunchId, string name, int locationId, DateTime date)
+    public RawEventDay(string id, string bunchId, string name, string locationId, DateTime date)
     {
         Id = id;
         BunchId = bunchId;

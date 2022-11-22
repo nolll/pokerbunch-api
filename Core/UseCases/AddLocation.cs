@@ -29,13 +29,13 @@ public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
             return Error(new ValidationError(validator));
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanAddLocation(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var location = new Location(0, request.Name, bunch.Id);
+        var location = new Location(null, request.Name, bunch.Id);
         var id = await _locationRepository.Add(location);
 
         return Success(new Result(bunch.Slug, id, location.Name));
@@ -59,10 +59,10 @@ public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
     public class Result
     {
         public string Slug { get; }
-        public int Id { get; }
+        public string Id { get; }
         public string Name { get; }
 
-        public Result(string slug, int id, string name)
+        public Result(string slug, string id, string name)
         {
             Slug = slug;
             Id = id;

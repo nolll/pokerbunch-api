@@ -25,7 +25,7 @@ public class Login : UseCase<Login.Request, Login.Result>
     
     private async Task<User> GetLoggedInUser(string loginName, string password)
     {
-        var user = await _userRepository.Get(loginName);
+        var user = await _userRepository.GetByUserNameOrEmail(loginName);
         if (user == null)
             return null;
 

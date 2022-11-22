@@ -4,7 +4,7 @@ namespace Core.Cache;
 
 public static class CacheKeyProvider
 {
-    public static string GetKey<T>(int id)
+    public static string GetKey<T>(string id)
     {
         return ConstructCacheKey(typeof(T).ToString(), id);
     }

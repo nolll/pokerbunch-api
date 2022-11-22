@@ -28,7 +28,7 @@ public class LocationController : BaseController
     [Route(ApiRoutes.Location.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public async Task<ObjectResult> Get(int locationId)
+    public async Task<ObjectResult> Get(string locationId)
     {
         var result = await _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
         return Model(result, () => new LocationModel(result.Data));

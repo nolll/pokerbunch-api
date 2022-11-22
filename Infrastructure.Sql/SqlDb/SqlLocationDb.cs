@@ -21,40 +21,40 @@ public class SqlLocationDb
         _db = db;
     }
 
-    public async Task<Location> Get(int id)
+    public async Task<Location> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", id)
+            new("@id", int.Parse(id))
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadOne(CreateLocation);
     }
         
-    public async Task<IList<Location>> Get(IList<int> ids)
+    public async Task<IList<Location>> Get(IList<string> ids)
     {
         if (!ids.Any())
             return new List<Location>();
 
         var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
-        var parameter = new ListSqlParameter("@ids", ids);
+        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
         var reader = await _db.QueryAsync(sql, parameter);
         return reader.ReadList(CreateLocation);
     }
 
-    public async Task<IList<int>> Find(int bunchId)
+    public async Task<IList<string>> Find(string bunchId)
     {
         var sql = string.Concat(SearchIdSql, "WHERE l.bunch_id = @bunchId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@bunchId", bunchId)
+            new("@bunchId", int.Parse(bunchId))
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("location_id");
+        return reader.ReadIntList("location_id").Select(o => o.ToString()).ToList();
     }
         
-    public async Task<int> Add(Location location)
+    public async Task<string> Add(Location location)
     {
         const string sql = @"
             INSERT INTO pb_location (name, bunch_id)
@@ -62,16 +62,16 @@ public class SqlLocationDb
         var parameters = new List<SimpleSqlParameter>
         {
             new("@name", location.Name),
-            new("@bunchId", location.BunchId)
+            new("@bunchId", int.Parse(location.BunchId))
         };
-        return await _db.ExecuteInsertAsync(sql, parameters);
+        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
 
     private Location CreateLocation(IStorageDataReader reader)
     {
         return new Location(
-            reader.GetIntValue("location_id"),
+            reader.GetIntValue("location_id").ToString(),
             reader.GetStringValue("name"),
-            reader.GetIntValue("bunch_id"));
+            reader.GetIntValue("bunch_id").ToString());
     }
 }

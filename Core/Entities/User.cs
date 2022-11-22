@@ -2,17 +2,17 @@ namespace Core.Entities;
 
 public class User : IEntity
 {
-    public int Id { get; }
-    public string UserName { get; private set; }
-    public string DisplayName { get; private set; }
-    public string RealName { get; private set; }
-    public string Email { get; private set; }
+    public string Id { get; }
+    public string UserName { get; }
+    public string DisplayName { get; }
+    public string RealName { get; }
+    public string Email { get; }
     public Role GlobalRole { get; }
     public string EncryptedPassword { get; private set; }
     public string Salt { get; private set; }
 
     public User(
-        int id, 
+        string id, 
         string userName, 
         string displayName = null, 
         string realName = null, 

@@ -163,7 +163,7 @@ public static class TestClient
 
         public static async Task<TestClientResult> Invite(string token, string playerId, PlayerInvitePostModel parameters)
         {
-            return await Post(token, new ApiPlayerInviteUrl(TestData.UserPlayerIdString), parameters);
+            return await Post(token, new ApiPlayerInviteUrl(TestData.UserPlayerId), parameters);
         }
 
         public static async Task<TestClientResult<List<PlayerListItemModel>>> List(string token, string bunchId)

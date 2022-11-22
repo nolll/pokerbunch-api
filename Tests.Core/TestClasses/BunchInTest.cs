@@ -6,7 +6,7 @@ namespace Tests.Core.TestClasses;
 public class BunchInTest : Bunch
 {
     public BunchInTest(
-        int id = 0, 
+        string id = null, 
         string slug = null, 
         string displayName = null, 
         string description = null, 

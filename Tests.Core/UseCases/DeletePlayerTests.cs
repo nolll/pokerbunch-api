@@ -8,7 +8,7 @@ public class DeletePlayerTests : TestBase
     [Test]
     public async Task DeletePlayer_PlayerHasntPlayed_PlayerDeletedAndReturnUrlIsPlayerIndex()
     {
-        const int playerIdThatHasNotPlayed = 3;
+        const string playerIdThatHasNotPlayed = "3";
 
         var request = new DeletePlayer.Request(TestData.ManagerUser.UserName, playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);

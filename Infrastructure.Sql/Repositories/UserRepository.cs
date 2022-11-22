@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
         _cacheContainer = cacheContainer;
     }
 
-    public async Task<User> Get(int id)
+    public async Task<User> GetById(string id)
     {
         return await GetAndCache(id);
     }
@@ -27,10 +27,10 @@ public class UserRepository : IUserRepository
         return await GetAndCache(ids);
     }
 
-    public async Task<User> Get(string nameOrEmail)
+    public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
     {
         var id = await _userDb.Find(nameOrEmail);
-        if (id == 0)
+        if (id == null)
             return null;
         return await GetAndCache(id);
     }
@@ -41,17 +41,17 @@ public class UserRepository : IUserRepository
         _cacheContainer.Remove<User>(user.Id);
     }
 
-    public async Task<int> Add(User user)
+    public async Task<string> Add(User user)
     {
         return await _userDb.Add(user);
     }
 
-    private async Task<User> GetAndCache(int id)
+    private async Task<User> GetAndCache(string id)
     {
         return await _cacheContainer.GetAndStoreAsync(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    private async Task<IList<User>> GetAndCache(IList<int> ids)
+    private async Task<IList<User>> GetAndCache(IList<string> ids)
     {
         return await _cacheContainer.GetAndStoreAsync(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }

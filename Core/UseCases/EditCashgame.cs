@@ -30,19 +30,19 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
             return Error(new ValidationError(validator));
 
         var cashgame = await _cashgameRepository.Get(request.Id);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanEditCashgame(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         var location = await _locationRepository.Get(request.LocationId);
-        var @event = request.EventId != 0 ? _eventRepository.Get(request.EventId) : null;
-        var eventId = @event?.Id ?? 0;
+        var @event = request.EventId != null ? await _eventRepository.Get(request.EventId) : null;
+        var eventId = @event?.Id;
         cashgame = new Cashgame(cashgame.BunchId, location.Id, eventId, cashgame.Status, cashgame.Id);
         await _cashgameRepository.Update(cashgame);
 
-        if (request.EventId > 0)
+        if (request.EventId != null)
         {
             await _eventRepository.AddCashgame(request.EventId, cashgame.Id);
         }
@@ -53,12 +53,12 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
     public class Request
     {
         public string UserName { get; }
-        public int Id { get; }
-        [Range(1, int.MaxValue, ErrorMessage = "Please select a location")]
-        public int LocationId { get; }
-        public int EventId { get; }
+        public string Id { get; }
+        [Required(ErrorMessage = "Please select a location")]
+        public string LocationId { get; }
+        public string EventId { get; }
 
-        public Request(string userName, int id, int locationId, int eventId)
+        public Request(string userName, string id, string locationId, string eventId)
         {
             UserName = userName;
             Id = id;

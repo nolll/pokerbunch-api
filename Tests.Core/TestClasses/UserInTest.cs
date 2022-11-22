@@ -5,7 +5,7 @@ namespace Tests.Core.TestClasses;
 public class UserInTest : User
 {
     public UserInTest(
-        int id = 0,
+        string id = null,
         string userName = null,
         string displayName = null,
         string realName = null,

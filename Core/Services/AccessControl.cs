@@ -9,7 +9,7 @@ public static class AccessControl
     public static bool CanSeeAppSettings(User currentUser) => IsAdmin(currentUser);
     public static bool CanListBunches(User currentUser) => IsAdmin(currentUser);
     public static bool CanListUsers(User currentUser) => IsAdmin(currentUser);
-    public static bool CanEditCashgameActionsFor(int requestedPlayerId, User currentUser, Player currentPlayer) =>
+    public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player currentPlayer) =>
         IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
     public static bool CanEditBunch(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanEditCashgame(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
@@ -35,7 +35,7 @@ public static class AccessControl
     public static bool CanAddEvent(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddLocation(User currentUser, Player currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
 
-    private static bool IsRequestedPlayer(Player currentPlayer, int requestedPlayerId) => currentPlayer.Id == requestedPlayerId;
+    private static bool IsRequestedPlayer(Player currentPlayer, string requestedPlayerId) => currentPlayer.Id == requestedPlayerId;
     private static bool IsPlayer(Player currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Player);
     private static bool IsManager(Player currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Manager);
     private static bool IsAdmin(User currentUser) => currentUser.IsAdmin;

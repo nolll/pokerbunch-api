@@ -16,7 +16,7 @@ public abstract class Arrange : UseCaseTest<ClearCache>
     {
         var user = new UserInTest(globalRole: Role);
 
-        Mock<IUserRepository>().Setup(o => o.Get(UserName)).Returns(Task.FromResult<User>(user));
+        Mock<IUserRepository>().Setup(o => o.GetByUserNameOrEmail(UserName)).Returns(Task.FromResult<User>(user));
     }
 
     protected override async Task ExecuteAsync()

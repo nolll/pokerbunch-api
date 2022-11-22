@@ -36,7 +36,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public async Task<ObjectResult> Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
+    public async Task<ObjectResult> Add(string cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
         return post.Type switch
         {
@@ -48,19 +48,19 @@ public class ActionController : BaseController
         };
     }
 
-    private async Task<ObjectResult> Buyin(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Buyin(string cashgameId, AddCashgameActionPostModel post)
     {
         var result = await _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
-    private async Task<ObjectResult> Report(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Report(string cashgameId, AddCashgameActionPostModel post)
     {
         var result = await _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
-    private async Task<ObjectResult> Cashout(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Cashout(string cashgameId, AddCashgameActionPostModel post)
     {
         var result = await _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
@@ -69,7 +69,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Update)]
     [HttpPut]
     [ApiAuthorize]
-    public async Task<ObjectResult> UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
+    public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
         var result = await _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
         return Model(result, () => new OkModel());
@@ -78,7 +78,7 @@ public class ActionController : BaseController
     [Route(ApiRoutes.Action.Delete)]
     [HttpDelete]
     [ApiAuthorize]
-    public async Task<ObjectResult> DeleteAction(int cashgameId, int actionId)
+    public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
         var result = await _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
         return Model(result, () => new OkModel());

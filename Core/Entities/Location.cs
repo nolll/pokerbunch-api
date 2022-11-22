@@ -2,11 +2,11 @@ namespace Core.Entities;
 
 public class Location : IEntity
 {
-    public int Id { get; }
+    public string Id { get; }
     public string Name { get; }
-    public int BunchId { get; }
+    public string BunchId { get; }
 
-    public Location(int id, string name, int bunchId)
+    public Location(string id, string name, string bunchId)
     {
         Id = id;
         Name = name;

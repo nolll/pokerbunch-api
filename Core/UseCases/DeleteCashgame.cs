@@ -23,7 +23,7 @@ public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Res
     {
         var cashgame = await _cashgameRepository.Get(request.Id);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))
@@ -40,9 +40,9 @@ public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Res
     public class Request
     {
         public string UserName { get; }
-        public int Id { get; }
+        public string Id { get; }
 
-        public Request(string userName, int id)
+        public Request(string userName, string id)
         {
             UserName = userName;
             Id = id;

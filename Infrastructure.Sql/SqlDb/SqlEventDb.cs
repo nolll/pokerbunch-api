@@ -22,13 +22,13 @@ public class SqlEventDb
         _db = db;
     }
 
-    public async Task<Event> Get(int id)
+    public async Task<Event> Get(string id)
     {
         const string whereClause = "WHERE e.event_id = @cashgameId";
         var sql = string.Format(EventSql, whereClause);
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@cashgameId", id)
+            new("@cashgameId", int.Parse(id))
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
@@ -36,17 +36,17 @@ public class SqlEventDb
         return rawEvent != null ? CreateEvent(rawEvent) : null;
     }
 
-    public async Task<IList<Event>> Get(IList<int> ids)
+    public async Task<IList<Event>> Get(IList<string> ids)
     {
         const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
-        var parameter = new ListSqlParameter("@ids", ids);
+        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
         var reader = await _db.QueryAsync(sql, parameter);
         var rawEvents = CreateRawEvents(reader);
         return rawEvents.Select(CreateEvent).ToList();
     }
 
-    public async Task<IList<int>> FindByBunchId(int bunchId)
+    public async Task<IList<string>> FindByBunchId(string bunchId)
     {
         const string sql = @"
             SELECT e.event_id
@@ -55,13 +55,13 @@ public class SqlEventDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", bunchId)
+            new("@id", int.Parse(bunchId))
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("event_id");
+        return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
     }
 
-    public async Task<IList<int>> FindByCashgameId(int cashgameId)
+    public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
         const string sql = @"
             SELECT ecg.event_id
@@ -70,13 +70,13 @@ public class SqlEventDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", cashgameId)
+            new("@id", int.Parse(cashgameId))
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("event_id");
+        return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
     }
 
-    public async Task<int> Add(Event e)
+    public async Task<string> Add(Event e)
     {
         const string sql = @"
             INSERT INTO pb_event (name, bunch_id)
@@ -85,20 +85,20 @@ public class SqlEventDb
         var parameters = new List<SimpleSqlParameter>
         {
             new("@name", e.Name),
-            new("@bunchId", e.BunchId)
+            new("@bunchId", int.Parse(e.BunchId))
         };
-        return await _db.ExecuteInsertAsync(sql, parameters);
+        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
 
-    public async Task AddCashgame(int eventId, int cashgameId)
+    public async Task AddCashgame(string eventId, string cashgameId)
     {
         const string sql = @"
             INSERT INTO pb_event_cashgame (event_id, cashgame_id)
             VALUES (@eventId, @cashgameId)";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@eventId", eventId),
-            new("@cashgameId", cashgameId)
+            new("@eventId", int.Parse(eventId)),
+            new("@cashgameId", int.Parse(cashgameId))
         };
         await _db.ExecuteInsertAsync(sql, parameters);
     }
@@ -117,7 +117,7 @@ public class SqlEventDb
     private static IList<RawEvent> CreateRawEvents(IStorageDataReader reader)
     {
         var rawEventDays = reader.ReadList(CreateRawEventDay);
-        var map = new Dictionary<int, IList<RawEventDay>>();
+        var map = new Dictionary<string, IList<RawEventDay>>();
         foreach (var day in rawEventDays)
         {
             IList<RawEventDay> list;
@@ -147,10 +147,10 @@ public class SqlEventDb
     private static RawEventDay CreateRawEventDay(IStorageDataReader reader)
     {
         return new RawEventDay(
-            reader.GetIntValue("event_id"),
-            reader.GetIntValue("bunch_id"),
+            reader.GetIntValue("event_id").ToString(),
+            reader.GetIntValue("bunch_id").ToString(),
             reader.GetStringValue("name"),
-            reader.GetIntValue("location_id"),
+            reader.GetIntValue("location_id").ToString(),
             reader.GetDateTimeValue("date"));
     }
 }

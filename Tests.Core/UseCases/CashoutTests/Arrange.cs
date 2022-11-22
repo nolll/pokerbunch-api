@@ -12,14 +12,14 @@ public abstract class Arrange : UseCaseTest<Cashout>
 {
     protected UseCaseResult<Cashout.Result> Result;
 
-    private const int BunchId = 1;
-    private const int CashgameId = 2;
-    private const int LocationId = 3;
-    private const int UserId = 4;
-    protected const int PlayerId = 5;
+    private const string BunchId = "1";
+    private const string CashgameId = "2";
+    private const string LocationId = "3";
+    private const string UserId = "4";
+    protected const string PlayerId = "5";
     protected const string Slug = "slug";
     protected const string UserName = "username";
-    private DateTime _startTime = DateTime.Parse("2001-01-01 12:00:00");
+    private readonly DateTime _startTime = DateTime.Parse("2001-01-01 12:00:00");
 
     protected virtual int CashoutStack => 123;
     protected DateTime CashoutTime => _startTime.AddMinutes(1);
@@ -40,7 +40,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
         Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(Task.FromResult(CreateCashgame()));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult(player));
-        Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(Task.FromResult(user));
+        Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(UserName)).Returns(Task.FromResult(user));
     }
 
     protected override async Task ExecuteAsync()
@@ -54,20 +54,20 @@ public abstract class Arrange : UseCaseTest<Cashout>
         {
             var checkpoints1 = new List<Checkpoint>
             {
-                Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, 1),
-                Checkpoint.Create(CashgameId, PlayerId, _startTime.AddMinutes(1), CheckpointType.Cashout, 200, 0, 3)
+                Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, "1"),
+                Checkpoint.Create(CashgameId, PlayerId, _startTime.AddMinutes(1), CheckpointType.Cashout, 200, 0, "3")
             };
 
-            return new Cashgame(BunchId, LocationId, 0, GameStatus.Running, CashgameId, checkpoints1);
+            return new Cashgame(BunchId, LocationId, null, GameStatus.Running, CashgameId, checkpoints1);
         }
         else
         {
             var checkpoints1 = new List<Checkpoint>
             {
-                Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, 1)
+                Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, "1")
             };
 
-            return new Cashgame(BunchId, LocationId, 0, GameStatus.Running, CashgameId, checkpoints1);
+            return new Cashgame(BunchId, LocationId, null, GameStatus.Running, CashgameId, checkpoints1);
         }
     }
 }

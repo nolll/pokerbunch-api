@@ -28,7 +28,7 @@ public class EventController : BaseController
     [Route(ApiRoutes.Event.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public async Task<ObjectResult> Get(int eventId)
+    public async Task<ObjectResult> Get(string eventId)
     {
         var result = await _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
         return Model(result, () => new EventModel(result.Data));

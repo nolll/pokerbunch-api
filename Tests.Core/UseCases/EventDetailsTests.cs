@@ -8,7 +8,7 @@ class EventDetailsTests : TestBase
     [Test]
     public async Task EventDetails_NameIsSet()
     {
-        var input = new EventDetails.Request(TestData.UserNameA, 1);
+        var input = new EventDetails.Request(TestData.UserNameA, "1");
         var result = await Sut.Execute(input);
 
         Assert.That(result.Data.Name, Is.EqualTo(TestData.EventNameA));

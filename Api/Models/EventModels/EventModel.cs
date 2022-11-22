@@ -7,7 +7,7 @@ namespace Api.Models.EventModels;
 public class EventModel
 {
     [JsonPropertyName("id")]
-    public int Id { get; }
+    public string Id { get; }
     
     [JsonPropertyName("bunchId")]
     public string BunchId { get; }
@@ -27,7 +27,7 @@ public class EventModel
         BunchId = e.BunchId;
         Name = e.Name;
         StartDate = e.StartDate?.IsoString;
-        Location = e.LocationId > 0 ? new SmallLocationModel(e) : null;
+        Location = e.LocationId != null ? new SmallLocationModel(e) : null;
     }
 
     public EventModel(EventDetails.Result r)
@@ -36,11 +36,11 @@ public class EventModel
         BunchId = r.BunchId;
         Name = r.Name;
         StartDate = r.StartDate?.IsoString;
-        Location = r.LocationId > 0 ? new SmallLocationModel(r) : null;
+        Location = r.LocationId != null ? new SmallLocationModel(r) : null;
     }
 
     [JsonConstructor]
-    public EventModel(int id, string bunchId, string name, string startDate, SmallLocationModel location)
+    public EventModel(string id, string bunchId, string name, string startDate, SmallLocationModel location)
     {
         Id = id;
         BunchId = bunchId;

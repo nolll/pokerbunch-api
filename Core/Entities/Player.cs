@@ -2,9 +2,9 @@ namespace Core.Entities;
 
 public class Player : IEntity
 {
-    public int BunchId { get; }
-    public int Id { get; }
-    public int UserId { get; }
+    public string BunchId { get; }
+    public string Id { get; }
+    public string UserId { get; }
     public string UserName { get; }
     public string DisplayName { get; }
     public Role Role { get; }
@@ -13,9 +13,9 @@ public class Player : IEntity
     public const string DefaultColor = "#9e9e9e";
 
     public Player(
-        int bunchId,
-        int id, 
-        int userId, 
+        string bunchId,
+        string id, 
+        string userId, 
         string userName,
         string displayName = null, 
         Role role = Role.Player,
@@ -30,14 +30,14 @@ public class Player : IEntity
         Color = color ?? DefaultColor;
     }
 
-    public static Player New(int bunchId, string displayName, Role role = Role.Player, string color = null)
+    public static Player New(string bunchId, string displayName, Role role = Role.Player, string color = null)
     {
-        return new Player(bunchId, 0, 0, null, displayName, role, color);
+        return new Player(bunchId, null, null, null, displayName, role, color);
     }
 
-    public static Player New(int bunchId, int userId, string userName, Role role = Role.Player, string color = null)
+    public static Player New(string bunchId, string userId, string userName, Role role = Role.Player, string color = null)
     {
-        return new Player(bunchId, 0, userId, userName, null, role, color);
+        return new Player(bunchId, null, userId, userName, null, role, color);
     }
 
     public bool IsInRole(Role requiredRole)

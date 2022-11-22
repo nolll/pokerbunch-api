@@ -27,7 +27,7 @@ public class Report : UseCase<Report.Request, Report.Result>
             return Error(new ValidationError(validator));
 
         var cashgame = await _cashgameRepository.Get(request.CashgameId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());
@@ -42,13 +42,13 @@ public class Report : UseCase<Report.Request, Report.Result>
     public class Request
     {
         public string UserName { get; }
-        public int CashgameId { get; }
-        public int PlayerId { get; }
+        public string CashgameId { get; }
+        public string PlayerId { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int Stack { get; }
         public DateTime CurrentTime { get; }
 
-        public Request(string userName, int cashgameId, int playerId, int stack, DateTime currentTime)
+        public Request(string userName, string cashgameId, string playerId, int stack, DateTime currentTime)
         {
             UserName = userName;
             CashgameId = cashgameId;

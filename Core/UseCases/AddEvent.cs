@@ -29,13 +29,13 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
             return Error(new ValidationError(validator));
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanAddEvent(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var e = new Event(0, bunch.Id, request.Name);
+        var e = new Event(null, bunch.Id, request.Name);
         var id = await _eventRepository.Add(e);
 
         return Success(new Result(bunch.Slug, id));
@@ -59,9 +59,9 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
     public class Result
     {
         public string BunchId { get; }
-        public int Id { get; }
+        public string Id { get; }
 
-        public Result(string bunchId, int id)
+        public Result(string bunchId, string id)
         {
             BunchId = bunchId;
             Id = id;

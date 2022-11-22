@@ -6,7 +6,7 @@ namespace Tests.Common.FakeRepositories;
 public class FakeEventRepository : IEventRepository
 {
     public Event Added { get; private set; }
-    public int AddedCashgameId { get; private set; }
+    public string AddedCashgameId { get; private set; }
 
     private readonly IList<Event> _list;
 
@@ -15,33 +15,33 @@ public class FakeEventRepository : IEventRepository
         _list = CreateEventList();
     }
 
-    public Task<Event> Get(int id)
+    public Task<Event> Get(string id)
     {
         return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
         
-    public Task<IList<Event>> Get(IList<int> ids)
+    public Task<IList<Event>> Get(IList<string> ids)
     {
         return Task.FromResult<IList<Event>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public Task<IList<Event>> List(int bunchId)
+    public Task<IList<Event>> List(string bunchId)
     {
         return Task.FromResult<IList<Event>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Task<Event> GetByCashgame(int cashgameId)
+    public Task<Event> GetByCashgame(string cashgameId)
     {
         return Task.FromResult(_list.First());
     }
 
-    public Task<int> Add(Event e)
+    public Task<string> Add(Event e)
     {
         Added = e;
-        return Task.FromResult(1);
+        return Task.FromResult("1");
     }
 
-    public Task AddCashgame(int eventId, int cashgameId)
+    public Task AddCashgame(string eventId, string cashgameId)
     {
         AddedCashgameId = cashgameId;
         return Task.CompletedTask;

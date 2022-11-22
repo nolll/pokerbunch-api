@@ -12,7 +12,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest();
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.PlayerId, Is.EqualTo(1));
+        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
     }
 
     [TestCase("")]

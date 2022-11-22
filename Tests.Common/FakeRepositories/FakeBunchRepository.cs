@@ -14,12 +14,12 @@ public class FakeBunchRepository : IBunchRepository
         SetupDefaultList();
     }
 
-    public Task<Bunch> Get(int id)
+    public Task<Bunch> Get(string id)
     {
         return Task.FromResult(_list.First(o => o.Id == id));
     }
 
-    public Task<IList<Bunch>> List(IList<int> ids)
+    public Task<IList<Bunch>> List(IList<string> ids)
     {
         return Task.FromResult<IList<Bunch>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
@@ -30,7 +30,7 @@ public class FakeBunchRepository : IBunchRepository
         return Task.FromResult(bunch);
     }
 
-    public Task<IList<Bunch>> GetByUserId(int userId)
+    public Task<IList<Bunch>> GetByUserId(string userId)
     {
         return Task.FromResult(_list);
     }
@@ -40,15 +40,15 @@ public class FakeBunchRepository : IBunchRepository
         return Task.FromResult(_list);
     }
 
-    public Task<IList<Bunch>> List(int userId)
+    public Task<IList<Bunch>> List(string userId)
     {
         return Task.FromResult(_list);
     }
 
-    public Task<int> Add(Bunch bunch)
+    public Task<string> Add(Bunch bunch)
     {
         Added = bunch;
-        return Task.FromResult(1);
+        return Task.FromResult("1");
     }
 
     public async Task Update(Bunch bunch)

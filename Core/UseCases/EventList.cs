@@ -26,7 +26,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = await _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListEvents(user, player))
@@ -45,7 +45,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
     {
         var location = locations.FirstOrDefault(o => o.Id == e.LocationId);
         var locationName = location != null ? location.Name : "";
-        var locationId = location?.Id ?? 0;
+        var locationId = location?.Id;
         if(e.HasGames)
             return new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate);
         return new Event(e.Id, slug, e.Name);
@@ -75,21 +75,21 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
 
     public class Event
     {
-        public int EventId { get; }
+        public string EventId { get; }
         public string BunchId { get; }
         public string Name { get; }
-        public int LocationId { get; }
+        public string LocationId { get; }
         public string LocationName { get; }
         public Date StartDate { get; }
 
-        public Event(int id, string bunchId, string name)
+        public Event(string id, string bunchId, string name)
         {
             EventId = id;
             BunchId = bunchId;
             Name = name;
         }
             
-        public Event(int id, string bunchId, string name, int locationId, string locationName, Date startDate)
+        public Event(string id, string bunchId, string name, string locationId, string locationName, Date startDate)
             : this(id, bunchId, name)
         {
             LocationId = locationId;

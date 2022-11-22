@@ -35,7 +35,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
 
         var bunch = CreateBunch(request);
         var id = await _bunchRepository.Add(bunch);
-        var user = await _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var player = Player.New(id, user.Id, user.UserName, Role.Manager);
         var playerId = await _playerRepository.Add(player);
         var createdPlayer = await _playerRepository.Get(playerId);
@@ -46,7 +46,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
     private static Bunch CreateBunch(Request request)
     {
         return new Bunch(
-            0,
+            null,
             SlugGenerator.GetSlug(request.DisplayName),
             request.DisplayName,
             request.Description,

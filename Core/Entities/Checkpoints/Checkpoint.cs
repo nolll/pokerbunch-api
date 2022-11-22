@@ -4,22 +4,22 @@ namespace Core.Entities.Checkpoints;
 
 public abstract class Checkpoint
 {
-    public int CashgameId { get; private set; }
-    public int PlayerId { get; private set; }
+    public string CashgameId { get; private set; }
+    public string PlayerId { get; private set; }
     public int Amount { get; private set; }
     public int Stack { get; private set; }
     public DateTime Timestamp { get; private set; }
     public CheckpointType Type { get; private set; }
-    public int Id { get; private set; }
+    public string Id { get; private set; }
         
     protected Checkpoint(
-        int cashgameId,
-        int playerId,
+        string cashgameId,
+        string playerId,
         DateTime timestamp, 
         CheckpointType type,
         int stack,
         int amount,
-        int id)
+        string id)
     {
         Timestamp = timestamp;
         Type = type;
@@ -32,7 +32,7 @@ public abstract class Checkpoint
 
     public abstract string Description { get; }
 
-    public static Checkpoint Create(int cashgameId, int playerId, DateTime timestamp, CheckpointType type, int stack, int amount = 0, int id = 0)
+    public static Checkpoint Create(string cashgameId, string playerId, DateTime timestamp, CheckpointType type, int stack, int amount = 0, string id = null)
     {
         if (type == CheckpointType.Cashout)
             return new CashoutCheckpoint(cashgameId, playerId, timestamp, stack, amount, id);

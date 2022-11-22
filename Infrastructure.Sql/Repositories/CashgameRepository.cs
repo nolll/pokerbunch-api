@@ -17,53 +17,53 @@ public class CashgameRepository : ICashgameRepository
         _cacheContainer = cacheContainer;
     }
 
-    public async Task<Cashgame> Get(int cashgameId)
+    public async Task<Cashgame> Get(string cashgameId)
     {
         return await _cacheContainer.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    private async Task<IList<Cashgame>> Get(IList<int> ids)
+    private async Task<IList<Cashgame>> Get(IList<string> ids)
     {
         return await _cacheContainer.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public async Task<IList<Cashgame>> GetFinished(int bunchId, int? year = null)
+    public async Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null)
     {
         var ids = await _cashgameDb.FindFinished(bunchId, year);
         return await Get(ids);
     }
 
-    public async Task<IList<Cashgame>> GetByEvent(int eventId)
+    public async Task<IList<Cashgame>> GetByEvent(string eventId)
     {
         var ids = await _cashgameDb.FindByEvent(eventId);
         return await Get(ids);
     }
 
-    public async Task<IList<Cashgame>> GetByPlayer(int playerId)
+    public async Task<IList<Cashgame>> GetByPlayer(string playerId)
     {
         var ids = await _cashgameDb.FindByPlayerId(playerId);
         return await Get(ids);
     }
 
-    public async Task<Cashgame> GetRunning(int bunchId)
+    public async Task<Cashgame> GetRunning(string bunchId)
     {
         var ids = await _cashgameDb.FindRunning(bunchId);
         return (await Get(ids)).FirstOrDefault();
     }
 
-    public async Task<Cashgame> GetByCheckpoint(int checkpointId)
+    public async Task<Cashgame> GetByCheckpoint(string checkpointId)
     {
         var ids = await _cashgameDb.FindByCheckpoint(checkpointId);
         return (await Get(ids)).FirstOrDefault();
     }
 
-    public async Task DeleteGame(int id)
+    public async Task DeleteGame(string id)
     {
         await _cashgameDb.DeleteGame(id);
         _cacheContainer.Remove<Cashgame>(id);
     }
 
-    public async Task<int> Add(Bunch bunch, Cashgame cashgame)
+    public async Task<string> Add(Bunch bunch, Cashgame cashgame)
     {
         return await _cashgameDb.AddGame(bunch, cashgame);
     }

@@ -51,7 +51,7 @@ public class BunchModel
         CurrencyFormat = r.Currency.Format;
         ThousandSeparator = r.Currency.ThousandSeparator;
         DefaultBuyin = r.DefaultBuyin;
-        Player = r.Player != null ? new BunchPlayerModel(r.Player?.Id.ToString(), r.Player?.Name) : null;
+        Player = r.Player != null ? new BunchPlayerModel(r.Player?.Id, r.Player?.Name) : null;
         Role = r.Role.ToString().ToLower();
     }
 

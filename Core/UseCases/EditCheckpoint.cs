@@ -31,7 +31,7 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
         var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanEditCheckpoint(currentUser, currentPlayer))
@@ -55,14 +55,14 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
     public class Request
     {
         public string UserName { get; }
-        public int CheckpointId { get; }
+        public string CheckpointId { get; }
         public DateTimeOffset Timestamp { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int Stack { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Amount can't be negative")]
         public int Amount { get; }
 
-        public Request(string userName, int checkpointId, DateTimeOffset timestamp, int stack, int? amount)
+        public Request(string userName, string checkpointId, DateTimeOffset timestamp, int stack, int? amount)
         {
             UserName = userName;
             CheckpointId = checkpointId;
@@ -74,10 +74,10 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
 
     public class Result
     {
-        public int CashgameId { get; }
-        public int PlayerId { get; }
+        public string CashgameId { get; }
+        public string PlayerId { get; }
 
-        public Result(int cashgameId, int playerId)
+        public Result(string cashgameId, string playerId)
         {
             CashgameId = cashgameId;
             PlayerId = playerId;

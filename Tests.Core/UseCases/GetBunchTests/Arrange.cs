@@ -8,9 +8,9 @@ public abstract class Arrange : UseCaseTest<GetBunch>
 {
     protected UseCaseResult<GetBunch.Result> Result;
 
-    private const int BunchId = 1;
-    private const int UserId = 4;
-    private const int PlayerId = 5;
+    private const string BunchId = "1";
+    private const string UserId = "4";
+    private const string PlayerId = "5";
     private const string Slug = "slug";
     private const string UserName = "username";
     protected const string DisplayName = "displayname";
@@ -26,7 +26,7 @@ public abstract class Arrange : UseCaseTest<GetBunch>
 
         Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult(bunch));
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult(player));
-        Mock<IUserRepository>().Setup(s => s.Get(UserName)).Returns(Task.FromResult(user));
+        Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(UserName)).Returns(Task.FromResult(user));
     }
 
     protected override async Task ExecuteAsync()

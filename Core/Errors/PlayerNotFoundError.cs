@@ -2,7 +2,7 @@
 
 public class PlayerNotFoundError : NotFoundError
 {
-    public PlayerNotFoundError(int playerId)
+    public PlayerNotFoundError(string playerId)
         : base($"Player not found: {playerId}")
     {
     }

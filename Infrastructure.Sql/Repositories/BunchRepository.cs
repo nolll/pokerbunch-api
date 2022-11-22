@@ -17,7 +17,7 @@ public class BunchRepository : IBunchRepository
         _cacheContainer = cacheContainer;
     }
 
-    public async Task<Bunch> Get(int id)
+    public async Task<Bunch> Get(string id)
     {
         return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
@@ -30,7 +30,7 @@ public class BunchRepository : IBunchRepository
         return null;
     }
 
-    private async Task<IList<Bunch>> List(IList<int> ids)
+    private async Task<IList<Bunch>> List(IList<string> ids)
     {
         return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
@@ -41,18 +41,18 @@ public class BunchRepository : IBunchRepository
         return await List(ids);
     }
 
-    private async Task<IList<int>> Search(string slug)
+    private async Task<IList<string>> Search(string slug)
     {
         return await _bunchDb.Search(slug);
     }
 
-    public async Task<IList<Bunch>> List(int userId)
+    public async Task<IList<Bunch>> List(string userId)
     {
-        var ids = await _bunchDb.Search(userId);
+        var ids = await _bunchDb.SearchByUser(userId);
         return await List(ids);
     }
 
-    public async Task<int> Add(Bunch bunch)
+    public async Task<string> Add(Bunch bunch)
     {
         return await _bunchDb.Add(bunch);
     }

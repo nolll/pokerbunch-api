@@ -6,7 +6,7 @@ public class ReportCheckpoint : Checkpoint
 {
     public override string Description => "Report";
 
-    public ReportCheckpoint(int cashgameId, int playerId, DateTime timestamp, int stack, int amount, int id)
+    public ReportCheckpoint(string cashgameId, string playerId, DateTime timestamp, int stack, int amount, string id = null)
         : base(cashgameId, playerId, timestamp, CheckpointType.Report, stack, amount, id)
     {
     }

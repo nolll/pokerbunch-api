@@ -51,8 +51,8 @@ public class ApiCurrentGame
 
     public ApiCurrentGame(CurrentCashgames.Game game, UrlProvider urls)
     {
-        Id = game.Id.ToString();
-        Url = urls.Api.Cashgame(game.Id.ToString());
+        Id = game.Id;
+        Url = urls.Api.Cashgame(game.Id);
     }
 
     [JsonConstructor]

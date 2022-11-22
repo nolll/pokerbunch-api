@@ -6,7 +6,7 @@ namespace Api.Models.PlayerModels;
 public class PlayerListItemModel
 {
     [JsonPropertyName("id")]
-    public int Id { get; }
+    public string Id { get; }
 
     [JsonPropertyName("name")]
     public string Name { get; }
@@ -30,7 +30,7 @@ public class PlayerListItemModel
     }
 
     [JsonConstructor]
-    public PlayerListItemModel(int id, string name, string userId, string userName, string color)
+    public PlayerListItemModel(string id, string name, string userId, string userName, string color)
     {
         Id = id;
         Name = name;

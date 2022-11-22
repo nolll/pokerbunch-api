@@ -18,7 +18,7 @@ class PlayerDetailsTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.That(result.Data.PlayerId, Is.EqualTo(1));
+        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
     }
 
     [Test]
@@ -94,7 +94,7 @@ class PlayerDetailsTests : TestBase
         Assert.That(result.Data.CanDelete, Is.False);
     }
 
-    private static GetPlayer.Request CreateRequest(string userName, int playerId)
+    private static GetPlayer.Request CreateRequest(string userName, string playerId)
     {
         return new GetPlayer.Request(userName, playerId);
     }

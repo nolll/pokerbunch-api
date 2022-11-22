@@ -32,8 +32,8 @@ public class ChangePasswordTests : MockBase
     [Test]
     public async Task ChangePassword_CurrentPasswordIsWrong_ReturnsError()
     {
-        var user = new User(1, TestData.UserNameA, salt: "123456", encryptedPassword: "abcdef");
-        _userRepositoryMock.Setup(o => o.Get(TestData.UserNameA)).Returns(Task.FromResult(user));
+        var user = new User("1", TestData.UserNameA, salt: "123456", encryptedPassword: "abcdef");
+        _userRepositoryMock.Setup(o => o.GetByUserNameOrEmail(TestData.UserNameA)).Returns(Task.FromResult(user));
 
         var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
         var result = await Sut.Execute(request);
@@ -44,8 +44,8 @@ public class ChangePasswordTests : MockBase
     [Test]
     public async Task ChangePassword_EqualPasswords_SavesUserWithNewPassword()
     {
-        var user = new User(1, TestData.UserNameA, salt: "123456", encryptedPassword: "9217510d5221554de3230b5634a3f81e3cf19d94");
-        _userRepositoryMock.Setup(o => o.Get(TestData.UserNameA)).Returns(Task.FromResult(user));
+        var user = new User("1", TestData.UserNameA, salt: "123456", encryptedPassword: "9217510d5221554de3230b5634a3f81e3cf19d94");
+        _userRepositoryMock.Setup(o => o.GetByUserNameOrEmail(TestData.UserNameA)).Returns(Task.FromResult(user));
 
         User savedUser = null;
         _userRepositoryMock.Setup(o => o.Update(It.IsAny<User>())).Callback((User u) => savedUser = u);

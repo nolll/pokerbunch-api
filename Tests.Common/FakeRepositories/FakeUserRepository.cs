@@ -14,7 +14,7 @@ public class FakeUserRepository : IUserRepository
         _list = CreateList();
     }
 
-    public Task<User> Get(int id)
+    public Task<User> GetById(string id)
     {
         return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
@@ -24,15 +24,15 @@ public class FakeUserRepository : IUserRepository
         return Task.FromResult(_list);
     }
 
-    public Task<User> Get(string nameOrEmail)
+    public Task<User> GetByUserNameOrEmail(string userNameOrEmail)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.UserName == nameOrEmail || o.Email == nameOrEmail));
+        return Task.FromResult(_list.FirstOrDefault(o => o.UserName == userNameOrEmail || o.Email == userNameOrEmail));
     }
 
-    public Task<int> Add(User user)
+    public Task<string> Add(User user)
     {
         Added = user;
-        return Task.FromResult(1);
+        return Task.FromResult("1");
     }
 
     public Task Update(User user)

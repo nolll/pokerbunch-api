@@ -25,7 +25,7 @@ public class CashgameListItemResultModel
 
     public CashgameListItemResultModel(CashgameList.ItemResult item)
     {
-        Id = item.Player.Id.ToString();
+        Id = item.Player.Id;
         Name = item.Player.Name;
         StartTime = item.BuyinTime;
         UpdatedTime = item.UpdatedTime;
@@ -35,7 +35,7 @@ public class CashgameListItemResultModel
 
     public CashgameListItemResultModel(EventCashgameList.ItemResult item)
     {
-        Id = item.Player.Id.ToString();
+        Id = item.Player.Id;
         Name = item.Player.Name;
         StartTime = item.BuyinTime;
         UpdatedTime = item.UpdatedTime;
@@ -45,7 +45,7 @@ public class CashgameListItemResultModel
 
     public CashgameListItemResultModel(PlayerCashgameList.ItemResult item)
     {
-        Id = item.Player.Id.ToString();
+        Id = item.Player.Id;
         Name = item.Player.Name;
         StartTime = item.BuyinTime;
         UpdatedTime = item.UpdatedTime;

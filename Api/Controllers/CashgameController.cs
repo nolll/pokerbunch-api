@@ -48,7 +48,7 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public async Task<ObjectResult> Get(int cashgameId)
+    public async Task<ObjectResult> Get(string cashgameId)
     {
         var request = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
         var result = await _cashgameDetails.Execute(request);
@@ -76,7 +76,7 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.ListByEvent)]
     [HttpGet]
     [ApiAuthorize]
-    public async Task<ObjectResult> EventCashgameList(int eventId)
+    public async Task<ObjectResult> EventCashgameList(string eventId)
     {
         var result = await _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
@@ -85,7 +85,7 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
     [HttpGet]
     [ApiAuthorize]
-    public async Task<ObjectResult> PlayerCashgameList(int playerId)
+    public async Task<ObjectResult> PlayerCashgameList(string playerId)
     {
         var result = await _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
@@ -109,7 +109,7 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.Update)]
     [HttpPut]
     [ApiAuthorize]
-    public async Task<ObjectResult> Update(int cashgameId, [FromBody] UpdateCashgamePostModel post)
+    public async Task<ObjectResult> Update(string cashgameId, [FromBody] UpdateCashgamePostModel post)
     {
         var updateRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
         var updateResult = await _editCashgame.Execute(updateRequest);
@@ -124,7 +124,7 @@ public class CashgameController : BaseController
     [Route(ApiRoutes.Cashgame.Delete)]
     [HttpDelete]
     [ApiAuthorize]
-    public async Task<ObjectResult> Delete(int cashgameId)
+    public async Task<ObjectResult> Delete(string cashgameId)
     {
         var request = new DeleteCashgame.Request(CurrentUserName, cashgameId);
         var result = await _deleteCashgame.Execute(request);

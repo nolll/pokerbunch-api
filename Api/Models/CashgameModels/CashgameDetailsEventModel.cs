@@ -13,7 +13,7 @@ public class CashgameDetailsEventModel
 
     public CashgameDetailsEventModel(CashgameDetails.Result details)
     {
-        Id = details.EventId.ToString();
+        Id = details.EventId;
         Name = details.EventName;
     }
 

@@ -23,7 +23,7 @@ public class GetLocation : UseCase<GetLocation.Request, GetLocation.Result>
     {
         var location = await _locationRepository.Get(request.LocationId);
         var bunch = await _bunchRepository.Get(location.BunchId);
-        var user = await _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var player = await _playerRepository.Get(location.BunchId, user.Id);
 
         if (!AccessControl.CanSeeLocation(user, player))
@@ -35,9 +35,9 @@ public class GetLocation : UseCase<GetLocation.Request, GetLocation.Result>
     public class Request
     {
         public string UserName { get; }
-        public int LocationId { get; }
+        public string LocationId { get; }
 
-        public Request(string userName, int locationId)
+        public Request(string userName, string locationId)
         {
             UserName = userName;
             LocationId = locationId;
@@ -46,11 +46,11 @@ public class GetLocation : UseCase<GetLocation.Request, GetLocation.Result>
 
     public class Result
     {
-        public int Id { get; private set; }
+        public string Id { get; private set; }
         public string Name { get; private set; }
         public string Slug { get; private set; }
 
-        public Result(int id, string name, string slug)
+        public Result(string id, string name, string slug)
         {
             Id = id;
             Name = name;

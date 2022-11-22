@@ -23,56 +23,56 @@ public class SqlBunchDb
         _db = db;
     }
 
-    public async Task<IList<Bunch>> Get(IList<int> ids)
+    public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
-        var parameter = new ListSqlParameter("@ids", ids);
+        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
         var reader = await _db.QueryAsync(sql, parameter);
         var rawHomegames = reader.ReadList(CreateRawBunch);
         return rawHomegames.Select(CreateBunch).ToList();
     }
 
-    public async Task<Bunch> Get(int id)
+    public async Task<Bunch> Get(string id)
     {
         var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", id)
+            new("@id", int.Parse(id))
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawHomegame = reader.ReadOne(CreateRawBunch);
         return rawHomegame != null ? CreateBunch(rawHomegame) : null;
     }
 
-    public async Task<IList<int>> Search()
+    public async Task<IList<string>> Search()
     {
         var reader = await _db.QueryAsync(SearchSql);
-        return reader.ReadIntList("bunch_id");
+        return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
     }
 
-    public async Task<IList<int>> Search(string slug)
+    public async Task<IList<string>> Search(string slug)
     {
         var sql = string.Concat(SearchSql, " WHERE b.name = @slug");
         var parameters = new SqlParameters(new SimpleSqlParameter("@slug", slug));
         var reader = await _db.QueryAsync(sql, parameters);
-        var id = reader.ReadInt("bunch_id");
-        if(id.HasValue)
-            return new List<int>{id.Value};
-        return new List<int>();
+        var id = reader.ReadInt("bunch_id")?.ToString();
+        if(id != null)
+            return new List<string> {id};
+        return new List<string>();
     }
 
-    public async Task<IList<int>> Search(int userId)
+    public async Task<IList<string>> SearchByUser(string userId)
     {
         var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userId", userId)
+            new("@userId", int.Parse(userId))
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadIntList("bunch_id");
+        return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
     }
         
-    public async Task<int> Add(Bunch bunch)
+    public async Task<string> Add(Bunch bunch)
     {
         var rawBunch = RawBunch.Create(bunch);
         const string sql = @"
@@ -92,7 +92,7 @@ public class SqlBunchDb
             new("@videosEnabled", rawBunch.VideosEnabled),
             new("@houseRules", rawBunch.HouseRules)
         };
-        return await _db.ExecuteInsertAsync(sql, parameters);
+        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
 
     public async Task Update(Bunch bunch)
@@ -126,7 +126,7 @@ public class SqlBunchDb
             new("@cashgamesEnabled", rawBunch.CashgamesEnabled),
             new("@tournamentsEnabled", rawBunch.TournamentsEnabled),
             new("@videosEnabled", rawBunch.VideosEnabled),
-            new("@id", rawBunch.Id)
+            new("@id", int.Parse(rawBunch.Id))
         };
 
         await _db.ExecuteAsync(sql, parameters);
@@ -148,7 +148,7 @@ public class SqlBunchDb
             currency);
     }
         
-    public bool DeleteBunch(int id)
+    public bool DeleteBunch(string id)
     {
         const string sql = @"
             DELETE
@@ -157,7 +157,7 @@ public class SqlBunchDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", id)
+            new("@id", int.Parse(id))
         };
         var rowCount = _db.Execute(sql, parameters);
         return rowCount > 0;
@@ -166,7 +166,7 @@ public class SqlBunchDb
     private static RawBunch CreateRawBunch(IStorageDataReader reader)
     {
         return new RawBunch(
-            reader.GetIntValue("bunch_id"),
+            reader.GetIntValue("bunch_id").ToString(),
             reader.GetStringValue("name"),
             reader.GetStringValue("display_name"),
             reader.GetStringValue("description"),

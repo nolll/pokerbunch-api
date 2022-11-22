@@ -25,7 +25,7 @@ public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoi
         var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanDeleteCheckpoint(currentUser, currentPlayer))
@@ -41,9 +41,9 @@ public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoi
     public class Request
     {
         public string UserName { get; }
-        public int CheckpointId { get; }
+        public string CheckpointId { get; }
 
-        public Request(string userName, int checkpointId)
+        public Request(string userName, string checkpointId)
         {
             UserName = userName;
             CheckpointId = checkpointId;
@@ -54,9 +54,9 @@ public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoi
     {
         public string Slug { get; private set; }
         public bool GameIsRunning { get; private set; }
-        public int CashgameId { get; private set; }
+        public string CashgameId { get; private set; }
 
-        public Result(string slug, bool gameIsRunning, int cashgameId)
+        public Result(string slug, bool gameIsRunning, string cashgameId)
         {
             Slug = slug;
             GameIsRunning = gameIsRunning;

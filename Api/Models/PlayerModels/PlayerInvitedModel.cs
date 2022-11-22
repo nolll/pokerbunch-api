@@ -4,10 +4,10 @@ namespace Api.Models.PlayerModels;
 
 public class PlayerInvitedModel : MessageModel
 {
-    private readonly int _id;
+    private readonly string _id;
     public override string Message => $"Player invited {_id}";
 
-    public PlayerInvitedModel(int id)
+    public PlayerInvitedModel(string id)
     {
         _id = id;
     }

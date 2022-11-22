@@ -28,10 +28,10 @@ public class PlayerModel
 
     public PlayerModel(GetPlayer.Result r)
     {
-        Id = r.PlayerId.ToString();
+        Id = r.PlayerId;
         Name = r.DisplayName;
         Slug = r.Slug;
-        UserId = r.UserId.ToString();
+        UserId = r.UserId;
         UserName = r.UserName;
         AvatarUrl = r.AvatarUrl;
         Color = r.Color;

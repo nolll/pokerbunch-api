@@ -29,11 +29,11 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var userByName = await _userRepository.Get(request.UserName);
+        var userByName = await _userRepository.GetByUserNameOrEmail(request.UserName);
         if (userByName != null)
             return Error(new UserExistsError());
 
-        var userByEmail = await _userRepository.Get(request.Email);
+        var userByEmail = await _userRepository.GetByUserNameOrEmail(request.Email);
         if (userByEmail != null)
             return Error(new EmailExistsError());
 
@@ -52,7 +52,7 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
     private static User CreateUser(Request request, string encryptedPassword, string salt)
     {
         return new User(
-            0,
+            null,
             request.UserName,
             request.DisplayName,
             string.Empty,

@@ -28,7 +28,7 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
     {
         var player = await _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayerCashgames(currentUser, currentPlayer))
@@ -56,9 +56,9 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
     public class Request
     {
         public string UserName { get; }
-        public int PlayerId { get; }
+        public string PlayerId { get; }
 
-        public Request(string userName, int playerId)
+        public Request(string userName, string playerId)
         {
             UserName = userName;
             PlayerId = playerId;
@@ -77,9 +77,9 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
 
     public class Item
     {
-        public int LocationId { get; }
+        public string LocationId { get; }
         public string LocationName { get; }
-        public int CashgameId { get; }
+        public string CashgameId { get; }
         public DateTime StartTime { get; }
         public DateTime EndTime { get; }
         public IList<ItemResult> Players { get; }
@@ -95,7 +95,7 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
         }
     }
 
-    private static string GetPlayerName(int playerId, IList<Player> players)
+    private static string GetPlayerName(string playerId, IList<Player> players)
     {
         var player = players.FirstOrDefault(o => o.Id == playerId);
         return player?.DisplayName ?? "";
@@ -121,10 +121,10 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
 
     public class ItemPlayer
     {
-        public int Id { get; }
+        public string Id { get; }
         public string Name { get; }
 
-        public ItemPlayer(int id, string name)
+        public ItemPlayer(string id, string name)
         {
             Id = id;
             Name = name;

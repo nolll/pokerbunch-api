@@ -24,7 +24,7 @@ public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
     {
         var player = await _playerRepository.Get(request.PlayerId);
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanDeletePlayer(currentUser, currentPlayer))
@@ -44,9 +44,9 @@ public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
     public class Request
     {
         public string UserName { get; }
-        public int PlayerId { get; }
+        public string PlayerId { get; }
 
-        public Request(string userName, int playerId)
+        public Request(string userName, string playerId)
         {
             UserName = userName;
             PlayerId = playerId;
@@ -56,9 +56,9 @@ public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
     public class Result
     {
         public string Slug { get; private set; }
-        public int PlayerId { get; private set; }
+        public string PlayerId { get; private set; }
 
-        public Result(string slug, int playerId)
+        public Result(string slug, string playerId)
         {
             Slug = slug;
             PlayerId = playerId;

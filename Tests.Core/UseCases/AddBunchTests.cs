@@ -61,7 +61,7 @@ class AddBunchTests : TestBase
     {
         await Sut.Execute(CreateRequest());
 
-        Assert.That(Deps.Bunch.Added.Id, Is.EqualTo(0));
+        Assert.That(Deps.Bunch.Added.Id, Is.Null);
         Assert.That(Deps.Bunch.Added.Slug, Is.EqualTo("a-display-name"));
         Assert.That(Deps.Bunch.Added.DisplayName, Is.EqualTo(DisplayName));
         Assert.That(Deps.Bunch.Added.Description, Is.EqualTo(Description));
@@ -77,8 +77,8 @@ class AddBunchTests : TestBase
     {
         await Sut.Execute(CreateRequest());
 
-        Assert.That(Deps.Player.Added.BunchId, Is.EqualTo(1));
-        Assert.That(Deps.Player.Added.UserId, Is.EqualTo(3));
+        Assert.That(Deps.Player.Added.BunchId, Is.EqualTo("1"));
+        Assert.That(Deps.Player.Added.UserId, Is.EqualTo("3"));
         Assert.That(Deps.Player.Added.Role, Is.EqualTo(Role.Manager));
     }
 

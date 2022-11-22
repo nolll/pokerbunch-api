@@ -28,8 +28,10 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
             return Error(new PlayerNotFoundError(request.PlayerId));
 
         var bunch = await _bunchRepository.Get(player.BunchId);
-        var user = await _userRepository.Get(player.UserId);
-        var currentUser = await _userRepository.Get(request.UserName);
+        var user = player.UserId != null 
+            ? await _userRepository.GetById(player.UserId)
+            : null;
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
@@ -45,9 +47,9 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
     public class Request
     {
         public string UserName { get; }
-        public int PlayerId { get; }
+        public string PlayerId { get; }
 
-        public Request(string userName, int playerId)
+        public Request(string userName, string playerId)
         {
             UserName = userName;
             PlayerId = playerId;
@@ -57,10 +59,10 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
     public class Result
     {
         public string DisplayName { get; }
-        public int PlayerId { get; }
+        public string PlayerId { get; }
         public bool CanDelete { get; }
         public bool IsUser { get; }
-        public int? UserId { get; }
+        public string UserId { get; }
         public string UserName { get; }
         public string AvatarUrl { get; }
         public string Slug { get; }
@@ -75,7 +77,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
             CanDelete = canDelete && !hasPlayed;
             IsUser = isUser;
             UserId = user?.Id;
-            UserName = isUser ? user.UserName : string.Empty;
+            UserName = isUser ? user.UserName : null;
             AvatarUrl = avatarUrl;
             Color = player.Color;
             Slug = bunch.Slug;

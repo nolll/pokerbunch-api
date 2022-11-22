@@ -12,7 +12,7 @@ public class CashgamePlayTests
     [Order(1)]
     public async Task AddCashgame()
     {
-        var parameters = new AddCashgamePostModel(TestData.BunchLocationIdInt);
+        var parameters = new AddCashgamePostModel(TestData.BunchLocationId);
         var result = await TestClient.Cashgame.Add(TestData.UserToken, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
@@ -24,19 +24,19 @@ public class CashgamePlayTests
     [Order(2)]
     public async Task Buyin()
     {
-        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerIdInt, 100);
-        await Buyin(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerIdInt, 200);
-        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerIdInt, 100);
-        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerIdInt, 100, 50);
+        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100);
+        await Buyin(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerId, 200);
+        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerId, 100);
+        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100, 50);
     }
 
     [Test]
     [Order(3)]
     public async Task Report()
     {
-        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerIdInt, 75);
-        await Report(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerIdInt, 265);
-        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerIdInt, 175);
+        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 75);
+        await Report(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerId, 265);
+        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerId, 175);
     }
 
     [Test]
@@ -44,7 +44,7 @@ public class CashgamePlayTests
     public async Task AddUpdateAndDeleteAction()
     {
         const string actionId = "8";
-        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerIdInt, 5000);
+        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 5000);
         await Update(TestData.ManagerToken, TestData.CashgameId, actionId, 5001);
         await Delete(TestData.ManagerToken, TestData.CashgameId, actionId);
     }
@@ -95,9 +95,9 @@ public class CashgamePlayTests
     [Order(7)]
     public async Task Cashout()
     {
-        await Cashout(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerIdInt, 255);
-        await Cashout(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerIdInt, 85);
-        await Cashout(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerIdInt, 310);
+        await Cashout(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerId, 255);
+        await Cashout(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 85);
+        await Cashout(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerId, 310);
     }
 
     [Test]
@@ -123,21 +123,21 @@ public class CashgamePlayTests
         Assert.That(result.Model.Players[2].Actions[3].Stack, Is.EqualTo(85));
     }
 
-    private async Task Buyin(string token, string cashgameId, int playerId, int buyin, int leftInStack = 0)
+    private async Task Buyin(string token, string cashgameId, string playerId, int buyin, int leftInStack = 0)
     {
         var parameters = new AddCashgameActionPostModel("buyin", playerId, buyin, leftInStack);
         var result = await TestClient.Action.Add(token, cashgameId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
-    private async Task Report(string token, string cashgameId, int playerId, int stack)
+    private async Task Report(string token, string cashgameId, string playerId, int stack)
     {
         var parameters = new AddCashgameActionPostModel("report", playerId, 0, stack);
         var result = await TestClient.Action.Add(token, cashgameId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
-    private async Task Cashout(string token, string cashgameId, int playerId, int stack)
+    private async Task Cashout(string token, string cashgameId, string playerId, int stack)
     {
         var parameters = new AddCashgameActionPostModel("cashout", playerId, 0, stack);
         var result = await TestClient.Action.Add(token, cashgameId, parameters);

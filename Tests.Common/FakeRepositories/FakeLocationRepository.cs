@@ -13,25 +13,25 @@ public class FakeLocationRepository : ILocationRepository
         _list = CreateLocationList();
     }
 
-    public Task<Location> Get(int id)
+    public Task<Location> Get(string id)
     {
         return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
 
-    public Task<IList<Location>> List(IList<int> ids)
+    public Task<IList<Location>> List(IList<string> ids)
     {
         return Task.FromResult<IList<Location>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public Task<IList<Location>> List(int bunchId)
+    public Task<IList<Location>> List(string bunchId)
     {
         return Task.FromResult<IList<Location>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
         
-    public Task<int> Add(Location location)
+    public Task<string> Add(Location location)
     {
         Added = location;
-        const int id = 1000;
+        const string id = "1000";
         _list.Add(new Location(id, location.Name, location.BunchId));
         return Task.FromResult(id);
     }

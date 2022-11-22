@@ -25,7 +25,7 @@ public class CashgameListItemModel
 
     public CashgameListItemModel(CashgameList.Item item)
     {
-        Id = item.CashgameId.ToString();
+        Id = item.CashgameId;
         StartTime = item.StartTime;
         UpdatedTime = item.EndTime;
         Location = new SmallLocationModel(item);
@@ -34,7 +34,7 @@ public class CashgameListItemModel
 
     public CashgameListItemModel(EventCashgameList.Item item)
     {
-        Id = item.CashgameId.ToString();
+        Id = item.CashgameId;
         StartTime = item.StartTime;
         UpdatedTime = item.EndTime;
         Location = new SmallLocationModel(item);
@@ -43,7 +43,7 @@ public class CashgameListItemModel
 
     public CashgameListItemModel(PlayerCashgameList.Item item)
     {
-        Id = item.CashgameId.ToString();
+        Id = item.CashgameId;
         StartTime = item.StartTime;
         UpdatedTime = item.EndTime;
         Location = new SmallLocationModel(item);

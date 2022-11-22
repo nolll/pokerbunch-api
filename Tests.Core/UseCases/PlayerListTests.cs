@@ -14,7 +14,7 @@ class PlayerListTests : TestBase
 
         Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
         Assert.That(result.Data.Players.Count, Is.EqualTo(4));
-        Assert.That(result.Data.Players[0].Id, Is.EqualTo(1));
+        Assert.That(result.Data.Players[0].Id, Is.EqualTo("1"));
         Assert.That(result.Data.Players[0].Name, Is.EqualTo(TestData.PlayerNameA));
         Assert.That(result.Data.CanAddPlayer, Is.False);
     }

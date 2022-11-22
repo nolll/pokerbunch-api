@@ -34,13 +34,13 @@ public class CashgameDetailsModel
 
     public CashgameDetailsModel(CashgameDetails.Result details)
     {
-        Id = details.CashgameId.ToString();
+        Id = details.CashgameId;
         IsRunning = details.IsRunning;
         StartTime = details.StartTime;
         UpdatedTime = details.UpdatedTime;
         Bunch = new CashgameBunchModel(details);
         Location = new SmallLocationModel(details);
-        Event = details.EventId != 0 ? new CashgameDetailsEventModel(details) : null;
+        Event = details.EventId != null ? new CashgameDetailsEventModel(details) : null;
         Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
     }
 

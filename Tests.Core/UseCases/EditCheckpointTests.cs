@@ -35,8 +35,8 @@ public class EditCheckpointTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.CashgameId, Is.EqualTo(1));
-        Assert.That(result.Data.PlayerId, Is.EqualTo(1));
+        Assert.That(result.Data.CashgameId, Is.EqualTo("1"));
+        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
     }
         
     [Test]

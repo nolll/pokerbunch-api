@@ -4,10 +4,10 @@ namespace Api.Models.CashgameModels;
 
 public class AddCashgamePostModel
 {
-    public int LocationId { get; }
+    public string LocationId { get; }
 
     [JsonConstructor]
-    public AddCashgamePostModel(int locationId)
+    public AddCashgamePostModel(string locationId)
     {
         LocationId = locationId;
     }

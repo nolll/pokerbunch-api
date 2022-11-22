@@ -37,8 +37,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        Assert.That(result.Data.Events[0].EventId, Is.EqualTo(2));
-        Assert.That(result.Data.Events[1].EventId, Is.EqualTo(1));
+        Assert.That(result.Data.Events[0].EventId, Is.EqualTo("2"));
+        Assert.That(result.Data.Events[1].EventId, Is.EqualTo("1"));
     }
 
     private EventList Sut => new(

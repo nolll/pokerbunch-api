@@ -41,7 +41,7 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Get)]
     [HttpGet]
     [ApiAuthorize]
-    public async Task<ObjectResult> Get(int playerId)
+    public async Task<ObjectResult> Get(string playerId)
     {
         var result = await _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
         return Model(result, () => new PlayerModel(result.Data));
@@ -79,7 +79,7 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Delete)]
     [HttpDelete]
     [ApiAuthorize]
-    public async Task<ObjectResult> Delete(int playerId)
+    public async Task<ObjectResult> Delete(string playerId)
     {
         var request = new DeletePlayer.Request(CurrentUserName, playerId);
         var result = await _deletePlayer.Execute(request);
@@ -92,7 +92,7 @@ public class PlayerController : BaseController
     [Route(ApiRoutes.Player.Invite)]
     [HttpPost]
     [ApiAuthorize]
-    public async Task<ObjectResult> Invite(int playerId, [FromBody] PlayerInvitePostModel post)
+    public async Task<ObjectResult> Invite(string playerId, [FromBody] PlayerInvitePostModel post)
     {
         var registerUrl = _urls.Site.AddUser;
         var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}");

@@ -12,10 +12,10 @@ public class Arrange : UseCaseTest<Report>
     protected UseCaseResult<Report.Result> Result;
 
     private const string Username = "username";
-    private const int UserId = 1;
-    private const int CashgameId = 2;
-    private const int PlayerId = 3;
-    private const int BunchId = 4;
+    private const string UserId = "1";
+    private const string CashgameId = "2";
+    private const string PlayerId = "3";
+    private const string BunchId = "4";
     protected virtual int Stack => 5;
     private static DateTime CurrentTime => DateTime.MinValue;
     protected Cashgame UpdatedCashgame;
@@ -29,7 +29,7 @@ public class Arrange : UseCaseTest<Report>
         Mock<ICashgameRepository>().Setup(o => o.Get(CashgameId)).Returns(Task.FromResult<Cashgame>(cashgame));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame cg) => UpdatedCashgame = cg);
         Mock<IPlayerRepository>().Setup(o => o.Get(BunchId, UserId)).Returns(Task.FromResult<Player>(player));
-        Mock<IUserRepository>().Setup(o => o.Get(Username)).Returns(Task.FromResult<User>(user));
+        Mock<IUserRepository>().Setup(o => o.GetByUserNameOrEmail(Username)).Returns(Task.FromResult<User>(user));
     }
 
     protected override async Task ExecuteAsync()

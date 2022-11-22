@@ -22,36 +22,35 @@ public class SqlUserDb
         _db = db;
     }
 
-    public async Task<User> Get(int id)
+    public async Task<User> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userId", id)
+            new("@userId", int.Parse(id))
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawUser = reader.ReadOne(CreateRawUser);
         return rawUser != null ? RawUser.CreateReal(rawUser) : null;
     }
 
-    public async Task<IList<User>> Get(IList<int> ids)
+    public async Task<IList<User>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
-        var parameter = new ListSqlParameter("@ids", ids);
+        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
         var reader = await _db.QueryAsync(sql, parameter);
         var rawUsers = reader.ReadList(CreateRawUser);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
     }
 
-    public async Task<IList<int>> Find()
+    public async Task<IList<string>> Find()
     {
         return await GetIds();
     }
 
-    public async Task<int> Find(string nameOrEmail)
+    public async Task<string> Find(string nameOrEmail)
     {
-        var userId = await GetIdByNameOrEmail(nameOrEmail);
-        return userId ?? 0;
+        return await GetIdByNameOrEmail(nameOrEmail);
     }
 
     public async Task Update(User user)
@@ -71,12 +70,12 @@ public class SqlUserDb
             new("@email", user.Email),
             new("@password", user.EncryptedPassword),
             new("@salt", user.Salt),
-            new("@userId", user.Id)
+            new("@userId", int.Parse(user.Id))
         };
         await _db.ExecuteAsync(sql, parameters);
     }
 
-    public async Task<int> Add(User user)
+    public async Task<string> Add(User user)
     {
         const string sql = @"
             INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
@@ -89,10 +88,10 @@ public class SqlUserDb
             new("@password", user.EncryptedPassword),
             new("@salt", user.Salt)
         };
-        return await _db.ExecuteInsertAsync(sql, parameters);
+        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
         
-    private async Task<int?> GetIdByNameOrEmail(string nameOrEmail)
+    private async Task<string> GetIdByNameOrEmail(string nameOrEmail)
     {
         if (string.IsNullOrEmpty(nameOrEmail))
             return null;
@@ -103,24 +102,24 @@ public class SqlUserDb
             new("@query", nameOrEmail)
         };
         var reader = await _db.QueryAsync(sql, parameters);
-        return reader.ReadInt("user_id");
+        return reader.ReadInt("user_id")?.ToString();
     }
 
-    private async Task<IList<int>> GetIds()
+    private async Task<IList<string>> GetIds()
     {
         var sql = string.Concat(SearchSql, "ORDER BY u.display_name");
         var reader = await _db.QueryAsync(sql);
-        return reader.ReadIntList("user_id");
+        return reader.ReadIntList("user_id").Select(o => o.ToString()).ToList();
     }
 
-    public async Task<bool> DeleteUser(int userId)
+    public async Task<bool> DeleteUser(string userId)
     {
         const string sql = @"
             DELETE FROM pb_user
             WHERE user_iD = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userId", userId)
+            new("@userId", int.Parse(userId))
         };
         var rowCount = await _db.ExecuteAsync(sql, parameters);
         return rowCount > 0;
@@ -129,7 +128,7 @@ public class SqlUserDb
     private static RawUser CreateRawUser(IStorageDataReader reader)
     {
         return new RawUser(
-            reader.GetIntValue("user_id"),
+            reader.GetIntValue("user_id").ToString(),
             reader.GetStringValue("user_name"),
             reader.GetStringValue("display_name"),
             reader.GetStringValue("real_name"),

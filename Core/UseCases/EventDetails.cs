@@ -25,15 +25,15 @@ public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var e = await _eventRepository.Get(request.EventId);
-        var location = e.LocationId > 0 ? await _locationRepository.Get(e.LocationId) : null;
+        var location = e.LocationId != null ? await _locationRepository.Get(e.LocationId) : null;
         var bunch = await _bunchRepository.Get(e.BunchId);
-        var user = await _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var player = await _playerRepository.Get(e.BunchId, user.Id);
 
         if (!AccessControl.CanSeeEventDetails(user, player))
             return Error(new AccessDeniedError());
 
-        var locationId = location?.Id ?? 0;
+        var locationId = location?.Id;
         var locationName = location?.Name;
 
         return Success(new Result(e.Id, e.Name, bunch.Slug, locationId, locationName, e.StartDate));
@@ -42,9 +42,9 @@ public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
     public class Request
     {
         public string UserName { get; }
-        public int EventId { get; }
+        public string EventId { get; }
 
-        public Request(string userName, int eventId)
+        public Request(string userName, string eventId)
         {
             UserName = userName;
             EventId = eventId;
@@ -53,14 +53,14 @@ public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
 
     public class Result
     {
-        public int Id { get; }
+        public string Id { get; }
         public string Name { get; }
         public string BunchId { get; }
-        public int LocationId { get; }
+        public string LocationId { get; }
         public string LocationName { get; }
         public Date StartDate { get; }
 
-        public Result(int id, string name, string bunchId, int locationId, string locationName, Date startDate)
+        public Result(string id, string name, string bunchId, string locationId, string locationName, Date startDate)
         {
             Id = id;
             Name = name;

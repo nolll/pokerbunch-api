@@ -39,7 +39,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data.Items[0].CashgameId, Is.EqualTo(2));
+        Assert.That(result.Data.Items[0].CashgameId, Is.EqualTo("2"));
     }
 
     [Test]

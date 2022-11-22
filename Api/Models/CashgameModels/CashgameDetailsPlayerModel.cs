@@ -33,7 +33,7 @@ public class CashgameDetailsPlayerModel
 
     public CashgameDetailsPlayerModel(CashgameDetails.RunningCashgamePlayerItem item)
     {
-        Id = item.PlayerId.ToString();
+        Id = item.PlayerId;
         Name = item.Name;
         Color = item.Color;
         StartTime = item.BuyinTime;

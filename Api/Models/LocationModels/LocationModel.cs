@@ -6,7 +6,7 @@ namespace Api.Models.LocationModels;
 public class LocationModel
 {
     [JsonPropertyName("id")]
-    public int Id { get; }
+    public string Id { get; }
     
     [JsonPropertyName("name")]
     public string Name { get; }
@@ -30,7 +30,7 @@ public class LocationModel
     }
 
     [JsonConstructor]
-    public LocationModel(int id, string name, string bunch)
+    public LocationModel(string id, string name, string bunch)
     {
         Id = id;
         Name = name;

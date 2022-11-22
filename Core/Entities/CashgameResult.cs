@@ -6,7 +6,7 @@ namespace Core.Entities;
 
 public class CashgameResult
 {
-    public int PlayerId { get; }
+    public string PlayerId { get; }
     public int Buyin { get; }
     public int Winnings { get; }
     public IList<Checkpoint> Checkpoints { get; }
@@ -19,7 +19,7 @@ public class CashgameResult
     public bool HasCachedOut => CashoutCheckpoint != null;
     public int WinRate { get; }
 
-    public CashgameResult(int playerId, IList<Checkpoint> checkpoints)
+    public CashgameResult(string playerId, IList<Checkpoint> checkpoints)
     {
         PlayerId = playerId;
         Stack = GetStack(checkpoints);

@@ -45,14 +45,14 @@ public class CashgameDetailsTests : TestBase
         Assert.That(result.Data.PlayerItems[0].HasCashedOut, Is.False);
         Assert.That(result.Data.PlayerItems[0].Name, Is.EqualTo(TestData.PlayerA.DisplayName));
         Assert.That(result.Data.PlayerItems[0].PlayerId, Is.EqualTo(TestData.PlayerA.Id));
-        Assert.That(result.Data.PlayerItems[0].CashgameId, Is.EqualTo(3));
-        Assert.That(result.Data.PlayerItems[0].PlayerId, Is.EqualTo(1));
+        Assert.That(result.Data.PlayerItems[0].CashgameId, Is.EqualTo("3"));
+        Assert.That(result.Data.PlayerItems[0].PlayerId, Is.EqualTo("1"));
         Assert.That(result.Data.PlayerItems[1].Checkpoints.Count, Is.EqualTo(1));
         Assert.That(result.Data.PlayerItems[1].HasCashedOut, Is.False);
         Assert.That(result.Data.PlayerItems[1].Name, Is.EqualTo(TestData.PlayerB.DisplayName));
         Assert.That(result.Data.PlayerItems[1].PlayerId, Is.EqualTo(TestData.PlayerB.Id));
-        Assert.That(result.Data.PlayerItems[1].CashgameId, Is.EqualTo(3));
-        Assert.That(result.Data.PlayerItems[1].PlayerId, Is.EqualTo(2));
+        Assert.That(result.Data.PlayerItems[1].CashgameId, Is.EqualTo("3"));
+        Assert.That(result.Data.PlayerItems[1].PlayerId, Is.EqualTo("2"));
     }
 
     private CashgameDetails Sut => new(

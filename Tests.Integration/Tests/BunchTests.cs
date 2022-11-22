@@ -46,7 +46,7 @@ public class BunchTests
     public async Task InviteAndJoin()
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
-        var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerIdString, inviteParameters);
+        var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerId, inviteParameters);
         var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage);
         Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(verificationCode, Is.Not.Null);
@@ -82,7 +82,7 @@ public class BunchTests
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model.Role, Is.EqualTo("manager"));
-        Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.ManagerPlayerIdString));
+        Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.ManagerPlayerId));
         Assert.That(result.Model.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
@@ -94,7 +94,7 @@ public class BunchTests
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model.Role, Is.EqualTo("player"));
-        Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.UserPlayerIdString));
+        Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.UserPlayerId));
         Assert.That(result.Model.Player.Name, Is.EqualTo(TestData.UserDisplayName));
     }
 

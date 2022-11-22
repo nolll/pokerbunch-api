@@ -4,10 +4,10 @@ namespace Api.Models.CashgameModels;
 
 public class CashgameDeletedModel : MessageModel
 {
-    private readonly int _id;
+    private readonly string _id;
     public override string Message => $"Cashgame deleted {_id}";
 
-    public CashgameDeletedModel(int id)
+    public CashgameDeletedModel(string id)
     {
         _id = id;
     }
