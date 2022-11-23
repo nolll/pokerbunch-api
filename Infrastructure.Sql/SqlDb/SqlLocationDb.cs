@@ -1,6 +1,7 @@
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -26,7 +27,7 @@ public class SqlLocationDb
         var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", int.Parse(id))
+            new IntSqlParameter("@id", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadOne(CreateLocation);
@@ -48,7 +49,7 @@ public class SqlLocationDb
         var sql = string.Concat(SearchIdSql, "WHERE l.bunch_id = @bunchId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@bunchId", int.Parse(bunchId))
+            new IntSqlParameter("@bunchId", bunchId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("location_id").Select(o => o.ToString()).ToList();
@@ -62,7 +63,7 @@ public class SqlLocationDb
         var parameters = new List<SimpleSqlParameter>
         {
             new("@name", location.Name),
-            new("@bunchId", int.Parse(location.BunchId))
+            new IntSqlParameter("@bunchId", location.BunchId)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }

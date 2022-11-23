@@ -4,7 +4,7 @@ namespace Infrastructure.Sql;
 
 public class ListSqlParameter
 {
-    public string ParameterName { get; private set; }
+    public string ParameterName { get; }
     private readonly IList<int> _idList;
 
     public ListSqlParameter(string parameterName, IList<int> idList)

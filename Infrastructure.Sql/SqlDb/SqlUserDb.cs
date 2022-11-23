@@ -2,6 +2,7 @@
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -27,7 +28,7 @@ public class SqlUserDb
         var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userId", int.Parse(id))
+            new IntSqlParameter("@userId", int.Parse(id))
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawUser = reader.ReadOne(CreateRawUser);
@@ -70,7 +71,7 @@ public class SqlUserDb
             new("@email", user.Email),
             new("@password", user.EncryptedPassword),
             new("@salt", user.Salt),
-            new("@userId", int.Parse(user.Id))
+            new IntSqlParameter("@userId", user.Id)
         };
         await _db.ExecuteAsync(sql, parameters);
     }
@@ -99,7 +100,7 @@ public class SqlUserDb
         var sql = string.Concat(SearchSql, "WHERE (u.user_name = @query OR u.email = @query)");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@query", nameOrEmail)
+            new StringSqlParameter("@query", nameOrEmail)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadInt("user_id")?.ToString();
@@ -119,7 +120,7 @@ public class SqlUserDb
             WHERE user_iD = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userId", int.Parse(userId))
+            new IntSqlParameter("@userId", userId)
         };
         var rowCount = await _db.ExecuteAsync(sql, parameters);
         return rowCount > 0;

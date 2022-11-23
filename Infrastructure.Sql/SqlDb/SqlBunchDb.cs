@@ -3,6 +3,7 @@ using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -37,7 +38,7 @@ public class SqlBunchDb
         var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", int.Parse(id))
+            new IntSqlParameter("@id", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawHomegame = reader.ReadOne(CreateRawBunch);
@@ -53,7 +54,10 @@ public class SqlBunchDb
     public async Task<IList<string>> Search(string slug)
     {
         var sql = string.Concat(SearchSql, " WHERE b.name = @slug");
-        var parameters = new SqlParameters(new SimpleSqlParameter("@slug", slug));
+        var parameters = new List<SimpleSqlParameter>
+        {
+            new StringSqlParameter("@slug", slug)
+        };
         var reader = await _db.QueryAsync(sql, parameters);
         var id = reader.ReadInt("bunch_id")?.ToString();
         if(id != null)
@@ -66,7 +70,7 @@ public class SqlBunchDb
         var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userId", int.Parse(userId))
+            new IntSqlParameter("@userId", userId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
@@ -81,16 +85,16 @@ public class SqlBunchDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@slug", rawBunch.Slug),
-            new("@displayName", rawBunch.DisplayName),
-            new("@description", rawBunch.Description),
-            new("@currencySymbol", rawBunch.CurrencySymbol),
-            new("@currencyLayout", rawBunch.CurrencyLayout),
-            new("@timeZone", rawBunch.TimezoneName),
-            new("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new("@videosEnabled", rawBunch.VideosEnabled),
-            new("@houseRules", rawBunch.HouseRules)
+            new StringSqlParameter("@slug", rawBunch.Slug),
+            new StringSqlParameter("@displayName", rawBunch.DisplayName),
+            new StringSqlParameter("@description", rawBunch.Description),
+            new StringSqlParameter("@currencySymbol", rawBunch.CurrencySymbol),
+            new StringSqlParameter("@currencyLayout", rawBunch.CurrencyLayout),
+            new StringSqlParameter("@timeZone", rawBunch.TimezoneName),
+            new BooleanSqlParameter("@cashgamesEnabled", rawBunch.CashgamesEnabled),
+            new BooleanSqlParameter("@tournamentsEnabled", rawBunch.TournamentsEnabled),
+            new BooleanSqlParameter("@videosEnabled", rawBunch.VideosEnabled),
+            new StringSqlParameter("@houseRules", rawBunch.HouseRules)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
@@ -115,18 +119,18 @@ public class SqlBunchDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@slug", rawBunch.Slug),
-            new("@displayName", rawBunch.DisplayName),
-            new("@description", rawBunch.Description),
-            new("@houseRules", rawBunch.HouseRules),
-            new("@currencySymbol", rawBunch.CurrencySymbol),
-            new("@currencyLayout", rawBunch.CurrencyLayout),
-            new("@timeZone", rawBunch.TimezoneName),
-            new("@defaultBuyin", rawBunch.DefaultBuyin),
-            new("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new("@videosEnabled", rawBunch.VideosEnabled),
-            new("@id", int.Parse(rawBunch.Id))
+            new StringSqlParameter("@slug", rawBunch.Slug),
+            new StringSqlParameter("@displayName", rawBunch.DisplayName),
+            new StringSqlParameter("@description", rawBunch.Description),
+            new StringSqlParameter("@houseRules", rawBunch.HouseRules),
+            new StringSqlParameter("@currencySymbol", rawBunch.CurrencySymbol),
+            new StringSqlParameter("@currencyLayout", rawBunch.CurrencyLayout),
+            new StringSqlParameter("@timeZone", rawBunch.TimezoneName),
+            new IntSqlParameter("@defaultBuyin", rawBunch.DefaultBuyin),
+            new BooleanSqlParameter("@cashgamesEnabled", rawBunch.CashgamesEnabled),
+            new BooleanSqlParameter("@tournamentsEnabled", rawBunch.TournamentsEnabled),
+            new BooleanSqlParameter("@videosEnabled", rawBunch.VideosEnabled),
+            new IntSqlParameter("@id", rawBunch.Id)
         };
 
         await _db.ExecuteAsync(sql, parameters);
@@ -157,7 +161,7 @@ public class SqlBunchDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", int.Parse(id))
+            new IntSqlParameter("@id", id)
         };
         var rowCount = _db.Execute(sql, parameters);
         return rowCount > 0;

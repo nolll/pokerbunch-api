@@ -39,11 +39,11 @@ class PlayerDetailsTests : TestBase
     }
 
     [Test]
-    public async Task PlayerDetails_WithoutUser_UserUrlIsEmpty()
+    public async Task PlayerDetails_WithoutUser_UserUrlIsNull()
     {
         var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.That(result.Data.UserName, Is.EqualTo(string.Empty));
+        Assert.That(result.Data.UserName, Is.Null);
     }
 
     [Test]

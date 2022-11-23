@@ -16,13 +16,8 @@ public class SimpleSqlParameter
         : this(CreateSqlParameter(parameterName, DbType.Int32, value))
     {
     }
-
-    public SimpleSqlParameter(string parameterName, bool value)
-        : this(CreateSqlParameter(parameterName, DbType.Boolean, value))
-    {
-    }
-
-    public SimpleSqlParameter(string parameterName, DateTime value, DbType type = DbType.DateTime)
+    
+    public SimpleSqlParameter(string parameterName, DbType type, object value)
         : this(CreateSqlParameter(parameterName, type, value))
     {
     }

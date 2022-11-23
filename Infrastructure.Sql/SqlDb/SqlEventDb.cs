@@ -2,6 +2,7 @@ using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -28,7 +29,7 @@ public class SqlEventDb
         var sql = string.Format(EventSql, whereClause);
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@cashgameId", int.Parse(id))
+            new IntSqlParameter("@cashgameId", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
@@ -55,7 +56,7 @@ public class SqlEventDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", int.Parse(bunchId))
+            new IntSqlParameter("@id", bunchId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
@@ -70,7 +71,7 @@ public class SqlEventDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@id", int.Parse(cashgameId))
+            new IntSqlParameter("@id", cashgameId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
@@ -85,7 +86,7 @@ public class SqlEventDb
         var parameters = new List<SimpleSqlParameter>
         {
             new("@name", e.Name),
-            new("@bunchId", int.Parse(e.BunchId))
+            new IntSqlParameter("@bunchId", e.BunchId)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
@@ -97,8 +98,8 @@ public class SqlEventDb
             VALUES (@eventId, @cashgameId)";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@eventId", int.Parse(eventId)),
-            new("@cashgameId", int.Parse(cashgameId))
+            new IntSqlParameter("@eventId", eventId),
+            new IntSqlParameter("@cashgameId", cashgameId)
         };
         await _db.ExecuteInsertAsync(sql, parameters);
     }
