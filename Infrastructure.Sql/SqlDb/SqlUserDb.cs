@@ -26,9 +26,9 @@ public class SqlUserDb
     public async Task<User> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@userId", int.Parse(id))
+            new IntParam("@userId", int.Parse(id))
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawUser = reader.ReadOne(CreateRawUser);
@@ -38,7 +38,7 @@ public class SqlUserDb
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
-        var parameter = new IntListSqlParameter("@ids", ids);
+        var parameter = new IntListParam("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawUsers = reader.ReadList(CreateRawUser);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
@@ -64,14 +64,14 @@ public class SqlUserDb
                 password = @password,
                 salt = @salt
             WHERE user_id = @userId";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@displayName", user.DisplayName),
-            new StringSqlParameter("@realName", user.RealName),
-            new StringSqlParameter("@email", user.Email),
-            new StringSqlParameter("@password", user.EncryptedPassword),
-            new StringSqlParameter("@salt", user.Salt),
-            new IntSqlParameter("@userId", user.Id)
+            new StringParam("@displayName", user.DisplayName),
+            new StringParam("@realName", user.RealName),
+            new StringParam("@email", user.Email),
+            new StringParam("@password", user.EncryptedPassword),
+            new StringParam("@salt", user.Salt),
+            new IntParam("@userId", user.Id)
         };
         await _db.ExecuteAsync(sql, parameters);
     }
@@ -81,13 +81,13 @@ public class SqlUserDb
         const string sql = @"
             INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
             VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@userName", user.UserName),
-            new StringSqlParameter("@displayName", user.DisplayName),
-            new StringSqlParameter("@email", user.Email),
-            new StringSqlParameter("@password", user.EncryptedPassword),
-            new StringSqlParameter("@salt", user.Salt)
+            new StringParam("@userName", user.UserName),
+            new StringParam("@displayName", user.DisplayName),
+            new StringParam("@email", user.Email),
+            new StringParam("@password", user.EncryptedPassword),
+            new StringParam("@salt", user.Salt)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
@@ -98,9 +98,9 @@ public class SqlUserDb
             return null;
 
         var sql = string.Concat(SearchSql, "WHERE (u.user_name = @query OR u.email = @query)");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@query", nameOrEmail)
+            new StringParam("@query", nameOrEmail)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadInt("user_id")?.ToString();
@@ -118,9 +118,9 @@ public class SqlUserDb
         const string sql = @"
             DELETE FROM pb_user
             WHERE user_iD = @userId";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@userId", userId)
+            new IntParam("@userId", userId)
         };
         var rowCount = await _db.ExecuteAsync(sql, parameters);
         return rowCount > 0;

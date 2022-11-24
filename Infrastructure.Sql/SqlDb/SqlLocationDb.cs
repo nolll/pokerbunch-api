@@ -25,9 +25,9 @@ public class SqlLocationDb
     public async Task<Location> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@id", id)
+            new IntParam("@id", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadOne(CreateLocation);
@@ -39,7 +39,7 @@ public class SqlLocationDb
             return new List<Location>();
 
         var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
-        var parameter = new IntListSqlParameter("@ids", ids);
+        var parameter = new IntListParam("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         return reader.ReadList(CreateLocation);
     }
@@ -47,9 +47,9 @@ public class SqlLocationDb
     public async Task<IList<string>> Find(string bunchId)
     {
         var sql = string.Concat(SearchIdSql, "WHERE l.bunch_id = @bunchId");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@bunchId", bunchId)
+            new IntParam("@bunchId", bunchId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("location_id").Select(o => o.ToString()).ToList();
@@ -60,10 +60,10 @@ public class SqlLocationDb
         const string sql = @"
             INSERT INTO pb_location (name, bunch_id)
             VALUES (@name, @bunchId) RETURNING location_id";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@name", location.Name),
-            new IntSqlParameter("@bunchId", location.BunchId)
+            new StringParam("@name", location.Name),
+            new IntParam("@bunchId", location.BunchId)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }

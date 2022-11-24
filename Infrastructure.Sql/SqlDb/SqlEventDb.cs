@@ -27,9 +27,9 @@ public class SqlEventDb
     {
         const string whereClause = "WHERE e.event_id = @cashgameId";
         var sql = string.Format(EventSql, whereClause);
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@cashgameId", id)
+            new IntParam("@cashgameId", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
@@ -41,7 +41,7 @@ public class SqlEventDb
     {
         const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
-        var parameter = new IntListSqlParameter("@ids", ids);
+        var parameter = new IntListParam("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawEvents = CreateRawEvents(reader);
         return rawEvents.Select(CreateEvent).ToList();
@@ -54,9 +54,9 @@ public class SqlEventDb
             FROM pb_event e
             WHERE e.bunch_id = @id";
 
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@id", bunchId)
+            new IntParam("@id", bunchId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
@@ -69,9 +69,9 @@ public class SqlEventDb
             FROM pb_event_cashgame ecg
             WHERE ecg.cashgame_id = @id";
 
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@id", cashgameId)
+            new IntParam("@id", cashgameId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
@@ -83,10 +83,10 @@ public class SqlEventDb
             INSERT INTO pb_event (name, bunch_id)
             VALUES (@name, @bunchId) RETURNING event_id";
 
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@name", e.Name),
-            new IntSqlParameter("@bunchId", e.BunchId)
+            new StringParam("@name", e.Name),
+            new IntParam("@bunchId", e.BunchId)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
@@ -96,10 +96,10 @@ public class SqlEventDb
         const string sql = @"
             INSERT INTO pb_event_cashgame (event_id, cashgame_id)
             VALUES (@eventId, @cashgameId)";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@eventId", eventId),
-            new IntSqlParameter("@cashgameId", cashgameId)
+            new IntParam("@eventId", eventId),
+            new IntParam("@cashgameId", cashgameId)
         };
         await _db.ExecuteInsertAsync(sql, parameters);
     }

@@ -3,15 +3,15 @@ using System.Linq;
 
 namespace Infrastructure.Sql.SqlParameters;
 
-public class ListSqlParameter
+public class ListParam
 {
-    public string ParameterName { get; }
+    public string Name { get; }
     private readonly DbType _type;
     private readonly IList<object> _idList;
 
-    protected ListSqlParameter(string parameterName, DbType type, IList<object> idList)
+    protected ListParam(string name, DbType type, IList<object> idList)
     {
-        ParameterName = parameterName;
+        Name = name;
         _type = type;
         _idList = idList;
     }
@@ -29,11 +29,11 @@ public class ListSqlParameter
         }
     }
 
-    public IList<SimpleSqlParameter> ParameterList
+    public IList<SqlParam> ParameterList
     {
         get
         {
-            return _idList.Select((t, i) => new SimpleSqlParameter(GetIdParameterName(i), _type, t)).ToList();
+            return _idList.Select((t, i) => new SqlParam(GetIdParameterName(i), _type, t)).ToList();
         }
     }
 

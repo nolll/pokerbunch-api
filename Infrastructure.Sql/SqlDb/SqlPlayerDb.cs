@@ -27,9 +27,9 @@ public class SqlPlayerDb
     public async Task<IList<string>> Find(string bunchId)
     {
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@bunchId", bunchId)
+            new IntParam("@bunchId", bunchId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
@@ -39,10 +39,10 @@ public class SqlPlayerDb
     public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId AND p.user_id = @userId");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@bunchId", bunchId),
-            new IntSqlParameter("@userId", userId)
+            new IntParam("@bunchId", bunchId),
+            new IntParam("@userId", userId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
@@ -53,7 +53,7 @@ public class SqlPlayerDb
         if(!ids.Any())
             return new List<Player>();
         var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
-        var parameter = new IntListSqlParameter("@ids", ids);
+        var parameter = new IntListParam("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawPlayers = reader.ReadList(CreateRawPlayer);
         return rawPlayers.Select(CreatePlayer).ToList();
@@ -62,9 +62,9 @@ public class SqlPlayerDb
     public async Task<Player> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE p.player_id = @id");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@id", id)
+            new IntParam("@id", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawPlayer = reader.ReadOne(CreateRawPlayer);
@@ -78,13 +78,13 @@ public class SqlPlayerDb
             const string sql = @"
                 INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
                 VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
-            var parameters = new List<SimpleSqlParameter>
+            var parameters = new List<SqlParam>
             {
-                new IntSqlParameter("@bunchId", player.BunchId),
-                new IntSqlParameter("@userId", player.UserId),
-                new IntSqlParameter("@role", (int)player.Role),
-                new BooleanSqlParameter("@approved", true),
-                new StringSqlParameter("@color", player.Color)
+                new IntParam("@bunchId", player.BunchId),
+                new IntParam("@userId", player.UserId),
+                new IntParam("@role", (int)player.Role),
+                new BoolParam("@approved", true),
+                new StringParam("@color", player.Color)
             };
             return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
         }
@@ -93,13 +93,13 @@ public class SqlPlayerDb
             const string sql = @"
                 INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
                 VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
-            var parameters = new List<SimpleSqlParameter>
+            var parameters = new List<SqlParam>
             {
-                new IntSqlParameter("@bunchId", player.BunchId),
-                new IntSqlParameter("@role", (int)Role.Player),
-                new BooleanSqlParameter("@approved", true),
-                new StringSqlParameter("@playerName", player.DisplayName),
-                new StringSqlParameter("@color", player.Color)
+                new IntParam("@bunchId", player.BunchId),
+                new IntParam("@role", (int)Role.Player),
+                new BoolParam("@approved", true),
+                new StringParam("@playerName", player.DisplayName),
+                new StringParam("@color", player.Color)
             };
             return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
         }
@@ -115,13 +115,13 @@ public class SqlPlayerDb
                 role_id = @role,
                 approved = @approved
             WHERE player_id = @playerId";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@bunchId", bunch.Id),
-            new IntSqlParameter("@userId", userId),
-            new IntSqlParameter("@role", (int)player.Role),
-            new BooleanSqlParameter("@approved", true),
-            new IntSqlParameter("@playerId", player.Id)
+            new IntParam("@bunchId", bunch.Id),
+            new IntParam("@userId", userId),
+            new IntParam("@role", (int)player.Role),
+            new BoolParam("@approved", true),
+            new IntParam("@playerId", player.Id)
         };
         var rowCount = await _db.ExecuteAsync(sql, parameters);
         return rowCount > 0;
@@ -132,9 +132,9 @@ public class SqlPlayerDb
         const string sql = @"
             DELETE FROM pb_player
             WHERE player_id = @playerId";
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@playerId", playerId)
+            new IntParam("@playerId", playerId)
         };
         await _db.ExecuteAsync(sql, parameters);
     }

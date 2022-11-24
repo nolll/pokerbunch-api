@@ -27,7 +27,7 @@ public class SqlBunchDb
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
-        var parameter = new IntListSqlParameter("@ids", ids);
+        var parameter = new IntListParam("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawHomegames = reader.ReadList(CreateRawBunch);
         return rawHomegames.Select(CreateBunch).ToList();
@@ -36,9 +36,9 @@ public class SqlBunchDb
     public async Task<Bunch> Get(string id)
     {
         var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@id", id)
+            new IntParam("@id", id)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var rawHomegame = reader.ReadOne(CreateRawBunch);
@@ -54,9 +54,9 @@ public class SqlBunchDb
     public async Task<IList<string>> Search(string slug)
     {
         var sql = string.Concat(SearchSql, " WHERE b.name = @slug");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@slug", slug)
+            new StringParam("@slug", slug)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         var id = reader.ReadInt("bunch_id")?.ToString();
@@ -68,9 +68,9 @@ public class SqlBunchDb
     public async Task<IList<string>> SearchByUser(string userId)
     {
         var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@userId", userId)
+            new IntParam("@userId", userId)
         };
         var reader = await _db.QueryAsync(sql, parameters);
         return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
@@ -83,18 +83,18 @@ public class SqlBunchDb
             INSERT INTO pb_bunch (name, display_name, description, currency, currency_layout, timezone, default_buyin, cashgames_enabled, tournaments_enabled, videos_enabled, house_rules)
             VALUES (@slug, @displayName, @description, @currencySymbol, @currencyLayout, @timeZone, 0, @cashgamesEnabled, @tournamentsEnabled, @videosEnabled, @houseRules) RETURNING bunch_id";
 
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@slug", rawBunch.Slug),
-            new StringSqlParameter("@displayName", rawBunch.DisplayName),
-            new StringSqlParameter("@description", rawBunch.Description),
-            new StringSqlParameter("@currencySymbol", rawBunch.CurrencySymbol),
-            new StringSqlParameter("@currencyLayout", rawBunch.CurrencyLayout),
-            new StringSqlParameter("@timeZone", rawBunch.TimezoneName),
-            new BooleanSqlParameter("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new BooleanSqlParameter("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new BooleanSqlParameter("@videosEnabled", rawBunch.VideosEnabled),
-            new StringSqlParameter("@houseRules", rawBunch.HouseRules)
+            new StringParam("@slug", rawBunch.Slug),
+            new StringParam("@displayName", rawBunch.DisplayName),
+            new StringParam("@description", rawBunch.Description),
+            new StringParam("@currencySymbol", rawBunch.CurrencySymbol),
+            new StringParam("@currencyLayout", rawBunch.CurrencyLayout),
+            new StringParam("@timeZone", rawBunch.TimezoneName),
+            new BoolParam("@cashgamesEnabled", rawBunch.CashgamesEnabled),
+            new BoolParam("@tournamentsEnabled", rawBunch.TournamentsEnabled),
+            new BoolParam("@videosEnabled", rawBunch.VideosEnabled),
+            new StringParam("@houseRules", rawBunch.HouseRules)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
@@ -117,20 +117,20 @@ public class SqlBunchDb
                 videos_enabled = @videosEnabled
             WHERE bunch_id = @id";
 
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new StringSqlParameter("@slug", rawBunch.Slug),
-            new StringSqlParameter("@displayName", rawBunch.DisplayName),
-            new StringSqlParameter("@description", rawBunch.Description),
-            new StringSqlParameter("@houseRules", rawBunch.HouseRules),
-            new StringSqlParameter("@currencySymbol", rawBunch.CurrencySymbol),
-            new StringSqlParameter("@currencyLayout", rawBunch.CurrencyLayout),
-            new StringSqlParameter("@timeZone", rawBunch.TimezoneName),
-            new IntSqlParameter("@defaultBuyin", rawBunch.DefaultBuyin),
-            new BooleanSqlParameter("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new BooleanSqlParameter("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new BooleanSqlParameter("@videosEnabled", rawBunch.VideosEnabled),
-            new IntSqlParameter("@id", rawBunch.Id)
+            new StringParam("@slug", rawBunch.Slug),
+            new StringParam("@displayName", rawBunch.DisplayName),
+            new StringParam("@description", rawBunch.Description),
+            new StringParam("@houseRules", rawBunch.HouseRules),
+            new StringParam("@currencySymbol", rawBunch.CurrencySymbol),
+            new StringParam("@currencyLayout", rawBunch.CurrencyLayout),
+            new StringParam("@timeZone", rawBunch.TimezoneName),
+            new IntParam("@defaultBuyin", rawBunch.DefaultBuyin),
+            new BoolParam("@cashgamesEnabled", rawBunch.CashgamesEnabled),
+            new BoolParam("@tournamentsEnabled", rawBunch.TournamentsEnabled),
+            new BoolParam("@videosEnabled", rawBunch.VideosEnabled),
+            new IntParam("@id", rawBunch.Id)
         };
 
         await _db.ExecuteAsync(sql, parameters);
@@ -159,9 +159,9 @@ public class SqlBunchDb
             FROM pb_bunch
             WHERE bunch_id = @id";
 
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new IntSqlParameter("@id", id)
+            new IntParam("@id", id)
         };
         var rowCount = _db.Execute(sql, parameters);
         return rowCount > 0;
