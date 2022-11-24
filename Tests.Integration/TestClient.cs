@@ -55,6 +55,11 @@ public static class TestClient
         {
             return await Post(token, new ApiBunchJoinUrl(bunchId), parameters);
         }
+
+        public static async Task<TestClientResult<BunchModel>> Update(string token, string bunchId, UpdateBunchPostModel parameters)
+        {
+            return await Put<BunchModel>(token, new ApiBunchUpdateUrl(bunchId), parameters);
+        }
     }
 
     public static class Cashgame
@@ -233,12 +238,6 @@ public static class TestClient
         return HandleEmptyResponse(response);
     }
 
-    private static async Task<TestClientResult> Put(string token, ApiUrl url, object parameters = null)
-    {
-        var response = await GetClient(token).PutAsJsonAsync(url.Relative, parameters);
-        return HandleEmptyResponse(response);
-    }
-
     private static async Task<TestClientResult<T>> Post<T>(ApiUrl url, object parameters) where T : class
     {
         return await Post<T>(null, url, parameters);
@@ -247,6 +246,18 @@ public static class TestClient
     private static async Task<TestClientResult<T>> Post<T>(string token, ApiUrl url, object parameters) where T : class
     {
         var response = await GetClient(token).PostAsJsonAsync(url.Relative, parameters);
+        return await HandleJsonResponse<T>(response);
+    }
+
+    private static async Task<TestClientResult> Put(string token, ApiUrl url, object parameters = null)
+    {
+        var response = await GetClient(token).PutAsJsonAsync(url.Relative, parameters);
+        return HandleEmptyResponse(response);
+    }
+
+    private static async Task<TestClientResult<T>> Put<T>(string token, ApiUrl url, object parameters) where T : class
+    {
+        var response = await GetClient(token).PutAsJsonAsync(url.Relative, parameters);
         return await HandleJsonResponse<T>(response);
     }
 

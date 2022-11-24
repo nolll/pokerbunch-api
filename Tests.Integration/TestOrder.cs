@@ -16,7 +16,6 @@ public static class TestOrder
 }
 
 /* ---- Routes left to test ----
-Bunch.Update
 Bunch.List
 Bunch.ListForCurrentUser
 Cashgame.ListByBunch

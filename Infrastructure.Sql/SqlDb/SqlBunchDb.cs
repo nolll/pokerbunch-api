@@ -29,8 +29,8 @@ public class SqlBunchDb
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
         var parameter = new IntListParam("@ids", ids);
         var reader = await _db.Query(sql, parameter);
-        var rawHomegames = reader.ReadList(CreateRawBunch);
-        return rawHomegames.Select(CreateBunch).ToList();
+        var rawBunches = reader.ReadList(CreateRawBunch);
+        return rawBunches.Select(CreateBunch).ToList();
     }
 
     public async Task<Bunch> Get(string id)
@@ -41,8 +41,8 @@ public class SqlBunchDb
             new IntParam("@id", id)
         };
         var reader = await _db.Query(sql, parameters);
-        var rawHomegame = reader.ReadOne(CreateRawBunch);
-        return rawHomegame != null ? CreateBunch(rawHomegame) : null;
+        var rawBunch = reader.ReadOne(CreateRawBunch);
+        return rawBunch != null ? CreateBunch(rawBunch) : null;
     }
 
     public async Task<IList<string>> Search()

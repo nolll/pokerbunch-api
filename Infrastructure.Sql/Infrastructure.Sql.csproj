@@ -6,14 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\Changes.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Scripts\Changes.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Npgsql" Version="7.0.0" />
   </ItemGroup>
 

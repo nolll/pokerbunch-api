@@ -33,10 +33,10 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
         if (!AccessControl.CanEditBunch(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var postedHomegame = CreateBunch(bunch, request);
-        await _bunchRepository.Update(postedHomegame);
+        var postedBunch = CreateBunch(bunch, request);
+        await _bunchRepository.Update(postedBunch);
 
-        return Success(new Result(bunch, currentPlayer));
+        return Success(new Result(postedBunch, currentPlayer));
     }
     
     private static Bunch CreateBunch(Bunch bunch, Request request)

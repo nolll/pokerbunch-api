@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
+using Api.Urls.ApiUrls;
 using Core;
 
 namespace Tests.Integration.Tests;
@@ -96,6 +97,26 @@ public class BunchTests
         Assert.That(result.Model.Role, Is.EqualTo("player"));
         Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.UserPlayerId));
         Assert.That(result.Model.Player.Name, Is.EqualTo(TestData.UserDisplayName));
+    }
+
+    [Test]
+    [Order(8)]
+    public async Task UpdateBunch()
+    {
+        var newDescription = $"UPDATED: {TestData.BunchDescription}";
+        var houseRules = "UPDATED: house rules";
+        var defaultBuyin = 10_000;
+
+        var parameters = new UpdateBunchPostModel(newDescription, houseRules, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout, defaultBuyin);
+        var updateResult = await TestClient.Bunch.Update(TestData.ManagerToken, TestData.BunchId, parameters);
+        Assert.That(updateResult.Model.Description, Is.EqualTo(newDescription));
+        Assert.That(updateResult.Model.HouseRules, Is.EqualTo(houseRules));
+        Assert.That(updateResult.Model.DefaultBuyin, Is.EqualTo(defaultBuyin));
+
+        var getResult = await TestClient.Bunch.Get(TestData.ManagerToken, TestData.BunchId);
+        Assert.That(getResult.Model.Description, Is.EqualTo(newDescription));
+        Assert.That(getResult.Model.HouseRules, Is.EqualTo(houseRules));
+        Assert.That(getResult.Model.DefaultBuyin, Is.EqualTo(defaultBuyin));
     }
 
     private string GetVerificationCode(IMessage message)
