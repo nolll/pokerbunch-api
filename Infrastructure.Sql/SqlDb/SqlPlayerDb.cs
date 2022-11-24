@@ -53,7 +53,7 @@ public class SqlPlayerDb
         if(!ids.Any())
             return new List<Player>();
         var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
-        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawPlayers = reader.ReadList(CreateRawPlayer);
         return rawPlayers.Select(CreatePlayer).ToList();
@@ -84,7 +84,7 @@ public class SqlPlayerDb
                 new IntSqlParameter("@userId", player.UserId),
                 new IntSqlParameter("@role", (int)player.Role),
                 new BooleanSqlParameter("@approved", true),
-                new("@color", player.Color)
+                new StringSqlParameter("@color", player.Color)
             };
             return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
         }
@@ -98,8 +98,8 @@ public class SqlPlayerDb
                 new IntSqlParameter("@bunchId", player.BunchId),
                 new IntSqlParameter("@role", (int)Role.Player),
                 new BooleanSqlParameter("@approved", true),
-                new("@playerName", player.DisplayName),
-                new("@color", player.Color)
+                new StringSqlParameter("@playerName", player.DisplayName),
+                new StringSqlParameter("@color", player.Color)
             };
             return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
         }

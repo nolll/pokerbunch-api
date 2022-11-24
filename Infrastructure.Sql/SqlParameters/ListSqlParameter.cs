@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Infrastructure.Sql.SqlParameters;
 
-public abstract class ListSqlParameter
+public class ListSqlParameter
 {
     public string ParameterName { get; }
     private readonly DbType _type;
@@ -29,8 +29,16 @@ public abstract class ListSqlParameter
         }
     }
 
-    public IList<SimpleSqlParameter> ParameterList =>
-        _idList.Select((t, i) => new SimpleSqlParameter(GetIdParameterName(i), _type, t)).ToList();
+    public IList<SimpleSqlParameter> ParameterList
+    {
+        get
+        {
+            return _idList.Select((t, i) => new SimpleSqlParameter(GetIdParameterName(i), _type, t)).ToList();
+        }
+    }
 
-    private string GetIdParameterName(int index) => $"@param{index}";
+    private string GetIdParameterName(int index)
+    {
+        return $"@param{index}";
+    }
 }

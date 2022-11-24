@@ -2,6 +2,7 @@ using System.Linq;
 using Infrastructure.Sql.Interfaces;
 using Npgsql;
 using System.Data;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql;
 

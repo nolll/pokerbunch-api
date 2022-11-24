@@ -39,7 +39,7 @@ public class SqlLocationDb
             return new List<Location>();
 
         var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
-        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         return reader.ReadList(CreateLocation);
     }
@@ -62,7 +62,7 @@ public class SqlLocationDb
             VALUES (@name, @bunchId) RETURNING location_id";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@name", location.Name),
+            new StringSqlParameter("@name", location.Name),
             new IntSqlParameter("@bunchId", location.BunchId)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();

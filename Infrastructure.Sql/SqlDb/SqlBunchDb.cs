@@ -27,7 +27,7 @@ public class SqlBunchDb
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
-        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawHomegames = reader.ReadList(CreateRawBunch);
         return rawHomegames.Select(CreateBunch).ToList();

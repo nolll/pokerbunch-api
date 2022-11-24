@@ -41,7 +41,7 @@ public class SqlEventDb
     {
         const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
-        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawEvents = CreateRawEvents(reader);
         return rawEvents.Select(CreateEvent).ToList();
@@ -85,7 +85,7 @@ public class SqlEventDb
 
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@name", e.Name),
+            new StringSqlParameter("@name", e.Name),
             new IntSqlParameter("@bunchId", e.BunchId)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();

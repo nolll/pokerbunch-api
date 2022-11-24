@@ -49,7 +49,7 @@ public class SqlCashgameDb
         if(ids.Count == 0)
             return new List<Cashgame>();
         var sql = string.Concat(DataSql, "WHERE g.cashgame_id IN (@idList) ORDER BY g.cashgame_id");
-        var parameter = new ListSqlParameter("@idList", ids.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@idList", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawCashgames = reader.ReadList(CreateRawCashgame);
         var rawCheckpoints = await GetCheckpoints(ids);
@@ -341,7 +341,7 @@ public class SqlCashgameDb
             WHERE cp.cashgame_id IN (@cashgameIdList)
             ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id DESC";
 
-        var parameter = new ListSqlParameter("@cashgameIdList", cashgameIdList.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@cashgameIdList", cashgameIdList);
         var reader = await _db.QueryAsync(sql, parameter);
         return reader.ReadList(CreateRawCheckpoint);
     }

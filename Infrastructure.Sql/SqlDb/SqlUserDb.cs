@@ -38,7 +38,7 @@ public class SqlUserDb
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
-        var parameter = new ListSqlParameter("@ids", ids.Select(int.Parse).ToList());
+        var parameter = new IntListSqlParameter("@ids", ids);
         var reader = await _db.QueryAsync(sql, parameter);
         var rawUsers = reader.ReadList(CreateRawUser);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
@@ -66,11 +66,11 @@ public class SqlUserDb
             WHERE user_id = @userId";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@displayName", user.DisplayName),
-            new("@realName", user.RealName),
-            new("@email", user.Email),
-            new("@password", user.EncryptedPassword),
-            new("@salt", user.Salt),
+            new StringSqlParameter("@displayName", user.DisplayName),
+            new StringSqlParameter("@realName", user.RealName),
+            new StringSqlParameter("@email", user.Email),
+            new StringSqlParameter("@password", user.EncryptedPassword),
+            new StringSqlParameter("@salt", user.Salt),
             new IntSqlParameter("@userId", user.Id)
         };
         await _db.ExecuteAsync(sql, parameters);
@@ -83,11 +83,11 @@ public class SqlUserDb
             VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
         var parameters = new List<SimpleSqlParameter>
         {
-            new("@userName", user.UserName),
-            new("@displayName", user.DisplayName),
-            new("@email", user.Email),
-            new("@password", user.EncryptedPassword),
-            new("@salt", user.Salt)
+            new StringSqlParameter("@userName", user.UserName),
+            new StringSqlParameter("@displayName", user.DisplayName),
+            new StringSqlParameter("@email", user.Email),
+            new StringSqlParameter("@password", user.EncryptedPassword),
+            new StringSqlParameter("@salt", user.Salt)
         };
         return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
     }
