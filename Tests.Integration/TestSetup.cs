@@ -29,8 +29,8 @@ public class TestSetup
         await Testcontainers.StartAsync();
         EmailSender = new FakeEmailSender();
         _webApplicationFactory = new WebApplicationFactoryInTest(ConnectionString, EmailSender);
-        CreateTables();
-        AddMasterData();
+        await CreateTables();
+        await AddMasterData();
     }
 
     [OneTimeTearDown]
@@ -47,16 +47,16 @@ public class TestSetup
         return client;
     }
     
-    private static void CreateTables()
+    private static async Task CreateTables()
     {
-        var db = new PostgresStorageProvider(ConnectionString);
-        db.Execute(CreateScript);
+        var db = new PostgresDb(ConnectionString);
+        await db.Execute(CreateScript);
     }
 
-    private static void AddMasterData()
+    private static async Task AddMasterData()
     {
-        var db = new PostgresStorageProvider(ConnectionString);
-        db.Execute(GetMasterDataSql);
+        var db = new PostgresDb(ConnectionString);
+        await db.Execute(GetMasterDataSql);
     }
 
     private static string CreateScript => ReadSqlFile("data/db-create.sql");

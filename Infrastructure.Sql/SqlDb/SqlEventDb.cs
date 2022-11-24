@@ -16,9 +16,9 @@ public class SqlEventDb
         {0}
         ORDER BY e.event_id, g.date";
 
-    private readonly PostgresStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlEventDb(PostgresStorageProvider db)
+    public SqlEventDb(PostgresDb db)
     {
         _db = db;
     }
@@ -31,7 +31,7 @@ public class SqlEventDb
         {
             new IntParam("@cashgameId", id)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
         var rawEvent = rawEvents.FirstOrDefault();
         return rawEvent != null ? CreateEvent(rawEvent) : null;
@@ -42,7 +42,7 @@ public class SqlEventDb
         const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
         var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         var rawEvents = CreateRawEvents(reader);
         return rawEvents.Select(CreateEvent).ToList();
     }
@@ -58,7 +58,7 @@ public class SqlEventDb
         {
             new IntParam("@id", bunchId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
     }
 
@@ -73,7 +73,7 @@ public class SqlEventDb
         {
             new IntParam("@id", cashgameId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
     }
 
@@ -88,7 +88,7 @@ public class SqlEventDb
             new StringParam("@name", e.Name),
             new IntParam("@bunchId", e.BunchId)
         };
-        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+        return (await _db.Insert(sql, parameters)).ToString();
     }
 
     public async Task AddCashgame(string eventId, string cashgameId)
@@ -101,7 +101,7 @@ public class SqlEventDb
             new IntParam("@eventId", eventId),
             new IntParam("@cashgameId", cashgameId)
         };
-        await _db.ExecuteInsertAsync(sql, parameters);
+        await _db.Insert(sql, parameters);
     }
 
     private static Event CreateEvent(RawEvent rawEvent)

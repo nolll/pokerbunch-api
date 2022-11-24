@@ -9,10 +9,10 @@ public class MasterDataTests
 {
     [Test]
     [Order(1)]
-    public void MasterDataExists()
+    public async Task MasterDataExists()
     {
-        var db = new PostgresStorageProvider(TestSetup.ConnectionString);
-        var reader = db.Query("SELECT role_id, role_name FROM pb_role ORDER BY role_id");
+        var db = new PostgresDb(TestSetup.ConnectionString);
+        var reader = await db.Query("SELECT role_id, role_name FROM pb_role ORDER BY role_id");
         var roles = reader.ReadList(RoleInTest.Create);
 
         Assert.That(roles[0].Id, Is.EqualTo(1));

@@ -16,8 +16,8 @@ public class UserRegistrationTests
         var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
         var result = await TestClient.User.Add(parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        var db = new PostgresStorageProvider(TestSetup.ConnectionString);
-        await db.ExecuteAsync("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
+        var db = new PostgresDb(TestSetup.ConnectionString);
+        await db.Execute("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
     }
 
     [Test]

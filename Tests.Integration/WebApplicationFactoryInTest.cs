@@ -22,7 +22,7 @@ public class WebApplicationFactoryInTest : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            services.ReplaceSingleton(new PostgresStorageProvider(_connectionString));
+            services.ReplaceSingleton(new PostgresDb(_connectionString));
             services.ReplaceSingleton(_emailSender);
             services.ReplaceSingleton<IRandomizer>(new FakeRandomizer());
             services.ReplaceSingleton<ICacheProvider>(new FakeCacheProvider());

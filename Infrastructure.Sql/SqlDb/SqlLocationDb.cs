@@ -15,9 +15,9 @@ public class SqlLocationDb
         SELECT l.location_id
         FROM pb_location l ";
 
-    private readonly PostgresStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlLocationDb(PostgresStorageProvider db)
+    public SqlLocationDb(PostgresDb db)
     {
         _db = db;
     }
@@ -29,7 +29,7 @@ public class SqlLocationDb
         {
             new IntParam("@id", id)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadOne(CreateLocation);
     }
         
@@ -40,7 +40,7 @@ public class SqlLocationDb
 
         var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
         var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         return reader.ReadList(CreateLocation);
     }
 
@@ -51,7 +51,7 @@ public class SqlLocationDb
         {
             new IntParam("@bunchId", bunchId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("location_id").Select(o => o.ToString()).ToList();
     }
         
@@ -65,7 +65,7 @@ public class SqlLocationDb
             new StringParam("@name", location.Name),
             new IntParam("@bunchId", location.BunchId)
         };
-        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+        return (await _db.Insert(sql, parameters)).ToString();
     }
 
     private Location CreateLocation(IStorageDataReader reader)

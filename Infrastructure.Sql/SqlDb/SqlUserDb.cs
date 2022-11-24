@@ -16,9 +16,9 @@ public class SqlUserDb
         SELECT u.user_id
         FROM pb_user u ";
         
-    private readonly PostgresStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlUserDb(PostgresStorageProvider db)
+    public SqlUserDb(PostgresDb db)
     {
         _db = db;
     }
@@ -30,7 +30,7 @@ public class SqlUserDb
         {
             new IntParam("@userId", int.Parse(id))
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawUser = reader.ReadOne(CreateRawUser);
         return rawUser != null ? RawUser.CreateReal(rawUser) : null;
     }
@@ -39,7 +39,7 @@ public class SqlUserDb
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
         var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         var rawUsers = reader.ReadList(CreateRawUser);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
     }
@@ -73,7 +73,7 @@ public class SqlUserDb
             new StringParam("@salt", user.Salt),
             new IntParam("@userId", user.Id)
         };
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
 
     public async Task<string> Add(User user)
@@ -89,7 +89,7 @@ public class SqlUserDb
             new StringParam("@password", user.EncryptedPassword),
             new StringParam("@salt", user.Salt)
         };
-        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+        return (await _db.Insert(sql, parameters)).ToString();
     }
         
     private async Task<string> GetIdByNameOrEmail(string nameOrEmail)
@@ -102,14 +102,14 @@ public class SqlUserDb
         {
             new StringParam("@query", nameOrEmail)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadInt("user_id")?.ToString();
     }
 
     private async Task<IList<string>> GetIds()
     {
         var sql = string.Concat(SearchSql, "ORDER BY u.display_name");
-        var reader = await _db.QueryAsync(sql);
+        var reader = await _db.Query(sql);
         return reader.ReadIntList("user_id").Select(o => o.ToString()).ToList();
     }
 
@@ -122,7 +122,7 @@ public class SqlUserDb
         {
             new IntParam("@userId", userId)
         };
-        var rowCount = await _db.ExecuteAsync(sql, parameters);
+        var rowCount = await _db.Execute(sql, parameters);
         return rowCount > 0;
     }
 

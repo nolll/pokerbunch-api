@@ -17,9 +17,9 @@ public class SqlPlayerDb
         SELECT p.player_id
         FROM pb_player p ";
 
-    private readonly PostgresStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlPlayerDb(PostgresStorageProvider db)
+    public SqlPlayerDb(PostgresDb db)
     {
         _db = db;
     }
@@ -31,7 +31,7 @@ public class SqlPlayerDb
         {
             new IntParam("@bunchId", bunchId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
 
     }
@@ -44,7 +44,7 @@ public class SqlPlayerDb
             new IntParam("@bunchId", bunchId),
             new IntParam("@userId", userId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
     }
 
@@ -54,7 +54,7 @@ public class SqlPlayerDb
             return new List<Player>();
         var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
         var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         var rawPlayers = reader.ReadList(CreateRawPlayer);
         return rawPlayers.Select(CreatePlayer).ToList();
     }
@@ -66,7 +66,7 @@ public class SqlPlayerDb
         {
             new IntParam("@id", id)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawPlayer = reader.ReadOne(CreateRawPlayer);
         return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
     }
@@ -86,7 +86,7 @@ public class SqlPlayerDb
                 new BoolParam("@approved", true),
                 new StringParam("@color", player.Color)
             };
-            return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+            return (await _db.Insert(sql, parameters)).ToString();
         }
         else
         {
@@ -101,7 +101,7 @@ public class SqlPlayerDb
                 new StringParam("@playerName", player.DisplayName),
                 new StringParam("@color", player.Color)
             };
-            return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+            return (await _db.Insert(sql, parameters)).ToString();
         }
     }
 
@@ -123,7 +123,7 @@ public class SqlPlayerDb
             new BoolParam("@approved", true),
             new IntParam("@playerId", player.Id)
         };
-        var rowCount = await _db.ExecuteAsync(sql, parameters);
+        var rowCount = await _db.Execute(sql, parameters);
         return rowCount > 0;
     }
 
@@ -136,7 +136,7 @@ public class SqlPlayerDb
         {
             new IntParam("@playerId", playerId)
         };
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
 
     private Player CreatePlayer(RawPlayer rawPlayer)

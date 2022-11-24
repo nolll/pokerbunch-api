@@ -23,9 +23,9 @@ public class SqlCashgameDb
         SELECT cp.cashgame_id
         FROM pb_cashgame_checkpoint cp ";
         
-    private readonly PostgresStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlCashgameDb(PostgresStorageProvider db)
+    public SqlCashgameDb(PostgresDb db)
     {
         _db = db;
     }
@@ -37,7 +37,7 @@ public class SqlCashgameDb
         {
             new IntParam("@cashgameId", cashgameId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawGame = reader.ReadOne(CreateRawCashgame);
         var rawCheckpoints = await GetCheckpoints(cashgameId);
         var checkpoints = CreateCheckpoints(rawCheckpoints);
@@ -50,7 +50,7 @@ public class SqlCashgameDb
             return new List<Cashgame>();
         var sql = string.Concat(DataSql, "WHERE g.cashgame_id IN (@idList) ORDER BY g.cashgame_id");
         var parameter = new IntListParam("@idList", ids);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         var rawCashgames = reader.ReadList(CreateRawCashgame);
         var rawCheckpoints = await GetCheckpoints(ids);
         return CreateCashgameList(rawCashgames, rawCheckpoints);
@@ -70,7 +70,7 @@ public class SqlCashgameDb
             sql = string.Concat(sql, " AND YEAR(g.date) = @year");
             parameters.Add(new IntParam("@year", year.Value));
         }
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("cashgame_id").Select(o => o.ToString()).ToList();
     }
 
@@ -81,7 +81,7 @@ public class SqlCashgameDb
         {
             new IntParam("@eventId", eventId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("cashgame_id").Select(o => o.ToString()).ToList();
     }
 
@@ -94,7 +94,7 @@ public class SqlCashgameDb
             new IntParam("@bunchId", bunchId),
             new IntParam("@status", status)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("cashgame_id").Select(o => o.ToString()).ToList();
     }
 
@@ -105,7 +105,7 @@ public class SqlCashgameDb
         {
             new IntParam("@checkpointId", checkpointId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("cashgame_id").Select(o => o.ToString()).ToList();
     }
 
@@ -129,7 +129,7 @@ public class SqlCashgameDb
         {
             new IntParam("@cashgameId", id)
         };
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
         
     public async Task<string> AddGame(Bunch bunch, Cashgame cashgame)
@@ -147,7 +147,7 @@ public class SqlCashgameDb
             new IntParam("@status", rawCashgame.Status),
             new DateParam("@date", timezoneAdjustedDate.Date)
         };
-        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+        return (await _db.Insert(sql, parameters)).ToString();
     }
         
     public async Task UpdateGame(Cashgame cashgame)
@@ -188,7 +188,7 @@ public class SqlCashgameDb
                 await DeleteCheckpoint(checkpoint);
             }
         }
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
         
     public async Task<IList<string>> FindByPlayerId(string playerId)
@@ -202,7 +202,7 @@ public class SqlCashgameDb
         {
             new IntParam("@playerId", playerId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("cashgame_id").Select(o => o.ToString()).ToList();
     }
 
@@ -272,7 +272,7 @@ public class SqlCashgameDb
             new IntParam("@stack", checkpoint.Stack),
             new TimestampParam("@timestamp", checkpoint.Timestamp.ToUniversalTime())
         };
-        return await _db.ExecuteInsertAsync(sql, parameters);
+        return await _db.Insert(sql, parameters);
     }
 
     private async Task UpdateCheckpoint(Checkpoint checkpoint)
@@ -290,7 +290,7 @@ public class SqlCashgameDb
             new IntParam("@stack", checkpoint.Stack),
             new IntParam("@checkpointId", checkpoint.Id)
         };
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
 
     private async Task DeleteCheckpoint(Checkpoint checkpoint)
@@ -303,7 +303,7 @@ public class SqlCashgameDb
         {
             new IntParam("@checkpointId", checkpoint.Id)
         };
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
 
     private async Task<IList<RawCheckpoint>> GetCheckpoints(string cashgameId)
@@ -317,7 +317,7 @@ public class SqlCashgameDb
         {
             new IntParam("@cashgameId", cashgameId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadList(CreateRawCheckpoint);
     }
 
@@ -342,7 +342,7 @@ public class SqlCashgameDb
             ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id DESC";
 
         var parameter = new IntListParam("@cashgameIdList", cashgameIdList);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         return reader.ReadList(CreateRawCheckpoint);
     }
 }

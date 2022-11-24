@@ -17,9 +17,9 @@ public class SqlBunchDb
         SELECT b.bunch_id
         FROM pb_bunch b";
 
-    private readonly PostgresStorageProvider _db;
+    private readonly PostgresDb _db;
         
-    public SqlBunchDb(PostgresStorageProvider db)
+    public SqlBunchDb(PostgresDb db)
     {
         _db = db;
     }
@@ -28,7 +28,7 @@ public class SqlBunchDb
     {
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
         var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.QueryAsync(sql, parameter);
+        var reader = await _db.Query(sql, parameter);
         var rawHomegames = reader.ReadList(CreateRawBunch);
         return rawHomegames.Select(CreateBunch).ToList();
     }
@@ -40,14 +40,14 @@ public class SqlBunchDb
         {
             new IntParam("@id", id)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawHomegame = reader.ReadOne(CreateRawBunch);
         return rawHomegame != null ? CreateBunch(rawHomegame) : null;
     }
 
     public async Task<IList<string>> Search()
     {
-        var reader = await _db.QueryAsync(SearchSql);
+        var reader = await _db.Query(SearchSql);
         return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
     }
 
@@ -58,7 +58,7 @@ public class SqlBunchDb
         {
             new StringParam("@slug", slug)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var id = reader.ReadInt("bunch_id")?.ToString();
         if(id != null)
             return new List<string> {id};
@@ -72,7 +72,7 @@ public class SqlBunchDb
         {
             new IntParam("@userId", userId)
         };
-        var reader = await _db.QueryAsync(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
     }
         
@@ -96,7 +96,7 @@ public class SqlBunchDb
             new BoolParam("@videosEnabled", rawBunch.VideosEnabled),
             new StringParam("@houseRules", rawBunch.HouseRules)
         };
-        return (await _db.ExecuteInsertAsync(sql, parameters)).ToString();
+        return (await _db.Insert(sql, parameters)).ToString();
     }
 
     public async Task Update(Bunch bunch)
@@ -133,7 +133,7 @@ public class SqlBunchDb
             new IntParam("@id", rawBunch.Id)
         };
 
-        await _db.ExecuteAsync(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
         
     private static Bunch CreateBunch(RawBunch rawBunch)
@@ -152,7 +152,7 @@ public class SqlBunchDb
             currency);
     }
         
-    public bool DeleteBunch(string id)
+    public async Task<bool> DeleteBunch(string id)
     {
         const string sql = @"
             DELETE
@@ -163,7 +163,7 @@ public class SqlBunchDb
         {
             new IntParam("@id", id)
         };
-        var rowCount = _db.Execute(sql, parameters);
+        var rowCount = await _db.Execute(sql, parameters);
         return rowCount > 0;
     }
 

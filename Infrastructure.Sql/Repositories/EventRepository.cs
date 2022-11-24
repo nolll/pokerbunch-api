@@ -11,7 +11,7 @@ public class EventRepository : IEventRepository
     private readonly SqlEventDb _eventDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public EventRepository(PostgresStorageProvider db, ICacheContainer cacheContainer)
+    public EventRepository(PostgresDb db, ICacheContainer cacheContainer)
     {
         _eventDb = new SqlEventDb(db);
         _cacheContainer = cacheContainer;
