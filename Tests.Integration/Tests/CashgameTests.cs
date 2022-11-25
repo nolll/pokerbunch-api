@@ -5,8 +5,8 @@ namespace Tests.Integration.Tests;
 
 [TestFixture]
 [NonParallelizable]
-[Order(TestOrder.CashgamePlay)]
-public class CashgamePlayTests
+[Order(TestOrder.Cashgame)]
+public class CashgameTests
 {
     [Test]
     [Order(1)]
@@ -121,6 +121,28 @@ public class CashgamePlayTests
         Assert.That(result.Model.Players[2].Name, Is.EqualTo("Manager"));
         Assert.That(result.Model.Players[2].Actions[3].Type, Is.EqualTo("cashout"));
         Assert.That(result.Model.Players[2].Actions[3].Stack, Is.EqualTo(85));
+    }
+
+    [Test]
+    [Order(9)]
+    public async Task ListByBunch()
+    {
+        var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId);
+        Assert.That(result.Success, Is.True);
+
+        var list = result.Model.ToList();
+        Assert.That(list.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    [Order(10)]
+    public async Task ListByBunchAndYear()
+    {
+        var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId, DateTime.Now.Year);
+        Assert.That(result.Success, Is.True);
+
+        var list = result.Model.ToList();
+        Assert.That(list.Count, Is.EqualTo(1));
     }
 
     private async Task Buyin(string token, string cashgameId, string playerId, int buyin, int leftInStack = 0)

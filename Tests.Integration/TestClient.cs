@@ -88,6 +88,11 @@ public static class TestClient
         {
             return await GetAsync<CashgameDetailsModel>(token, new ApiCashgameUrl(cashgameId));
         }
+
+        public static async Task<TestClientResult<IEnumerable<CashgameListItemModel>>> ListByBunch(string token, string bunchId, int? year = null)
+        {
+            return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiBunchCashgamesUrl(bunchId, year));
+        }
     }
 
     public static class Event

@@ -10,20 +10,16 @@ public static class TestOrder
     public const int Admin = 6;
     public const int Bunch = 7;
     public const int Location = 8;
-    public const int CashgamePlay = 9;
-    public const int Event = 10;
-    public const int Player = 11;
+    public const int Event = 9;
+    public const int Player = 10;
+    public const int Cashgame = 11;
 }
 
 /* ---- Routes left to test ----
-Cashgame.ListByBunch
 Cashgame.Update
 Cashgame.Delete
-Cashgame.ListByBunchAndYear
-Cashgame.ListCurrentByBunch
 Cashgame.ListByEvent
 Cashgame.ListByPlayer
-Cashgame.YearsByBunch
 Profile.ChangePassword
 Profile.ResetPassword
 User.Update

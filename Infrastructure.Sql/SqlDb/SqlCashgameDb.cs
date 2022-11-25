@@ -67,7 +67,7 @@ public class SqlCashgameDb
         };
         if (year.HasValue)
         {
-            sql = string.Concat(sql, " AND YEAR(g.date) = @year");
+            sql = string.Concat(sql, " AND DATE_PART('year', g.date) = @year");
             parameters.Add(new IntParam("@year", year.Value));
         }
         var reader = await _db.Query(sql, parameters);
