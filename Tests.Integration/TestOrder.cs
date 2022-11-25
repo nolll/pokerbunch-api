@@ -26,7 +26,6 @@ Cashgame.ListByPlayer
 Cashgame.YearsByBunch
 Profile.ChangePassword
 Profile.ResetPassword
-Auth.Token
 User.Update
 */
 

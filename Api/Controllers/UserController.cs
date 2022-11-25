@@ -140,25 +140,7 @@ public class UserController : BaseController
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName));
         return Model(result, () => new FullUserModel(result.Data));
     }
-
-    // https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api
-    /// <summary>
-    /// Get an auth token by posting form data.
-    /// </summary>
-    /// <param name="userName">Username</param>
-    /// <param name="password" format="password">Password</param>
-    /// <returns>A token that can be used for authentication</returns>
-    [AllowAnonymous]
-    [HttpPost]
-    [Obsolete]
-    [Route(ApiRoutes.Auth.Token)]
-    public async Task<ObjectResult> Token([FromForm] string userName, [FromForm] string password)
-    {
-        var post = new LoginPostModel(userName, password);
-        var token = await GetToken(post);
-        return Ok(token);
-    }
-
+    
     /// <summary>
     /// Get an auth token by posting json data
     /// </summary>

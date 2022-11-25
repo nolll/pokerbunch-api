@@ -77,7 +77,6 @@ public static class ApiRoutes
     public static class Auth
     {
         public const string Login = "login";
-        public const string Token = "token";
     }
 
     public static class User
