@@ -119,6 +119,48 @@ public class BunchTests
         Assert.That(getResult.Model.DefaultBuyin, Is.EqualTo(defaultBuyin));
     }
 
+    [Test]
+    [Order(9)]
+    public async Task ListBunchesAsAdmin()
+    {
+        var result = await TestClient.Bunch.List(TestData.AdminToken);
+        Assert.That(result.Success, Is.True);
+        var list = result.Model.ToList();
+        var first = list.First();
+        Assert.That(list.Count, Is.EqualTo(1));
+        Assert.That(first.Name, Is.EqualTo(TestData.BunchDisplayName));
+    }
+
+    [Test]
+    [Order(10)]
+    public async Task ListBunhesAsManager()
+    {
+        var result = await TestClient.Bunch.List(TestData.ManagerToken);
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+    }
+
+    [Test]
+    [Order(11)]
+    public async Task ListUserBunchesForUserWithOneBunch()
+    {
+        var result = await TestClient.Bunch.ListForUser(TestData.ManagerToken);
+        Assert.That(result.Success, Is.True);
+        var list = result.Model.ToList();
+        var first = list.First();
+        Assert.That(list.Count, Is.EqualTo(1));
+        Assert.That(first.Name, Is.EqualTo(TestData.BunchDisplayName));
+    }
+
+    [Test]
+    [Order(12)]
+    public async Task ListUserBunchesForUserWithNoBunches()
+    {
+        var result = await TestClient.Bunch.ListForUser(TestData.AdminToken);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Model.Count(), Is.EqualTo(0));
+    }
+
     private string GetVerificationCode(IMessage message)
     {
         var regex = new Regex("verification code: (.+)");
