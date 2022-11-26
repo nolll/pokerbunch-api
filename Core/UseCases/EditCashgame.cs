@@ -39,12 +39,16 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
         var location = await _locationRepository.Get(request.LocationId);
         var @event = request.EventId != null ? await _eventRepository.Get(request.EventId) : null;
         var eventId = @event?.Id;
-        cashgame = new Cashgame(cashgame.BunchId, location.Id, eventId, cashgame.Status, cashgame.Id);
-        await _cashgameRepository.Update(cashgame);
+        var updatedCashgame = new Cashgame(cashgame.BunchId, location.Id, eventId, cashgame.Status, cashgame.Id);
+        await _cashgameRepository.Update(updatedCashgame);
 
-        if (request.EventId != null)
+        if (cashgame.EventId == null && request.EventId != null)
         {
-            await _eventRepository.AddCashgame(request.EventId, cashgame.Id);
+            await _eventRepository.AddCashgame(request.EventId, updatedCashgame.Id);
+        }
+        else if(cashgame.EventId != null && request.EventId == null)
+        {
+            await _eventRepository.RemoveCashgame(cashgame.EventId, cashgame.Id);
         }
 
         return Success(new Result());

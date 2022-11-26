@@ -135,7 +135,7 @@ public class CashgameTests
 
     [Test]
     [Order(10)]
-    public async Task ListByBunch()
+    public async Task ListCashgamesByBunch()
     {
         var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId);
         Assert.That(result.Success, Is.True);
@@ -146,7 +146,7 @@ public class CashgameTests
 
     [Test]
     [Order(11)]
-    public async Task ListByBunchAndYear()
+    public async Task ListCashgamesByBunchAndYear()
     {
         var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId, DateTime.Now.Year);
         Assert.That(result.Success, Is.True);
@@ -157,7 +157,7 @@ public class CashgameTests
 
     [Test]
     [Order(12)]
-    public async Task ListByEvent()
+    public async Task ListCashgamesByEvent()
     {
         var result = await TestClient.Cashgame.ListByEvent(TestData.UserToken, TestData.EventId);
         Assert.That(result.Success, Is.True);
@@ -168,13 +168,61 @@ public class CashgameTests
 
     [Test]
     [Order(12)]
-    public async Task ListByPlayer()
+    public async Task ListCashgamesByPlayer()
     {
         var result = await TestClient.Cashgame.ListByPlayer(TestData.UserToken, TestData.PlayerPlayerId);
         Assert.That(result.Success, Is.True);
 
         var list = result.Model.ToList();
         Assert.That(list.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    [Order(13)]
+    public async Task DeleteCashgameInEvent_Fails()
+    {
+        var deleteResult = await TestClient.Cashgame.Delete(TestData.ManagerToken, TestData.CashgameId);
+        Assert.That(deleteResult.Success, Is.False);
+    }
+
+    [Test]
+    [Order(14)]
+    public async Task RemoveCashgameFromEvent()
+    {
+        var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, null);
+        var result = await TestClient.Cashgame.Update(TestData.ManagerToken, TestData.CashgameId, parameters);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Model.Event, Is.Null);
+    }
+
+    [Test]
+    [Order(15)]
+    public async Task DeleteCashgameWithResults_Fails()
+    {
+        var deleteResult = await TestClient.Cashgame.Delete(TestData.ManagerToken, TestData.CashgameId);
+        Assert.That(deleteResult.Success, Is.False);
+    }
+
+    [Test]
+    [Order(16)]
+    public async Task ClearCashgameBeforeDeleting_Succeeds()
+    {
+        var cashgameResult = await TestClient.Cashgame.Get(TestData.ManagerToken, TestData.CashgameId);
+        var cashgame = cashgameResult.Model;
+        foreach (var player in cashgame.Players)
+        {
+            foreach (var action in player.Actions.Reverse())
+            {
+                await TestClient.Action.Delete(TestData.ManagerToken, TestData.CashgameId, action.Id);
+            }
+        }
+
+        var deleteResult = await TestClient.Cashgame.Delete(TestData.ManagerToken, TestData.CashgameId);
+        Assert.That(deleteResult.Success, Is.True);
+
+        var getResult = await TestClient.Cashgame.ListByBunch(TestData.ManagerToken, TestData.BunchId);
+        var list = getResult.Model.ToList();
+        Assert.That(list.Count, Is.EqualTo(0));
     }
 
     private async Task Buyin(string token, string cashgameId, string playerId, int buyin, int leftInStack = 0)

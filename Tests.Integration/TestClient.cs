@@ -84,6 +84,11 @@ public static class TestClient
             return await GetAsync<IEnumerable<ApiCurrentGame>>(token, new ApiBunchCashgamesCurrentUrl(bunchId));
         }
 
+        public static async Task<TestClientResult> Delete(string token, string cashgameId)
+        {
+            return await DeleteAsync(token, new ApiCashgameDeleteUrl(cashgameId));
+        }
+
         public static async Task<TestClientResult<CashgameDetailsModel>> Get(string token, string cashgameId)
         {
             return await GetAsync<CashgameDetailsModel>(token, new ApiCashgameUrl(cashgameId));

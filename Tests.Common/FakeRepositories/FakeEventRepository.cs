@@ -47,6 +47,11 @@ public class FakeEventRepository : IEventRepository
         return Task.CompletedTask;
     }
 
+    public Task RemoveCashgame(string eventId, string cashgameId)
+    {
+        return Task.CompletedTask;
+    }
+
     private IList<Event> CreateEventList()
     {
         return new List<Event>

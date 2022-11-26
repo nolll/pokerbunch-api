@@ -10,4 +10,5 @@ public interface IEventRepository
     Task<Event> GetByCashgame(string cashgameId);
     Task<string> Add(Event e);
     Task AddCashgame(string eventId, string cashgameId);
+    Task RemoveCashgame(string eventId, string cashgameId);
 }

@@ -16,7 +16,6 @@ public static class TestOrder
 }
 
 /* ---- Routes left to test ----
-Cashgame.Delete
 Profile.ChangePassword
 Profile.ResetPassword
 User.Update

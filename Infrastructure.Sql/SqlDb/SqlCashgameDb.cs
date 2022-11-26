@@ -111,10 +111,13 @@ public class SqlCashgameDb
 
     private RawCashgame CreateRawCashgame(IStorageDataReader reader)
     {
+        var intEventId = reader.GetIntValue("event_id");
+
+
         var id = reader.GetIntValue("cashgame_id").ToString();
         var bunchId = reader.GetIntValue("bunch_id").ToString();
         var locationId = reader.GetIntValue("location_id").ToString();
-        var eventId = reader.GetIntValue("event_id").ToString();
+        var eventId = intEventId == 0 ? null : intEventId.ToString();
         var status = reader.GetIntValue("status");
         var date = TimeZoneInfo.ConvertTimeToUtc(reader.GetDateTimeValue("date"));
 

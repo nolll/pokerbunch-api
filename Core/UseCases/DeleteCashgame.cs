@@ -29,6 +29,9 @@ public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Res
         if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
+        if (cashgame.EventId != null)
+            return Error(new CashgameIsPartOfEventError());
+
         if (cashgame.PlayerCount > 0)
             return Error(new CashgameHasResultsError());
 

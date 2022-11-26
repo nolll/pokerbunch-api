@@ -48,4 +48,9 @@ public class EventRepository : IEventRepository
     {
         await _eventDb.AddCashgame(eventId, cashgameId);
     }
+
+    public async Task RemoveCashgame(string eventId, string cashgameId)
+    {
+        await _eventDb.RemoveCashgame(eventId, cashgameId);
+    }
 }
