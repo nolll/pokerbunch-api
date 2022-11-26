@@ -14,7 +14,3 @@ public static class TestOrder
     public const int Player = 10;
     public const int Cashgame = 11;
 }
-
-/* ---- Routes left to test ----
-User.Update
-*/

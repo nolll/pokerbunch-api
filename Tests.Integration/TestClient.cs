@@ -248,6 +248,11 @@ public static class TestClient
         {
             return await GetAsync<FullUserModel>(token, new ApiUserProfileUrl());
         }
+
+        public static async Task<TestClientResult<FullUserModel>> Update(string token, string userName, UpdateUserPostModel parameters)
+        {
+            return await PutAsync<FullUserModel>(token, new ApiUserUpdateUrl(userName), parameters);
+        }
     }
     
     private static async Task<TestClientResult> GetAsync(ApiUrl url)

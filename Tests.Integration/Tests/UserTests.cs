@@ -83,4 +83,20 @@ public class UserTests
         Assert.That(result.Success, Is.True);
         Assert.That(TestSetup.EmailSender.To, Is.EqualTo(TestData.UserEmail));
     }
+
+    [Test]
+    [Order(8)]
+    public async Task UpdateUser()
+    {
+        const string displayName = "New Display Name";
+        const string realName = "Real Name";
+        var parameters = new UpdateUserPostModel(displayName, TestData.UserEmail, realName);
+        var result = await TestClient.User.Update(TestData.AdminToken, TestData.UserUserName, parameters);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Model.DisplayName, Is.EqualTo(displayName));
+        Assert.That(result.Model.RealName, Is.EqualTo(realName));
+
+        var changeBackParameters = new UpdateUserPostModel(TestData.UserDisplayName, TestData.UserEmail, null);
+        var changeBackResult = await TestClient.User.Update(TestData.AdminToken, TestData.UserUserName, changeBackParameters);
+    }
 }
