@@ -155,6 +155,28 @@ public class CashgameTests
         Assert.That(list.Count, Is.EqualTo(1));
     }
 
+    [Test]
+    [Order(12)]
+    public async Task ListByEvent()
+    {
+        var result = await TestClient.Cashgame.ListByEvent(TestData.UserToken, TestData.EventId);
+        Assert.That(result.Success, Is.True);
+
+        var list = result.Model.ToList();
+        Assert.That(list.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    [Order(12)]
+    public async Task ListByPlayer()
+    {
+        var result = await TestClient.Cashgame.ListByPlayer(TestData.UserToken, TestData.PlayerPlayerId);
+        Assert.That(result.Success, Is.True);
+
+        var list = result.Model.ToList();
+        Assert.That(list.Count, Is.EqualTo(1));
+    }
+
     private async Task Buyin(string token, string cashgameId, string playerId, int buyin, int leftInStack = 0)
     {
         var parameters = new AddCashgameActionPostModel("buyin", playerId, buyin, leftInStack);

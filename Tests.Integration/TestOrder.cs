@@ -16,10 +16,7 @@ public static class TestOrder
 }
 
 /* ---- Routes left to test ----
-Cashgame.Update
 Cashgame.Delete
-Cashgame.ListByEvent
-Cashgame.ListByPlayer
 Profile.ChangePassword
 Profile.ResetPassword
 User.Update

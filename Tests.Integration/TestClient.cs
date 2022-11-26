@@ -94,6 +94,16 @@ public static class TestClient
             return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiBunchCashgamesUrl(bunchId, year));
         }
 
+        public static async Task<TestClientResult<IEnumerable<CashgameListItemModel>>> ListByEvent(string token, string eventId)
+        {
+            return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiEventCashgamesUrl(eventId));
+        }
+
+        public static async Task<TestClientResult<IEnumerable<CashgameListItemModel>>> ListByPlayer(string token, string playerId)
+        {
+            return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiPlayerCashgamesUrl(playerId));
+        }
+
         public static async Task<TestClientResult<CashgameDetailsModel>> Update(string token, string cashgameId, UpdateCashgamePostModel parameters)
         {
             return await PutAsync<CashgameDetailsModel>(token, new ApiCashgameUpdateUrl(cashgameId), parameters);
