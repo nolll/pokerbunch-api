@@ -93,6 +93,11 @@ public static class TestClient
         {
             return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiBunchCashgamesUrl(bunchId, year));
         }
+
+        public static async Task<TestClientResult<CashgameDetailsModel>> Update(string token, string cashgameId, UpdateCashgamePostModel parameters)
+        {
+            return await PutAsync<CashgameDetailsModel>(token, new ApiCashgameUpdateUrl(cashgameId), parameters);
+        }
     }
 
     public static class Event

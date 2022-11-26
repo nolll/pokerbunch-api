@@ -125,6 +125,16 @@ public class CashgameTests
 
     [Test]
     [Order(9)]
+    public async Task AddCashgameToEvent()
+    {
+        var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, TestData.EventId);
+        var result = await TestClient.Cashgame.Update(TestData.ManagerToken, TestData.CashgameId, parameters);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Model.Event.Name, Is.EqualTo(TestData.EventName));
+    }
+
+    [Test]
+    [Order(10)]
     public async Task ListByBunch()
     {
         var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId);
@@ -135,7 +145,7 @@ public class CashgameTests
     }
 
     [Test]
-    [Order(10)]
+    [Order(11)]
     public async Task ListByBunchAndYear()
     {
         var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId, DateTime.Now.Year);
