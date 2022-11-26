@@ -1,4 +1,5 @@
 using System.Net;
+using Api.Models.UserModels;
 
 namespace Tests.Integration.Tests;
 
@@ -62,5 +63,24 @@ public class UserTests
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model.UserName, Is.EqualTo(TestData.UserUserName));
         Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.UserDisplayName));
+    }
+
+    [Test]
+    [Order(6)]
+    public async Task ChangePassword()
+    {
+        var parameters = new ChangePasswordPostModel("new_password", TestData.UserPassword);
+        var result = await TestClient.User.PasswordChange(TestData.UserToken, parameters);
+        Assert.That(result.Success, Is.True);
+    }
+
+    [Test]
+    [Order(7)]
+    public async Task ResetPassword()
+    {
+        var parameters = new ResetPasswordPostModel(TestData.UserEmail);
+        var result = await TestClient.User.PasswordReset(TestData.UserToken, parameters);
+        Assert.That(result.Success, Is.True);
+        Assert.That(TestSetup.EmailSender.To, Is.EqualTo(TestData.UserEmail));
     }
 }

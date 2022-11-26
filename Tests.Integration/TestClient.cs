@@ -234,6 +234,16 @@ public static class TestClient
             return await GetAsync<List<UserModel>>(token, new ApiUserListUrl());
         }
 
+        public static async Task<TestClientResult> PasswordChange(string token, ChangePasswordPostModel parameters)
+        {
+            return await PutAsync(token, new ApiUserChangePasswordUrl(), parameters);
+        }
+
+        public static async Task<TestClientResult> PasswordReset(string token, ResetPasswordPostModel parameters)
+        {
+            return await PostAsync(token, new ApiUserResetPasswordUrl(), parameters);
+        }
+
         public static async Task<TestClientResult<FullUserModel>> Profile(string token)
         {
             return await GetAsync<FullUserModel>(token, new ApiUserProfileUrl());

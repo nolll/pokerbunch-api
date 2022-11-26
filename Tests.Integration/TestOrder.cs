@@ -16,38 +16,5 @@ public static class TestOrder
 }
 
 /* ---- Routes left to test ----
-Profile.ChangePassword
-Profile.ResetPassword
 User.Update
-*/
-
-/* ---- Routes with tests ----
-Error (no tests needed)
-Root
-Settings
-Version
-Action.Add
-Admin.ClearCache
-Admin.SendEmail
-Auth.Login
-Bunch.Add
-Bunch.Get
-Bunch.Join
-Cashgame.Add
-Cashgame.Get
-Event.Add
-Event.Get
-Event.ListByBunch
-Location.Get
-Location.ListByBunch
-Location.Add
-Player.Add
-Player.Delete
-Player.Get
-Player.Invite
-Player.ListByBunch
-Profile.Get
-User.Add
-User.Get
-User.List
 */
