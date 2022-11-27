@@ -176,9 +176,12 @@ public class ServiceConfig
 
     private IEmailSender GetEmailSender()
     {
-        if (_settings.Email.Provider == EmailProvider.SendGrid)
-            return new SendGridEmailSender(_settings.Email.SendGrid.Key);
-        return new SmtpEmailSender(_settings.Email.Smtp.Host);
+        var host = _configuration.GetValue<string>("MAILGUN_SMTP_SERVER") ?? "localhost";
+        var strPort = _configuration.GetValue<string>("MAILGUN_SMTP_PORT");
+        var port = strPort != null ? int.Parse(strPort) : 25;
+        var login = _configuration.GetValue<string>("MAILGUN_SMTP_LOGIN");
+        var password = _configuration.GetValue<string>("MAILGUN_SMTP_PASSWORD");
+        return new SmtpEmailSender(host, port, login, password);
     }
 
     private void AddMvc()
