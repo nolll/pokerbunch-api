@@ -8,10 +8,10 @@ public class HomeModel
     [JsonPropertyName("userProfileUrl")]
     public string UserProfileUrl { get; }
 
-    [JsonPropertyName("docs")]
+    [JsonPropertyName("docsUrl")]
     public string DocsUrl { get; }
 
-    [JsonPropertyName("swagger")]
+    [JsonPropertyName("swaggerUrl")]
     public string SwaggerUrl { get; }
 
     public HomeModel(UrlProvider urls)
