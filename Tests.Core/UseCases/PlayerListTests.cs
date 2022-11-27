@@ -1,5 +1,4 @@
 ﻿using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,41 +6,41 @@ namespace Tests.Core.UseCases;
 class PlayerListTests : TestBase
 {
     [Test]
-    public void Execute_WithSlug_SlugAndPlayersAreSet()
+    public async Task Execute_WithSlug_SlugAndPlayersAreSet()
     {
         var request = new GetPlayerList.Request(TestData.UserNameA, TestData.SlugA);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual("bunch-a", result.Slug);
-        Assert.AreEqual(4, result.Players.Count);
-        Assert.AreEqual(1, result.Players[0].Id);
-        Assert.AreEqual(TestData.PlayerNameA, result.Players[0].Name);
-        Assert.IsFalse(result.CanAddPlayer);
+        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data.Players.Count, Is.EqualTo(4));
+        Assert.That(result.Data.Players[0].Id, Is.EqualTo("1"));
+        Assert.That(result.Data.Players[0].Name, Is.EqualTo(TestData.PlayerNameA));
+        Assert.That(result.Data.CanAddPlayer, Is.False);
     }
 
     [Test]
-    public void Execute_PlayersAreSortedAlphabetically()
+    public async Task Execute_PlayersAreSortedAlphabetically()
     {
         var request = new GetPlayerList.Request(TestData.UserNameA, TestData.SlugA);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.PlayerNameA, result.Players[0].Name);
-        Assert.AreEqual(TestData.PlayerNameB, result.Players[1].Name);
+        Assert.That(result.Data.Players[0].Name, Is.EqualTo(TestData.PlayerNameA));
+        Assert.That(result.Data.Players[1].Name, Is.EqualTo(TestData.PlayerNameB));
     }
 
     [Test]
-    public void Execute_PlayerIsManager_CanAddPlayerIsTrue()
+    public async Task Execute_PlayerIsManager_CanAddPlayerIsTrue()
     {
         var request = new GetPlayerList.Request(TestData.UserNameC, TestData.SlugA);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.IsTrue(result.CanAddPlayer);
+        Assert.That(result.Data.CanAddPlayer, Is.True);
     }
 
-    private GetPlayerList Sut => new GetPlayerList(
+    private GetPlayerList Sut => new(
         Deps.Bunch,
         Deps.User,
         Deps.Player);

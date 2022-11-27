@@ -1,10 +1,11 @@
 ﻿using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCheckpoint
+public class DeleteCheckpoint : UseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -19,27 +20,30 @@ public class DeleteCheckpoint
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
+        var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunch = _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
+        var bunch = await _bunchRepository.Get(cashgame.BunchId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+
+        if (!AccessControl.CanDeleteCheckpoint(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         cashgame.DeleteCheckpoint(checkpoint);
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
         var gameIsRunning = cashgame.Status == GameStatus.Running;
-        return new Result(bunch.Slug, gameIsRunning, cashgame.Id);
+        return Success(new Result(bunch.Slug, gameIsRunning, cashgame.Id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
-        public int CheckpointId { get; }
+        public string CheckpointId { get; }
 
-        public Request(string userName, int checkpointId)
+        public Request(string userName, string checkpointId)
         {
             UserName = userName;
             CheckpointId = checkpointId;
@@ -50,9 +54,9 @@ public class DeleteCheckpoint
     {
         public string Slug { get; private set; }
         public bool GameIsRunning { get; private set; }
-        public int CashgameId { get; private set; }
+        public string CashgameId { get; private set; }
 
-        public Result(string slug, bool gameIsRunning, int cashgameId)
+        public Result(string slug, bool gameIsRunning, string cashgameId)
         {
             Slug = slug;
             GameIsRunning = gameIsRunning;

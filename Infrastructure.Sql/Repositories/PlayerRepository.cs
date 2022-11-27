@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Repositories;
@@ -13,50 +11,50 @@ public class PlayerRepository : IPlayerRepository
     private readonly SqlPlayerDb _playerDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public PlayerRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
+    public PlayerRepository(PostgresDb db, ICacheContainer cacheContainer)
     {
         _playerDb = new SqlPlayerDb(db);
         _cacheContainer = cacheContainer;
     }
 
-    public Player Get(int id)
+    public async Task<Player> Get(string id)
     {
-        return _cacheContainer.GetAndStore(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Player> Get(IList<int> ids)
+    public async Task<IList<Player>> Get(IList<string> ids)
     {
-        return _cacheContainer.GetAndStore(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Player> List(int bunchId)
+    public async Task<IList<Player>> List(string bunchId)
     {
-        var ids = _playerDb.Find(bunchId);
-        return Get(ids);
+        var ids = await _playerDb.Find(bunchId);
+        return await Get(ids);
     }
 
-    public Player Get(int bunchId, int userId)
+    public async Task<Player> Get(string bunchId, string userId)
     {
-        var ids = _playerDb.Find(bunchId, userId);
+        var ids = await _playerDb.FindByUser(bunchId, userId);
         if (!ids.Any())
             return null;
-        return Get(ids).First();
+        return (await Get(ids)).First();
 
     }
 
-    public int Add(Player player)
+    public async Task<string> Add(Player player)
     {
-        return _playerDb.Add(player);
+        return await _playerDb.Add(player);
     }
 
-    public bool JoinBunch(Player player, Bunch bunch, int userId)
+    public async Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
     {
-        return _playerDb.JoinHomegame(player, bunch, userId);
+        return await _playerDb.JoinBunch(player, bunch, userId);
     }
 
-    public void Delete(int playerId)
+    public async Task Delete(string playerId)
     {
-        _playerDb.Delete(playerId);
+        await _playerDb.Delete(playerId);
         _cacheContainer.Remove<Player>(playerId);
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using Core.Entities;
 using Core.Services;
-using NUnit.Framework;
 
 namespace Tests.Core.Services;
 
@@ -16,7 +15,7 @@ public class GlobalizationTests
     public void FormatNumber(int input, string expected)
     {
         var result = Globalization.FormatNumber(input);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(1, "1 kr")]
@@ -26,7 +25,7 @@ public class GlobalizationTests
         var currency = new Currency("kr", "{AMOUNT} {SYMBOL}");
             
         var result = Globalization.FormatCurrency(currency, input);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(1, "1 kr/h")]
@@ -36,7 +35,7 @@ public class GlobalizationTests
         var currency = new Currency("kr", "{AMOUNT} {SYMBOL}");
             
         var result = Globalization.FormatWinrate(currency, input);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(0, "0 kr")]
@@ -47,7 +46,7 @@ public class GlobalizationTests
         var currency = new Currency("kr", "{AMOUNT} {SYMBOL}");
             
         var result = Globalization.FormatResult(currency, input);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(59, "59m")]
@@ -56,7 +55,7 @@ public class GlobalizationTests
     public void FormatDuration(int input, string expected)
     {
         var result = Globalization.FormatDuration(input);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(1, "now")]
@@ -69,7 +68,7 @@ public class GlobalizationTests
         var timespan = TimeSpan.FromSeconds(input);
             
         var result = Globalization.FormatTimespan(timespan);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(false, "Feb 1")]
@@ -78,7 +77,7 @@ public class GlobalizationTests
     {
         var dateTime = DateTime.Parse("2010-02-01");
         var result = Globalization.FormatShortDate(dateTime, includeYear);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [TestCase(false, "Feb 1 12:28")]
@@ -88,7 +87,7 @@ public class GlobalizationTests
         var dateTime = DateTime.Parse("2010-02-01 12:28:35");
             
         var result = Globalization.FormatShortDateTime(dateTime, includeYear);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
@@ -98,7 +97,7 @@ public class GlobalizationTests
         const string expected = "12:28";
             
         var result = Globalization.FormatTime(dateTime);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
@@ -108,7 +107,7 @@ public class GlobalizationTests
         const string expected = "2010-02-01";
             
         var result = Globalization.FormatIsoDate(dateTime);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
@@ -118,7 +117,7 @@ public class GlobalizationTests
         const string expected = "2010-02-01 12:28:35";
 
         var result = Globalization.FormatIsoDateTime(dateTime);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
@@ -128,6 +127,6 @@ public class GlobalizationTests
         const string expected = "2010";
 
         var result = Globalization.FormatYear(dateTime);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 }

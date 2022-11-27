@@ -1,6 +1,0 @@
-﻿CREATE TABLE [dbo].[Location]
-(
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [Name] NVARCHAR(50) NOT NULL, 
-    [BunchId] INT NOT NULL DEFAULT 0
-)

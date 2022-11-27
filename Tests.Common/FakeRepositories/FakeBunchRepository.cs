@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
 using Core.Repositories;
 
 namespace Tests.Common.FakeRepositories;
@@ -17,48 +14,46 @@ public class FakeBunchRepository : IBunchRepository
         SetupDefaultList();
     }
 
-    public Bunch Get(int id)
+    public Task<Bunch> Get(string id)
     {
-        return _list.First(o => o.Id == id);
+        return Task.FromResult(_list.First(o => o.Id == id));
     }
 
-    public IList<Bunch> List(IList<int> ids)
+    public Task<IList<Bunch>> List(IList<string> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Bunch>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public Bunch GetBySlug(string slug)
+    public Task<Bunch> GetBySlug(string slug)
     {
         var bunch = _list.FirstOrDefault(o => o.Slug == slug);
-        if(bunch == null)
-            throw new BunchNotFoundException(slug);
-        return bunch;
+        return Task.FromResult(bunch);
     }
 
-    public IList<Bunch> GetByUserId(int userId)
+    public Task<IList<Bunch>> GetByUserId(string userId)
     {
-        return _list;
+        return Task.FromResult(_list);
     }
 
-    public IList<Bunch> List()
+    public Task<IList<Bunch>> List()
     {
-        return _list;
+        return Task.FromResult(_list);
     }
 
-    public IList<Bunch> List(int userId)
+    public Task<IList<Bunch>> List(string userId)
     {
-        return _list;
+        return Task.FromResult(_list);
     }
 
-    public int Add(Bunch bunch)
+    public Task<string> Add(Bunch bunch)
     {
         Added = bunch;
-        return 1;
+        return Task.FromResult("1");
     }
 
-    public void Update(Bunch bunch)
+    public async Task Update(Bunch bunch)
     {
-        Saved = bunch;
+        Saved = await Task.FromResult(bunch);
     }
 
     public void SetupDefaultList()

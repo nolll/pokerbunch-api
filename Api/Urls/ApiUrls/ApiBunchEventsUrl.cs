@@ -7,7 +7,7 @@ public class ApiBunchEventsUrl : ApiUrl
 {
     private readonly string _bunchId;
 
-    public ApiBunchEventsUrl(string host, string bunchId) : base(host)
+    public ApiBunchEventsUrl(string bunchId)
     {
         _bunchId = bunchId;
     }

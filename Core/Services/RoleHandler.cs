@@ -8,4 +8,9 @@ public static class RoleHandler
     {
         return user.IsAdmin || player != null && player.IsInRole(role);
     }
+
+    public static bool IsInRole(Player player, Role role)
+    {
+        return player != null && player.IsInRole(role);
+    }
 }

@@ -1,93 +1,123 @@
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class SqlEventDb
 {
-    private const string EventSql = @"SELECT e.EventID, e.BunchID, e.Name, g.LocationId, g.Date
-                                        FROM [Event] e
-                                        LEFT JOIN EventCashgame ecg on e.EventId = ecg.EventId
-                                        LEFT JOIN Game g on ecg.GameId = g.GameID
-                                        {0}
-                                        ORDER BY e.EventId, g.Date";
+    private const string EventSql = @"
+        SELECT e.event_id, e.bunch_id, e.name, g.location_id, g.date
+        FROM pb_event e
+        LEFT JOIN pb_event_cashgame ecg on e.event_id = ecg.event_id
+        LEFT JOIN pb_cashgame g on ecg.cashgame_id = g.cashgame_id
+        {0}
+        ORDER BY e.event_id, g.date";
 
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlEventDb(SqlServerStorageProvider db)
+    public SqlEventDb(PostgresDb db)
     {
         _db = db;
     }
 
-    public Event Get(int id)
+    public async Task<Event> Get(string id)
     {
-        const string whereClause = "WHERE e.EventID = @id";
+        const string whereClause = "WHERE e.event_id = @cashgameId";
         var sql = string.Format(EventSql, whereClause);
-        var parameters = new List<SimpleSqlParameter>
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@id", id)
+            new IntParam("@cashgameId", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawEvents = CreateRawEvents(reader);
         var rawEvent = rawEvents.FirstOrDefault();
         return rawEvent != null ? CreateEvent(rawEvent) : null;
     }
 
-    public IList<Event> Get(IList<int> ids)
+    public async Task<IList<Event>> Get(IList<string> ids)
     {
-        const string whereClause = "WHERE e.EventID IN(@ids)";
+        const string whereClause = "WHERE e.event_id IN(@ids)";
         var sql = string.Format(EventSql, whereClause);
-        var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+        var parameter = new IntListParam("@ids", ids);
+        var reader = await _db.Query(sql, parameter);
         var rawEvents = CreateRawEvents(reader);
         return rawEvents.Select(CreateEvent).ToList();
     }
 
-    public IList<int> FindByBunchId(int bunchId)
+    public async Task<IList<string>> FindByBunchId(string bunchId)
     {
-        const string sql = "SELECT e.EventID FROM [Event] e WHERE e.BunchID = @id";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            SELECT e.event_id
+            FROM pb_event e
+            WHERE e.bunch_id = @id";
+
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@id", bunchId)
+            new IntParam("@id", bunchId)
         };
-        var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("EventID");
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
     }
 
-    public IList<int> FindByCashgameId(int cashgameId)
+    public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
-        const string sql = "SELECT ecg.EventID FROM [EventCashgame] ecg WHERE ecg.CashgameId = @id";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            SELECT ecg.event_id
+            FROM pb_event_cashgame ecg
+            WHERE ecg.cashgame_id = @id";
+
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@id", cashgameId)
+            new IntParam("@id", cashgameId)
         };
-        var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("EventID");
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
     }
 
-    public int Add(Event e)
+    public async Task<string> Add(Event e)
     {
-        const string sql = "INSERT INTO event (Name, BunchId) VALUES (@name, @bunchId) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            INSERT INTO pb_event (name, bunch_id)
+            VALUES (@name, @bunchId) RETURNING event_id";
+
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@name", e.Name),
-            new SimpleSqlParameter("@bunchId", e.BunchId)
+            new StringParam("@name", e.Name),
+            new IntParam("@bunchId", e.BunchId)
         };
-        return _db.ExecuteInsert(sql, parameters);
+        return (await _db.Insert(sql, parameters)).ToString();
     }
 
-    public void AddCashgame(int eventId, int cashgameId)
+    public async Task AddCashgame(string eventId, string cashgameId)
     {
-        const string sql = "INSERT INTO eventcashgame (EventId, GameId) VALUES (@eventId, @cashgameId)";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            INSERT INTO pb_event_cashgame (event_id, cashgame_id)
+            VALUES (@eventId, @cashgameId)";
+
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@eventId", eventId),
-            new SimpleSqlParameter("@cashgameId", cashgameId)
+            new IntParam("@eventId", eventId),
+            new IntParam("@cashgameId", cashgameId)
         };
-        _db.ExecuteInsert(sql, parameters);
+        await _db.Insert(sql, parameters);
+    }
+
+    public async Task RemoveCashgame(string eventId, string cashgameId)
+    {
+        const string sql = @"
+            DELETE FROM pb_event_cashgame
+            WHERE event_id = @eventId
+            AND cashgame_id = @cashgameId";
+
+        var parameters = new List<SqlParam>
+        {
+            new IntParam("@eventId", eventId),
+            new IntParam("@cashgameId", cashgameId)
+        };
+        await _db.Insert(sql, parameters);
     }
 
     private static Event CreateEvent(RawEvent rawEvent)
@@ -104,7 +134,7 @@ public class SqlEventDb
     private static IList<RawEvent> CreateRawEvents(IStorageDataReader reader)
     {
         var rawEventDays = reader.ReadList(CreateRawEventDay);
-        var map = new Dictionary<int, IList<RawEventDay>>();
+        var map = new Dictionary<string, IList<RawEventDay>>();
         foreach (var day in rawEventDays)
         {
             IList<RawEventDay> list;
@@ -134,10 +164,10 @@ public class SqlEventDb
     private static RawEventDay CreateRawEventDay(IStorageDataReader reader)
     {
         return new RawEventDay(
-            reader.GetIntValue("EventID"),
-            reader.GetIntValue("BunchId"),
-            reader.GetStringValue("Name"),
-            reader.GetIntValue("LocationId"),
-            reader.GetDateTimeValue("Date"));
+            reader.GetIntValue("event_id").ToString(),
+            reader.GetIntValue("bunch_id").ToString(),
+            reader.GetStringValue("name"),
+            reader.GetIntValue("location_id").ToString(),
+            reader.GetDateTimeValue("date"));
     }
 }

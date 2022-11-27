@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 
@@ -8,7 +6,7 @@ namespace Tests.Common.FakeRepositories;
 public class FakeEventRepository : IEventRepository
 {
     public Event Added { get; private set; }
-    public int AddedCashgameId { get; private set; }
+    public string AddedCashgameId { get; private set; }
 
     private readonly IList<Event> _list;
 
@@ -17,43 +15,49 @@ public class FakeEventRepository : IEventRepository
         _list = CreateEventList();
     }
 
-    public Event Get(int id)
+    public Task<Event> Get(string id)
     {
-        return _list.FirstOrDefault(o => o.Id == id);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
         
-    public IList<Event> Get(IList<int> ids)
+    public Task<IList<Event>> Get(IList<string> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Event>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public IList<Event> List(int bunchId)
+    public Task<IList<Event>> List(string bunchId)
     {
-        return _list.Where(o => o.BunchId == bunchId).ToList();
+        return Task.FromResult<IList<Event>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Event GetByCashgame(int cashgameId)
+    public Task<Event> GetByCashgame(string cashgameId)
     {
-        return _list.First();
+        return Task.FromResult(_list.First());
     }
 
-    public int Add(Event e)
+    public Task<string> Add(Event e)
     {
         Added = e;
-        return 1;
+        return Task.FromResult("1");
     }
 
-    public void AddCashgame(int eventId, int cashgameId)
+    public Task AddCashgame(string eventId, string cashgameId)
     {
         AddedCashgameId = cashgameId;
+        return Task.CompletedTask;
+    }
+
+    public Task RemoveCashgame(string eventId, string cashgameId)
+    {
+        return Task.CompletedTask;
     }
 
     private IList<Event> CreateEventList()
     {
         return new List<Event>
         {
-            new Event(TestData.EventIdA, TestData.BunchA.Id, TestData.EventNameA, TestData.LocationIdA, new Date(TestData.StartTimeA), new Date(TestData.StartTimeA.AddDays(1))),
-            new Event(TestData.EventIdB, TestData.BunchA.Id, TestData.EventNameB, TestData.LocationIdB, new Date(TestData.StartTimeB), new Date(TestData.StartTimeB.AddDays(1)))
+            new(TestData.EventIdA, TestData.BunchA.Id, TestData.EventNameA, TestData.LocationIdA, new Date(TestData.StartTimeA), new Date(TestData.StartTimeA.AddDays(1))),
+            new(TestData.EventIdB, TestData.BunchA.Id, TestData.EventNameB, TestData.LocationIdB, new Date(TestData.StartTimeB), new Date(TestData.StartTimeB.AddDays(1)))
         };
     }
 }

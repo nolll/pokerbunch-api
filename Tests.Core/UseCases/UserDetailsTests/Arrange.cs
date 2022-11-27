@@ -6,10 +6,10 @@ namespace Tests.Core.UseCases.UserDetailsTests;
 
 public abstract class Arrange : UseCaseTest<UserDetails>
 {
-    protected UserDetails.Result Result;
+    protected UseCaseResult<UserDetails.Result> Result;
 
-    private const int CurrentUserId = 1;
-    private const int ViewUserId = 2;
+    private const string CurrentUserId = "1";
+    private const string ViewUserId = "2";
     private string _currentUserName = "currentusername";
     protected const string ViewUserName = "viewusername";
     protected const string DisplayName = "displayname";
@@ -22,18 +22,18 @@ public abstract class Arrange : UseCaseTest<UserDetails>
     {
         if (ViewingOwnUser)
         {
-            Mock<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+            Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(ViewUserName)).Returns(Task.FromResult(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role)));
             _currentUserName = ViewUserName;
         }
         else
         {
-            Mock<IUserRepository>().Setup(s => s.Get(_currentUserName)).Returns(new User(CurrentUserId, _currentUserName, globalRole: Role));
-            Mock<IUserRepository>().Setup(s => s.Get(ViewUserName)).Returns(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role));
+            Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(_currentUserName)).Returns(Task.FromResult(new User(CurrentUserId, _currentUserName, globalRole: Role)));
+            Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(ViewUserName)).Returns(Task.FromResult(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role)));
         }
     }
 
-    protected override void Execute()
+    protected override async Task ExecuteAsync()
     {
-        Result = Sut.Execute(new UserDetails.Request(_currentUserName, ViewUserName));
+        Result = await Sut.Execute(new UserDetails.Request(_currentUserName, ViewUserName));
     }
 }

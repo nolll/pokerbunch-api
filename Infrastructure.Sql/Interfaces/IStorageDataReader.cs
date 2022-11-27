@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Infrastructure.Sql.Interfaces;
+﻿namespace Infrastructure.Sql.Interfaces;
 
 public interface IStorageDataReader
 {

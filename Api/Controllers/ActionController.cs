@@ -1,10 +1,9 @@
-using System;
 using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
 using Api.Routes;
 using Api.Settings;
-using Core.Exceptions;
+using Core.Errors;
 using Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,55 +33,55 @@ public class ActionController : BaseController
         _deleteCheckpoint = deleteCheckpoint;
     }
 
-    [Route(ApiRoutes.Action.List)]
+    [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [ApiAuthorize]
-    public OkModel Add(int cashgameId, [FromBody] AddCashgameActionPostModel post)
+    public async Task<ObjectResult> Add(string cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
-        if(post.Type == ActionType.Buyin)
-            return Buyin(cashgameId, post);
-        if (post.Type == ActionType.Report)
-            return Report(cashgameId, post);
-        if(post.Type == ActionType.Cashout)
-            return Cashout(cashgameId, post);
-
-        throw new NotFoundException($"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]");
+        return post.Type switch
+        {
+            ActionType.Buyin => await Buyin(cashgameId, post),
+            ActionType.Report => await Report(cashgameId, post),
+            ActionType.Cashout => await Cashout(cashgameId, post),
+            _ => Error(ErrorType.NotFound,
+                $"Action type not found. Valid types are [{ActionType.Buyin}], [{ActionType.Report}] and [{ActionType.Cashout}]")
+        };
     }
 
-    private OkModel Buyin(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Buyin(string cashgameId, AddCashgameActionPostModel post)
     {
-        _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
-        return new OkModel();
+        var result = await _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+        return Model(result, () => new OkModel());
     }
 
-    private OkModel Report(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Report(string cashgameId, AddCashgameActionPostModel post)
     {
-        _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
-        return new OkModel();
+        var result = await _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        return Model(result, () => new OkModel());
     }
 
-    private OkModel Cashout(int cashgameId, AddCashgameActionPostModel post)
+    private async Task<ObjectResult> Cashout(string cashgameId, AddCashgameActionPostModel post)
     {
-        _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
-        return new OkModel();
+        var result = await _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        return Model(result, () => new OkModel());
     }
 
-    [Route(ApiRoutes.Action.Get)]
+    [Route(ApiRoutes.Action.Update)]
     [HttpPut]
     [ApiAuthorize]
-    public OkModel UpdateAction(int cashgameId, int actionId, [FromBody] UpdateActionPostModel post)
+    public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
-        _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
-        return new OkModel();
+        var result = await _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
+        return Model(result, () => new OkModel());
     }
 
-    [Route(ApiRoutes.Action.Get)]
+    [Route(ApiRoutes.Action.Delete)]
     [HttpDelete]
     [ApiAuthorize]
-    public OkModel DeleteAction(int cashgameId, int actionId)
+    public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
-        _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
-        return new OkModel();
+        var result = await _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+        return Model(result, () => new OkModel());
     }
 
     private static class ActionType

@@ -1,11 +1,11 @@
-using System.Collections.Generic;
 using System.Linq;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocationList
+public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,17 +20,20 @@ public class GetLocationList
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
-        var locations = _locationRepository.List(bunch.Id);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
+
+        if (!AccessControl.CanListLocations(user, player))
+            return Error(new AccessDeniedError());
+
+        var locations = await _locationRepository.List(bunch.Id);
 
         var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 
-        return new Result(locationItems);
+        return Success(new Result(locationItems));
     }
 
     private static Location CreateLocationItem(Entities.Location location, string slug)
@@ -62,11 +65,11 @@ public class GetLocationList
 
     public class Location
     {
-        public int Id { get; }
+        public string Id { get; }
         public string Name { get; }
         public string Slug { get; }
 
-        public Location(int id, string name, string slug)
+        public Location(string id, string name, string slug)
         {
             Id = id;
             Name = name;

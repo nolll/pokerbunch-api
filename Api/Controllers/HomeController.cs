@@ -20,8 +20,9 @@ public class HomeController : BaseController
     /// </summary>
     [Route(ApiRoutes.Root)]
     [HttpGet]
-    public HomeModel Home()
+    [ProducesResponseType(typeof(HomeModel), 200)]
+    public ObjectResult Home()
     {
-        return new HomeModel(_urls);
+        return Success(new HomeModel(_urls));
     }
 }

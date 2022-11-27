@@ -1,41 +1,59 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Api.Models.LocationModels;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "cashgame")]
 public class CashgameDetailsModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "isRunning")]
+    
+    [JsonPropertyName("isRunning")]
     public bool IsRunning { get; }
-    [DataMember(Name = "startTime")]
+    
+    [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }
-    [DataMember(Name = "updatedTime")]
+    
+    [JsonPropertyName("updatedTime")]
     public DateTime UpdatedTime { get; }
-    [DataMember(Name = "bunch")]
+    
+    [JsonPropertyName("bunch")]
     public CashgameBunchModel Bunch { get; }
-    [DataMember(Name = "location")]
+    
+    [JsonPropertyName("location")]
     public SmallLocationModel Location { get; }
-    [DataMember(Name = "event")]
+    
+    [JsonPropertyName("event")]
     public CashgameDetailsEventModel Event { get; }
-    [DataMember(Name = "players")]
+    
+    [JsonPropertyName("players")]
     public IList<CashgameDetailsPlayerModel> Players { get; }
 
     public CashgameDetailsModel(CashgameDetails.Result details)
     {
-        Id = details.CashgameId.ToString();
+        Id = details.CashgameId;
         IsRunning = details.IsRunning;
         StartTime = details.StartTime;
         UpdatedTime = details.UpdatedTime;
         Bunch = new CashgameBunchModel(details);
         Location = new SmallLocationModel(details);
-        Event = details.EventId != 0 ? new CashgameDetailsEventModel(details) : null;
+        Event = details.EventId != null ? new CashgameDetailsEventModel(details) : null;
         Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
+    }
+
+    [JsonConstructor]
+    public CashgameDetailsModel(string id, bool isRunning, DateTime startTime, DateTime updatedTime, CashgameBunchModel bunch, SmallLocationModel location, CashgameDetailsEventModel @event, IList<CashgameDetailsPlayerModel> players)
+    {
+        Id = id;
+        IsRunning = isRunning;
+        StartTime = startTime;
+        UpdatedTime = updatedTime;
+        Bunch = bunch;
+        Location = location;
+        Event = @event;
+        Players = players;
     }
 }

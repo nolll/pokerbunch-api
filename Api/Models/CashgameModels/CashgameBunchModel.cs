@@ -1,26 +1,32 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "bunch")]
 public class CashgameBunchModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "timezone")]
+    
+    [JsonPropertyName("timezone")]
     public string Timezone { get; }
-    [DataMember(Name = "currencyFormat")]
+    
+    [JsonPropertyName("currencyFormat")]
     public string CurrencyFormat { get; }
-    [DataMember(Name = "currencySymbol")]
+    
+    [JsonPropertyName("currencySymbol")]
     public string CurrencySymbol { get; }
-    [DataMember(Name = "currencyLayout")]
+    
+    [JsonPropertyName("currencyLayout")]
     public string CurrencyLayout { get; }
-    [DataMember(Name = "thousandSeparator")]
+    
+    [JsonPropertyName("thousandSeparator")]
     public string ThousandSeparator { get; }
-    [DataMember(Name = "culture")]
+    
+    [JsonPropertyName("culture")]
     public string Culture { get; }
-    [DataMember(Name = "role")]
+    
+    [JsonPropertyName("role")]
     public string Role { get; }
 
     public CashgameBunchModel(CashgameDetails.Result detailsResult)
@@ -33,5 +39,18 @@ public class CashgameBunchModel
         ThousandSeparator = detailsResult.ThousandSeparator;
         Culture = detailsResult.Culture;
         Role = detailsResult.Role.ToString().ToLower();
+    }
+
+    [JsonConstructor]
+    public CashgameBunchModel(string id, string timezone, string currencyFormat, string currencySymbol, string currencyLayout, string thousandSeparator, string culture, string role)
+    {
+        Id = id;
+        Timezone = timezone;
+        CurrencyFormat = currencyFormat;
+        CurrencySymbol = currencySymbol;
+        CurrencyLayout = currencyLayout;
+        ThousandSeparator = thousandSeparator;
+        Culture = culture;
+        Role = role;
     }
 }

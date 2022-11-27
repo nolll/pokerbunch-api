@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddEvent
+public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,24 +21,26 @@ public class AddEvent
         _eventRepository = eventRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Player(currentUser, currentPlayer);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
-        var e = new Event(0, bunch.Id, request.Name);
-        var id = _eventRepository.Add(e);
+        if (!AccessControl.CanAddEvent(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
-        return new Result(bunch.Slug, id);
+        var e = new Event(null, bunch.Id, request.Name);
+        var id = await _eventRepository.Add(e);
+
+        return Success(new Result(bunch.Slug, id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
@@ -57,9 +59,9 @@ public class AddEvent
     public class Result
     {
         public string BunchId { get; }
-        public int Id { get; }
+        public string Id { get; }
 
-        public Result(string bunchId, int id)
+        public Result(string bunchId, string id)
         {
             BunchId = bunchId;
             Id = id;

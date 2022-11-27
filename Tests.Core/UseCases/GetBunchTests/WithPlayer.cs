@@ -1,5 +1,4 @@
 ﻿using Core.Entities;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.GetBunchTests;
 
@@ -8,14 +7,14 @@ public class WithPlayer : Arrange
     protected override Role Role => Role.Player;
 
     [Test]
-    public void BunchNameIsSet() => Assert.AreEqual(DisplayName, Result.Name);
+    public void BunchNameIsSet() => Assert.That(Result.Data.Name, Is.EqualTo(DisplayName));
 
     [Test]
-    public void DescriptionIsSet() => Assert.AreEqual(Description, Result.Description);
+    public void DescriptionIsSet() => Assert.That(Result.Data.Description, Is.EqualTo(Description));
 
     [Test]
-    public void HouseRulesIsSet() => Assert.AreEqual(HouseRules, Result.HouseRules);
+    public void HouseRulesIsSet() => Assert.That(Result.Data.HouseRules, Is.EqualTo(HouseRules));
 
     [Test]
-    public void CanEditIsFalse() => Assert.AreEqual(Role.Player, Result.Role);
+    public void CanEditIsFalse() => Assert.That(Result.Data.Role, Is.EqualTo(Role.Player));
 }

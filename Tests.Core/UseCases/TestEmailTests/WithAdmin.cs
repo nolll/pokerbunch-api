@@ -1,5 +1,4 @@
 ﻿using Core.Entities;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
@@ -10,14 +9,15 @@ public class WithAdmin : Arrange
     [Test]
     public void MessageIsSent()
     {
-        Assert.AreEqual("henriks@gmail.com", To);
-        Assert.AreEqual("Test Email", Subject);
-        Assert.AreEqual("This is a test email from pokerbunch.com", Body);
+        // todo: Move email to config
+        Assert.That(To, Is.EqualTo("henriks@gmail.com"));
+        Assert.That(Subject, Is.EqualTo("Test Email"));
+        Assert.That(Body, Is.EqualTo("This is a test email from pokerbunch.com"));
     }
 
     [Test]
     public void EmailIsSet()
     {
-        Assert.AreEqual(Email, Result.Email);
+        Assert.That(Result.Data.Email, Is.EqualTo(Email));
     }
 }

@@ -1,17 +1,15 @@
 ﻿using Core.Entities;
-using Core.Exceptions;
-using NUnit.Framework;
+using Core.Errors;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithPlayer : Arrange
 {
-    protected override bool ExecuteAutomatically => false;
     protected override Role Role => Role.Manager;
 
     [Test]
-    public void ThrowsException()
+    public void ReturnsError()
     {
-        Assert.Throws<AccessDeniedException>(Execute);
+        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
     }
 }

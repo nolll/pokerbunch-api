@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Entities;
+﻿using Core.Entities;
 
 namespace Core.Repositories;
 
 public interface IUserRepository
 {
-    User Get(int id);
-    User Get(string nameOrEmail);
-    IList<User> List();
-    void Update(User user);
-    int Add(User user);
+    Task<User> GetById(string id);
+    Task<User> GetByUserNameOrEmail(string userNameOrEmail);
+    Task<IList<User>> List();
+    Task Update(User user);
+    Task<string> Add(User user);
 }

@@ -7,7 +7,7 @@ public class ApiBunchJoinUrl : ApiUrl
 {
     private readonly string _bunchId;
 
-    public ApiBunchJoinUrl(string host, string bunchId) : base(host)
+    public ApiBunchJoinUrl(string bunchId)
     {
         _bunchId = bunchId;
     }

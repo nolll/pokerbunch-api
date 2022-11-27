@@ -1,13 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class Buyin
+public class Buyin : UseCase<Buyin.Request, Buyin.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -20,36 +20,39 @@ public class Buyin
         _userRepository = userRepository;
     }
 
-    public void Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.Get(request.CashgameId);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
-            
+        var cashgame = await _cashgameRepository.Get(request.CashgameId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
         var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
         cashgame.AddCheckpoint(checkpoint);
-        _cashgameRepository.Update(cashgame);
-    }
+        await _cashgameRepository.Update(cashgame);
 
+        return Success(new Result());
+    }
+    
     public class Request
     {
         public string UserName { get; }
-        public int CashgameId { get; }
-        public int PlayerId { get; }
+        public string CashgameId { get; }
+        public string PlayerId { get; }
         [Range(1, int.MaxValue, ErrorMessage = "Amount needs to be positive")]
         public int BuyinAmount { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int StackAmount { get; }
         public DateTime CurrentTime { get; }
 
-        public Request(string userName, int cashgameId, int playerId, int buyinAmount, int stackAmount, DateTime currentTime)
+        public Request(string userName, string cashgameId, string playerId, int buyinAmount, int stackAmount, DateTime currentTime)
         {
             UserName = userName;
             CashgameId = cashgameId;
@@ -58,5 +61,9 @@ public class Buyin
             StackAmount = stackAmount;
             CurrentTime = currentTime;
         }
+    }
+
+    public class Result
+    {
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,19 +6,19 @@ namespace Tests.Core.UseCases;
 public class DeletePlayerTests : TestBase
 {
     [Test]
-    public void DeletePlayer_PlayerHasntPlayed_PlayerDeletedAndReturnUrlIsPlayerIndex()
+    public async Task DeletePlayer_PlayerHasntPlayed_PlayerDeletedAndReturnUrlIsPlayerIndex()
     {
-        const int playerIdThatHasNotPlayed = 3;
+        const string playerIdThatHasNotPlayed = "3";
 
         var request = new DeletePlayer.Request(TestData.ManagerUser.UserName, playerIdThatHasNotPlayed);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.SlugA, result.Slug);
-        Assert.AreEqual(playerIdThatHasNotPlayed, result.PlayerId);
-        Assert.AreEqual(playerIdThatHasNotPlayed, Deps.Player.Deleted);
+        Assert.That(result.Data.Slug, Is.EqualTo(TestData.SlugA));
+        Assert.That(result.Data.PlayerId, Is.EqualTo(playerIdThatHasNotPlayed));
+        Assert.That(Deps.Player.Deleted, Is.EqualTo(playerIdThatHasNotPlayed));
     }
 
-    // This should throw an exception. Fix test during test rewrite
+    // todo: This should throw an exception. Fix test during test rewrite
     //[Test]
     //public void DeletePlayer_PlayerHasPlayed_ReturnUrlIsPlayerDetails()
     //{
@@ -27,7 +26,7 @@ public class DeletePlayerTests : TestBase
     //    var result = Sut.Execute(request);
     //}
 
-    private DeletePlayer Sut => new DeletePlayer(
+    private DeletePlayer Sut => new(
         Deps.Player,
         Deps.Cashgame,
         Deps.User,

@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventList
+public class EventList : UseCase<EventList.Request, EventList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IEventRepository _eventRepository;
@@ -24,26 +23,29 @@ public class EventList
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
-        var events = _eventRepository.List(bunch.Id);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
+
+        if (!AccessControl.CanListEvents(user, player))
+            return Error(new AccessDeniedError());
+
+        var events = await _eventRepository.List(bunch.Id);
         var locationIds = events.Select(o => o.LocationId).Distinct().ToList();
-        var locations = _locationRepository.List(locationIds);
+        var locations = await _locationRepository.List(locationIds);
 
         var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
 
-        return new Result(eventItems);
+        return Success(new Result(eventItems));
     }
 
     private static Event CreateEventItem(Entities.Event e, IList<Location> locations, string slug)
     {
         var location = locations.FirstOrDefault(o => o.Id == e.LocationId);
         var locationName = location != null ? location.Name : "";
-        var locationId = location?.Id ?? 0;
+        var locationId = location?.Id;
         if(e.HasGames)
             return new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate);
         return new Event(e.Id, slug, e.Name);
@@ -63,7 +65,7 @@ public class EventList
 
     public class Result
     {
-        public IList<Event> Events { get; private set; }
+        public IList<Event> Events { get; }
 
         public Result(IList<Event> events)
         {
@@ -73,21 +75,21 @@ public class EventList
 
     public class Event
     {
-        public int EventId { get; }
+        public string EventId { get; }
         public string BunchId { get; }
         public string Name { get; }
-        public int LocationId { get; }
+        public string LocationId { get; }
         public string LocationName { get; }
         public Date StartDate { get; }
 
-        public Event(int id, string bunchId, string name)
+        public Event(string id, string bunchId, string name)
         {
             EventId = id;
             BunchId = bunchId;
             Name = name;
         }
             
-        public Event(int id, string bunchId, string name, int locationId, string locationName, Date startDate)
+        public Event(string id, string bunchId, string name, string locationId, string locationName, Date startDate)
             : this(id, bunchId, name)
         {
             LocationId = locationId;

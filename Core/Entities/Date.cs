@@ -8,6 +8,12 @@ public class Date : IComparable<Date>
     public int Day { get; }
     public int Year { get; }
 
+    private string YearString => Year.ToString("D4");
+    private string MonthString => Month.ToString("D2");
+    private string DayString => Day.ToString("D2");
+    public string IsoString => $"{YearString}-{MonthString}-{DayString}";
+    public DateTime UtcMidninght => new(Year, Month, Day, 0, 0, 0, DateTimeKind.Utc);
+
     public Date(int year, int month, int day)
     {
         Year = year;
@@ -20,27 +26,26 @@ public class Date : IComparable<Date>
     {
     }
 
-    public string IsoString
-    {
-        get { return string.Format("{0}-{1}-{2}", Year.ToString("D4"), Month.ToString("D2"), Day.ToString("D2")); }
-    }
-
-    public DateTime UtcMidninght
-    {
-        get { return new DateTime(Year, Month, Day, 0, 0, 0, DateTimeKind.Utc); }
-    }
-
     public static Date Parse(string s)
     {
         var d = DateTime.Parse(s);
         return new Date(d.Year, d.Month, d.Day);
     }
 
-    //todo: override gethashcode
     public override bool Equals(object obj)
     {
         var other = obj as Date;
         return other != null && Year == other.Year && Month == other.Month && Day == other.Day;
+    }
+
+    protected bool Equals(Date other)
+    {
+        return Month == other.Month && Day == other.Day && Year == other.Year;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Month, Day, Year);
     }
 
     public int CompareTo(Date that)

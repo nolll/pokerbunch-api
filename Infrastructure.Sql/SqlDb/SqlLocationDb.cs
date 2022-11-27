@@ -1,70 +1,78 @@
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class SqlLocationDb
 {
-    private const string DataSql = "SELECT l.Id, l.Name, l.BunchId FROM Location l ";
-    private const string SearchIdSql = "SELECT l.Id FROM Location l ";
+    private const string DataSql = @"
+        SELECT l.location_id, l.name, l.bunch_id
+        FROM pb_location l ";
 
-    private readonly SqlServerStorageProvider _db;
+    private const string SearchIdSql = @"
+        SELECT l.location_id
+        FROM pb_location l ";
 
-    public SqlLocationDb(SqlServerStorageProvider db)
+    private readonly PostgresDb _db;
+
+    public SqlLocationDb(PostgresDb db)
     {
         _db = db;
     }
 
-    public Location Get(int id)
+    public async Task<Location> Get(string id)
     {
-        var sql = string.Concat(DataSql, "WHERE l.Id = @id");
-        var parameters = new List<SimpleSqlParameter>
+        var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@id", id)
+            new IntParam("@id", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         return reader.ReadOne(CreateLocation);
     }
         
-    public IList<Location> Get(IList<int> ids)
+    public async Task<IList<Location>> Get(IList<string> ids)
     {
         if (!ids.Any())
             return new List<Location>();
-        var sql = string.Concat(DataSql, "WHERE l.Id IN (@ids)");
-        var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+
+        var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
+        var parameter = new IntListParam("@ids", ids);
+        var reader = await _db.Query(sql, parameter);
         return reader.ReadList(CreateLocation);
     }
 
-    public IList<int> Find(int bunchId)
+    public async Task<IList<string>> Find(string bunchId)
     {
-        var sql = string.Concat(SearchIdSql, "WHERE l.BunchId = @bunchId");
-        var parameters = new List<SimpleSqlParameter>
+        var sql = string.Concat(SearchIdSql, "WHERE l.bunch_id = @bunchId");
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@bunchId", bunchId)
+            new IntParam("@bunchId", bunchId)
         };
-        var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("Id");
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadIntList("location_id").Select(o => o.ToString()).ToList();
     }
         
-    public int Add(Location location)
+    public async Task<string> Add(Location location)
     {
-        const string sql = "INSERT INTO location (Name, BunchId) VALUES (@name, @bunchId) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            INSERT INTO pb_location (name, bunch_id)
+            VALUES (@name, @bunchId) RETURNING location_id";
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@name", location.Name),
-            new SimpleSqlParameter("@bunchId", location.BunchId)
+            new StringParam("@name", location.Name),
+            new IntParam("@bunchId", location.BunchId)
         };
-        return _db.ExecuteInsert(sql, parameters);
+        return (await _db.Insert(sql, parameters)).ToString();
     }
 
     private Location CreateLocation(IStorageDataReader reader)
     {
         return new Location(
-            reader.GetIntValue("Id"),
-            reader.GetStringValue("Name"),
-            reader.GetIntValue("BunchId"));
+            reader.GetIntValue("location_id").ToString(),
+            reader.GetStringValue("name"),
+            reader.GetIntValue("bunch_id").ToString());
     }
 }

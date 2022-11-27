@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 
@@ -8,7 +6,7 @@ namespace Tests.Common.FakeRepositories;
 public class FakePlayerRepository : IPlayerRepository
 {
     public Player Added { get; private set; }
-    public int Deleted { get; private set; }
+    public string Deleted { get; private set; }
     public JoinedData Joined { get; private set; }
     private readonly IList<Player> _list;
 
@@ -17,41 +15,42 @@ public class FakePlayerRepository : IPlayerRepository
         _list = CreateList();
     }
 
-    public IList<Player> List(int bunchId)
+    public Task<IList<Player>> List(string bunchId)
     {
-        return _list.Where(o => o.BunchId == bunchId).ToList();
+        return Task.FromResult<IList<Player>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Player Get(int bunchId, int userId)
+    public Task<Player> Get(string bunchId, string userId)
     {
-        return _list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId);
+        return Task.FromResult(_list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId));
     }
 
-    public IList<Player> Get(IList<int> ids)
+    public Task<IList<Player>> Get(IList<string> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Player>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public Player Get(int id)
+    public Task<Player> Get(string id)
     {
-        return _list.FirstOrDefault(o => o.Id == id);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
 
-    public int Add(Player player)
+    public Task<string> Add(Player player)
     {
         Added = player;
-        return 1;
+        return Task.FromResult("1");
     }
 
-    public bool JoinBunch(Player player, Bunch bunch, int userId)
+    public Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
     {
         Joined = new JoinedData(player.Id, bunch.Id, userId);
-        return true;
+        return Task.FromResult(true);
     }
 
-    public void Delete(int playerId)
+    public Task Delete(string playerId)
     {
         Deleted = playerId;
+        return Task.CompletedTask;
     }
 
     private IList<Player> CreateList()
@@ -67,15 +66,15 @@ public class FakePlayerRepository : IPlayerRepository
 
     public class JoinedData
     {
-        public JoinedData(int playerId, int bunchId, int userId)
+        public JoinedData(string playerId, string bunchId, string userId)
         {
             PlayerId = playerId;
             BunchId = bunchId;
             UserId = userId;
         }
 
-        public int PlayerId { get; private set; }
-        public int BunchId { get; private set; }
-        public int UserId { get; private set; }
+        public string PlayerId { get; }
+        public string BunchId { get; }
+        public string UserId { get; }
     }
 }

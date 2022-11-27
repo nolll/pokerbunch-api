@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddUser
+public class AddUser : UseCase<AddUser.Request, AddUser.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRandomizer _randomizer;
@@ -23,33 +22,37 @@ public class AddUser
         _emailSender = emailSender;
     }
 
-    public void Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
-        if (_userRepository.Get(request.UserName) != null)
-            throw new UserExistsException();
+        var userByName = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        if (userByName != null)
+            return Error(new UserExistsError());
 
-        if (_userRepository.Get(request.Email) != null)
-            throw new EmailExistsException();
+        var userByEmail = await _userRepository.GetByUserNameOrEmail(request.Email);
+        if (userByEmail != null)
+            return Error(new EmailExistsError());
 
         var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
         var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
         var user = CreateUser(request, encryptedPassword, salt);
 
-        _userRepository.Add(user);
-            
+        await _userRepository.Add(user);
+
         var message = new RegistrationMessage(request.LoginUrl);
         _emailSender.Send(request.Email, message);
-    }
 
+        return Success(new Result());
+    }
+    
     private static User CreateUser(Request request, string encryptedPassword, string salt)
     {
         return new User(
-            0,
+            null,
             request.UserName,
             request.DisplayName,
             string.Empty,
@@ -84,5 +87,9 @@ public class AddUser
             Password = password;
             LoginUrl = loginUrl;
         }
+    }
+
+    public class Result
+    {
     }
 }

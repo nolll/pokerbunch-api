@@ -7,7 +7,7 @@ public class ApiEventUrl : ApiUrl
 {
     private readonly string _eventId;
 
-    public ApiEventUrl(string host, string eventId) : base(host)
+    public ApiEventUrl(string eventId)
     {
         _eventId = eventId;
     }

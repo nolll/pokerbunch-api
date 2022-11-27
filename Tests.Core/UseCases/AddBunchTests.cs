@@ -1,7 +1,6 @@
 ﻿using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -23,59 +22,64 @@ class AddBunchTests : TestBase
     }
         
     [Test]
-    public void AddBunch_WithEmptyDisplayName_ThrowsValidationException()
+    public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest("")));
+        var result = await Sut.Execute(CreateRequest(""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyCurrencySymbol_ThrowsValidationException()
+    public async Task AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest(currencySymbol: "")));
+        var result = await Sut.Execute(CreateRequest(currencySymbol: ""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyCurrencyLayout_ThrowsValidationException()
+    public async Task AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest(currencyLayout: "")));
+        var result = await Sut.Execute(CreateRequest(currencyLayout: ""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithEmptyTimeZone_ThrowsValidationException()
+    public async Task AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
-        Assert.Throws<ValidationException>(() => Sut.Execute(CreateRequest(timeZone: "")));
+        var result = await Sut.Execute(CreateRequest(timeZone: ""));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddBunch_WithExistingSlug_ThrowsException()
+    public async Task AddBunch_WithExistingSlug_ReturnsConflictError()
     {
-        Assert.Throws<BunchExistsException>(() => Sut.Execute(CreateRequest(_existingDisplayName)));
+        var result = await Sut.Execute(CreateRequest(_existingDisplayName));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
-    public void AddBunch_WithGoodInput_CreatesBunch()
+    public async Task AddBunch_WithGoodInput_CreatesBunch()
     {
-        Sut.Execute(CreateRequest());
+        await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(0, Deps.Bunch.Added.Id);
-        Assert.AreEqual("a-display-name", Deps.Bunch.Added.Slug);
-        Assert.AreEqual(DisplayName, Deps.Bunch.Added.DisplayName);
-        Assert.AreEqual(Description, Deps.Bunch.Added.Description);
-        Assert.AreEqual("", Deps.Bunch.Added.HouseRules);
-        Assert.AreEqual(TestData.TimeZoneLocal.Id, Deps.Bunch.Added.Timezone.Id);
-        Assert.AreEqual(200, Deps.Bunch.Added.DefaultBuyin);
-        Assert.AreEqual(CurrencySymbol, Deps.Bunch.Added.Currency.Symbol);
-        Assert.AreEqual(CurrencyLayout, Deps.Bunch.Added.Currency.Layout);
+        Assert.That(Deps.Bunch.Added.Id, Is.Null);
+        Assert.That(Deps.Bunch.Added.Slug, Is.EqualTo("a-display-name"));
+        Assert.That(Deps.Bunch.Added.DisplayName, Is.EqualTo(DisplayName));
+        Assert.That(Deps.Bunch.Added.Description, Is.EqualTo(Description));
+        Assert.That(Deps.Bunch.Added.HouseRules, Is.EqualTo(""));
+        Assert.That(Deps.Bunch.Added.Timezone.Id, Is.EqualTo(TestData.TimeZoneLocal.Id));
+        Assert.That(Deps.Bunch.Added.DefaultBuyin, Is.EqualTo(0));
+        Assert.That(Deps.Bunch.Added.Currency.Symbol, Is.EqualTo(CurrencySymbol));
+        Assert.That(Deps.Bunch.Added.Currency.Layout, Is.EqualTo(CurrencyLayout));
     }
 
     [Test]
-    public void AddBunch_WithGoodInput_CreatesPlayer()
+    public async Task AddBunch_WithGoodInput_CreatesPlayer()
     {
-        Sut.Execute(CreateRequest());
+        await Sut.Execute(CreateRequest());
 
-        Assert.AreEqual(1, Deps.Player.Added.BunchId);
-        Assert.AreEqual(3, Deps.Player.Added.UserId);
-        Assert.AreEqual(Role.Manager, Deps.Player.Added.Role);
+        Assert.That(Deps.Player.Added.BunchId, Is.EqualTo("1"));
+        Assert.That(Deps.Player.Added.UserId, Is.EqualTo("3"));
+        Assert.That(Deps.Player.Added.Role, Is.EqualTo(Role.Manager));
     }
 
     private AddBunch.Request CreateRequest(string displayName = DisplayName, string currencySymbol = CurrencySymbol, string currencyLayout = CurrencyLayout, string timeZone = null)
@@ -83,7 +87,7 @@ class AddBunchTests : TestBase
         return new AddBunch.Request(TestData.UserNameC, displayName, Description, currencySymbol, currencyLayout, timeZone ?? _timeZone);
     }
 
-    private AddBunch Sut => new AddBunch(
+    private AddBunch Sut => new(
         Deps.User,
         Deps.Bunch,
         Deps.Player);

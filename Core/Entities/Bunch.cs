@@ -4,7 +4,7 @@ namespace Core.Entities;
 
 public class Bunch : IEntity
 {
-    public int Id { get; }
+    public string Id { get; }
     public string Slug { get; }
     public string DisplayName { get; }
     public string Description { get; }
@@ -17,7 +17,7 @@ public class Bunch : IEntity
     public bool VideosEnabled { get; }
 
     public Bunch(
-        int id, 
+        string id, 
         string slug, 
         string displayName = null, 
         string description = null, 

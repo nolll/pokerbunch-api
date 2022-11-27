@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class Report
+public class Report : UseCase<Report.Request, Report.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -20,32 +20,35 @@ public class Report
         _userRepository = userRepository;
     }
 
-    public void Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.Get(request.CashgameId);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
+        var cashgame = await _cashgameRepository.Get(request.CashgameId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
         var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
         cashgame.AddCheckpoint(checkpoint);
-        _cashgameRepository.Update(cashgame);
-    }
+        await _cashgameRepository.Update(cashgame);
 
+        return Success(new Result());
+    }
+    
     public class Request
     {
         public string UserName { get; }
-        public int CashgameId { get; }
-        public int PlayerId { get; }
+        public string CashgameId { get; }
+        public string PlayerId { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int Stack { get; }
         public DateTime CurrentTime { get; }
 
-        public Request(string userName, int cashgameId, int playerId, int stack, DateTime currentTime)
+        public Request(string userName, string cashgameId, string playerId, int stack, DateTime currentTime)
         {
             UserName = userName;
             CashgameId = cashgameId;
@@ -53,5 +56,9 @@ public class Report
             Stack = stack;
             CurrentTime = currentTime;
         }
+    }
+
+    public class Result
+    {
     }
 }

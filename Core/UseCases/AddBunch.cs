@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddBunch
+public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -21,48 +20,39 @@ public class AddBunch
         _playerRepository = playerRepository;
     }
 
-    public BunchResult Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
         var slug = SlugGenerator.GetSlug(request.DisplayName);
-
-        bool bunchExists;
-        try
-        {
-            var b = _bunchRepository.GetBySlug(slug);
-            bunchExists = true;
-        }
-        catch (BunchNotFoundException)
-        {
-            bunchExists = false;
-        }
+        var existingBunch = await _bunchRepository.GetBySlug(slug);
+        var bunchExists = existingBunch != null;
 
         if (bunchExists)
-            throw new BunchExistsException(slug);
+            return Error(new BunchExistsError(slug));
 
         var bunch = CreateBunch(request);
-        var id = _bunchRepository.Add(bunch);
-        var user = _userRepository.Get(request.UserName);
+        var id = await _bunchRepository.Add(bunch);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var player = Player.New(id, user.Id, user.UserName, Role.Manager);
-        var playerId = _playerRepository.Add(player);
-        var createdPlayer = _playerRepository.Get(playerId);
+        var playerId = await _playerRepository.Add(player);
+        var createdPlayer = await _playerRepository.Get(playerId);
 
-        return new BunchResult(bunch, createdPlayer);
+        return Success(new Result(bunch, createdPlayer));
     }
-
+    
     private static Bunch CreateBunch(Request request)
     {
         return new Bunch(
-            0,
+            null,
             SlugGenerator.GetSlug(request.DisplayName),
             request.DisplayName,
             request.Description,
             string.Empty,
             TimeZoneInfo.FindSystemTimeZoneById(request.TimeZone),
-            200,
+            0,
             new Currency(request.CurrencySymbol, request.CurrencyLayout));
     }
 
@@ -87,6 +77,13 @@ public class AddBunch
             CurrencySymbol = currencySymbol;
             CurrencyLayout = currencyLayout;
             TimeZone = timeZone;
+        }
+    }
+
+    public class Result : BunchResult
+    {
+        public Result(Bunch b, Player p) : base(b, p)
+        {
         }
     }
 }

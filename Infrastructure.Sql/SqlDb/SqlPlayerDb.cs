@@ -1,137 +1,142 @@
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class SqlPlayerDb
 {
     private const string DataSql = @"
-SELECT p.HomegameID, p.PlayerID, p.UserID, p.RoleID, ISNULL(p.PlayerName, u.DisplayName) AS PlayerName, p.Color, u.UserName 
-FROM player p 
-LEFT JOIN [user] u ON u.UserID = p.UserID ";
+        SELECT p.bunch_id, p.player_id, p.user_id, p.role_id, COALESCE(u.display_name, p.player_name) AS player_name, p.color, u.user_name 
+        FROM pb_player p 
+        LEFT JOIN pb_user u ON u.user_id = p.user_id ";
         
-    private const string SearchSql = "SELECT p.PlayerID FROM player p ";
+    private const string SearchSql = @"
+        SELECT p.player_id
+        FROM pb_player p ";
 
-    private readonly SqlServerStorageProvider _db;
+    private readonly PostgresDb _db;
 
-    public SqlPlayerDb(SqlServerStorageProvider db)
+    public SqlPlayerDb(PostgresDb db)
     {
         _db = db;
     }
 
-    public IList<int> Find(int bunchId)
+    public async Task<IList<string>> Find(string bunchId)
     {
-        var sql = string.Concat(SearchSql, "WHERE p.HomegameID = @homegameId");
-        var parameters = new List<SimpleSqlParameter>
+        var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId");
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@homegameId", bunchId)
+            new IntParam("@bunchId", bunchId)
         };
-        var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("PlayerID");
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
 
     }
 
-    public IList<int> Find(int bunchId, string name)
+    public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {
-        var sql = string.Concat(SearchSql, "LEFT JOIN [user] u on p.UserID = u.UserID WHERE p.HomegameID = @homegameId AND (p.PlayerName = @playerName OR u.DisplayName = @playerName)");
-        var parameters = new List<SimpleSqlParameter>
+        var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId AND p.user_id = @userId");
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@homegameId", bunchId),
-            new SimpleSqlParameter("@playerName", name)
+            new IntParam("@bunchId", bunchId),
+            new IntParam("@userId", userId)
         };
-        var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("PlayerID");
-
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
     }
 
-    public IList<int> Find(int bunchId, int userId)
-    {
-        var sql = string.Concat(SearchSql, "WHERE p.HomegameID = @homegameId AND p.UserID = @userId");
-        var parameters = new List<SimpleSqlParameter>
-        {
-            new SimpleSqlParameter("@homegameId", bunchId),
-            new SimpleSqlParameter("@userId", userId)
-        };
-        var reader = _db.Query(sql, parameters);
-        return reader.ReadIntList("PlayerID");
-    }
-
-    public IList<Player> Get(IList<int> ids)
+    public async Task<IList<Player>> Get(IList<string> ids)
     {
         if(!ids.Any())
             return new List<Player>();
-        var sql = string.Concat(DataSql, "WHERE p.PlayerID IN (@ids)");
-        var parameter = new ListSqlParameter("@ids", ids);
-        var reader = _db.Query(sql, parameter);
+        var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
+        var parameter = new IntListParam("@ids", ids);
+        var reader = await _db.Query(sql, parameter);
         var rawPlayers = reader.ReadList(CreateRawPlayer);
         return rawPlayers.Select(CreatePlayer).ToList();
     }
 
-    public Player Get(int id)
+    public async Task<Player> Get(string id)
     {
-        var sql = string.Concat(DataSql, "WHERE p.PlayerID = @id");
-        var parameters = new List<SimpleSqlParameter>
+        var sql = string.Concat(DataSql, "WHERE p.player_id = @id");
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@id", id)
+            new IntParam("@id", id)
         };
-        var reader = _db.Query(sql, parameters);
+        var reader = await _db.Query(sql, parameters);
         var rawPlayer = reader.ReadOne(CreateRawPlayer);
         return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
     }
 
-    public int Add(Player player)
+    public async Task<string> Add(Player player)
     {
         if (player.IsUser)
         {
-            const string sql = "INSERT INTO player (HomegameID, UserID, RoleID, Approved, Color) VALUES (@homegameId, @userId, @role, 1, @color) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
-            var parameters = new List<SimpleSqlParameter>
+            const string sql = @"
+                INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
+                VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
+            var parameters = new List<SqlParam>
             {
-                new SimpleSqlParameter("@homegameId", player.BunchId),
-                new SimpleSqlParameter("@userId", player.UserId),
-                new SimpleSqlParameter("@role", player.Role),
-                new SimpleSqlParameter("@color", player.Color)
+                new IntParam("@bunchId", player.BunchId),
+                new IntParam("@userId", player.UserId),
+                new IntParam("@role", (int)player.Role),
+                new BoolParam("@approved", true),
+                new StringParam("@color", player.Color)
             };
-            return _db.ExecuteInsert(sql, parameters);
+            return (await _db.Insert(sql, parameters)).ToString();
         }
         else
         {
-            const string sql = "INSERT INTO player (HomegameID, RoleID, Approved, PlayerName, Color) VALUES (@homegameId, @role, 1, @playerName, @color) SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]";
-            var parameters = new List<SimpleSqlParameter>
+            const string sql = @"
+                INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
+                VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
+            var parameters = new List<SqlParam>
             {
-                new SimpleSqlParameter("@homegameId", player.BunchId),
-                new SimpleSqlParameter("@role", (int)Role.Player),
-                new SimpleSqlParameter("@playerName", player.DisplayName),
-                new SimpleSqlParameter("@color", player.Color)
+                new IntParam("@bunchId", player.BunchId),
+                new IntParam("@role", (int)Role.Player),
+                new BoolParam("@approved", true),
+                new StringParam("@playerName", player.DisplayName),
+                new StringParam("@color", player.Color)
             };
-            return _db.ExecuteInsert(sql, parameters);
+            return (await _db.Insert(sql, parameters)).ToString();
         }
     }
 
-    public bool JoinHomegame(Player player, Bunch bunch, int userId)
+    public async Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
     {
-        const string sql = "UPDATE player SET HomegameID = @homegameId, PlayerName = NULL, UserID = @userId, RoleID = @role, Approved = 1 WHERE PlayerID = @playerId";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            UPDATE pb_player
+            SET bunch_id = @bunchId,
+                player_name = NULL,
+                user_id = @userId,
+                role_id = @role,
+                approved = @approved
+            WHERE player_id = @playerId";
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@homegameId", bunch.Id),
-            new SimpleSqlParameter("@userId", userId),
-            new SimpleSqlParameter("@role", (int) player.Role),
-            new SimpleSqlParameter("@playerId", player.Id)
+            new IntParam("@bunchId", bunch.Id),
+            new IntParam("@userId", userId),
+            new IntParam("@role", (int)player.Role),
+            new BoolParam("@approved", true),
+            new IntParam("@playerId", player.Id)
         };
-        var rowCount = _db.Execute(sql, parameters);
+        var rowCount = await _db.Execute(sql, parameters);
         return rowCount > 0;
     }
 
-    public void Delete(int playerId)
+    public async Task Delete(string playerId)
     {
-        const string sql = @"DELETE FROM player WHERE PlayerID = @playerId";
-        var parameters = new List<SimpleSqlParameter>
+        const string sql = @"
+            DELETE FROM pb_player
+            WHERE player_id = @playerId";
+        var parameters = new List<SqlParam>
         {
-            new SimpleSqlParameter("@playerId", playerId)
+            new IntParam("@playerId", playerId)
         };
-        _db.Execute(sql, parameters);
+        await _db.Execute(sql, parameters);
     }
 
     private Player CreatePlayer(RawPlayer rawPlayer)
@@ -148,13 +153,18 @@ LEFT JOIN [user] u ON u.UserID = p.UserID ";
 
     private static RawPlayer CreateRawPlayer(IStorageDataReader reader)
     {
+        var intUserId = reader.GetIntValue("user_id");
+        var userId = intUserId != 0
+            ? intUserId.ToString()
+            : null;
+
         return new RawPlayer(
-            reader.GetIntValue("HomegameID"),
-            reader.GetIntValue("PlayerID"),
-            reader.GetIntValue("UserID"),
-            reader.GetStringValue("UserName"),
-            reader.GetStringValue("PlayerName"),
-            reader.GetIntValue("RoleID"),
-            reader.GetStringValue("Color"));
+            reader.GetIntValue("bunch_id").ToString(),
+            reader.GetIntValue("player_id").ToString(),
+            userId,
+            reader.GetStringValue("user_name"),
+            reader.GetStringValue("player_name"),
+            reader.GetIntValue("role_id"),
+            reader.GetStringValue("color"));
     }
 }

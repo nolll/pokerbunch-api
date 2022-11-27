@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class PlayerCashgameList
+public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCashgameList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -24,21 +24,25 @@ public class PlayerCashgameList
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = _playerRepository.Get(request.PlayerId);
-        var bunch = _bunchRepository.Get(player.BunchId);
-        var user = _userRepository.Get(request.UserName);
-        RequireRole.Player(user, player);
-        var cashgames = _cashgameRepository.GetByPlayer(request.PlayerId);
+        var player = await _playerRepository.Get(request.PlayerId);
+        var bunch = await _bunchRepository.Get(player.BunchId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+
+        if (!AccessControl.CanListPlayerCashgames(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
+        var cashgames = await _cashgameRepository.GetByPlayer(request.PlayerId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = _locationRepository.List(bunch.Id);
-        var players = _playerRepository.List(bunch.Id);
+        var locations = await _locationRepository.List(bunch.Id);
+        var players = await _playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
-        return new Result(items.ToList());
+        return Success(new Result(items.ToList()));
     }
-
+    
     private Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations)
     {
         return locations.First(o => o.Id == cashgame.LocationId);
@@ -52,9 +56,9 @@ public class PlayerCashgameList
     public class Request
     {
         public string UserName { get; }
-        public int PlayerId { get; }
+        public string PlayerId { get; }
 
-        public Request(string userName, int playerId)
+        public Request(string userName, string playerId)
         {
             UserName = userName;
             PlayerId = playerId;
@@ -73,9 +77,9 @@ public class PlayerCashgameList
 
     public class Item
     {
-        public int LocationId { get; }
+        public string LocationId { get; }
         public string LocationName { get; }
-        public int CashgameId { get; }
+        public string CashgameId { get; }
         public DateTime StartTime { get; }
         public DateTime EndTime { get; }
         public IList<ItemResult> Players { get; }
@@ -91,7 +95,7 @@ public class PlayerCashgameList
         }
     }
 
-    private static string GetPlayerName(int playerId, IList<Player> players)
+    private static string GetPlayerName(string playerId, IList<Player> players)
     {
         var player = players.FirstOrDefault(o => o.Id == playerId);
         return player?.DisplayName ?? "";
@@ -117,10 +121,10 @@ public class PlayerCashgameList
 
     public class ItemPlayer
     {
-        public int Id { get; }
+        public string Id { get; }
         public string Name { get; }
 
-        public ItemPlayer(int id, string name)
+        public ItemPlayer(string id, string name)
         {
             Id = id;
             Name = name;

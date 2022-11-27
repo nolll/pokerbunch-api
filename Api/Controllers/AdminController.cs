@@ -1,5 +1,5 @@
 using Api.Auth;
-using Api.Models.AdminModels;
+using Api.Models.CommonModels;
 using Api.Models.HomeModels;
 using Api.Routes;
 using Api.Settings;
@@ -13,14 +13,14 @@ public class AdminController : BaseController
     private readonly AppSettings _appSettings;
     private readonly ClearCache _clearCache;
     private readonly TestEmail _testEmail;
-    private readonly EnsureAdmin _ensureAdmin;
+    private readonly RequireAppsettingsAccess _requireAppsettingsAccess;
 
-    public AdminController(AppSettings appSettings, ClearCache clearCache, TestEmail testEmail, EnsureAdmin ensureAdmin) : base(appSettings)
+    public AdminController(AppSettings appSettings, ClearCache clearCache, TestEmail testEmail, RequireAppsettingsAccess requireAppsettingsAccess) : base(appSettings)
     {
         _appSettings = appSettings;
         _clearCache = clearCache;
         _testEmail = testEmail;
-        _ensureAdmin = ensureAdmin;
+        _requireAppsettingsAccess = requireAppsettingsAccess;
     }
 
     /// <summary>
@@ -29,10 +29,10 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [ApiAuthorize]
-    public ClearCacheModel ClearCache()
+    public async Task<ObjectResult> ClearCache()
     {
-        _clearCache.Execute(new ClearCache.Request(CurrentUserName));
-        return new ClearCacheModel();
+        var result = await _clearCache.Execute(new ClearCache.Request(CurrentUserName));
+        return Model(result, () => new MessageModel(result.Data.Message));
     }
 
     /// <summary>
@@ -41,10 +41,10 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [ApiAuthorize]
-    public SendEmailModel SendEmail()
+    public async Task<ObjectResult> SendEmail()
     {
-        var result = _testEmail.Execute(new TestEmail.Request(CurrentUserName));
-        return new SendEmailModel(result);
+        var result = await _testEmail.Execute(new TestEmail.Request(CurrentUserName));
+        return Model(result, () => new MessageModel(result.Data.Message));
     }
 
     /// <summary>
@@ -52,9 +52,9 @@ public class AdminController : BaseController
     /// </summary>
     [Route(ApiRoutes.Version)]
     [HttpGet]
-    public VersionModel Version()
+    public ObjectResult Version()
     {
-        return new VersionModel(_appSettings.Version);
+        return Success(new VersionModel(_appSettings.Version));
     }
 
     /// <summary>
@@ -63,10 +63,9 @@ public class AdminController : BaseController
     [Route(ApiRoutes.Settings)]
     [HttpGet]
     [ApiAuthorize]
-    public AppSettings Settings()
+    public async Task<ObjectResult> Settings()
     {
-        _ensureAdmin.Execute(new EnsureAdmin.Request(CurrentUserName));
-
-        return _appSettings;
+        var result = await _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
+        return Model(result, () => _appSettings);
     }
 }

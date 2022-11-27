@@ -7,7 +7,7 @@ public class ApiBunchCashgamesCurrentUrl : ApiUrl
 {
     private readonly string _bunchId;
 
-    public ApiBunchCashgamesCurrentUrl(string host, string bunchId) : base(host)
+    public ApiBunchCashgamesCurrentUrl(string bunchId)
     {
         _bunchId = bunchId;
     }

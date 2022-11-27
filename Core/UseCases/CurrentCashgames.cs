@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class CurrentCashgames
+public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -23,22 +23,23 @@ public class CurrentCashgames
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        if (!AccessControl.CanListCurrentGames(user, player))
+            return Error(new AccessDeniedError());
 
-        var cashgame = _cashgameRepository.GetRunning(bunch.Id);
+        var cashgame = await _cashgameRepository.GetRunning(bunch.Id);
 
         var gameList = new List<Game>();
         if (cashgame != null)
             gameList.Add(new Game(bunch.Slug, cashgame.Id));
-            
-        return new Result(gameList);
-    }
 
+        return Success(new Result(gameList));
+    }
+    
     public class Request
     {
         public string UserName { get; }
@@ -64,9 +65,9 @@ public class CurrentCashgames
     public class Game
     {
         public string Slug { get; }
-        public int Id { get; }
+        public string Id { get; }
 
-        public Game(string slug, int id)
+        public Game(string slug, string id)
         {
             Slug = slug;
             Id = id;

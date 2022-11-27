@@ -1,6 +1,5 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -12,50 +11,52 @@ public class EditUserTests : TestBase
     private const string ChangedEmail = "email@example.com";
 
     [Test]
-    public void EditUser_EmptyDisplayName_ThrowsException()
+    public async Task EditUser_EmptyDisplayName_ReturnsError()
     {
         var request = new EditUser.Request(TestData.UserNameA, "", RealName, ChangedEmail);
+        var result = await Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditUser_EmptyEmail_ThrowsException()
+    public async Task EditUser_EmptyEmail_ReturnsError()
     {
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, "");
+        var result = await Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditUser_InvalidEmail_ThrowsException()
+    public async Task EditUser_InvalidEmail_ReturnsError()
     {
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, "a");
+        var result = await Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditUser_ValidInput_ReturnUrlIsSet()
+    public async Task EditUser_ValidInput_ReturnUrlIsSet()
     {
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, ChangedEmail);
+        var result = await Sut.Execute(request);
 
-        var result = Sut.Execute(request);
-
-        Assert.AreEqual("user-name-a", result.UserName);
+        Assert.That(result.Data.UserName, Is.EqualTo("user-name-a"));
     }
 
     [Test]
-    public void EditUser_ValidInput_UserIsSaved()
+    public async Task EditUser_ValidInput_UserIsSaved()
     {
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, ChangedEmail);
 
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.UserNameA, Deps.User.Saved.UserName);
-        Assert.AreEqual(ChangedDisplayName, Deps.User.Saved.DisplayName);
-        Assert.AreEqual(ChangedEmail, Deps.User.Saved.Email);
+        Assert.That(Deps.User.Saved.UserName, Is.EqualTo(TestData.UserNameA));
+        Assert.That(Deps.User.Saved.DisplayName, Is.EqualTo(ChangedDisplayName));
+        Assert.That(Deps.User.Saved.Email, Is.EqualTo(ChangedEmail));
     }
 
-    private EditUser Sut => new EditUser(Deps.User);
+    private EditUser Sut => new(Deps.User);
 }

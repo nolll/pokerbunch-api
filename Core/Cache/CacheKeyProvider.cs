@@ -4,9 +4,9 @@ namespace Core.Cache;
 
 public static class CacheKeyProvider
 {
-    public static string GetKey<T>(int id)
+    public static string GetKey<T>(string id)
     {
-        return ConstructCacheKey(typeof(T).ToString(), id); ;
+        return ConstructCacheKey(typeof(T).ToString(), id);
     }
 
     private static string ConstructCacheKey(string typeName, params object[] procedureParameters)

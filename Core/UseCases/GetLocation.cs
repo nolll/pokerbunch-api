@@ -1,50 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetTimezoneList
-{
-    private readonly ITimezoneRepository _timezoneRepository;
-
-    public GetTimezoneList(ITimezoneRepository timezoneRepository)
-    {
-        _timezoneRepository = timezoneRepository;
-    }
-
-    public Result Execute()
-    {
-        var timezones = _timezoneRepository.List().Select(o => new Timezone(o.Id, o.Name)).ToList();
-
-        return new Result(timezones);
-    }
-
-    public class Result
-    {
-        public IList<Timezone> Timezones { get; }
-
-        public Result(IList<Timezone> timezones)
-        {
-            Timezones = timezones;
-        }
-    }
-
-    public class Timezone
-    {
-        public string Id { get; }
-        public string Name { get; }
-
-        public Timezone(string id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-    }
-}
-
-public class GetLocation
+public class GetLocation : UseCase<GetLocation.Request, GetLocation.Result>
 {
     private readonly ILocationRepository _locationRepository;
     private readonly IUserRepository _userRepository;
@@ -59,23 +19,25 @@ public class GetLocation
         _bunchRepository = bunchRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var location = _locationRepository.Get(request.LocationId);
-        var bunch = _bunchRepository.Get(location.BunchId);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(location.BunchId, user.Id);
-        RequireRole.Player(user, player);
+        var location = await _locationRepository.Get(request.LocationId);
+        var bunch = await _bunchRepository.Get(location.BunchId);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var player = await _playerRepository.Get(location.BunchId, user.Id);
 
-        return new Result(location.Id, location.Name, bunch.Slug);
+        if (!AccessControl.CanSeeLocation(user, player))
+            return Error(new AccessDeniedError());
+
+        return Success(new Result(location.Id, location.Name, bunch.Slug));
     }
 
     public class Request
     {
         public string UserName { get; }
-        public int LocationId { get; }
+        public string LocationId { get; }
 
-        public Request(string userName, int locationId)
+        public Request(string userName, string locationId)
         {
             UserName = userName;
             LocationId = locationId;
@@ -84,11 +46,11 @@ public class GetLocation
 
     public class Result
     {
-        public int Id { get; private set; }
+        public string Id { get; private set; }
         public string Name { get; private set; }
         public string Slug { get; private set; }
 
-        public Result(int id, string name, string slug)
+        public Result(string id, string name, string slug)
         {
             Id = id;
             Name = name;

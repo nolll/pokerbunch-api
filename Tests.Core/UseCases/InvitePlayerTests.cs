@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -9,26 +7,26 @@ namespace Tests.Core.UseCases;
 public class InvitePlayerTests : TestBase
 {
     [Test]
-    public void InvitePlayer_ReturnUrlIsSet()
+    public async Task InvitePlayer_ReturnUrlIsSet()
     {
         var request = CreateRequest();
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(1, result.PlayerId);
+        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
     }
 
     [TestCase("")]
     [TestCase("a")]
-    public void InvitePlayer_InvalidEmail_ThrowsException(string email)
+    public async Task InvitePlayer_InvalidEmail_ReturnsError(string email)
     {
         var request = CreateRequest(email);
+        var result = await Sut.Execute(request);
 
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void InvitePlayer_ValidEmail_SendsInvitationEmail()
+    public async Task InvitePlayer_ValidEmail_SendsInvitationEmail()
     {
         const string subject = "Invitation to Poker Bunch: Bunch A";
         const string body = @"You have been invited to join the poker game: Bunch A.
@@ -39,11 +37,11 @@ use this link instead, https://pokerbunch.com/fakejoin/bunch-a, and enter this v
 If you don't have an account, you can register at https://pokerbunch.com/test";
         var request = CreateRequest();
 
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.UserEmailA, Deps.EmailSender.To);
-        Assert.AreEqual(subject, Deps.EmailSender.Message.Subject);
-        Assert.AreEqual(body, Deps.EmailSender.Message.Body);
+        Assert.That(Deps.EmailSender.To, Is.EqualTo(TestData.UserEmailA));
+        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
     }
 
     private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)
@@ -51,7 +49,7 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
         return new InvitePlayer.Request(TestData.UserNameC, TestData.PlayerIdA, email, TestData.TestUrl, "https://pokerbunch.com/fakejoin/{0}", "https://pokerbunch.com/fakejoin/{0}/{1}");
     }
 
-    private InvitePlayer Sut => new InvitePlayer(
+    private InvitePlayer Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.EmailSender,

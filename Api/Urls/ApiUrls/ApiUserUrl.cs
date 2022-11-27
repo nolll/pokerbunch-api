@@ -7,7 +7,7 @@ public class ApiUserUrl : ApiUrl
 {
     private readonly string _userName;
 
-    public ApiUserUrl(string host, string userName) : base(host)
+    public ApiUserUrl(string userName)
     {
         _userName = userName;
     }

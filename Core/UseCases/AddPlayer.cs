@@ -2,14 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddPlayer
+public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -22,28 +21,30 @@ public class AddPlayer
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
-        var existingPlayers = _playerRepository.List(bunch.Id);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+        if (!AccessControl.CanAddPlayer(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
+        var existingPlayers = await _playerRepository.List(bunch.Id);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
-        if(player != null)
-            throw new PlayerExistsException();
+        if (player != null)
+            return Error(new PlayerExistsError());
 
         player = Player.New(bunch.Id, request.Name);
-        var id = _playerRepository.Add(player);
+        var id = await _playerRepository.Add(player);
 
-        return new Result(id);
+        return Success(new Result(id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
@@ -61,9 +62,9 @@ public class AddPlayer
 
     public class Result
     {
-        public int Id { get; private set; }
+        public string Id { get; }
 
-        public Result(int id)
+        public Result(string id)
         {
             Id = id;
         }

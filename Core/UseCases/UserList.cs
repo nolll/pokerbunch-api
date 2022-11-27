@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class UserList
+public class UserList : UseCase<UserList.Request, UserList.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,15 +14,16 @@ public class UserList
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = _userRepository.Get(request.UserName);
-        RequireRole.Admin(user);
-            
-        var users = _userRepository.List();
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        if (!AccessControl.CanListUsers(user))
+            return Error(new AccessDeniedError());
+
+        var users = await _userRepository.List();
         var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();
 
-        return new Result(userItems);
+        return Success(new Result(userItems));
     }
 
     public class Request
@@ -37,7 +38,7 @@ public class UserList
 
     public class Result
     {
-        public IList<UserListItem> Users { get; private set; }
+        public IList<UserListItem> Users { get; }
 
         public Result(IList<UserListItem> userItems)
         {
@@ -47,8 +48,8 @@ public class UserList
 
     public class UserListItem
     {
-        public string DisplayName { get; private set; }
-        public string UserName { get; private set; }
+        public string DisplayName { get; }
+        public string UserName { get; }
 
         public UserListItem(string displayName, string userName)
         {

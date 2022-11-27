@@ -1,5 +1,4 @@
 ﻿using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,100 +6,100 @@ namespace Tests.Core.UseCases;
 class PlayerDetailsTests : TestBase
 {
     [Test]
-    public void PlayerDetails_DisplayNameIsSet()
+    public async Task PlayerDetails_DisplayNameIsSet()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual(TestData.PlayerNameA, result.DisplayName);
+        Assert.That(result.Data.DisplayName, Is.EqualTo(TestData.PlayerNameA));
     }
 
     [Test]
-    public void PlayerDetails_DeleteUrlIsSet()
+    public async Task PlayerDetails_DeleteUrlIsSet()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual(1, result.PlayerId);
+        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
     }
 
     [Test]
-    public void PlayerDetails_WithoutUser_AvatarUrlIsEmpty()
+    public async Task PlayerDetails_WithoutUser_AvatarUrlIsEmpty()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.AreEqual("", result.AvatarUrl);
+        Assert.That(result.Data.AvatarUrl, Is.EqualTo(""));
     }
 
     [Test]
-    public void PlayerDetails_WithUser_AvatarUrlIsSet()
+    public async Task PlayerDetails_WithUser_AvatarUrlIsSet()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
         const string expected = "https://gravatar.com/avatar/0796c9df772de3f82c0c89377330471b?s=100&d=blank";
-        Assert.AreEqual(expected, result.AvatarUrl);
+        Assert.That(result.Data.AvatarUrl, Is.EqualTo(expected));
     }
 
     [Test]
-    public void PlayerDetails_WithoutUser_UserUrlIsEmpty()
+    public async Task PlayerDetails_WithoutUser_UserUrlIsNull()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.AreEqual(string.Empty, result.UserName);
+        Assert.That(result.Data.UserName, Is.Null);
     }
 
     [Test]
-    public void PlayerDetails_WithUser_UserUrlIsSet()
+    public async Task PlayerDetails_WithUser_UserUrlIsSet()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.AreEqual("user-name-a", result.UserName);
+        Assert.That(result.Data.UserName, Is.EqualTo("user-name-a"));
     }
 
     [Test]
-    public void PlayerDetails_WithoutUser_IsUserIsFalse()
+    public async Task PlayerDetails_WithoutUser_IsUserIsFalse()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
 
-        Assert.IsFalse(result.IsUser);
+        Assert.That(result.Data.IsUser, Is.False);
     }
 
     [Test]
-    public void PlayerDetails_WithUser_IsUserIsTrue()
+    public async Task PlayerDetails_WithUser_IsUserIsTrue()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsTrue(result.IsUser);
+        Assert.That(result.Data.IsUser, Is.True);
     }
 
     [Test]
-    public void PlayerDetails_WithNormalUser_CanDeleteIsFalse()
+    public async Task PlayerDetails_WithNormalUser_CanDeleteIsFalse()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsFalse(result.CanDelete);
+        Assert.That(result.Data.CanDelete, Is.False);
     }
 
     [Test]
-    public void PlayerDetails_WithManagerAndPlayerHasNotPlayedGames_CanDeleteIsTrue()
+    public async Task PlayerDetails_WithManagerAndPlayerHasNotPlayedGames_CanDeleteIsTrue()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameC, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameC, TestData.PlayerIdD));
 
-        Assert.IsTrue(result.CanDelete);
+        Assert.That(result.Data.CanDelete, Is.True);
     }
 
     [Test]
-    public void PlayerDetails_WithManagerAndPlayerHasPlayedGames_CanDeleteIsFalse()
+    public async Task PlayerDetails_WithManagerAndPlayerHasPlayedGames_CanDeleteIsFalse()
     {
-        var result = Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
 
-        Assert.IsFalse(result.CanDelete);
+        Assert.That(result.Data.CanDelete, Is.False);
     }
 
-    private static GetPlayer.Request CreateRequest(string userName, int playerId)
+    private static GetPlayer.Request CreateRequest(string userName, string playerId)
     {
         return new GetPlayer.Request(userName, playerId);
     }
 
-    private GetPlayer Sut => new GetPlayer(
+    private GetPlayer Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.Cashgame,

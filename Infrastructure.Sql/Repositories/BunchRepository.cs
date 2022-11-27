@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
-using Core.Exceptions;
 using Core.Repositories;
 using Core.Services;
 using Infrastructure.Sql.SqlDb;
@@ -14,55 +11,55 @@ public class BunchRepository : IBunchRepository
     private readonly SqlBunchDb _bunchDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public BunchRepository(SqlServerStorageProvider db, ICacheContainer cacheContainer)
+    public BunchRepository(PostgresDb db, ICacheContainer cacheContainer)
     {
         _bunchDb = new SqlBunchDb(db);
         _cacheContainer = cacheContainer;
     }
 
-    public Bunch Get(int id)
+    public async Task<Bunch> Get(string id)
     {
-        return _cacheContainer.GetAndStore(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public Bunch GetBySlug(string slug)
+    public async Task<Bunch> GetBySlug(string slug)
     {
-        var ids = Search(slug);
+        var ids = await Search(slug);
         if (ids.Any())
-            return Get(ids.First());
-        throw new BunchNotFoundException(slug);
+            return await Get(ids.First());
+        return null;
     }
 
-    private IList<Bunch> List(IList<int> ids)
+    private async Task<IList<Bunch>> List(IList<string> ids)
     {
-        return _cacheContainer.GetAndStore(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public IList<Bunch> List()
+    public async Task<IList<Bunch>> List()
     {
-        var ids = _bunchDb.Search();
-        return List(ids);
+        var ids = await _bunchDb.Search();
+        return await List(ids);
     }
 
-    private IList<int> Search(string slug)
+    private async Task<IList<string>> Search(string slug)
     {
-        return _bunchDb.Search(slug);
+        return await _bunchDb.Search(slug);
     }
 
-    public IList<Bunch> List(int userId)
+    public async Task<IList<Bunch>> List(string userId)
     {
-        var ids = _bunchDb.Search(userId);
-        return List(ids);
+        var ids = await _bunchDb.SearchByUser(userId);
+        return await List(ids);
     }
 
-    public int Add(Bunch bunch)
+    public async Task<string> Add(Bunch bunch)
     {
-        return _bunchDb.Add(bunch);
+        return await _bunchDb.Add(bunch);
     }
 
-    public void Update(Bunch bunch)
+    public async Task Update(Bunch bunch)
     {
-        _bunchDb.Update(bunch);
+        await _bunchDb.Update(bunch);
         _cacheContainer.Remove<Bunch>(bunch.Id);
     }
 }

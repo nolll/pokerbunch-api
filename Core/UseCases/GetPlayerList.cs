@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayerList
+public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -19,16 +19,19 @@ public class GetPlayerList
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
-        var players = _playerRepository.List(bunch.Id);
-        var isManager = RoleHandler.IsInRole(user, player, Role.Manager);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
-        return new Result(bunch, players, isManager);
+        if (!AccessControl.CanListPlayers(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
+        var players = await _playerRepository.List(bunch.Id);
+        var canAddPlayer = AccessControl.CanAddPlayer(currentUser, currentPlayer);
+
+        return Success(new Result(bunch, players, canAddPlayer));
     }
 
     public class Request
@@ -49,10 +52,10 @@ public class GetPlayerList
         public bool CanAddPlayer { get; }
         public string Slug { get; }
 
-        public Result(Bunch bunch, IEnumerable<Player> players, bool isManager)
+        public Result(Bunch bunch, IEnumerable<Player> players, bool canAddPlayer)
         {
             Players = players.Select(o => new ResultItem(o)).OrderBy(o => o.Name).ToList();
-            CanAddPlayer = isManager;
+            CanAddPlayer = canAddPlayer;
             Slug = bunch.Slug;
         }
     }
@@ -60,7 +63,7 @@ public class GetPlayerList
     public class ResultItem
     {
         public string Name { get; }
-        public int Id { get; }
+        public string Id { get; }
         public string Color { get; }
         public string UserId { get; }
         public string UserName { get; }
@@ -70,8 +73,8 @@ public class GetPlayerList
             Name = player.DisplayName;
             Id = player.Id;
             Color = player.Color;
-            UserId = player.IsUser ? player.UserId.ToString() : null;
-            UserName = player.IsUser ? player.UserName.ToString() : null;
+            UserId = player.IsUser ? player.UserId : null;
+            UserName = player.IsUser ? player.UserName : null;
         }
     }
 }

@@ -1,11 +1,20 @@
-using JetBrains.Annotations;
+using System.Text.Json.Serialization;
 
 namespace Api.Models.CashgameModels;
 
 public class AddCashgameActionPostModel
 {
-    public string Type { get; [UsedImplicitly] set; }
-    public int PlayerId { get; [UsedImplicitly] set; }
-    public int Added { get; [UsedImplicitly] set; }
-    public int Stack { get; [UsedImplicitly] set; }
+    public string Type { get; }
+    public string PlayerId { get; }
+    public int Added { get; }
+    public int Stack { get; }
+
+    [JsonConstructor]
+    public AddCashgameActionPostModel(string type, string playerId, int added, int stack)
+    {
+        Type = type;
+        PlayerId = playerId;
+        Added = added;
+        Stack = stack;
+    }
 }

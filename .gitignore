@@ -20,3 +20,6 @@ Web/Assets
 **/Local.config
 **/appsettings.Development.json
 *.user
+.env.dev
+data/postgresql.sql
+data/sqlserver.sql

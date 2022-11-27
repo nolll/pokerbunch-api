@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Core.UseCases;
-using NUnit.Framework;
+﻿using Core.UseCases;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -8,14 +6,14 @@ namespace Tests.Core.UseCases;
 public class UserListTests : TestBase
 {
     [Test]
-    public void UserList_ReturnsListOfUserItems()
+    public async Task UserList_ReturnsListOfUserItems()
     {
-        var result = Sut.Execute(new UserList.Request(TestData.AdminUser.UserName));
+        var result = await Sut.Execute(new UserList.Request(TestData.AdminUser.UserName));
 
-        Assert.AreEqual(4, result.Users.Count);
-        Assert.AreEqual(TestData.UserDisplayNameA, result.Users.First().DisplayName);
-        Assert.AreEqual("user-name-a", result.Users.First().UserName);
+        Assert.That(result.Data.Users.Count, Is.EqualTo(4));
+        Assert.That(result.Data.Users.First().DisplayName, Is.EqualTo(TestData.UserDisplayNameA));
+        Assert.That(result.Data.Users.First().UserName, Is.EqualTo("user-name-a"));
     }
 
-    private UserList Sut => new UserList(Deps.User);
+    private UserList Sut => new(Deps.User);
 }

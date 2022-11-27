@@ -1,21 +1,16 @@
-using System.Collections.Generic;
 using Core.Entities;
 
 namespace Core.Repositories;
 
 public interface ICashgameRepository
 {
-    Cashgame Get(int cashgameId);
-
-    IList<Cashgame> GetFinished(int bunchId, int? year = null);
-    IList<Cashgame> GetByEvent(int eventId);
-    IList<Cashgame> GetByPlayer(int playerId);
-    Cashgame GetRunning(int bunchId);
-    Cashgame GetByCheckpoint(int checkpointId);
-        
-    void DeleteGame(int id);
-    int Add(Bunch bunch, Cashgame cashgame);
-    void Update(Cashgame cashgame);
-
-    IList<int> GetYears(int bunchId);
+    Task<Cashgame> Get(string cashgameId);
+    Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null);
+    Task<IList<Cashgame>> GetByEvent(string eventId);
+    Task<IList<Cashgame>> GetByPlayer(string playerId);
+    Task<Cashgame> GetRunning(string bunchId);
+    Task<Cashgame> GetByCheckpoint(string checkpointId);
+    Task DeleteGame(string id);
+    Task<string> Add(Bunch bunch, Cashgame cashgame);
+    Task Update(Cashgame cashgame);
 }

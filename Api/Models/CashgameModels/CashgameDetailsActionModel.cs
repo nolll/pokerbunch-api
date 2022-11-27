@@ -1,22 +1,24 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.Entities.Checkpoints;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "actions")]
 public class CashgameDetailsActionModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "type")]
+    
+    [JsonPropertyName("type")]
     public string Type { get; }
-    [DataMember(Name = "time")]
+    
+    [JsonPropertyName("time")]
     public DateTime Time { get; }
-    [DataMember(Name = "stack")]
+    
+    [JsonPropertyName("stack")]
     public int Stack { get; }
-    [DataMember(Name = "added")]
+    
+    [JsonPropertyName("added")]
     public int? Added { get; }
 
     public CashgameDetailsActionModel(CashgameDetails.RunningCashgameActionItem item)
@@ -30,5 +32,15 @@ public class CashgameDetailsActionModel
         {
             Added = item.AddedMoney;
         }
+    }
+
+    [JsonConstructor]
+    public CashgameDetailsActionModel(string id, string type, DateTime time, int stack, int? added)
+    {
+        Id = id;
+        Type = type;
+        Time = time;
+        Stack = stack;
+        Added = added;
     }
 }

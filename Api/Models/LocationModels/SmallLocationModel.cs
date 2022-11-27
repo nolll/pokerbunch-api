@@ -1,14 +1,14 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.LocationModels;
 
-[DataContract(Namespace = "", Name = "location")]
 public class SmallLocationModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "name")]
+    
+    [JsonPropertyName("name")]
     public string Name { get; }
 
     public SmallLocationModel(CashgameDetails.Result details)
@@ -46,6 +46,7 @@ public class SmallLocationModel
     {
     }
 
+    [JsonConstructor]
     public SmallLocationModel(string id, string name)
     {
         Id = id;

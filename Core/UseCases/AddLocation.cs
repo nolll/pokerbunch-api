@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class AddLocation
+public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,24 +21,26 @@ public class AddLocation
         _locationRepository = locationRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
 
         if (!validator.IsValid)
-            throw new ValidationException(validator);
+            return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Player(currentUser, currentPlayer);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
-        var location = new Location(0, request.Name, bunch.Id);
-        var id = _locationRepository.Add(location);
+        if (!AccessControl.CanAddLocation(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
 
-        return new Result(bunch.Slug, id, location.Name);
+        var location = new Location(null, request.Name, bunch.Id);
+        var id = await _locationRepository.Add(location);
+
+        return Success(new Result(bunch.Slug, id, location.Name));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
@@ -57,10 +59,10 @@ public class AddLocation
     public class Result
     {
         public string Slug { get; }
-        public int Id { get; }
+        public string Id { get; }
         public string Name { get; }
 
-        public Result(string slug, int id, string name)
+        public Result(string slug, string id, string name)
         {
             Slug = slug;
             Id = id;

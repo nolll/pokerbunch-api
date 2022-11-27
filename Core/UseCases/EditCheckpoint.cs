@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class EditCheckpoint
+public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -22,20 +22,21 @@ public class EditCheckpoint
         _cashgameRepository = cashgameRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.GetByCheckpoint(request.CheckpointId);
+        var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        //var existingCheckpoint = _cashgameService.GetCheckpoint(request.CheckpointId);
-        var bunch = _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
-            
+        var bunch = await _bunchRepository.Get(cashgame.BunchId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+
+        if (!AccessControl.CanEditCheckpoint(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         var postedCheckpoint = Checkpoint.Create(
             existingCheckpoint.CashgameId,
             existingCheckpoint.PlayerId,
@@ -46,22 +47,22 @@ public class EditCheckpoint
             existingCheckpoint.Id);
 
         cashgame.UpdateCheckpoint(postedCheckpoint);
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
-        return new Result(cashgame.Id, existingCheckpoint.PlayerId);
+        return Success(new Result(cashgame.Id, existingCheckpoint.PlayerId));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
-        public int CheckpointId { get; }
+        public string CheckpointId { get; }
         public DateTimeOffset Timestamp { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int Stack { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Amount can't be negative")]
         public int Amount { get; }
 
-        public Request(string userName, int checkpointId, DateTimeOffset timestamp, int stack, int? amount)
+        public Request(string userName, string checkpointId, DateTimeOffset timestamp, int stack, int? amount)
         {
             UserName = userName;
             CheckpointId = checkpointId;
@@ -73,10 +74,10 @@ public class EditCheckpoint
 
     public class Result
     {
-        public int CashgameId { get; }
-        public int PlayerId { get; }
+        public string CashgameId { get; }
+        public string PlayerId { get; }
 
-        public Result(int cashgameId, int playerId)
+        public Result(string cashgameId, string playerId)
         {
             CashgameId = cashgameId;
             PlayerId = playerId;

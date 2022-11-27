@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class EditBunch
+public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -20,22 +20,25 @@ public class EditBunch
         _playerRepository = playerRepository;
     }
 
-    public BunchResult Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Manager(user, player);
-        var postedHomegame = CreateBunch(bunch, request);
-        _bunchRepository.Update(postedHomegame);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
-        return new BunchResult(bunch, player);
+        if (!AccessControl.CanEditBunch(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
+        var postedBunch = CreateBunch(bunch, request);
+        await _bunchRepository.Update(postedBunch);
+
+        return Success(new Result(postedBunch, currentPlayer));
     }
-
+    
     private static Bunch CreateBunch(Bunch bunch, Request request)
     {
         return new Bunch(
@@ -76,15 +79,10 @@ public class EditBunch
         }
     }
 
-    public class Result
+    public class Result : BunchResult
     {
-        public int BunchId { get; private set; }
-        public string Slug { get; private set; }
-
-        public Result(int bunchId, string slug)
+        public Result(Bunch b, Player p) : base(b, p)
         {
-            BunchId = bunchId;
-            Slug = slug;
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using Core.Exceptions;
+﻿using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCashgame
+public class DeleteCashgame : UseCase<DeleteCashgame.Request, DeleteCashgame.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IBunchRepository _bunchRepository;
@@ -19,28 +19,33 @@ public class DeleteCashgame
         _playerRepository = playerRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var cashgame = _cashgameRepository.Get(request.Id);
-        var bunch = _bunchRepository.Get(cashgame.BunchId);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Manager(user, player);
+        var cashgame = await _cashgameRepository.Get(request.Id);
+        var bunch = await _bunchRepository.Get(cashgame.BunchId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+
+        if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
+        if (cashgame.EventId != null)
+            return Error(new CashgameIsPartOfEventError());
 
         if (cashgame.PlayerCount > 0)
-            throw new CashgameHasResultsException();
+            return Error(new CashgameHasResultsError());
 
-        _cashgameRepository.DeleteGame(cashgame.Id);
+        await _cashgameRepository.DeleteGame(cashgame.Id);
 
-        return new Result(bunch.Slug);
+        return Success(new Result(bunch.Slug));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
-        public int Id { get; }
+        public string Id { get; }
 
-        public Request(string userName, int id)
+        public Request(string userName, string id)
         {
             UserName = userName;
             Id = id;

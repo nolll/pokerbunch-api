@@ -1,5 +1,4 @@
 ﻿using Core.Entities;
-using NUnit.Framework;
 
 namespace Tests.Core;
 
@@ -12,16 +11,16 @@ class DateTests
     [Test]
     public void Construct_PropertiesAreSet()
     {
-        Assert.AreEqual(Year, Sut.Year);
-        Assert.AreEqual(Month, Sut.Month);
-        Assert.AreEqual(Day, Sut.Day);
+        Assert.That(Sut.Year, Is.EqualTo(Year));
+        Assert.That(Sut.Month, Is.EqualTo(Month));
+        Assert.That(Sut.Day, Is.EqualTo(Day));
     }
 
     [Test]
     public void IsoString_IsCorrectFormat()
     {
-        Assert.AreEqual("2000-02-03", Sut.IsoString);
+        Assert.That(Sut.IsoString, Is.EqualTo("2000-02-03"));
     }
 
-    private Date Sut => new Date(Year, Month, Day);
+    private static Date Sut => new(Year, Month, Day);
 }

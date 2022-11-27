@@ -1,11 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Api.Models.HomeModels;
 
-[DataContract(Namespace = "", Name = "application")]
 public class VersionModel
 {
-    [DataMember(Name = "version")]
+    [JsonPropertyName("version")]
     public string Version { get; }
         
     public VersionModel(string version)

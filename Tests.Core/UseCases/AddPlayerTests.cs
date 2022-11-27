@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Core.Exceptions;
+﻿using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -13,40 +11,41 @@ class AddPlayerTests : TestBase
     private const string ExistingName = TestData.PlayerNameA;
 
     [Test]
-    public void AddPlayer_ReturnUrlIsSet()
+    public async Task AddPlayer_ReturnUrlIsSet()
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(1, result.Id);
+        Assert.That(result.Data.Id, Is.EqualTo("1"));
     }
 
     [Test]
-    public void AddPlayer_EmptyName_ThrowsException()
+    public async Task AddPlayer_EmptyName_ReturnsError()
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, EmptyName);
-
-        var ex = Assert.Throws<ValidationException>(() => Sut.Execute(request));
-        Assert.AreEqual(1, ex.Messages.Count());
+        var result = await Sut.Execute(request);
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void AddPlayer_ValidName_AddsPlayer()
+    public async Task AddPlayer_ValidName_AddsPlayer()
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
-        Assert.IsNotNull(Deps.Player.Added);
+        Assert.That(Deps.Player.Added, Is.Not.Null);
     }
 
     [Test]
-    public void AddPlayer_ValidNameButNameExists_ThrowsException()
+    public async Task AddPlayer_ValidNameButNameExists_ReturnsError()
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, ExistingName);
-        Assert.Throws<PlayerExistsException>(() => Sut.Execute(request));
+        var result = await Sut.Execute(request);
+
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
-    private AddPlayer Sut => new AddPlayer(
+    private AddPlayer Sut => new(
         Deps.Bunch,
         Deps.Player,
         Deps.User);

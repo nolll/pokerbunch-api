@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 
@@ -16,30 +14,31 @@ public class FakeUserRepository : IUserRepository
         _list = CreateList();
     }
 
-    public User Get(int id)
+    public Task<User> GetById(string id)
     {
-        return _list.FirstOrDefault(o => o.Id == id);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
 
-    public IList<User> List()
+    public Task<IList<User>> List()
     {
-        return _list;
+        return Task.FromResult(_list);
     }
 
-    public User Get(string nameOrEmail)
+    public Task<User> GetByUserNameOrEmail(string userNameOrEmail)
     {
-        return _list.FirstOrDefault(o => o.UserName == nameOrEmail || o.Email == nameOrEmail);
+        return Task.FromResult(_list.FirstOrDefault(o => o.UserName == userNameOrEmail || o.Email == userNameOrEmail));
     }
 
-    public int Add(User user)
+    public Task<string> Add(User user)
     {
         Added = user;
-        return 1;
+        return Task.FromResult("1");
     }
 
-    public void Update(User user)
+    public Task Update(User user)
     {
         Saved = user;
+        return Task.CompletedTask;
     }
 
     private IList<User> CreateList()

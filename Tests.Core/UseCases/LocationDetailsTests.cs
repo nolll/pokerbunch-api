@@ -1,5 +1,4 @@
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,17 +6,17 @@ namespace Tests.Core.UseCases;
 public class LocationDetailsTests : TestBase
 {
     [Test]
-    public void LocationDetails_AllPropertiesAreSet()
+    public async Task LocationDetails_AllPropertiesAreSet()
     {
         var request = new GetLocation.Request(TestData.UserA.UserName, TestData.LocationIdA);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.BunchA.Id, result.Id);
-        Assert.AreEqual(TestData.LocationNameA, result.Name);
-        Assert.AreEqual(TestData.BunchA.Slug, result.Slug);
+        Assert.That(result.Data.Id, Is.EqualTo(TestData.BunchA.Id));
+        Assert.That(result.Data.Name, Is.EqualTo(TestData.LocationNameA));
+        Assert.That(result.Data.Slug, Is.EqualTo(TestData.BunchA.Slug));
     }
 
-    private GetLocation Sut => new GetLocation(
+    private GetLocation Sut => new(
         Deps.Location,
         Deps.User,
         Deps.Player,

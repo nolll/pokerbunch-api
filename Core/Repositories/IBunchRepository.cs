@@ -1,14 +1,13 @@
-using System.Collections.Generic;
 using Core.Entities;
 
 namespace Core.Repositories;
 
 public interface IBunchRepository
 {
-    Bunch Get(int id);
-    Bunch GetBySlug(string slug);
-    IList<Bunch> List();
-    IList<Bunch> List(int userId);
-    int Add(Bunch bunch);
-    void Update(Bunch bunch);
+    Task<Bunch> Get(string id);
+    Task<Bunch> GetBySlug(string slug);
+    Task<IList<Bunch>> List();
+    Task<IList<Bunch>> List(string userId);
+    Task<string> Add(Bunch bunch);
+    Task Update(Bunch bunch);
 }

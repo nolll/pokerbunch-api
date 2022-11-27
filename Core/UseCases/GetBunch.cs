@@ -1,11 +1,12 @@
 using System;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunch
+public class GetBunch : UseCase<GetBunch.Request, GetBunch.Result>
 {
     private readonly IBunchRepository _bunchRepository;
     private readonly IUserRepository _userRepository;
@@ -18,14 +19,15 @@ public class GetBunch
         _playerRepository = playerRepository;
     }
 
-    public BunchResult Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = _bunchRepository.GetBySlug(request.Slug);
-        var user = _userRepository.Get(request.UserName);
-        var player = _playerRepository.Get(bunch.Id, user.Id);
-        RequireRole.Player(user, player);
-            
-        return new BunchResult(bunch, player);
+        var bunch = await _bunchRepository.GetBySlug(request.Slug);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        if (!AccessControl.CanGetBunch(user, player))
+            return Error(new AccessDeniedError());
+
+        return Success(new Result(bunch, player));
     }
 
     public class Request
@@ -37,6 +39,13 @@ public class GetBunch
         {
             UserName = userName;
             Slug = slug;
+        }
+    }
+
+    public class Result : BunchResult
+    {
+        public Result(Bunch b, Player p) : base(b, p)
+        {
         }
     }
 }
@@ -69,10 +78,10 @@ public class BunchResult
 
 public class BunchPlayerResult
 {
-    public int? Id { get; }
+    public string Id { get; }
     public string Name { get; }
 
-    public BunchPlayerResult(int? id, string name)
+    public BunchPlayerResult(string id, string name)
     {
         Id = id;
         Name = name;

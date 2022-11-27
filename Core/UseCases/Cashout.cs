@@ -2,13 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class Cashout
+public class Cashout : UseCase<Cashout.Request, Cashout.Result>
 {
     private readonly ICashgameRepository _cashgameRepository;
     private readonly IPlayerRepository _playerRepository;
@@ -21,16 +21,18 @@ public class Cashout
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
-        var cashgame = _cashgameRepository.Get(request.CashgameId);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        RequireRole.Me(currentUser, currentPlayer, request.PlayerId);
+        var cashgame = await _cashgameRepository.Get(request.CashgameId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
         var result = cashgame.GetResult(request.PlayerId);
 
         var existingCashoutCheckpoint = result.CashoutCheckpoint;
@@ -41,7 +43,7 @@ public class Cashout
             CheckpointType.Cashout,
             request.Stack,
             0,
-            existingCashoutCheckpoint?.Id ?? 0);
+            existingCashoutCheckpoint?.Id);
 
         if (existingCashoutCheckpoint != null)
             cashgame.UpdateCheckpoint(postedCheckpoint);
@@ -51,21 +53,21 @@ public class Cashout
         if (cashgame.IsReadyToEnd)
             cashgame.ChangeStatus(GameStatus.Finished);
 
-        _cashgameRepository.Update(cashgame);
+        await _cashgameRepository.Update(cashgame);
 
-        return new Result(cashgame.Id);
+        return Success(new Result(cashgame.Id));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
-        public int CashgameId { get; }
-        public int PlayerId { get; }
+        public string CashgameId { get; }
+        public string PlayerId { get; }
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int Stack { get; }
         public DateTime CurrentTime { get; }
 
-        public Request(string userName, int cashgameId, int playerId, int stack, DateTime currentTime)
+        public Request(string userName, string cashgameId, string playerId, int stack, DateTime currentTime)
         {
             UserName = userName;
             CashgameId = cashgameId;
@@ -77,9 +79,9 @@ public class Cashout
 
     public class Result
     {
-        public int CashgameId { get; private set; }
+        public string CashgameId { get; }
 
-        public Result(int cashgameId)
+        public Result(string cashgameId)
         {
             CashgameId = cashgameId;
         }

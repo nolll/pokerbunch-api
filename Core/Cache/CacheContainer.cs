@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Services;
@@ -15,7 +14,7 @@ public class CacheContainer : ICacheContainer
         _cacheProvider = cacheProvider;
     }
 
-    public void Remove<T>(int id)
+    public void Remove<T>(string id)
     {
         Remove(CacheKeyProvider.GetKey<T>(id));
     }
@@ -41,7 +40,23 @@ public class CacheContainer : ICacheContainer
         return cachedObject;
     }
 
-    public T GetAndStore<T>(Func<int, T> sourceExpression, int id, TimeSpan cacheTime) where T : class, IEntity
+    public async Task<T> GetAndStoreAsync<T>(Func<Task<T>> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
+    {
+        var foundInCache = TryGet(cacheKey, out T cachedObject);
+
+        if (foundInCache)
+        {
+            return cachedObject;
+        }
+        cachedObject = await sourceExpression();
+        if (cachedObject != null)
+        {
+            Insert(cacheKey, cachedObject, cacheTime);
+        }
+        return cachedObject;
+    }
+
+    public T GetAndStore<T>(Func<string, T> sourceExpression, string id, TimeSpan cacheTime) where T : class, IEntity
     {
         var cacheKey = CacheKeyProvider.GetKey<T>(id);
         var foundInCache = TryGet(cacheKey, out T cachedObject);
@@ -58,10 +73,27 @@ public class CacheContainer : ICacheContainer
         return cachedObject;
     }
 
-    public IList<T> GetAndStore<T>(Func<IList<int>, IList<T>> sourceExpression, IList<int> ids, TimeSpan cacheTime) where T : class, IEntity
+    public async Task<T> GetAndStoreAsync<T>(Func<string, Task<T>> sourceExpression, string id, TimeSpan cacheTime) where T : class, IEntity
+    {
+        var cacheKey = CacheKeyProvider.GetKey<T>(id);
+        var foundInCache = TryGet(cacheKey, out T cachedObject);
+
+        if (foundInCache)
+        {
+            return cachedObject;
+        }
+        cachedObject = await sourceExpression(id);
+        if (cachedObject != null)
+        {
+            Insert(cacheKey, cachedObject, cacheTime);
+        }
+        return cachedObject;
+    }
+
+    public IList<T> GetAndStore<T>(Func<IList<string>, IList<T>> sourceExpression, IList<string> ids, TimeSpan cacheTime) where T : class, IEntity
     {
         var list = new List<T>();
-        var notInCache = new List<int>();
+        var notInCache = new List<string>();
         foreach (var id in ids)
         {
             var cacheKey = CacheKeyProvider.GetKey<T>(id);
@@ -91,7 +123,40 @@ public class CacheContainer : ICacheContainer
         return list;
     }
 
-    private static IList<T> OrderItemsByIdList<T>(IEnumerable<int> ids, IEnumerable<T> list) where T : class, IEntity
+    public async Task<IList<T>> GetAndStoreAsync<T>(Func<IList<string>, Task<IList<T>>> sourceExpression, IList<string> ids, TimeSpan cacheTime) where T : class, IEntity
+    {
+        var list = new List<T>();
+        var notInCache = new List<string>();
+        foreach (var id in ids)
+        {
+            var cacheKey = CacheKeyProvider.GetKey<T>(id);
+            var foundInCache = TryGet(cacheKey, out T cachedObject);
+            if (foundInCache)
+                list.Add(cachedObject);
+            else
+            {
+                notInCache.Add(id);
+            }
+        }
+        if (notInCache.Any())
+        {
+            var sourceItems = await sourceExpression(notInCache);
+            foreach (var sourceItem in sourceItems)
+            {
+                if (sourceItem != null)
+                {
+                    var cacheKey = CacheKeyProvider.GetKey<T>(sourceItem.Id);
+                    Insert(cacheKey, sourceItem, cacheTime);
+                }
+            }
+
+            list = list.Concat(sourceItems.Where(o => o != null)).ToList();
+            return OrderItemsByIdList(ids, list);
+        }
+        return list;
+    }
+
+    private static IList<T> OrderItemsByIdList<T>(IEnumerable<string> ids, IEnumerable<T> list) where T : class, IEntity
     {
         var result = ids.Select(id => list.FirstOrDefault(i => i.Id == id)).ToList();
         return result.Where(r => r != null).ToList();

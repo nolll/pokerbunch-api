@@ -1,9 +1,18 @@
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Api.Models.CommonModels;
 
-public abstract class MessageModel
+public class MessageModel
 {
-    [DataMember(Name = "message")]
-    public abstract string Message { get; }
+    [JsonPropertyName("message")]
+    public virtual string Message { get; }
+
+    public MessageModel()
+    {
+    }
+
+    public MessageModel(string message)
+    {
+        Message = message;
+    }
 }

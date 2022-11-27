@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class EditUser
+public class EditUser : UseCase<EditUser.Request, EditUser.Result>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,18 +14,18 @@ public class EditUser
         _userRepository = userRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var userToSave = GetUser(user, request);
 
-        _userRepository.Update(userToSave);
+        await _userRepository.Update(userToSave);
 
-        return new Result(userToSave.UserName);
+        return Success(new Result(userToSave.UserName));
     }
 
     private static User GetUser(User user, Request request)

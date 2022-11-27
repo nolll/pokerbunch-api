@@ -1,36 +1,29 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.PlayerModels;
 
-[DataContract(Namespace = "", Name = "player")]
 public class PlayerModel
 {
-    [DataMember(Name = "id")]
-    public int Id { get; }
+    [JsonPropertyName("id")]
+    public string Id { get; }
 
-    [DataMember(Name = "name")]
+    [JsonPropertyName("name")]
     public string Name { get; }
 
-    //[DataMember(Name = "canDelete")]
-    //public bool CanDelete { get; }
-
-    //[DataMember(Name = "isUser")]
-    //public bool IsUser { get; }
-
-    [DataMember(Name = "userId")]
+    [JsonPropertyName("userId")]
     public string UserId { get; }
 
-    [DataMember(Name = "userName")]
+    [JsonPropertyName("userName")]
     public string UserName { get; }
 
-    [DataMember(Name = "avatarUrl")]
+    [JsonPropertyName("avatarUrl")]
     public string AvatarUrl { get; }
 
-    [DataMember(Name = "bunchId")]
+    [JsonPropertyName("bunchId")]
     public string Slug { get; }
 
-    [DataMember(Name = "color")]
+    [JsonPropertyName("color")]
     public string Color { get; }
 
     public PlayerModel(GetPlayer.Result r)
@@ -38,9 +31,21 @@ public class PlayerModel
         Id = r.PlayerId;
         Name = r.DisplayName;
         Slug = r.Slug;
-        UserId = r.UserId.ToString();
+        UserId = r.UserId;
         UserName = r.UserName;
         AvatarUrl = r.AvatarUrl;
         Color = r.Color;
+    }
+
+    [JsonConstructor]
+    public PlayerModel(string id, string name, string userId, string userName, string avatarUrl, string slug, string color)
+    {
+        Id = id;
+        Name = name;
+        UserId = userId;
+        UserName = userName;
+        AvatarUrl = avatarUrl;
+        Slug = slug;
+        Color = color;
     }
 }

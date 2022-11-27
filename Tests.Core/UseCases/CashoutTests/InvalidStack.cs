@@ -1,13 +1,15 @@
-﻿using Core.Exceptions;
-using NUnit.Framework;
+﻿using Core.Errors;
 
 namespace Tests.Core.UseCases.CashoutTests;
 
 public class InvalidStack : Arrange
 {
-    protected override bool ExecuteAutomatically => false;
     protected override int CashoutStack => -1;
 
     [Test]
-    public void ThrowsValidationException() => Assert.Throws<ValidationException>(Execute);
+    public void ReturnsError()
+    {
+        Assert.That(Result.Success, Is.False);
+        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.Validation));
+    }
 }

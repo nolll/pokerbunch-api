@@ -1,6 +1,5 @@
-using System;
 using Api.Settings;
-using Core.Exceptions;
+using Core.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -11,45 +10,52 @@ public class TestController : BaseController
     {
     }
 
+    [Route("test/exception")]
+    [HttpGet]
+    public ObjectResult Exception()
+    {
+        throw new Exception("exception");
+    }
+
     [Route("test/unexpected")]
     [HttpGet]
-    public void Unexpected()
+    public ObjectResult Unexpected()
     {
-        throw new Exception("unexpected");
+        return Error(ErrorType.Unknown, "unknown");
     }
 
     [Route("test/notfound")]
     [HttpGet]
-    public void NotFoundException()
+    public ObjectResult NotFoundError()
     {
-        throw new NotFoundException("not found");
+        return Error(ErrorType.NotFound, "not found");
     }
 
     [Route("test/accessdenied")]
     [HttpGet]
-    public void AccessDeniedException()
+    public ObjectResult AccessDeniedError()
     {
-        throw new AccessDeniedException("access denied");
+        return Error(ErrorType.AccessDenied, "access denied");
     }
 
     [Route("test/auth")]
     [HttpGet]
-    public void AuthException()
+    public ObjectResult AuthError()
     {
-        throw new AuthException("auth error");
+        return Error(ErrorType.Auth, "auth error");
     }
 
     [Route("test/validation")]
     [HttpGet]
-    public void ValidationException()
+    public ObjectResult ValidationError()
     {
-        throw new ValidationException("validation");
+        return Error(ErrorType.NotFound, "validation error");
     }
 
     [Route("test/conflict")]
     [HttpGet]
-    public void ConflictException()
+    public ObjectResult ConflictException()
     {
-        throw new EmailExistsException();
+        return Error(ErrorType.Conflict, "conflict");
     }
 }

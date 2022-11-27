@@ -8,23 +8,21 @@ namespace Api.Bootstrapping;
 
 public class Startup
 {
-    // Memcache
-    // Injection
-    // Https
-
     private readonly AppSettings _settings;
+    private readonly IConfiguration _configuration;
 
     public Startup(IConfiguration configuration)
     {
         _settings = configuration.Get<AppSettings>();
+        _configuration = configuration;
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
-        new ServiceConfig(_settings, services).Configure();
+        new ServiceConfig(_settings, services, _configuration).Configure();
     }
 
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         new AppConfig(_settings, app, env).Configure();
     }

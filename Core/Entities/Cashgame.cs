@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities.Checkpoints;
 using Core.Services;
@@ -12,10 +11,10 @@ public class Cashgame : IEntity
     public IList<Checkpoint> AddedCheckpoints { get; }
     public IList<Checkpoint> UpdatedCheckpoints { get; }
     public IList<Checkpoint> DeletedCheckpoints { get; }
-    public int Id { get; }
-    public int BunchId { get; }
-    public int LocationId { get; }
-    public int EventId { get; }
+    public string Id { get; }
+    public string BunchId { get; }
+    public string LocationId { get; }
+    public string EventId { get; }
     public GameStatus Status { get; private set; }
     public DateTime? StartTime { get; private set; }
     public DateTime? EndTime { get; private set; }
@@ -25,9 +24,9 @@ public class Cashgame : IEntity
     public int AverageBuyin { get; private set; }
     public string DateString { get; private set; }
         
-    public Cashgame(int bunchId, int locationId, int eventId, GameStatus status, int? id = null, IList<Checkpoint> checkpoints = null)
+    public Cashgame(string bunchId, string locationId, string eventId, GameStatus status, string id = null, IList<Checkpoint> checkpoints = null)
     {
-        Id = id ?? 0;
+        Id = id;
         BunchId = bunchId;
         LocationId = locationId;
         EventId = eventId;
@@ -63,14 +62,14 @@ public class Cashgame : IEntity
         DateString = StartTime.HasValue ? Globalization.FormatIsoDate(StartTime.Value) : string.Empty;
     }
 
-    public Checkpoint GetCheckpoint(int checkpointId)
+    public Checkpoint GetCheckpoint(string checkpointId)
     {
         return Checkpoints.FirstOrDefault(o => o.Id == checkpointId);
     }
 
     private static IList<CashgameResult> CreateResults(IEnumerable<Checkpoint> checkpoints)
     {
-        var map = new Dictionary<int, IList<Checkpoint>>();
+        var map = new Dictionary<string, IList<Checkpoint>>();
         foreach (var checkpoint in checkpoints)
         {
             IList<Checkpoint> list;
@@ -163,12 +162,12 @@ public class Cashgame : IEntity
         }
     }
 
-    public CashgameResult GetResult(int playerId)
+    public CashgameResult GetResult(string playerId)
     {
         return Results.FirstOrDefault(result => result.PlayerId == playerId);
     }
 
-    public bool IsInGame(int playerId)
+    public bool IsInGame(string playerId)
     {
         return GetResult(playerId) != null;
     }

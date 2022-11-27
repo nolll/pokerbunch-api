@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Core.Entities;
-using NUnit.Framework;
+﻿using Core.Entities;
 
 namespace Tests.Core.UseCases.CurrentCashgamesTests;
 
@@ -12,10 +10,10 @@ public class WithGames : Arrange
     [Test]
     public void ReturnsListOfGames()
     {
-        var games = Result.Games;
-        Assert.AreEqual(1, games.Count);
+        var games = Result.Data.Games;
+        Assert.That(games.Count, Is.EqualTo(1));
         var game = games.First();
-        Assert.AreEqual(Slug, game.Slug);
-        Assert.AreEqual(CashgameId, game.Id);
+        Assert.That(game.Slug, Is.EqualTo(Slug));
+        Assert.That(game.Id, Is.EqualTo(CashgameId));
     }
 }

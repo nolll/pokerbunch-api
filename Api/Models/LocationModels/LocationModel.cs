@@ -1,16 +1,17 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.LocationModels;
 
-[DataContract(Namespace = "", Name = "location")]
 public class LocationModel
 {
-    [DataMember(Name = "id")]
-    public int Id { get; }
-    [DataMember(Name = "name")]
+    [JsonPropertyName("id")]
+    public string Id { get; }
+    
+    [JsonPropertyName("name")]
     public string Name { get; }
-    [DataMember(Name = "bunch")]
+    
+    [JsonPropertyName("bunch")]
     public string Bunch { get; }
 
     public LocationModel(GetLocationList.Location location)
@@ -28,7 +29,8 @@ public class LocationModel
     {
     }
 
-    private LocationModel(int id, string name, string bunch)
+    [JsonConstructor]
+    public LocationModel(string id, string name, string bunch)
     {
         Id = id;
         Name = name;

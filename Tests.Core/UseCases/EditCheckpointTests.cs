@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Core.Entities.Checkpoints;
-using Core.Exceptions;
+﻿using Core.Entities.Checkpoints;
+using Core.Errors;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -13,47 +11,49 @@ public class EditCheckpointTests : TestBase
     private const int ChangedAmount = 2;
 
     [Test]
-    public void EditCheckpoint_InvalidStack_ThrowsException()
+    public async Task EditCheckpoint_InvalidStack_ReturnsError()
     {
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
+        var result = await Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditCheckpoint_InvalidAmount_ThrowsException()
+    public async Task EditCheckpoint_InvalidAmount_ReturnsError()
     {
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
+        var result = await Sut.Execute(request);
 
-        Assert.Throws<ValidationException>(() => Sut.Execute(request));
+        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
-    public void EditCheckpoint_ValidInput_ReturnUrlIsSet()
+    public async Task EditCheckpoint_ValidInput_ReturnUrlIsSet()
     {
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
 
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(1, result.CashgameId);
-        Assert.AreEqual(1, result.PlayerId);
+        Assert.That(result.Data.CashgameId, Is.EqualTo("1"));
+        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
     }
         
     [Test]
-    public void EditCheckpoint_ValidInput_CheckpointIsSaved()
+    public async Task EditCheckpoint_ValidInput_CheckpointIsSaved()
     {
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
 
-        Sut.Execute(request);
+        await Sut.Execute(request);
 
         var updatedCheckpoint = Deps.Cashgame.Updated.UpdatedCheckpoints.First();
-        Assert.AreEqual(CheckpointType.Buyin, updatedCheckpoint.Type);
-        Assert.AreEqual(TestData.BuyinCheckpointId, updatedCheckpoint.Id);
-        Assert.AreEqual(ChangedStack, updatedCheckpoint.Stack);
-        Assert.AreEqual(ChangedAmount, updatedCheckpoint.Amount);
+        Assert.That(updatedCheckpoint.Type, Is.EqualTo(CheckpointType.Buyin));
+        Assert.That(updatedCheckpoint.Id, Is.EqualTo(TestData.BuyinCheckpointId));
+        Assert.That(updatedCheckpoint.Stack, Is.EqualTo(ChangedStack));
+        Assert.That(updatedCheckpoint.Amount, Is.EqualTo(ChangedAmount));
     }
 
-    private EditCheckpoint Sut => new EditCheckpoint(
+    private EditCheckpoint Sut => new(
         Deps.Bunch,
         Deps.User,
         Deps.Player,

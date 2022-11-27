@@ -1,0 +1,76 @@
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
+using Infrastructure.Sql;
+using Tests.Common.FakeServices;
+
+namespace Tests.Integration;
+
+[SetUpFixture]
+public class TestSetup
+{
+    private static readonly TestcontainerDatabase Testcontainers = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+        .WithDatabase(new PostgreSqlTestcontainerConfiguration
+        {
+            Database = "db",
+            Username = "postgres",
+            Password = "postgres",
+            Port = 49262
+        })
+        .Build();
+
+    public static string ConnectionString => Testcontainers.ConnectionString;
+    public static FakeEmailSender EmailSender;
+    private static WebApplicationFactoryInTest _webApplicationFactory;
+
+    [OneTimeSetUp]
+    public async Task SetUp()
+    {
+        await Testcontainers.StartAsync();
+        EmailSender = new FakeEmailSender();
+        _webApplicationFactory = new WebApplicationFactoryInTest(ConnectionString, EmailSender);
+        await CreateTables();
+        await AddMasterData();
+    }
+
+    [OneTimeTearDown]
+    public async Task TearDown()
+    {
+        await Testcontainers.DisposeAsync().AsTask();
+    }
+
+    public static HttpClient GetClient(string token = null)
+    {
+        var client = _webApplicationFactory.CreateClient();
+        if(token != null)
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        return client;
+    }
+    
+    private static async Task CreateTables()
+    {
+        var db = new PostgresDb(ConnectionString);
+        await db.Execute(CreateScript);
+    }
+
+    private static async Task AddMasterData()
+    {
+        var db = new PostgresDb(ConnectionString);
+        await db.Execute(GetMasterDataSql);
+    }
+
+    private static string CreateScript => ReadSqlFile("data/db-create.sql");
+    private static string GetMasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
+
+    private static string ReadSqlFile(string fileName)
+    {
+        var path = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            fileName);
+        return File.ReadAllText(path);
+    }
+}

@@ -1,9 +1,6 @@
 using System;
-using System.ComponentModel.Design;
 using Core.Entities;
-using Core.Exceptions;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -11,62 +8,54 @@ namespace Tests.Core.UseCases;
 public class CashgameDetailsTests : TestBase
 {
     [Test]
-    public void RunningCashgame_CashgameNotRunning_ThrowsException()
-    {
-        //var request = new CashgameDetails2.Request(TestData.UserNameA, TestData.CashgameIdC);
-
-        //Assert.Throws<CashgameNotRunningException>(() => Sut.Execute(request));
-    }
-
-    [Test]
-    public void CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
+    public async Task CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(TestData.PlayerIdA, result.PlayerId);
-        Assert.AreEqual(TestData.LocationNameC, result.LocationName);
-        Assert.AreEqual(100, result.DefaultBuyin);
-        Assert.AreEqual(Role.Player, result.Role);
+        Assert.That(result.Data.PlayerId, Is.EqualTo(TestData.PlayerIdA));
+        Assert.That(result.Data.LocationName, Is.EqualTo(TestData.LocationNameC));
+        Assert.That(result.Data.DefaultBuyin, Is.EqualTo(100));
+        Assert.That(result.Data.Role, Is.EqualTo(Role.Player));
     }
-
+        
     [Test]
-    public void CashgameDetails_CashgameRunning_SlugIsSet()
+    public async Task CashgameDetails_CashgameRunning_SlugIsSet()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual("bunch-a", result.Slug);
+        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
     }
 
     [Test]
-    public void CashgameDetails_CashgameRunning_PlayerItemsAreSet()
+    public async Task CashgameDetails_CashgameRunning_PlayerItemsAreSet()
     {
         Deps.Cashgame.SetupRunningGame();
 
         var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
-        var result = Sut.Execute(request);
+        var result = await Sut.Execute(request);
 
-        Assert.AreEqual(2, result.PlayerItems.Count);
-        Assert.AreEqual(1, result.PlayerItems[0].Checkpoints.Count);
-        Assert.IsFalse(result.PlayerItems[0].HasCashedOut);
-        Assert.AreEqual(TestData.PlayerA.DisplayName, result.PlayerItems[0].Name);
-        Assert.AreEqual(TestData.PlayerA.Id, result.PlayerItems[0].PlayerId);
-        Assert.AreEqual(3, result.PlayerItems[0].CashgameId);
-        Assert.AreEqual(1, result.PlayerItems[0].PlayerId);
-        Assert.AreEqual(1, result.PlayerItems[1].Checkpoints.Count);
-        Assert.IsFalse(result.PlayerItems[1].HasCashedOut);
-        Assert.AreEqual(TestData.PlayerB.DisplayName, result.PlayerItems[1].Name);
-        Assert.AreEqual(TestData.PlayerB.Id, result.PlayerItems[1].PlayerId);
-        Assert.AreEqual(3, result.PlayerItems[1].CashgameId);
-        Assert.AreEqual(2, result.PlayerItems[1].PlayerId);
+        Assert.That(result.Data.PlayerItems.Count, Is.EqualTo(2));
+        Assert.That(result.Data.PlayerItems[0].Checkpoints.Count, Is.EqualTo(1));
+        Assert.That(result.Data.PlayerItems[0].HasCashedOut, Is.False);
+        Assert.That(result.Data.PlayerItems[0].Name, Is.EqualTo(TestData.PlayerA.DisplayName));
+        Assert.That(result.Data.PlayerItems[0].PlayerId, Is.EqualTo(TestData.PlayerA.Id));
+        Assert.That(result.Data.PlayerItems[0].CashgameId, Is.EqualTo("3"));
+        Assert.That(result.Data.PlayerItems[0].PlayerId, Is.EqualTo("1"));
+        Assert.That(result.Data.PlayerItems[1].Checkpoints.Count, Is.EqualTo(1));
+        Assert.That(result.Data.PlayerItems[1].HasCashedOut, Is.False);
+        Assert.That(result.Data.PlayerItems[1].Name, Is.EqualTo(TestData.PlayerB.DisplayName));
+        Assert.That(result.Data.PlayerItems[1].PlayerId, Is.EqualTo(TestData.PlayerB.Id));
+        Assert.That(result.Data.PlayerItems[1].CashgameId, Is.EqualTo("3"));
+        Assert.That(result.Data.PlayerItems[1].PlayerId, Is.EqualTo("2"));
     }
 
-    private CashgameDetails Sut => new CashgameDetails(
+    private CashgameDetails Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
         Deps.Player,

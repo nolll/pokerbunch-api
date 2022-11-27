@@ -9,9 +9,9 @@ public class ApiUrlProvider
         _host = host;
     }
 
-    public Url BunchCashgames(string bunchId, int? year) => new ApiBunchCashgamesUrl(_host, bunchId, year);
-    public Url Cashgame(string cashgameId) => new ApiCashgameUrl(_host, cashgameId);
-    public Url User(string userName) => new ApiUserUrl(_host, userName);
-    public Url UserProfile => new ApiUserProfileUrl(_host);
-    public Url Swagger => new ApiSwaggerUrl(_host);
+    public string BunchCashgames(string bunchId, int? year) => new ApiBunchCashgamesUrl(bunchId, year).Absolute(_host);
+    public string Cashgame(string cashgameId) => new ApiCashgameUrl(cashgameId).Absolute(_host);
+    public string User(string userName) => new ApiUserUrl(userName).Absolute(_host);
+    public string UserProfile => new ApiUserProfileUrl().Absolute(_host);
+    public string Swagger => new ApiSwaggerUrl().Absolute(_host);
 }

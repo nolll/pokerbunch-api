@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -17,13 +17,13 @@ using Infrastructure.Sql.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
+using Npgsql;
 
 namespace Api.Bootstrapping;
 
@@ -31,18 +31,22 @@ public class ServiceConfig
 {
     private readonly AppSettings _settings;
     private readonly IServiceCollection _services;
+    private readonly IConfiguration _configuration;
 
-    public ServiceConfig(AppSettings settings, IServiceCollection services)
+    public ServiceConfig(AppSettings settings, IServiceCollection services, IConfiguration configuration)
     {
         _settings = settings;
         _services = services;
+        _configuration = configuration;
     }
 
     public void Configure()
     {
+        var connectionString = GetConnectionString();
+
         AddCompression();
         AddLogging();
-        AddDependencies();
+        AddDependencies(connectionString);
         AddMvc();
         AddCors();
         AddAuthorization();
@@ -73,7 +77,7 @@ public class ServiceConfig
         });
     }
 
-    private void AddDependencies()
+    private void AddDependencies(string connectionString)
     {
         _services.AddSingleton(_settings);
         _services.AddSingleton(new UrlProvider(_settings.Urls.Api, _settings.Urls.Site));
@@ -81,25 +85,20 @@ public class ServiceConfig
         _services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
         _services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
         _services.AddSingleton<ICacheContainer, CacheContainer>();
-        _services.AddSingleton<SqlServerStorageProvider>();
         _services.AddSingleton<IUserRepository, UserRepository>();
         _services.AddSingleton<IBunchRepository, BunchRepository>();
         _services.AddSingleton<ICashgameRepository, CashgameRepository>();
         _services.AddSingleton<IEventRepository, EventRepository>();
         _services.AddSingleton<ILocationRepository, LocationRepository>();
         _services.AddSingleton<IPlayerRepository, PlayerRepository>();
-        _services.AddSingleton<ITimezoneRepository, TimezoneRepository>();
         _services.AddSingleton(GetEmailSender());
-        _services.AddSingleton(new SqlServerStorageProvider(_settings.Sql.ConnectionString));
+        _services.AddSingleton(new PostgresDb(connectionString));
         _services.AddSingleton<IRandomizer, Randomizer>();
 
         // Admin
         _services.AddSingleton<ClearCache>();
         _services.AddSingleton<TestEmail>();
-        _services.AddSingleton<EnsureAdmin>();
-
-        // Misc
-        _services.AddSingleton<GetTimezoneList>();
+        _services.AddSingleton<RequireAppsettingsAccess>();
 
         // Auth
         _services.AddSingleton<Login>();
@@ -114,6 +113,7 @@ public class ServiceConfig
 
         // Bunch
         _services.AddSingleton<GetBunchList>();
+        _services.AddSingleton<GetBunchListForUser>();
         _services.AddSingleton<GetBunch>();
         _services.AddSingleton<AddBunch>();
         _services.AddSingleton<EditBunch>();
@@ -130,7 +130,6 @@ public class ServiceConfig
 
         // Cashgame
         _services.AddSingleton<CashgameList>();
-        _services.AddSingleton<CashgameYearList>();
         _services.AddSingleton<EventCashgameList>();
         _services.AddSingleton<PlayerCashgameList>();
         _services.AddSingleton<CurrentCashgames>();
@@ -151,6 +150,28 @@ public class ServiceConfig
         _services.AddSingleton<DeletePlayer>();
         _services.AddSingleton<InvitePlayer>();
         _services.AddSingleton<JoinBunch>();
+    }
+
+    private string GetConnectionString()
+    {
+        var databaseUrl = _configuration.GetValue<string>("DATABASE_URL");
+        if (string.IsNullOrEmpty(databaseUrl))
+            throw new ConfigurationErrorsException("Database url is missing");
+
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = databaseUri.Host,
+            Port = databaseUri.Port,
+            Username = userInfo[0],
+            Password = userInfo[1],
+            Database = databaseUri.LocalPath.TrimStart('/'),
+            TrustServerCertificate = true
+        };
+
+        return builder.ToString();
     }
 
     private IEmailSender GetEmailSender()
@@ -229,6 +250,7 @@ public class ServiceConfig
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Poker Bunch Api", Version = "v1" });
             c.IncludeXmlComments(xmlPath);
             c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
+            c.CustomSchemaIds(SwaggerSchema.GetSwaggerTypeName);
         });
     }
 }

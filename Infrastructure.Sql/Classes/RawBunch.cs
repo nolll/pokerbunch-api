@@ -4,7 +4,7 @@ namespace Infrastructure.Sql.Classes;
 
 public class RawBunch
 {
-    public int Id { get; }
+    public string Id { get; }
     public string Slug { get; }
     public string DisplayName { get; }
     public string Description { get; }
@@ -17,7 +17,7 @@ public class RawBunch
     public bool TournamentsEnabled { get; }
     public bool VideosEnabled { get; }
 
-    public RawBunch(int id, string slug, string displayName, string description, string houseRules, string timezoneName, int defaultBuyin, string currencyLayout, string currencySymbol, bool cashgamesEnabled, bool tournamentsEnabled, bool videosEnabled)
+    public RawBunch(string id, string slug, string displayName, string description, string houseRules, string timezoneName, int defaultBuyin, string currencyLayout, string currencySymbol, bool cashgamesEnabled, bool tournamentsEnabled, bool videosEnabled)
     {
         Id = id;
         Slug = slug;

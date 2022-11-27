@@ -1,6 +1,5 @@
 ﻿using Core.Entities;
 using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -8,41 +7,41 @@ namespace Tests.Core.UseCases;
 class EventListTests : TestBase
 {
     [Test]
-    public void EventList_ReturnsAllEvents()
+    public async Task EventList_ReturnsAllEvents()
     {
-        var result = Sut.Execute(CreateInput());
+        var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(2, result.Events.Count);
+        Assert.That(result.Data.Events.Count, Is.EqualTo(2));
     }
 
     [Test]
-    public void EventList_EachItem_NameIsSet()
+    public async Task EventList_EachItem_NameIsSet()
     {
-        var result = Sut.Execute(CreateInput());
+        var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(TestData.EventNameB, result.Events[0].Name);
-        Assert.AreEqual(TestData.EventNameA, result.Events[1].Name);
+        Assert.That(result.Data.Events[0].Name, Is.EqualTo(TestData.EventNameB));
+        Assert.That(result.Data.Events[1].Name, Is.EqualTo(TestData.EventNameA));
     }
 
     [Test]
-    public void EventList_EachItem_StartTimeIsSet()
+    public async Task EventList_EachItem_StartTimeIsSet()
     {
-        var result = Sut.Execute(CreateInput());
+        var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(new Date(2002, 2, 2), result.Events[0].StartDate);
-        Assert.AreEqual(new Date(2001, 1, 1), result.Events[1].StartDate);
+        Assert.That(result.Data.Events[0].StartDate, Is.EqualTo(new Date(2002, 2, 2)));
+        Assert.That(result.Data.Events[1].StartDate, Is.EqualTo(new Date(2001, 1, 1)));
     }
 
     [Test]
-    public void EventList_EachItem_UrlIsSet()
+    public async Task EventList_EachItem_UrlIsSet()
     {
-        var result = Sut.Execute(CreateInput());
+        var result = await Sut.Execute(CreateInput());
 
-        Assert.AreEqual(2, result.Events[0].EventId);
-        Assert.AreEqual(1, result.Events[1].EventId);
+        Assert.That(result.Data.Events[0].EventId, Is.EqualTo("2"));
+        Assert.That(result.Data.Events[1].EventId, Is.EqualTo("1"));
     }
 
-    private EventList Sut => new EventList(
+    private EventList Sut => new(
         Deps.Bunch,
         Deps.Event,
         Deps.User,

@@ -1,19 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
+	<IsPublishable>false</IsPublishable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\Changes.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Scripts\Changes.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="Npgsql" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

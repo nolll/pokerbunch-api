@@ -1,5 +1,4 @@
 ﻿using Core.UseCases;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -7,16 +6,18 @@ namespace Tests.Core.UseCases;
 public class BunchListTests : TestBase
 {
     [Test]
-    public void BunchList_ReturnsListOfBunchItems()
+    public async Task BunchList_ReturnsListOfBunchItems()
     {
-        var result = Sut.Execute(new GetBunchList.AllBunchesRequest(TestData.AdminUser.UserName));
+        var result = await Sut.Execute(new GetBunchList.Request(TestData.AdminUser.UserName));
 
-        Assert.AreEqual(2, result.Bunches.Count);
-        Assert.AreEqual("bunch-a", result.Bunches[0].Slug);
-        Assert.AreEqual(TestData.BunchA.DisplayName, result.Bunches[0].Name);
-        Assert.AreEqual("bunch-b", result.Bunches[1].Slug);
-        Assert.AreEqual(TestData.BunchB.DisplayName, result.Bunches[1].Name);
+        Assert.That(result.Data.Bunches.Count, Is.EqualTo(2));
+        Assert.That(result.Data.Bunches[0].Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data.Bunches[0].Name, Is.EqualTo(TestData.BunchA.DisplayName));
+        Assert.That(result.Data.Bunches[1].Slug, Is.EqualTo("bunch-b"));
+        Assert.That(result.Data.Bunches[1].Name, Is.EqualTo(TestData.BunchB.DisplayName));
     }
 
-    private GetBunchList Sut => new GetBunchList(Deps.Bunch, Deps.User);
+    private GetBunchList Sut => new(
+        Deps.Bunch,
+        Deps.User);
 }

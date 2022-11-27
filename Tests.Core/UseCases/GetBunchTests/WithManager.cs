@@ -1,5 +1,4 @@
 using Core.Entities;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.GetBunchTests;
 
@@ -8,5 +7,5 @@ public class WithManager : Arrange
     protected override Role Role => Role.Manager;
 
     [Test]
-    public void RoleIsManager() => Assert.AreEqual(Role.Manager, Result.Role);
+    public void RoleIsManager() => Assert.That(Result.Data.Role, Is.EqualTo(Role.Manager));
 }

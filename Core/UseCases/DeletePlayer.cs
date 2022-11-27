@@ -1,11 +1,11 @@
 using System.Linq;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeletePlayer
+public class DeletePlayer : UseCase<DeletePlayer.Request, DeletePlayer.Result>
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly ICashgameRepository _cashgameRepository;
@@ -20,30 +20,33 @@ public class DeletePlayer
         _bunchRepository = bunchRepository;
     }
 
-    public Result Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = _playerRepository.Get(request.PlayerId);
-        var bunch = _bunchRepository.Get(player.BunchId);
-        var currentUser = _userRepository.Get(request.UserName);
-        var currentPlayer = _playerRepository.Get(bunch.Id, currentUser.Id);
-        RequireRole.Manager(currentUser, currentPlayer);
-        var cashgames = _cashgameRepository.GetByPlayer(player.Id);
+        var player = await _playerRepository.Get(request.PlayerId);
+        var bunch = await _bunchRepository.Get(player.BunchId);
+        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+
+        if (!AccessControl.CanDeletePlayer(currentUser, currentPlayer))
+            return Error(new AccessDeniedError());
+
+        var cashgames = await _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
 
         if (hasPlayed)
-            throw new PlayerHasGamesException();
-            
-        _playerRepository.Delete(request.PlayerId);
+            return Error(new PlayerHasGamesError());
 
-        return new Result(bunch.Slug, request.PlayerId);
+        await _playerRepository.Delete(request.PlayerId);
+
+        return Success(new Result(bunch.Slug, request.PlayerId));
     }
-
+    
     public class Request
     {
         public string UserName { get; }
-        public int PlayerId { get; }
+        public string PlayerId { get; }
 
-        public Request(string userName, int playerId)
+        public Request(string userName, string playerId)
         {
             UserName = userName;
             PlayerId = playerId;
@@ -53,9 +56,9 @@ public class DeletePlayer
     public class Result
     {
         public string Slug { get; private set; }
-        public int PlayerId { get; private set; }
+        public string PlayerId { get; private set; }
 
-        public Result(string slug, int playerId)
+        public Result(string slug, string playerId)
         {
             Slug = slug;
             PlayerId = playerId;

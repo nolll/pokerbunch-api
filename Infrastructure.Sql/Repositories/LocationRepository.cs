@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
 using Core.Repositories;
@@ -13,40 +11,40 @@ public class LocationRepository : ILocationRepository
     private readonly SqlLocationDb _locationDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public LocationRepository(SqlServerStorageProvider container, ICacheContainer cacheContainer)
+    public LocationRepository(PostgresDb container, ICacheContainer cacheContainer)
     {
         _locationDb = new SqlLocationDb(container);
         _cacheContainer = cacheContainer;
     }
 
-    public Location Get(int id)
+    public async Task<Location> Get(string id)
     {
-        return GetAndCache(id);
+        return await GetAndCache(id);
     }
 
-    public IList<Location> List(IList<int> ids)
+    public async Task<IList<Location>> List(IList<string> ids)
     {
-        return GetAndCache(ids);
+        return await GetAndCache(ids);
     }
 
-    public IList<Location> List(int bunchId)
+    public async Task<IList<Location>> List(string bunchId)
     {
-        var ids = _locationDb.Find(bunchId);
-        return GetAndCache(ids).OrderBy(o => o.Name).ToList();
+        var ids = await _locationDb.Find(bunchId);
+        return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
-    public int Add(Location location)
+    public async Task<string> Add(Location location)
     {
-        return _locationDb.Add(location);
+        return await _locationDb.Add(location);
     }
 
-    private Location GetAndCache(int id)
+    private async Task<Location> GetAndCache(string id)
     {
-        return _cacheContainer.GetAndStore(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    private IList<Location> GetAndCache(IList<int> ids)
+    private async Task<IList<Location>> GetAndCache(IList<string> ids)
     {
-        return _cacheContainer.GetAndStore(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cacheContainer.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 }

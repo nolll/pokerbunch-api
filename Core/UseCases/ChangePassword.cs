@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.Entities;
-using Core.Exceptions;
+using Core.Errors;
 using Core.Repositories;
 using Core.Services;
-using ValidationException = Core.Exceptions.ValidationException;
 
 namespace Core.UseCases;
 
-public class ChangePassword
+public class ChangePassword : UseCase<ChangePassword.Request, ChangePassword.Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRandomizer _randomizer;
@@ -18,24 +17,26 @@ public class ChangePassword
         _randomizer = randomizer;
     }
 
-    public void Execute(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
-        if(!validator.IsValid)
-            throw new ValidationException(validator);
+        if (!validator.IsValid)
+            return Error(new ValidationError(validator));
 
-        var user = _userRepository.Get(request.UserName);
+        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
         var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
         if (!isCurrentPwdValid)
-            throw new AuthException("The old password was not correct");
+            return Error(new AuthError("The old password was not correct"));
 
         var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
         var encryptedPassword = EncryptionService.Encrypt(request.NewPassword, salt);
         user = CreateUser(user, encryptedPassword, salt);
 
         _userRepository.Update(user);
-    }
 
+        return Success(new Result());
+    }
+    
     private static User CreateUser(User user, string encryptedPassword, string salt)
     {
         return new User(
@@ -62,5 +63,9 @@ public class ChangePassword
             NewPassword = newPassword;
             OldPassword = oldPassword;
         }
+    }
+
+    public class Result
+    {
     }
 }

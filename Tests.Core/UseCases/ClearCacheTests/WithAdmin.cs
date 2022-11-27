@@ -1,5 +1,4 @@
 using Core.Entities;
-using NUnit.Framework;
 
 namespace Tests.Core.UseCases.ClearCacheTests;
 

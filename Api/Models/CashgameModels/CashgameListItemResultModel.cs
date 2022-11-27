@@ -1,28 +1,31 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "player")]
 public class CashgameListItemResultModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "name")]
+    
+    [JsonPropertyName("name")]
     public string Name { get; }
-    [DataMember(Name = "startTime")]
+    
+    [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }
-    [DataMember(Name = "updatedTime")]
+    
+    [JsonPropertyName("updatedTime")]
     public DateTime UpdatedTime { get; }
-    [DataMember(Name = "buyin")]
+    
+    [JsonPropertyName("buyin")]
     public int Buyin { get; }
-    [DataMember(Name = "stack")]
+    
+    [JsonPropertyName("stack")]
     public int Stack { get; }
 
     public CashgameListItemResultModel(CashgameList.ItemResult item)
     {
-        Id = item.Player.Id.ToString();
+        Id = item.Player.Id;
         Name = item.Player.Name;
         StartTime = item.BuyinTime;
         UpdatedTime = item.UpdatedTime;
@@ -32,7 +35,7 @@ public class CashgameListItemResultModel
 
     public CashgameListItemResultModel(EventCashgameList.ItemResult item)
     {
-        Id = item.Player.Id.ToString();
+        Id = item.Player.Id;
         Name = item.Player.Name;
         StartTime = item.BuyinTime;
         UpdatedTime = item.UpdatedTime;
@@ -42,11 +45,22 @@ public class CashgameListItemResultModel
 
     public CashgameListItemResultModel(PlayerCashgameList.ItemResult item)
     {
-        Id = item.Player.Id.ToString();
+        Id = item.Player.Id;
         Name = item.Player.Name;
         StartTime = item.BuyinTime;
         UpdatedTime = item.UpdatedTime;
         Buyin = item.Buyin;
         Stack = item.Stack;
+    }
+
+    [JsonConstructor]
+    public CashgameListItemResultModel(string id, string name, DateTime startTime, DateTime updatedTime, int buyin, int stack)
+    {
+        Id = id;
+        Name = name;
+        StartTime = startTime;
+        UpdatedTime = updatedTime;
+        Buyin = buyin;
+        Stack = stack;
     }
 }

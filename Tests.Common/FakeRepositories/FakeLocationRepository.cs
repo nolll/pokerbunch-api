@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 
@@ -15,37 +13,37 @@ public class FakeLocationRepository : ILocationRepository
         _list = CreateLocationList();
     }
 
-    public Location Get(int id)
+    public Task<Location> Get(string id)
     {
-        return _list.FirstOrDefault(o => o.Id == id);
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
     }
 
-    public IList<Location> List(IList<int> ids)
+    public Task<IList<Location>> List(IList<string> ids)
     {
-        return _list.Where(o => ids.Contains(o.Id)).ToList();
+        return Task.FromResult<IList<Location>>(_list.Where(o => ids.Contains(o.Id)).ToList());
     }
 
-    public IList<Location> List(int bunchId)
+    public Task<IList<Location>> List(string bunchId)
     {
-        return _list.Where(o => o.BunchId == bunchId).ToList();
+        return Task.FromResult<IList<Location>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
         
-    public int Add(Location location)
+    public Task<string> Add(Location location)
     {
         Added = location;
-        const int id = 1000;
+        const string id = "1000";
         _list.Add(new Location(id, location.Name, location.BunchId));
-        return id;
+        return Task.FromResult(id);
     }
 
     private IList<Location> CreateLocationList()
     {
         return new List<Location>
         {
-            new Location(TestData.LocationIdA, TestData.LocationNameA, TestData.BunchA.Id),
-            new Location(TestData.LocationIdB, TestData.LocationNameB, TestData.BunchA.Id),
-            new Location(TestData.LocationIdC, TestData.LocationNameC, TestData.BunchA.Id),
-            new Location(TestData.ChangedLocationId, TestData.ChangedLocationName, TestData.BunchA.Id)
+            new(TestData.LocationIdA, TestData.LocationNameA, TestData.BunchA.Id),
+            new(TestData.LocationIdB, TestData.LocationNameB, TestData.BunchA.Id),
+            new(TestData.LocationIdC, TestData.LocationNameC, TestData.BunchA.Id),
+            new(TestData.ChangedLocationId, TestData.ChangedLocationName, TestData.BunchA.Id)
         };
     }
 }

@@ -1,19 +1,18 @@
-using System;
 using Core.Entities.Checkpoints;
 
 namespace Infrastructure.Sql.Classes;
 
 public class RawCheckpoint
 {
-    public int CashgameId { get; }
-    public int PlayerId { get; }
+    public string CashgameId { get; }
+    public string PlayerId { get; }
     public int Amount { get; }
     public int Stack { get; }
     public DateTime Timestamp { get; }
-    public int Id { get; }
+    public string Id { get; }
     public int Type { get; }
 
-    public RawCheckpoint(int cashgameId, int playerId, int amount, int stack, DateTime timestamp, int id, int type)
+    public RawCheckpoint(string cashgameId, string playerId, int amount, int stack, DateTime timestamp, string id, int type)
     {
         CashgameId = cashgameId;
         PlayerId = playerId;

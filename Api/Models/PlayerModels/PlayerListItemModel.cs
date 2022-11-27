@@ -1,24 +1,23 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.PlayerModels;
 
-[DataContract(Namespace = "", Name = "player")]
 public class PlayerListItemModel
 {
-    [DataMember(Name = "id")]
-    public int Id { get; }
+    [JsonPropertyName("id")]
+    public string Id { get; }
 
-    [DataMember(Name = "name")]
+    [JsonPropertyName("name")]
     public string Name { get; }
 
-    [DataMember(Name = "userId")]
+    [JsonPropertyName("userId")]
     public string UserId { get; }
 
-    [DataMember(Name = "userName")]
+    [JsonPropertyName("userName")]
     public string UserName { get; }
 
-    [DataMember(Name = "color")]
+    [JsonPropertyName("color")]
     public string Color { get; }
 
     public PlayerListItemModel(GetPlayerList.ResultItem r)
@@ -28,5 +27,15 @@ public class PlayerListItemModel
         Color = r.Color;
         UserId = r.UserId;
         UserName = r.UserName;
+    }
+
+    [JsonConstructor]
+    public PlayerListItemModel(string id, string name, string userId, string userName, string color)
+    {
+        Id = id;
+        Name = name;
+        UserId = userId;
+        UserName = userName;
+        Color = color;
     }
 }

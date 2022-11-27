@@ -1,47 +1,46 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 using Core.UseCases;
 
 namespace Api.Models.BunchModels;
 
-[DataContract(Namespace = "", Name = "bunch")]
 public class BunchModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
 
-    [DataMember(Name = "name")]
+    [JsonPropertyName("name")]
     public string Name { get; }
 
-    [DataMember(Name = "description")]
+    [JsonPropertyName("description")]
     public string Description { get; }
 
-    [DataMember(Name = "houseRules")]
+    [JsonPropertyName("houseRules")]
     public string HouseRules { get; }
 
-    [DataMember(Name = "timezone")]
+    [JsonPropertyName("timezone")]
     public string Timezone { get; }
 
-    [DataMember(Name = "currencySymbol")]
+    [JsonPropertyName("currencySymbol")]
     public string CurrencySymbol { get; }
 
-    [DataMember(Name = "currencyLayout")]
+    [JsonPropertyName("currencyLayout")]
     public string CurrencyLayout { get; }
 
-    [DataMember(Name = "currencyFormat")]
+    [JsonPropertyName("currencyFormat")]
     public string CurrencyFormat { get; }
 
-    [DataMember(Name = "thousandSeparator")]
+    [JsonPropertyName("thousandSeparator")]
     public string ThousandSeparator { get; }
 
-    [DataMember(Name = "defaultBuyin")]
+    [JsonPropertyName("defaultBuyin")]
     public int DefaultBuyin { get; }
 
-    [DataMember(Name = "player")]
+    [JsonPropertyName("player")]
     public BunchPlayerModel Player { get; }
 
-    [DataMember(Name = "role")]
+    [JsonPropertyName("role")]
     public string Role { get; }
-
+    
     public BunchModel(BunchResult r)
         : this(r.Slug, r.Name, r.Description)
     {
@@ -52,11 +51,11 @@ public class BunchModel
         CurrencyFormat = r.Currency.Format;
         ThousandSeparator = r.Currency.ThousandSeparator;
         DefaultBuyin = r.DefaultBuyin;
-        Player = r.Player != null ? new BunchPlayerModel(r.Player?.Id.ToString(), r.Player?.Name) : null;
+        Player = r.Player != null ? new BunchPlayerModel(r.Player?.Id, r.Player?.Name) : null;
         Role = r.Role.ToString().ToLower();
     }
 
-    public BunchModel(GetBunchList.ResultItem r)
+    public BunchModel(BunchListResultItem r)
         : this(r.Slug, r.Name, r.Description)
     {
     }
@@ -68,13 +67,31 @@ public class BunchModel
         Description = description;
     }
 
+    [JsonConstructor]
+    public BunchModel(string id, string name, string description, string houseRules, string timezone, string currencySymbol, string currencyLayout, string currencyFormat, string thousandSeparator, int defaultBuyin, BunchPlayerModel player, string role)
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        HouseRules = houseRules;
+        Timezone = timezone;
+        CurrencySymbol = currencySymbol;
+        CurrencyLayout = currencyLayout;
+        CurrencyFormat = currencyFormat;
+        ThousandSeparator = thousandSeparator;
+        DefaultBuyin = defaultBuyin;
+        Player = player;
+        Role = role;
+    }
+
     public class BunchPlayerModel
     {
-        [DataMember(Name = "id")]
+        [JsonPropertyName("id")]
         public string Id { get; }
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; }
 
+        [JsonConstructor]
         public BunchPlayerModel(string id, string name)
         {
             Id = id;

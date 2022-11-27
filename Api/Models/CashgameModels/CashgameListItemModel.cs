@@ -1,29 +1,31 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Api.Models.LocationModels;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-[DataContract(Namespace = "", Name = "cashgame")]
 public class CashgameListItemModel
 {
-    [DataMember(Name = "id")]
+    [JsonPropertyName("id")]
     public string Id { get; }
-    [DataMember(Name = "startTime")]
+    
+    [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }
-    [DataMember(Name = "updatedTime")]
+    
+    [JsonPropertyName("updatedTime")]
     public DateTime UpdatedTime { get; }
-    [DataMember(Name = "location")]
+    
+    [JsonPropertyName("location")]
     public SmallLocationModel Location { get; }
-    [DataMember(Name = "players")]
+    
+    [JsonPropertyName("results")]
     public IList<CashgameListItemResultModel> Results { get; }
 
     public CashgameListItemModel(CashgameList.Item item)
     {
-        Id = item.CashgameId.ToString();
+        Id = item.CashgameId;
         StartTime = item.StartTime;
         UpdatedTime = item.EndTime;
         Location = new SmallLocationModel(item);
@@ -32,7 +34,7 @@ public class CashgameListItemModel
 
     public CashgameListItemModel(EventCashgameList.Item item)
     {
-        Id = item.CashgameId.ToString();
+        Id = item.CashgameId;
         StartTime = item.StartTime;
         UpdatedTime = item.EndTime;
         Location = new SmallLocationModel(item);
@@ -41,10 +43,20 @@ public class CashgameListItemModel
 
     public CashgameListItemModel(PlayerCashgameList.Item item)
     {
-        Id = item.CashgameId.ToString();
+        Id = item.CashgameId;
         StartTime = item.StartTime;
         UpdatedTime = item.EndTime;
         Location = new SmallLocationModel(item);
         Results = item.Players.Select(o => new CashgameListItemResultModel(o)).ToList();
+    }
+
+    [JsonConstructor]
+    public CashgameListItemModel(string id, DateTime startTime, DateTime updatedTime, SmallLocationModel location, IList<CashgameListItemResultModel> results)
+    {
+        Id = id;
+        StartTime = startTime;
+        UpdatedTime = updatedTime;
+        Location = location;
+        Results = results;
     }
 }
