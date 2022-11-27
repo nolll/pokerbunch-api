@@ -20,7 +20,7 @@ public class CashgameListItemModel
     [JsonPropertyName("location")]
     public SmallLocationModel Location { get; }
     
-    [JsonPropertyName("players")]
+    [JsonPropertyName("results")]
     public IList<CashgameListItemResultModel> Results { get; }
 
     public CashgameListItemModel(CashgameList.Item item)
