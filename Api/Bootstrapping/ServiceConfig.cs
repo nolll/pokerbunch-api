@@ -176,21 +176,20 @@ public class ServiceConfig
 
     private IEmailSender GetEmailSender()
     {
-        var host = _configuration.GetValue<string>("MAILGUN_SMTP_SERVER") ?? "localhost";
-        var strPort = _configuration.GetValue<string>("MAILGUN_SMTP_PORT");
+        var host = _configuration.GetValue<string>("SMTP_SERVER") ?? "localhost";
+        var strPort = _configuration.GetValue<string>("SMTP_PORT");
         var port = strPort != null ? int.Parse(strPort) : 25;
-        var login = _configuration.GetValue<string>("MAILGUN_SMTP_LOGIN");
-        var password = _configuration.GetValue<string>("MAILGUN_SMTP_PASSWORD");
+        var login = _configuration.GetValue<string>("SMTP_LOGIN");
+        var password = _configuration.GetValue<string>("SMTP_PASSWORD");
         return new SmtpEmailSender(host, port, login, password);
     }
 
     private void AddMvc()
     {
-        _services
-            .AddMvc(options =>
-            {
-                options.EnableEndpointRouting = false;
-            });
+        _services.AddMvc(options =>
+        {
+            options.EnableEndpointRouting = false;
+        });
     }
 
     private void AddCors()
