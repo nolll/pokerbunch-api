@@ -9,6 +9,6 @@ public class VersionModel
         
     public VersionModel(string version)
     {
-        Version = "Heroku 1";
+        Version = "";
     }
 }
