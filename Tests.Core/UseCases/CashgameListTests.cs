@@ -41,51 +41,10 @@ class CashgameListTests : TestBase
 
         Assert.That(result.Data.Items[0].CashgameId, Is.EqualTo("2"));
     }
-
-    [Test]
-    public async Task CashgameList_DefaultSort_FirstItemDurationIsSet()
+    
+    private CashgameList.Request CreateRequest(int? year = null)
     {
-        var result = await Sut.Execute(CreateRequest());
-
-        Assert.That(result.Data.Items[0].Duration.Minutes, Is.EqualTo(92));
-    }
-
-    [Test]
-    public async Task CashgameList_DefaultSort_FirstItemDateIsSet()
-    {
-        var result = await Sut.Execute(CreateRequest());
-
-        var expected = new Date(2002, 2, 2);
-        Assert.That(result.Data.Items[0].Date, Is.EqualTo(expected));
-    }
-
-    [Test]
-    public async Task CashgameList_DefaultSort_FirstItemPlayerCountIsSet()
-    {
-        var result = await Sut.Execute(CreateRequest());
-
-        Assert.That(result.Data.Items[0].PlayerCount, Is.EqualTo(2));
-    }
-
-    [Test]
-    public async Task CashgameList_DefaultSort_FirstItemTurnoverIsSet()
-    {
-        var result = await Sut.Execute(CreateRequest());
-
-        Assert.That(result.Data.Items[0].Turnover.Amount, Is.EqualTo(600));
-    }
-
-    [Test]
-    public async Task CashgameList_DefaultSort_FirstItemAverageBuyinIsSet()
-    {
-        var result = await Sut.Execute(CreateRequest());
-
-        Assert.That(result.Data.Items[0].AverageBuyin.Amount, Is.EqualTo(300));
-    }
-
-    private CashgameList.Request CreateRequest(CashgameList.SortOrder orderBy = CashgameList.SortOrder.Date, int? year = null)
-    {
-        return new CashgameList.Request(TestData.UserNameA, TestData.SlugA, orderBy, year);
+        return new CashgameList.Request(TestData.UserNameA, TestData.SlugA, year);
     }
 
     private CashgameList Sut => new(

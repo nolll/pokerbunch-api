@@ -23,6 +23,6 @@ public class WithDefaultCurrency : Arrange
     {
         // The space is a non breaking space (160)
         var result = new Money(1000, Currency).ToString();
-        Assert.That(result, Is.EqualTo("$1 000"));
+        Assert.That(result, Is.EqualTo("$1Â 000"));
     }
 }

@@ -60,7 +60,7 @@ public class CashgameController : BaseController
     [ApiAuthorize]
     public async Task<ObjectResult> List(string bunchId)
     {
-        var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, null));
+        var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, null));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
     }
 
@@ -69,7 +69,7 @@ public class CashgameController : BaseController
     [ApiAuthorize]
     public async Task<ObjectResult> List(string bunchId, int year)
     {
-        var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, CashgameList.SortOrder.Date, year));
+        var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, year));
         return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
     }
 

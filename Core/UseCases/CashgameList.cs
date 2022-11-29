@@ -33,11 +33,10 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
         if (!AccessControl.CanListCashgames(user, player))
             return Error(new AccessDeniedError());
         
-        var cashgames = await _cashgameRepository.GetFinished(bunch.Id, request.Year);
-        cashgames = SortItems(cashgames, request.SortOrder).ToList();
+        var cashgames = (await _cashgameRepository.GetFinished(bunch.Id, request.Year)).OrderByDescending(o => o.StartTime);
         var locations = await _locationRepository.List(bunch.Id);
         var players = await _playerRepository.List(bunch.Id);
-        var items = cashgames.Select(o => new Item(bunch, o, GetLocation(o, locations), players));
+        var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(request.Slug, items.ToList()));
     }
@@ -46,36 +45,17 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
     {
         return locations.First(o => o.Id == cashgame.LocationId);
     }
-
-    private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items, SortOrder orderBy)
-    {
-        switch (orderBy)
-        {
-            case SortOrder.PlayerCount:
-                return items.OrderByDescending(o => o.PlayerCount);
-            case SortOrder.Duration:
-                return items.OrderByDescending(o => o.Duration);
-            case SortOrder.Turnover:
-                return items.OrderByDescending(o => o.Turnover);
-            case SortOrder.AverageBuyin:
-                return items.OrderByDescending(o => o.AverageBuyin);
-            default:
-                return items.OrderByDescending(o => o.StartTime);
-        }
-    }
-
+    
     public class Request
     {
         public string UserName { get; }
         public string Slug { get; }
-        public SortOrder SortOrder { get; }
         public int? Year { get; }
 
-        public Request(string userName, string slug, SortOrder sortOrder, int? year)
+        public Request(string userName, string slug, int? year)
         {
             UserName = userName;
             Slug = slug;
-            SortOrder = sortOrder;
             Year = year;
         }
     }
@@ -97,27 +77,17 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
         public string LocationId { get; }
         public string LocationName { get; }
         public string CashgameId { get; }
-        public Time Duration { get; }
-        public Date Date { get; }
         public DateTime StartTime { get; }
         public DateTime EndTime { get; }
-        public Money Turnover { get; }
-        public Money AverageBuyin { get; }
-        public int PlayerCount { get; }
         public IList<ItemResult> Results { get; }
 
-        public Item(Bunch bunch, Cashgame cashgame, Location location, IList<Player> players)
+        public Item(Cashgame cashgame, Location location, IList<Player> players)
         {
             LocationId = location.Id;
             LocationName = location.Name;
             CashgameId = cashgame.Id;
-            Duration = Time.FromMinutes(cashgame.Duration);
-            Date = cashgame.StartTime.HasValue ? new Date(cashgame.StartTime.Value) : new Date(DateTime.MinValue);
             StartTime = cashgame.StartTime ?? DateTime.MinValue;
             EndTime = cashgame.EndTime ?? DateTime.MinValue;
-            Turnover = new Money(cashgame.Turnover, bunch.Currency);
-            AverageBuyin = new Money(cashgame.AverageBuyin, bunch.Currency);
-            PlayerCount = cashgame.PlayerCount;
             Results = cashgame.Results.Select(o => new ItemResult(o, GetPlayerName(o.PlayerId, players))).ToList();
         }
     }
@@ -156,15 +126,5 @@ public class CashgameList : UseCase<CashgameList.Request, CashgameList.Result>
             Id = id;
             Name = name;
         }
-    }
-
-    public enum SortOrder
-    {
-        Date,
-        PlayerCount,
-        Location,
-        Duration,
-        Turnover,
-        AverageBuyin
     }
 }

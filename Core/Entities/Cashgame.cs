@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Core.Entities.Checkpoints;
-using Core.Services;
 
 namespace Core.Entities;
 
@@ -22,7 +21,6 @@ public class Cashgame : IEntity
     public int PlayerCount { get; private set; }
     public int Turnover { get; private set; }
     public int AverageBuyin { get; private set; }
-    public string DateString { get; private set; }
         
     public Cashgame(string bunchId, string locationId, string eventId, GameStatus status, string id = null, IList<Checkpoint> checkpoints = null)
     {
@@ -59,7 +57,6 @@ public class Cashgame : IEntity
         PlayerCount = Results.Count;
         Turnover = GetBuyinSum(Results);
         AverageBuyin = GetAverageBuyin(Turnover, PlayerCount);
-        DateString = StartTime.HasValue ? Globalization.FormatIsoDate(StartTime.Value) : string.Empty;
     }
 
     public Checkpoint GetCheckpoint(string checkpointId)
