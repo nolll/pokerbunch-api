@@ -17,9 +17,9 @@ public class SqlBunchDb
         SELECT b.bunch_id
         FROM pb_bunch b";
 
-    private readonly PostgresDb _db;
+    private readonly IDb _db;
         
-    public SqlBunchDb(PostgresDb db)
+    public SqlBunchDb(IDb db)
     {
         _db = db;
     }

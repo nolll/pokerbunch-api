@@ -15,9 +15,9 @@ public class SqlLocationDb
         SELECT l.location_id
         FROM pb_location l ";
 
-    private readonly PostgresDb _db;
+    private readonly IDb _db;
 
-    public SqlLocationDb(PostgresDb db)
+    public SqlLocationDb(IDb db)
     {
         _db = db;
     }

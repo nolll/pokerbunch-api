@@ -1,5 +1,3 @@
-using Infrastructure.Sql;
-
 namespace Tests.Integration.Tests;
 
 [TestFixture]
@@ -11,8 +9,7 @@ public class MasterDataTests
     [Order(1)]
     public async Task MasterDataExists()
     {
-        var db = new PostgresDb(TestSetup.ConnectionString);
-        var reader = await db.Query("SELECT role_id, role_name FROM pb_role ORDER BY role_id");
+        var reader = await TestSetup.Db.Query("SELECT role_id, role_name FROM pb_role ORDER BY role_id");
         var roles = reader.ReadList(RoleInTest.Create);
 
         Assert.That(roles[0].Id, Is.EqualTo(1));

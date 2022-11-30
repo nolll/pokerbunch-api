@@ -11,7 +11,7 @@ public class LocationRepository : ILocationRepository
     private readonly SqlLocationDb _locationDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public LocationRepository(PostgresDb container, ICacheContainer cacheContainer)
+    public LocationRepository(IDb container, ICacheContainer cacheContainer)
     {
         _locationDb = new SqlLocationDb(container);
         _cacheContainer = cacheContainer;

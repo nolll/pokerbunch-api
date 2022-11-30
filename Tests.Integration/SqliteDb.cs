@@ -1,31 +1,24 @@
-using System.Linq;
+using Infrastructure.Sql;
 using Infrastructure.Sql.Interfaces;
+using Infrastructure.Sql.SqlParameters;
+using Microsoft.Data.Sqlite;
 using Npgsql;
 using System.Data;
-using Infrastructure.Sql.SqlParameters;
 
-namespace Infrastructure.Sql;
+namespace Tests.Integration;
 
-public class PostgresDb : IDb
+public class SqliteDb : IDb
 {
-    private readonly string _connectionString;
+    private readonly SqliteConnection _connection;
 
-    public PostgresDb(string connectionString)
+    public SqliteDb(SqliteConnection connection)
     {
-        _connectionString = connectionString;
+        _connection = connection;
     }
-
-    private NpgsqlConnection GetConnection()
-    {
-        return new NpgsqlConnection(_connectionString);
-    }
-
+    
     public async Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null)
     {
-        await using var connection = GetConnection();
-        connection.Open();
-
-        await using var command = new NpgsqlCommand(sql, connection);
+        await using var command = new SqliteCommand(sql, _connection);
         if (parameters != null)
             command.Parameters.AddRange(ToSqlCommands(parameters));
 
@@ -43,10 +36,7 @@ public class PostgresDb : IDb
 
     public async Task<int> Execute(string sql, IEnumerable<SqlParam> parameters = null)
     {
-        await using var connection = GetConnection();
-        connection.Open();
-
-        await using var command = new NpgsqlCommand(sql, connection);
+        await using var command = new SqliteCommand(sql, _connection);
         if (parameters != null)
             command.Parameters.AddRange(ToSqlCommands(parameters));
 
@@ -55,10 +45,7 @@ public class PostgresDb : IDb
 
     public async Task<int> Insert(string sql, IEnumerable<SqlParam> parameters = null)
     {
-        await using var connection = GetConnection();
-        connection.Open();
-
-        await using var command = new NpgsqlCommand(sql, connection);
+        await using var command = new SqliteCommand(sql, _connection);
         if (parameters != null)
             command.Parameters.AddRange(ToSqlCommands(parameters));
 

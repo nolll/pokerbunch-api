@@ -16,9 +16,9 @@ public class SqlEventDb
         {0}
         ORDER BY e.event_id, g.date";
 
-    private readonly PostgresDb _db;
+    private readonly IDb _db;
 
-    public SqlEventDb(PostgresDb db)
+    public SqlEventDb(IDb db)
     {
         _db = db;
     }

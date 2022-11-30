@@ -23,9 +23,9 @@ public class SqlCashgameDb
         SELECT cp.cashgame_id
         FROM pb_cashgame_checkpoint cp ";
         
-    private readonly PostgresDb _db;
+    private readonly IDb _db;
 
-    public SqlCashgameDb(PostgresDb db)
+    public SqlCashgameDb(IDb db)
     {
         _db = db;
     }

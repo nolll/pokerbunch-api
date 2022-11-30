@@ -16,9 +16,9 @@ public class SqlUserDb
         SELECT u.user_id
         FROM pb_user u ";
         
-    private readonly PostgresDb _db;
+    private readonly IDb _db;
 
-    public SqlUserDb(PostgresDb db)
+    public SqlUserDb(IDb db)
     {
         _db = db;
     }

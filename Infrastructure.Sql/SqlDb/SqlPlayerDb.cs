@@ -17,9 +17,9 @@ public class SqlPlayerDb
         SELECT p.player_id
         FROM pb_player p ";
 
-    private readonly PostgresDb _db;
+    private readonly IDb _db;
 
-    public SqlPlayerDb(PostgresDb db)
+    public SqlPlayerDb(IDb db)
     {
         _db = db;
     }

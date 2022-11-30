@@ -1,7 +1,5 @@
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
+using Microsoft.Data.Sqlite;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
@@ -9,26 +7,21 @@ namespace Tests.Integration;
 [SetUpFixture]
 public class TestSetup
 {
-    private static readonly TestcontainerDatabase Testcontainers = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-        .WithDatabase(new PostgreSqlTestcontainerConfiguration
-        {
-            Database = "db",
-            Username = "postgres",
-            Password = "postgres",
-            Port = 49262
-        })
-        .Build();
-
-    public static string ConnectionString => Testcontainers.ConnectionString;
-    public static FakeEmailSender EmailSender;
     private static WebApplicationFactoryInTest _webApplicationFactory;
+    private static SqliteConnection _dbConnection;
+    
+    public static FakeEmailSender EmailSender;
+    public static IDb Db;
 
     [OneTimeSetUp]
     public async Task SetUp()
     {
-        await Testcontainers.StartAsync();
+        const string connectionString = "Data Source=:memory:";
+        _dbConnection = new SqliteConnection(connectionString);
+        await _dbConnection.OpenAsync();
+        Db = new SqliteDb(_dbConnection);
         EmailSender = new FakeEmailSender();
-        _webApplicationFactory = new WebApplicationFactoryInTest(ConnectionString, EmailSender);
+        _webApplicationFactory = new WebApplicationFactoryInTest(connectionString, EmailSender);
         await CreateTables();
         await AddMasterData();
     }
@@ -36,7 +29,7 @@ public class TestSetup
     [OneTimeTearDown]
     public async Task TearDown()
     {
-        await Testcontainers.DisposeAsync().AsTask();
+        await _dbConnection.CloseAsync();
     }
 
     public static HttpClient GetClient(string token = null)
@@ -49,14 +42,12 @@ public class TestSetup
     
     private static async Task CreateTables()
     {
-        var db = new PostgresDb(ConnectionString);
-        await db.Execute(CreateScript);
+        await Db.Execute(CreateScript);
     }
 
     private static async Task AddMasterData()
     {
-        var db = new PostgresDb(ConnectionString);
-        await db.Execute(GetMasterDataSql);
+        await Db.Execute(GetMasterDataSql);
     }
 
     private static string CreateScript => ReadSqlFile("data/db-create.sql");
