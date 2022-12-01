@@ -10,13 +10,14 @@ namespace Tests.Integration;
 public class SqliteDb : IDb
 {
     private readonly SqliteConnection _connection;
-
-    public SqliteDb(SqliteConnection connection)
-    {
-        _connection = connection;
-    }
-
     public DbEngine Engine => DbEngine.Sqlite;
+    private IStorageDataReader GetDataReader(IDataReader dataReader) => new SqliteDataReader(dataReader);
+
+    public SqliteDb(string connectionString)
+    {
+        _connection = new SqliteConnection(connectionString);
+        _connection.Open();
+    }
 
     public async Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null)
     {
@@ -27,7 +28,7 @@ public class SqliteDb : IDb
         var mySqlReader = await command.ExecuteReaderAsync();
         var dt = new DataTable();
         dt.Load(mySqlReader);
-        return new StorageDataReader(dt.CreateDataReader());
+        return GetDataReader(dt.CreateDataReader());
     }
 
     public async Task<IStorageDataReader> Query(string sql, ListParam parameter)
@@ -59,5 +60,10 @@ public class SqliteDb : IDb
     private static NpgsqlParameter[] ToSqlCommands(IEnumerable<SqlParam> parameters)
     {
         return parameters.Select(o => o.Parameter).ToArray();
+    }
+
+    public void Dispose()
+    {
+        _connection?.Dispose();
     }
 }

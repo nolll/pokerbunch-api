@@ -9,8 +9,8 @@ namespace Infrastructure.Sql;
 public class PostgresDb : IDb
 {
     private readonly string _connectionString;
-
     public DbEngine Engine => DbEngine.Postgres;
+    private IStorageDataReader GetDataReader(IDataReader dataReader) => new PostgresDataReader(dataReader);
 
     public PostgresDb(string connectionString)
     {
@@ -29,7 +29,7 @@ public class PostgresDb : IDb
         var mySqlReader = await command.ExecuteReaderAsync();
         var dt = new DataTable();
         dt.Load(mySqlReader);
-        return new StorageDataReader(dt.CreateDataReader());
+        return GetDataReader(dt.CreateDataReader());
     }
 
     public async Task<IStorageDataReader> Query(string sql, ListParam parameter)
@@ -72,5 +72,9 @@ public class PostgresDb : IDb
     private static NpgsqlParameter[] ToSqlCommands(IEnumerable<SqlParam> parameters)
     {
         return parameters.Select(o => o.Parameter).ToArray();
+    }
+
+    public void Dispose()
+    {
     }
 }

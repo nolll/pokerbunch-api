@@ -3,35 +3,35 @@ using Infrastructure.Sql.Interfaces;
 
 namespace Infrastructure.Sql;
 
-public class StorageDataReader : IStorageDataReader
+public abstract class StorageDataReader : IStorageDataReader
 {
     private readonly IDataReader _reader;
 
-    public StorageDataReader(IDataReader reader)
+    protected StorageDataReader(IDataReader reader)
     {
         _reader = reader;
     }
 
-    public string GetStringValue(string key)
+    public virtual string GetStringValue(string key)
     {
         var ordinal = _reader.GetOrdinal(key);
-        return _reader.IsDBNull(ordinal) ? default(string) : _reader.GetString(ordinal);
+        return _reader.IsDBNull(ordinal) ? default : _reader.GetString(ordinal);
     }
-
-    public int GetIntValue(string key)
+    
+    public virtual int GetIntValue(string key)
     {
         var ordinal = _reader.GetOrdinal(key);
-        return _reader.IsDBNull(ordinal) ? default(int) : _reader.GetInt32(ordinal);
+        return _reader.IsDBNull(ordinal) ? default : _reader.GetInt32(ordinal);
     }
 
-    public string ReadString(string key)
+    public virtual string ReadString(string key)
     {
         if (Read())
             return GetStringValue(key);
         return null;
     }
 
-    public IList<string> ReadStringList(string key)
+    public virtual IList<string> ReadStringList(string key)
     {
         var list = new List<string>();
         while (Read())
@@ -72,7 +72,7 @@ public class StorageDataReader : IStorageDataReader
     public DateTime GetDateTimeValue(string key)
     {
         var ordinal = _reader.GetOrdinal(key);
-        var dateTime = _reader.IsDBNull(ordinal) ? default(DateTime) : _reader.GetDateTime(ordinal);
+        var dateTime = _reader.IsDBNull(ordinal) ? default : _reader.GetDateTime(ordinal);
         return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     }
 
@@ -93,6 +93,6 @@ public class StorageDataReader : IStorageDataReader
 
     public T ReadOne<T>(Func<IStorageDataReader, T> func)
     {
-        return Read() ? func(this) : default(T);
+        return Read() ? func(this) : default;
     }
 }

@@ -1,5 +1,8 @@
 using Infrastructure.Sql;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Data.Sqlite;
+using System.Data.Common;
+using System.Reflection.PortableExecutable;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
@@ -8,7 +11,6 @@ namespace Tests.Integration;
 public class TestSetup
 {
     private static WebApplicationFactoryInTest _webApplicationFactory;
-    private static SqliteConnection _dbConnection;
     
     public static FakeEmailSender EmailSender;
     public static IDb Db;
@@ -16,22 +18,16 @@ public class TestSetup
     [OneTimeSetUp]
     public async Task SetUp()
     {
-        const string connectionString = "Data Source=:memory:";
-        _dbConnection = new SqliteConnection(connectionString);
-        await _dbConnection.OpenAsync();
-        Db = new SqliteDb(_dbConnection);
+        const string connectionString = "Data Source=IntegrationTests;Mode=Memory;Cache=Shared";
+        Db = new SqliteDb(connectionString);
         EmailSender = new FakeEmailSender();
         _webApplicationFactory = new WebApplicationFactoryInTest(connectionString, EmailSender);
+        await DropTables();
         await CreateTables();
+        await ReadUsers(connectionString); 
         await AddMasterData();
     }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        await _dbConnection.CloseAsync();
-    }
-
+    
     public static HttpClient GetClient(string token = null)
     {
         var client = _webApplicationFactory.CreateClient();
@@ -39,7 +35,12 @@ public class TestSetup
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         return client;
     }
-    
+
+    private static async Task DropTables()
+    {
+        await Db.Execute(DropScript);
+    }
+
     private static async Task CreateTables()
     {
         await Db.Execute(CreateScript);
@@ -50,7 +51,28 @@ public class TestSetup
         await Db.Execute(GetMasterDataSql);
     }
 
-    private static string CreateScript => ReadSqlFile("data/db-create.sql");
+    private async Task ReadUsers(string connectionString)
+    {
+        await using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        var command = new SqliteCommand("SELECT * FROM pb_user", connection);
+        var reader = await command.ExecuteReaderAsync();
+        while (reader.Read())
+        {
+            var ordinal = reader.GetOrdinal("user_name");
+            var value = reader.IsDBNull(ordinal) ? default : reader.GetString(ordinal);
+            Console.WriteLine(value);
+        }
+    }
+
+    [OneTimeTearDown]
+    public void TearDown()
+    {
+        Db.Dispose();
+    }
+
+    private static string DropScript => ReadSqlFile("data/db-drop.sql");
+    private static string CreateScript => ReadSqlFile("data/db-create-sqlite.sql");
     private static string GetMasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
 
     private static string ReadSqlFile(string fileName)

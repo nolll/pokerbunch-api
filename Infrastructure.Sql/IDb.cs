@@ -3,7 +3,7 @@ using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql;
 
-public interface IDb
+public interface IDb : IDisposable
 {
     DbEngine Engine { get; }
     Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null);
