@@ -1,8 +1,7 @@
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.Data.Sqlite;
-using System.Data.Common;
-using System.Reflection.PortableExecutable;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
@@ -10,35 +9,70 @@ namespace Tests.Integration;
 [SetUpFixture]
 public class TestSetup
 {
+    private TestcontainerDatabase _testcontainers;
+
     private static WebApplicationFactoryInTest _webApplicationFactory;
     
     public static FakeEmailSender EmailSender;
     public static IDb Db;
+    private const DbEngine Engine = DbEngine.Sqlite;
+    private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
 
     [OneTimeSetUp]
     public async Task SetUp()
     {
-        const string connectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
-        Db = new SqliteDb(connectionString);
+        Db = await InitDbEngine();
         EmailSender = new FakeEmailSender();
         _webApplicationFactory = new WebApplicationFactoryInTest(EmailSender, Db);
-        await DropTables();
         await CreateTables();
-        await ReadUsers(connectionString); 
         await AddMasterData();
     }
-    
+
+    private async Task<IDb> InitDbEngine()
+    {
+        return Engine == DbEngine.Postgres
+            ? await InitPostgresEngine()
+            : InitSqliteEngine();
+    }
+
+    private async Task<IDb> InitPostgresEngine()
+    {
+        _testcontainers = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+            .WithDatabase(new PostgreSqlTestcontainerConfiguration
+            {
+                Database = "db",
+                Username = "postgres",
+                Password = "postgres",
+                Port = 49262
+            })
+            .Build();
+        await _testcontainers.StartAsync();
+        return new PostgresDb(_testcontainers.ConnectionString);
+    }
+
+    private IDb InitSqliteEngine()
+    {
+        return new SqliteDb(SqliteConnectionString);
+    }
+
+    private async Task DestroyDbEngine()
+    {
+        Db.Dispose();
+        if(Engine == DbEngine.Postgres)
+            await DestroyPostgresEngine();
+    }
+
+    private async Task DestroyPostgresEngine()
+    {
+        await _testcontainers.DisposeAsync().AsTask();
+    }
+
     public static HttpClient GetClient(string token = null)
     {
         var client = _webApplicationFactory.CreateClient();
         if(token != null)
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         return client;
-    }
-
-    private static async Task DropTables()
-    {
-        await Db.Execute(DropScript);
     }
 
     private static async Task CreateTables()
@@ -51,27 +85,12 @@ public class TestSetup
         await Db.Execute(GetMasterDataSql);
     }
 
-    private async Task ReadUsers(string connectionString)
-    {
-        await using var connection = new SqliteConnection(connectionString);
-        connection.Open();
-        var command = new SqliteCommand("SELECT * FROM pb_user", connection);
-        var reader = await command.ExecuteReaderAsync();
-        while (reader.Read())
-        {
-            var ordinal = reader.GetOrdinal("user_name");
-            var value = reader.IsDBNull(ordinal) ? default : reader.GetString(ordinal);
-            Console.WriteLine(value);
-        }
-    }
-
     [OneTimeTearDown]
-    public void TearDown()
+    public async Task TearDown()
     {
-        Db.Dispose();
+        await DestroyDbEngine();
     }
 
-    private static string DropScript => ReadSqlFile("data/db-drop.sql");
     private static string CreateScript => ReadSqlFile("data/db-create-sqlite.sql");
     private static string GetMasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
 
