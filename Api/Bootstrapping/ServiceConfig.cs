@@ -156,7 +156,7 @@ public class ServiceConfig
     {
         var databaseUrl = _configuration.GetValue<string>("DATABASE_URL");
         if (string.IsNullOrEmpty(databaseUrl))
-            throw new ConfigurationErrorsException("Database url is missing");
+            return string.Empty;
 
         var databaseUri = new Uri(databaseUrl);
         var userInfo = databaseUri.UserInfo.Split(':');

@@ -12,6 +12,7 @@ public class MasterDataTests
         var reader = await TestSetup.Db.Query("SELECT role_id, role_name FROM pb_role ORDER BY role_id");
         var roles = reader.ReadList(RoleInTest.Create);
 
+        Assert.That(roles.Count, Is.EqualTo(3));
         Assert.That(roles[0].Id, Is.EqualTo(1));
         Assert.That(roles[0].Name, Is.EqualTo("Player"));
         Assert.That(roles[1].Id, Is.EqualTo(2));

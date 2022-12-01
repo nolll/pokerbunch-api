@@ -18,7 +18,7 @@ public class UserRegistrationTests
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         await TestSetup.Db.Execute("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
     }
-
+    
     [Test]
     [Order(2)]
     public async Task RegisterManagerReturns200()

@@ -18,10 +18,10 @@ public class TestSetup
     [OneTimeSetUp]
     public async Task SetUp()
     {
-        const string connectionString = "Data Source=IntegrationTests;Mode=Memory;Cache=Shared";
+        const string connectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
         Db = new SqliteDb(connectionString);
         EmailSender = new FakeEmailSender();
-        _webApplicationFactory = new WebApplicationFactoryInTest(connectionString, EmailSender);
+        _webApplicationFactory = new WebApplicationFactoryInTest(EmailSender, Db);
         await DropTables();
         await CreateTables();
         await ReadUsers(connectionString); 
