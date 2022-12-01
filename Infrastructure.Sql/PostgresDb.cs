@@ -10,14 +10,11 @@ public class PostgresDb : IDb
 {
     private readonly string _connectionString;
 
+    public DbEngine Engine => DbEngine.Postgres;
+
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
-    }
-
-    private NpgsqlConnection GetConnection()
-    {
-        return new NpgsqlConnection(_connectionString);
     }
 
     public async Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null)
@@ -65,6 +62,11 @@ public class PostgresDb : IDb
         var result = await command.ExecuteScalarAsync();
 
         return Convert.ToInt32(result);
+    }
+
+    private NpgsqlConnection GetConnection()
+    {
+        return new NpgsqlConnection(_connectionString);
     }
 
     private static NpgsqlParameter[] ToSqlCommands(IEnumerable<SqlParam> parameters)

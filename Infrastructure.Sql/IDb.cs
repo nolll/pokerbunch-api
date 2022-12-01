@@ -5,6 +5,7 @@ namespace Infrastructure.Sql;
 
 public interface IDb
 {
+    DbEngine Engine { get; }
     Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null);
     Task<IStorageDataReader> Query(string sql, ListParam parameter);
     Task<int> Execute(string sql, IEnumerable<SqlParam> parameters = null);

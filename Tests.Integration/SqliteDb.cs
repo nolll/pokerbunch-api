@@ -15,7 +15,9 @@ public class SqliteDb : IDb
     {
         _connection = connection;
     }
-    
+
+    public DbEngine Engine => DbEngine.Sqlite;
+
     public async Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null)
     {
         await using var command = new SqliteCommand(sql, _connection);
