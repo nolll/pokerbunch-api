@@ -24,7 +24,7 @@ public class PostgresDb : IDb
 
         await using var command = new NpgsqlCommand(sql, connection);
         if (parameters != null)
-            command.Parameters.AddRange(ToSqlCommands(parameters));
+            command.Parameters.AddRange(ToPostgresParams(parameters));
 
         var mySqlReader = await command.ExecuteReaderAsync();
         var dt = new DataTable();
@@ -45,7 +45,7 @@ public class PostgresDb : IDb
 
         await using var command = new NpgsqlCommand(sql, connection);
         if (parameters != null)
-            command.Parameters.AddRange(ToSqlCommands(parameters));
+            command.Parameters.AddRange(ToPostgresParams(parameters));
 
         return await command.ExecuteNonQueryAsync();
     }
@@ -57,7 +57,7 @@ public class PostgresDb : IDb
 
         await using var command = new NpgsqlCommand(sql, connection);
         if (parameters != null)
-            command.Parameters.AddRange(ToSqlCommands(parameters));
+            command.Parameters.AddRange(ToPostgresParams(parameters));
 
         var result = await command.ExecuteScalarAsync();
 
@@ -69,9 +69,17 @@ public class PostgresDb : IDb
         return new NpgsqlConnection(_connectionString);
     }
 
-    private static NpgsqlParameter[] ToSqlCommands(IEnumerable<SqlParam> parameters)
+    private static NpgsqlParameter[] ToPostgresParams(IEnumerable<SqlParam> parameters)
     {
-        return parameters.Select(o => o.Parameter).ToArray();
+        return parameters.Select(ToPostgresParams).ToArray();
+    }
+
+    private static NpgsqlParameter ToPostgresParams(SqlParam p)
+    {
+        return new NpgsqlParameter(p.Name, p.Type)
+        {
+            Value = p.Value
+        };
     }
 
     public void Dispose()

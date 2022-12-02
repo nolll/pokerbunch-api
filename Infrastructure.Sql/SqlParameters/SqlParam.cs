@@ -5,13 +5,14 @@ namespace Infrastructure.Sql.SqlParameters;
 
 public class SqlParam
 {
-    public NpgsqlParameter Parameter { get; }
-    
+    public string Name { get; }
+    public DbType Type { get; }
+    public object Value { get; }
+
     public SqlParam(string name, DbType type, object value)
     {
-        Parameter = new NpgsqlParameter(name, type)
-        {
-            Value = value
-        };
+        Name = name;
+        Type = type;
+        Value = value;
     }
 }

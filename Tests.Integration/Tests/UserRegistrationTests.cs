@@ -1,6 +1,5 @@
 using System.Net;
 using Api.Models.UserModels;
-using Infrastructure.Sql;
 
 namespace Tests.Integration.Tests;
 

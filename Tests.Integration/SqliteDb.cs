@@ -2,6 +2,7 @@ using Infrastructure.Sql;
 using Infrastructure.Sql.Interfaces;
 using Infrastructure.Sql.SqlParameters;
 using Microsoft.Data.Sqlite;
+using Newtonsoft.Json.Linq;
 using Npgsql;
 using System.Data;
 
@@ -23,7 +24,7 @@ public class SqliteDb : IDb
     {
         await using var command = new SqliteCommand(sql, _connection);
         if (parameters != null)
-            command.Parameters.AddRange(ToSqlCommands(parameters));
+            command.Parameters.AddRange(ToSqliteParams(parameters));
 
         var mySqlReader = await command.ExecuteReaderAsync();
         var dt = new DataTable();
@@ -41,7 +42,7 @@ public class SqliteDb : IDb
     {
         await using var command = new SqliteCommand(sql, _connection);
         if (parameters != null)
-            command.Parameters.AddRange(ToSqlCommands(parameters));
+            command.Parameters.AddRange(ToSqliteParams(parameters));
 
         return await command.ExecuteNonQueryAsync();
     }
@@ -50,16 +51,24 @@ public class SqliteDb : IDb
     {
         await using var command = new SqliteCommand(sql, _connection);
         if (parameters != null)
-            command.Parameters.AddRange(ToSqlCommands(parameters));
+            command.Parameters.AddRange(ToSqliteParams(parameters));
 
         var result = await command.ExecuteScalarAsync();
 
         return Convert.ToInt32(result);
     }
 
-    private static NpgsqlParameter[] ToSqlCommands(IEnumerable<SqlParam> parameters)
+    private static SqliteParameter[] ToSqliteParams(IEnumerable<SqlParam> parameters)
     {
-        return parameters.Select(o => o.Parameter).ToArray();
+        return parameters.Select(ToSqliteParam).ToArray();
+    }
+
+    private static SqliteParameter ToSqliteParam(SqlParam p)
+    {
+        return new SqliteParameter(p.Name, p.Type)
+        {
+            Value = p.Value
+        };
     }
 
     public void Dispose()

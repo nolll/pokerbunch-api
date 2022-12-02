@@ -15,7 +15,7 @@ public class TestSetup
     
     public static FakeEmailSender EmailSender;
     public static IDb Db;
-    private const DbEngine Engine = DbEngine.Postgres;
+    private const DbEngine Engine = DbEngine.Sqlite;
     private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
 
     [OneTimeSetUp]
