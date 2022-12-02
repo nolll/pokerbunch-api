@@ -15,7 +15,7 @@ public class TestSetup
     
     public static FakeEmailSender EmailSender;
     public static IDb Db;
-    private const DbEngine Engine = DbEngine.Sqlite;
+    private const DbEngine Engine = DbEngine.Postgres;
     private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
 
     [OneTimeSetUp]
@@ -50,10 +50,7 @@ public class TestSetup
         return new PostgresDb(_testcontainers.ConnectionString);
     }
 
-    private IDb InitSqliteEngine()
-    {
-        return new SqliteDb(SqliteConnectionString);
-    }
+    private IDb InitSqliteEngine() => new SqliteDb(SqliteConnectionString);
 
     private async Task DestroyDbEngine()
     {
@@ -62,10 +59,7 @@ public class TestSetup
             await DestroyPostgresEngine();
     }
 
-    private async Task DestroyPostgresEngine()
-    {
-        await _testcontainers.DisposeAsync().AsTask();
-    }
+    private async Task DestroyPostgresEngine() => await _testcontainers.DisposeAsync().AsTask();
 
     public static HttpClient GetClient(string token = null)
     {
@@ -75,23 +69,16 @@ public class TestSetup
         return client;
     }
 
-    private static async Task CreateTables()
-    {
-        await Db.Execute(CreateScript);
-    }
-
-    private static async Task AddMasterData()
-    {
-        await Db.Execute(GetMasterDataSql);
-    }
+    private static async Task CreateTables() => await Db.Execute(CreateScript);
+    private static async Task AddMasterData() => await Db.Execute(GetMasterDataSql);
 
     [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        await DestroyDbEngine();
-    }
+    public async Task TearDown() => await DestroyDbEngine();
 
-    private static string CreateScript => ReadSqlFile("data/db-create-sqlite.sql");
+    private static string CreateScriptName => Engine == DbEngine.Postgres
+        ? "db-create-postgres.sql"
+        : "db-create-sqlite.sql";
+    private static string CreateScript => ReadSqlFile($"data/{CreateScriptName}");
     private static string GetMasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
 
     private static string ReadSqlFile(string fileName)
