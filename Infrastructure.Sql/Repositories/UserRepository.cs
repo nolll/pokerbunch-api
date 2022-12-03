@@ -29,7 +29,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
     {
-        var id = await _userDb.Find(nameOrEmail);
+        var id = await _userDb.Find(nameOrEmail.ToLower());
         if (id == null)
             return null;
         return await GetAndCache(id);
