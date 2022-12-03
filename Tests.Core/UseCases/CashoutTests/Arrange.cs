@@ -40,7 +40,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
         Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(Task.FromResult(CreateCashgame()));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult(player));
-        Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(UserName)).Returns(Task.FromResult(user));
+        Mock<IUserRepository>().Setup(s => s.GetByUserName(UserName)).Returns(Task.FromResult(user));
     }
 
     protected override async Task ExecuteAsync()

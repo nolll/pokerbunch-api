@@ -29,11 +29,11 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var userByName = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var userByName = await _userRepository.GetByUserName(request.UserName);
         if (userByName != null)
             return Error(new UserExistsError());
 
-        var userByEmail = await _userRepository.GetByUserNameOrEmail(request.Email);
+        var userByEmail = await _userRepository.GetByUserEmail(request.Email);
         if (userByEmail != null)
             return Error(new EmailExistsError());
 

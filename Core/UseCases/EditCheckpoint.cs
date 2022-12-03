@@ -31,7 +31,7 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
         var cashgame = await _cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
         var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanEditCheckpoint(currentUser, currentPlayer))

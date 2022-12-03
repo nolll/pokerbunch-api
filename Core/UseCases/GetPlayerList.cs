@@ -22,7 +22,7 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayers(currentUser, currentPlayer))

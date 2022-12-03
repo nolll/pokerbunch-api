@@ -31,7 +31,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         var user = player.UserId != null 
             ? await _userRepository.GetById(player.UserId)
             : null;
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());

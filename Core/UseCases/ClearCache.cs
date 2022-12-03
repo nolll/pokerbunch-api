@@ -17,7 +17,7 @@ public class ClearCache : UseCase<ClearCache.Request, ClearCache.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         if (!AccessControl.CanClearCache(user))
             return Error(new AccessDeniedError());
 

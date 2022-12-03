@@ -27,7 +27,7 @@ public class Report : UseCase<Report.Request, Report.Result>
             return Error(new ValidationError(validator));
 
         var cashgame = await _cashgameRepository.Get(request.CashgameId);
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());

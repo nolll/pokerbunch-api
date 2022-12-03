@@ -27,9 +27,25 @@ public class UserRepository : IUserRepository
         return await GetAndCache(ids);
     }
 
+    public async Task<User> GetByUserEmail(string email)
+    {
+        var id = await _userDb.FindByEmail(email.ToLower());
+        if (id == null)
+            return null;
+        return await GetAndCache(id);
+    }
+
     public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
     {
-        var id = await _userDb.Find(nameOrEmail.ToLower());
+        var id = await _userDb.FindByNameOrEmail(nameOrEmail.ToLower());
+        if (id == null)
+            return null;
+        return await GetAndCache(id);
+    }
+
+    public async Task<User> GetByUserName(string name)
+    {
+        var id = await _userDb.FindByName(name.ToLower());
         if (id == null)
             return null;
         return await GetAndCache(id);

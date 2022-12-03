@@ -49,7 +49,17 @@ public class SqlUserDb
         return await GetIds();
     }
 
-    public async Task<string> Find(string nameOrEmail)
+    public async Task<string> FindByName(string name)
+    {
+        return await GetIdByName(name);
+    }
+
+    public async Task<string> FindByEmail(string email)
+    {
+        return await GetIdByEmail(email);
+    }
+
+    public async Task<string> FindByNameOrEmail(string nameOrEmail)
     {
         return await GetIdByNameOrEmail(nameOrEmail);
     }
@@ -101,6 +111,34 @@ public class SqlUserDb
         var parameters = new List<SqlParam>
         {
             new StringParam("@query", nameOrEmail)
+        };
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadInt("user_id")?.ToString();
+    }
+
+    private async Task<string> GetIdByName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return null;
+
+        var sql = string.Concat(SearchSql, "WHERE u.user_name = @name");
+        var parameters = new List<SqlParam>
+        {
+            new StringParam("@name", name)
+        };
+        var reader = await _db.Query(sql, parameters);
+        return reader.ReadInt("user_id")?.ToString();
+    }
+
+    private async Task<string> GetIdByEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return null;
+
+        var sql = string.Concat(SearchSql, "WHERE u.email = @email");
+        var parameters = new List<SqlParam>
+        {
+            new StringParam("@email", email)
         };
         var reader = await _db.Query(sql, parameters);
         return reader.ReadInt("user_id")?.ToString();

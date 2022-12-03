@@ -16,8 +16,8 @@ public class UserDetails : UseCase<UserDetails.Request, UserDetails.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.CurrentUserName);
-        var displayUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.CurrentUserName);
+        var displayUser = await _userRepository.GetByUserName(request.UserName);
 
         if (displayUser == null)
             return Error(new UserNotFoundError(request.UserName));

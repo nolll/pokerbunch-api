@@ -29,7 +29,7 @@ public class AddPlayer : UseCase<AddPlayer.Request, AddPlayer.Result>
             return Error(new ValidationError(validator));
 
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanAddPlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
