@@ -1,45 +1,30 @@
 using Core.Entities;
+using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Classes;
 
+[UsedImplicitly]
 public class RawUser
 {
-    public int Id { get; }
-    public string UserName { get; }
-    public string DisplayName { get; }
-    public string RealName { get; }
-    public string Email { get; }
-    public int GlobalRole { get; }
-    public string EncryptedPassword { get; }
-    public string Salt { get; }
-
-    public RawUser(int user_id, string user_name, string display_name, string real_name, string email, string password, string salt, int role_id)
-    {
-        Id = user_id;
-        UserName = user_name;
-        DisplayName = display_name;
-        RealName = real_name;
-        Email = email;
-        GlobalRole = role_id;
-        EncryptedPassword = password;
-        Salt = salt;
-    }
+    [UsedImplicitly] public int User_Id { get; set; }
+    [UsedImplicitly] public string User_Name { get; set; }
+    [UsedImplicitly] public string Display_Name { get; set; }
+    [UsedImplicitly] public string Real_Name { get; set; }
+    [UsedImplicitly] public string Email { get; set; }
+    [UsedImplicitly] public int Role_Id { get; set; }
+    [UsedImplicitly] public string Password { get; set; }
+    [UsedImplicitly] public string Salt { get; set; }
 
     public static User CreateReal(RawUser rawUser)
     {
         return new User(
-            rawUser.Id.ToString(),
-            rawUser.UserName,
-            rawUser.DisplayName,
-            rawUser.RealName,
+            rawUser.User_Id.ToString(),
+            rawUser.User_Name,
+            rawUser.Display_Name,
+            rawUser.Real_Name,
             rawUser.Email,
-            (Role)rawUser.GlobalRole,
-            rawUser.EncryptedPassword,
+            (Role)rawUser.Role_Id,
+            rawUser.Password,
             rawUser.Salt);
-    }
-
-    public static string ToStringId(int id)
-    {
-        return string.Concat("RawUsers/", id);
     }
 }

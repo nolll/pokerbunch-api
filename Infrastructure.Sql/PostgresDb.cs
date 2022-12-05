@@ -4,7 +4,6 @@ using Npgsql;
 using System.Data;
 using Dapper;
 using Infrastructure.Sql.SqlParameters;
-using System.Data.Common;
 
 namespace Infrastructure.Sql;
 
