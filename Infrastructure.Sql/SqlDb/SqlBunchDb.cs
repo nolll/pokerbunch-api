@@ -117,23 +117,23 @@ public class SqlBunchDb
                 videos_enabled = @videosEnabled
             WHERE bunch_id = @id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new StringParam("@slug", rawBunch.Slug),
-            new StringParam("@displayName", rawBunch.DisplayName),
-            new StringParam("@description", rawBunch.Description),
-            new StringParam("@houseRules", rawBunch.HouseRules),
-            new StringParam("@currencySymbol", rawBunch.CurrencySymbol),
-            new StringParam("@currencyLayout", rawBunch.CurrencyLayout),
-            new StringParam("@timeZone", rawBunch.TimezoneName),
-            new IntParam("@defaultBuyin", rawBunch.DefaultBuyin),
-            new BoolParam("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new BoolParam("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new BoolParam("@videosEnabled", rawBunch.VideosEnabled),
-            new IntParam("@id", rawBunch.Id)
+            slug = rawBunch.Slug,
+            displayName = rawBunch.DisplayName,
+            description = rawBunch.Description,
+            houseRules = rawBunch.HouseRules,
+            currencySymbol = rawBunch.CurrencySymbol,
+            currencyLayout = rawBunch.CurrencyLayout,
+            timeZone = rawBunch.TimezoneName,
+            defaultBuyin = rawBunch.DefaultBuyin,
+            cashgamesEnabled = rawBunch.CashgamesEnabled,
+            tournamentsEnabled = rawBunch.TournamentsEnabled,
+            videosEnabled = rawBunch.VideosEnabled,
+            id = int.Parse(rawBunch.Id)
         };
 
-        await _db.Execute(sql, parameters);
+        await _db.Execute(sql, @params);
     }
         
     private static Bunch CreateBunch(RawBunch rawBunch)
@@ -159,11 +159,12 @@ public class SqlBunchDb
             FROM pb_bunch
             WHERE bunch_id = @id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@id", id)
+            id = int.Parse(id)
         };
-        var rowCount = await _db.Execute(sql, parameters);
+
+        var rowCount = await _db.Execute(sql, @params);
         return rowCount > 0;
     }
 

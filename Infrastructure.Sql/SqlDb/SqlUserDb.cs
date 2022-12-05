@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
-using Infrastructure.Sql.Interfaces;
 using Infrastructure.Sql.SqlParameters;
-using Dapper;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -73,16 +71,18 @@ public class SqlUserDb
                 password = @password,
                 salt = @salt
             WHERE user_id = @userId";
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new StringParam("@displayName", user.DisplayName),
-            new StringParam("@realName", user.RealName),
-            new StringParam("@email", user.Email),
-            new StringParam("@password", user.EncryptedPassword),
-            new StringParam("@salt", user.Salt),
-            new IntParam("@userId", user.Id)
+            displayName = user.DisplayName,
+            realName = user.RealName,
+            email = user.Email,
+            password = user.EncryptedPassword,
+            salt = user.Salt,
+            userId = int.Parse(user.Id)
         };
-        await _db.Execute(sql, parameters);
+
+        await _db.Execute(sql, @params);
     }
 
     public async Task<string> Add(User user)
@@ -90,15 +90,17 @@ public class SqlUserDb
         const string sql = @"
             INSERT INTO pb_user (user_name, display_name, email, role_id, password, salt)
             VALUES (@userName, @displayName, @email, 1, @password, @salt) RETURNING user_id";
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new StringParam("@userName", user.UserName),
-            new StringParam("@displayName", user.DisplayName),
-            new StringParam("@email", user.Email),
-            new StringParam("@password", user.EncryptedPassword),
-            new StringParam("@salt", user.Salt)
+            userName = user.UserName,
+            displayName = user.DisplayName,
+            email = user.Email,
+            password = user.EncryptedPassword,
+            salt = user.Salt
         };
-        return (await _db.Insert(sql, parameters)).ToString();
+
+        return (await _db.Insert(sql, @params)).ToString();
     }
         
     private async Task<string> GetIdByNameOrEmail(string nameOrEmail)
@@ -107,19 +109,19 @@ public class SqlUserDb
             return null;
 
         var sql = string.Concat(SearchSql, "WHERE (u.user_name = @query OR u.email = @query)");
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new StringParam("@query", nameOrEmail)
+            query = nameOrEmail
         };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadInt("user_id")?.ToString();
+
+        return (await _db.Single<int?>(sql, @params))?.ToString();
     }
 
     private async Task<IList<string>> GetIds()
     {
         var sql = string.Concat(SearchSql, "ORDER BY u.display_name");
-        var reader = await _db.Query(sql);
-        return reader.ReadIntList("user_id").Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(sql)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<bool> DeleteUser(string userId)
@@ -127,11 +129,13 @@ public class SqlUserDb
         const string sql = @"
             DELETE FROM pb_user
             WHERE user_iD = @userId";
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@userId", userId)
+            userId = int.Parse(userId)
         };
-        var rowCount = await _db.Execute(sql, parameters);
+
+        var rowCount = await _db.Execute(sql, @params);
         return rowCount > 0;
     }
 }

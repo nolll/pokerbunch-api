@@ -128,11 +128,12 @@ public class SqlCashgameDb
         const string sql = @"
             DELETE FROM pb_cashgame WHERE cashgame_id = @cashgameId";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@cashgameId", id)
+            cashgameId = int.Parse(id)
         };
-        await _db.Execute(sql, parameters);
+
+        await _db.Execute(sql, @params);
     }
         
     public async Task<string> AddGame(Bunch bunch, Cashgame cashgame)
@@ -163,13 +164,15 @@ public class SqlCashgameDb
             WHERE cashgame_id = @cashgameId";
 
         var rawCashgame = CreateRawCashgame(cashgame);
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@locationId", rawCashgame.LocationId),
-            new TimestampParam("@date", rawCashgame.Date),
-            new IntParam("@status", rawCashgame.Status),
-            new IntParam("@cashgameId", rawCashgame.Id)
+            locationId = int.Parse(rawCashgame.LocationId),
+            date = rawCashgame.Date,
+            status = rawCashgame.Status,
+            cashgameId = int.Parse(rawCashgame.Id)
         };
+
         if (cashgame.AddedCheckpoints.Any())
         {
             foreach (var checkpoint in cashgame.AddedCheckpoints)
@@ -191,7 +194,7 @@ public class SqlCashgameDb
                 await DeleteCheckpoint(checkpoint);
             }
         }
-        await _db.Execute(sql, parameters);
+        await _db.Execute(sql, @params);
     }
         
     public async Task<IList<string>> FindByPlayerId(string playerId)
@@ -286,14 +289,16 @@ public class SqlCashgameDb
                 amount = @amount,
                 stack = @stack
             WHERE checkpoint_id = @checkpointId";
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new TimestampParam("@timestamp", checkpoint.Timestamp),
-            new IntParam("@amount", checkpoint.Amount),
-            new IntParam("@stack", checkpoint.Stack),
-            new IntParam("@checkpointId", checkpoint.Id)
+            timestamp = checkpoint.Timestamp,
+            amount = checkpoint.Amount,
+            stack = checkpoint.Stack,
+            checkpointId = int.Parse(checkpoint.Id)
         };
-        await _db.Execute(sql, parameters);
+
+        await _db.Execute(sql, @params);
     }
 
     private async Task DeleteCheckpoint(Checkpoint checkpoint)
@@ -302,11 +307,12 @@ public class SqlCashgameDb
             DELETE FROM pb_cashgame_checkpoint
             WHERE checkpoint_id = @checkpointId";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@checkpointId", checkpoint.Id)
+            checkpointId = int.Parse(checkpoint.Id)
         };
-        await _db.Execute(sql, parameters);
+
+        await _db.Execute(sql, @params);
     }
 
     private async Task<IList<RawCheckpoint>> GetCheckpoints(string cashgameId)

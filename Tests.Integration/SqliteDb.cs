@@ -48,14 +48,10 @@ public class SqliteDb : IDb
         var sqlWithIdList = sql.Replace(parameter.Name, parameter.ParameterNameList);
         return await Query(sqlWithIdList, parameter.ParameterList);
     }
-
-    public async Task<int> Execute(string sql, IEnumerable<SqlParam> parameters = null)
+    
+    public async Task<int> Execute(string sql, object @params = null)
     {
-        await using var command = new SqliteCommand(sql, _connection);
-        if (parameters != null)
-            command.Parameters.AddRange(ToSqliteParams(parameters));
-
-        return await command.ExecuteNonQueryAsync();
+        return await _connection.ExecuteAsync(sql, @params);
     }
 
     public async Task<int> Insert(string sql, IEnumerable<SqlParam> parameters = null)
@@ -67,6 +63,11 @@ public class SqliteDb : IDb
         var result = await command.ExecuteScalarAsync();
 
         return Convert.ToInt32(result);
+    }
+
+    public async Task<int> Insert(string sql, object @params = null)
+    {
+        return await _connection.ExecuteScalarAsync<int>(sql, @params);
     }
 
     private static SqliteParameter[] ToSqliteParams(IEnumerable<SqlParam> parameters)

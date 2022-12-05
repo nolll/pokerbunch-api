@@ -115,15 +115,17 @@ public class SqlPlayerDb
                 role_id = @role,
                 approved = @approved
             WHERE player_id = @playerId";
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@bunchId", bunch.Id),
-            new IntParam("@userId", userId),
-            new IntParam("@role", (int)player.Role),
-            new BoolParam("@approved", true),
-            new IntParam("@playerId", player.Id)
+            bunchId = int.Parse(bunch.Id),
+            userId = int.Parse(userId),
+            role = (int)player.Role,
+            approved = true,
+            playerId = int.Parse(player.Id)
         };
-        var rowCount = await _db.Execute(sql, parameters);
+
+        var rowCount = await _db.Execute(sql, @params);
         return rowCount > 0;
     }
 
@@ -132,11 +134,13 @@ public class SqlPlayerDb
         const string sql = @"
             DELETE FROM pb_player
             WHERE player_id = @playerId";
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@playerId", playerId)
+            playerId = int.Parse(playerId)
         };
-        await _db.Execute(sql, parameters);
+
+        await _db.Execute(sql, @params);
     }
 
     private Player CreatePlayer(RawPlayer rawPlayer)

@@ -53,16 +53,12 @@ public class PostgresDb : IDb
         return await Query(sqlWithIdList, parameter.ParameterList);
     }
 
-    public async Task<int> Execute(string sql, IEnumerable<SqlParam> parameters = null)
+    public async Task<int> Execute(string sql, object @params = null)
     {
         await using var connection = GetConnection();
         connection.Open();
 
-        await using var command = new NpgsqlCommand(sql, connection);
-        if (parameters != null)
-            command.Parameters.AddRange(ToPostgresParams(parameters));
-
-        return await command.ExecuteNonQueryAsync();
+        return await connection.ExecuteAsync(sql, @params);
     }
 
     public async Task<int> Insert(string sql, IEnumerable<SqlParam> parameters = null)
@@ -77,6 +73,14 @@ public class PostgresDb : IDb
         var result = await command.ExecuteScalarAsync();
 
         return Convert.ToInt32(result);
+    }
+
+    public async Task<int> Insert(string sql, object @params = null)
+    {
+        await using var connection = GetConnection();
+        connection.Open();
+
+        return await connection.ExecuteScalarAsync<int>(sql, @params);
     }
 
     private NpgsqlConnection GetConnection()
