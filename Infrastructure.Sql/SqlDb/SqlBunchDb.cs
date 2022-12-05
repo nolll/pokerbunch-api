@@ -83,20 +83,21 @@ public class SqlBunchDb
             INSERT INTO pb_bunch (name, display_name, description, currency, currency_layout, timezone, default_buyin, cashgames_enabled, tournaments_enabled, videos_enabled, house_rules)
             VALUES (@slug, @displayName, @description, @currencySymbol, @currencyLayout, @timeZone, 0, @cashgamesEnabled, @tournamentsEnabled, @videosEnabled, @houseRules) RETURNING bunch_id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new StringParam("@slug", rawBunch.Slug),
-            new StringParam("@displayName", rawBunch.DisplayName),
-            new StringParam("@description", rawBunch.Description),
-            new StringParam("@currencySymbol", rawBunch.CurrencySymbol),
-            new StringParam("@currencyLayout", rawBunch.CurrencyLayout),
-            new StringParam("@timeZone", rawBunch.TimezoneName),
-            new BoolParam("@cashgamesEnabled", rawBunch.CashgamesEnabled),
-            new BoolParam("@tournamentsEnabled", rawBunch.TournamentsEnabled),
-            new BoolParam("@videosEnabled", rawBunch.VideosEnabled),
-            new StringParam("@houseRules", rawBunch.HouseRules)
+            slug = rawBunch.Slug,
+            displayName = rawBunch.DisplayName,
+            description = rawBunch.Description,
+            currencySymbol = rawBunch.CurrencySymbol,
+            currencyLayout = rawBunch.CurrencyLayout,
+            timeZone = rawBunch.TimezoneName,
+            cashgamesEnabled = rawBunch.CashgamesEnabled,
+            tournamentsEnabled = rawBunch.TournamentsEnabled,
+            videosEnabled = rawBunch.VideosEnabled,
+            @houseRules = rawBunch.HouseRules
         };
-        return (await _db.Insert(sql, parameters)).ToString();
+
+        return (await _db.Insert(sql, @params)).ToString();
     }
 
     public async Task Update(Bunch bunch)

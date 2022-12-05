@@ -144,14 +144,16 @@ public class SqlCashgameDb
             VALUES (@bunchId, @locationId, @status, @date) RETURNING cashgame_id";
 
         var timezoneAdjustedDate = TimeZoneInfo.ConvertTime(rawCashgame.Date, bunch.Timezone);
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@bunchId", bunch.Id),
-            new IntParam("@locationId", rawCashgame.LocationId),
-            new IntParam("@status", rawCashgame.Status),
-            new DateParam("@date", timezoneAdjustedDate.Date)
+            bunchId = int.Parse(bunch.Id),
+            locationId = int.Parse(rawCashgame.LocationId),
+            status = rawCashgame.Status,
+            date = timezoneAdjustedDate.Date
         };
-        return (await _db.Insert(sql, parameters)).ToString();
+
+        return (await _db.Insert(sql, @params)).ToString();
     }
         
     public async Task UpdateGame(Cashgame cashgame)
