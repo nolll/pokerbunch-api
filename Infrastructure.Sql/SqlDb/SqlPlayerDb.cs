@@ -78,30 +78,34 @@ public class SqlPlayerDb
             const string sql = @"
                 INSERT INTO pb_player (bunch_id, user_id, role_id, approved, color)
                 VALUES (@bunchId, @userId, @role, @approved, @color) RETURNING player_id";
-            var parameters = new List<SqlParam>
+
+            var @params = new
             {
-                new IntParam("@bunchId", player.BunchId),
-                new IntParam("@userId", player.UserId),
-                new IntParam("@role", (int)player.Role),
-                new BoolParam("@approved", true),
-                new StringParam("@color", player.Color)
+                bunchId = int.Parse(player.BunchId),
+                userId = int.Parse(player.UserId),
+                role = (int)player.Role,
+                approved = true,
+                color = player.Color
             };
-            return (await _db.Insert(sql, parameters)).ToString();
+
+            return (await _db.Insert(sql, @params)).ToString();
         }
         else
         {
             const string sql = @"
                 INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
                 VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
-            var parameters = new List<SqlParam>
+
+            var @params = new
             {
-                new IntParam("@bunchId", player.BunchId),
-                new IntParam("@role", (int)Role.Player),
-                new BoolParam("@approved", true),
-                new StringParam("@playerName", player.DisplayName),
-                new StringParam("@color", player.Color)
+                bunchId = int.Parse(player.BunchId),
+                role = (int)Role.Player,
+                approved = true,
+                playerName = player.DisplayName,
+                color = player.Color
             };
-            return (await _db.Insert(sql, parameters)).ToString();
+
+            return (await _db.Insert(sql, @params)).ToString();
         }
     }
 

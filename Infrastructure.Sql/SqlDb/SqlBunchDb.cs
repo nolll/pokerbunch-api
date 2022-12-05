@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Linq;
 using Core.Entities;
@@ -36,44 +37,45 @@ public class SqlBunchDb
     public async Task<Bunch> Get(string id)
     {
         var sql = string.Concat(DataSql, " WHERE bunch_id = @id");
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new IntParam("@id", id)
+            id = int.Parse(id)
         };
-        var reader = await _db.Query(sql, parameters);
-        var rawBunch = reader.ReadOne(CreateRawBunch);
+        var rawBunch = await _db.Single<RawBunch>(sql, @params);
         return rawBunch != null ? CreateBunch(rawBunch) : null;
     }
 
     public async Task<IList<string>> Search()
     {
-        var reader = await _db.Query(SearchSql);
-        return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(SearchSql)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> Search(string slug)
     {
         var sql = string.Concat(SearchSql, " WHERE b.name = @slug");
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new StringParam("@slug", slug)
+            slug = slug
         };
-        var reader = await _db.Query(sql, parameters);
-        var id = reader.ReadInt("bunch_id")?.ToString();
-        if(id != null)
-            return new List<string> {id};
-        return new List<string>();
+        
+        var id = (await _db.Single<int?>(sql, @params))?.ToString();
+        return id != null 
+            ? new List<string> {id} 
+            : new List<string>();
     }
 
     public async Task<IList<string>> SearchByUser(string userId)
     {
         var sql = string.Concat(SearchSql, " INNER JOIN pb_player p on b.bunch_id = p.bunch_id WHERE p.user_id = @userId ORDER BY b.name");
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@userId", userId)
+            userId = int.Parse(userId)
         };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadIntList("bunch_id").Select(o => o.ToString()).ToList();
+
+        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Bunch bunch)
@@ -85,16 +87,16 @@ public class SqlBunchDb
 
         var @params = new
         {
-            slug = rawBunch.Slug,
-            displayName = rawBunch.DisplayName,
+            slug = rawBunch.Name,
+            displayName = rawBunch.Display_Name,
             description = rawBunch.Description,
-            currencySymbol = rawBunch.CurrencySymbol,
-            currencyLayout = rawBunch.CurrencyLayout,
-            timeZone = rawBunch.TimezoneName,
-            cashgamesEnabled = rawBunch.CashgamesEnabled,
-            tournamentsEnabled = rawBunch.TournamentsEnabled,
-            videosEnabled = rawBunch.VideosEnabled,
-            @houseRules = rawBunch.HouseRules
+            currencySymbol = rawBunch.Currency,
+            currencyLayout = rawBunch.Currency_Layout,
+            timeZone = rawBunch.Timezone,
+            cashgamesEnabled = rawBunch.Cashgames_Enabled,
+            tournamentsEnabled = rawBunch.Tournaments_Enabled,
+            videosEnabled = rawBunch.Videos_Enabled,
+            @houseRules = rawBunch.House_Rules
         };
 
         return (await _db.Insert(sql, @params)).ToString();
@@ -120,18 +122,18 @@ public class SqlBunchDb
 
         var @params = new
         {
-            slug = rawBunch.Slug,
-            displayName = rawBunch.DisplayName,
+            slug = rawBunch.Name,
+            displayName = rawBunch.Display_Name,
             description = rawBunch.Description,
-            houseRules = rawBunch.HouseRules,
-            currencySymbol = rawBunch.CurrencySymbol,
-            currencyLayout = rawBunch.CurrencyLayout,
-            timeZone = rawBunch.TimezoneName,
-            defaultBuyin = rawBunch.DefaultBuyin,
-            cashgamesEnabled = rawBunch.CashgamesEnabled,
-            tournamentsEnabled = rawBunch.TournamentsEnabled,
-            videosEnabled = rawBunch.VideosEnabled,
-            id = int.Parse(rawBunch.Id)
+            houseRules = rawBunch.House_Rules,
+            currencySymbol = rawBunch.Currency,
+            currencyLayout = rawBunch.Currency_Layout,
+            timeZone = rawBunch.Timezone,
+            defaultBuyin = rawBunch.Default_Buyin,
+            cashgamesEnabled = rawBunch.Cashgames_Enabled,
+            tournamentsEnabled = rawBunch.Tournaments_Enabled,
+            videosEnabled = rawBunch.Videos_Enabled,
+            id = int.Parse(rawBunch.Bunch_Id)
         };
 
         await _db.Execute(sql, @params);
@@ -140,16 +142,16 @@ public class SqlBunchDb
     private static Bunch CreateBunch(RawBunch rawBunch)
     {
         var culture = CultureInfo.CreateSpecificCulture("sv-SE");
-        var currency = new Currency(rawBunch.CurrencySymbol, rawBunch.CurrencyLayout, culture);
+        var currency = new Currency(rawBunch.Currency, rawBunch.Currency_Layout, culture);
 
         return new Bunch(
-            rawBunch.Id,
-            rawBunch.Slug,
-            rawBunch.DisplayName,
+            rawBunch.Bunch_Id,
+            rawBunch.Name,
+            rawBunch.Display_Name,
             rawBunch.Description,
-            rawBunch.HouseRules,
-            TimeZoneInfo.FindSystemTimeZoneById(rawBunch.TimezoneName),
-            rawBunch.DefaultBuyin,
+            rawBunch.House_Rules,
+            TimeZoneInfo.FindSystemTimeZoneById(rawBunch.Timezone),
+            rawBunch.Default_Buyin,
             currency);
     }
         
@@ -171,18 +173,20 @@ public class SqlBunchDb
 
     private static RawBunch CreateRawBunch(IStorageDataReader reader)
     {
-        return new RawBunch(
-            reader.GetIntValue("bunch_id").ToString(),
-            reader.GetStringValue("name"),
-            reader.GetStringValue("display_name"),
-            reader.GetStringValue("description"),
-            reader.GetStringValue("house_rules"),
-            reader.GetStringValue("timezone"),
-            reader.GetIntValue("default_buyin"),
-            reader.GetStringValue("currency_layout"),
-            reader.GetStringValue("currency"),
-            reader.GetBooleanValue("cashgames_enabled"),
-            reader.GetBooleanValue("tournaments_enabled"),
-            reader.GetBooleanValue("videos_enabled"));
+        return new RawBunch
+        {
+            Bunch_Id = reader.GetIntValue("bunch_id").ToString(),
+            Name = reader.GetStringValue("name"),
+            Display_Name = reader.GetStringValue("display_name"),
+            Description = reader.GetStringValue("description"),
+            House_Rules = reader.GetStringValue("house_rules"),
+            Timezone = reader.GetStringValue("timezone"),
+            Default_Buyin = reader.GetIntValue("default_buyin"),
+            Currency_Layout = reader.GetStringValue("currency_layout"),
+            Currency = reader.GetStringValue("currency"),
+            Cashgames_Enabled = reader.GetBooleanValue("cashgames_enabled"),
+            Tournaments_Enabled = reader.GetBooleanValue("tournaments_enabled"),
+            Videos_Enabled = reader.GetBooleanValue("videos_enabled")
+        };
     }
 }

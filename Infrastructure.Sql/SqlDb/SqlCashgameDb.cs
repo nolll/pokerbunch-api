@@ -271,16 +271,17 @@ public class SqlCashgameDb
             INSERT INTO pb_cashgame_checkpoint (cashgame_id, player_id, type, amount, stack, timestamp)
             VALUES (@cashgameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@cashgameId", checkpoint.CashgameId),
-            new IntParam("@playerId", checkpoint.PlayerId),
-            new IntParam("@type",(int) checkpoint.Type),
-            new IntParam("@amount", checkpoint.Amount),
-            new IntParam("@stack", checkpoint.Stack),
-            new TimestampParam("@timestamp", checkpoint.Timestamp.ToUniversalTime())
+            cashgameId = int.Parse(checkpoint.CashgameId),
+            playerId = int.Parse(checkpoint.PlayerId),
+            type = (int)checkpoint.Type,
+            amount = checkpoint.Amount,
+            stack = checkpoint.Stack,
+            timestamp = checkpoint.Timestamp.ToUniversalTime()
         };
-        return await _db.Insert(sql, parameters);
+
+        return await _db.Insert(sql, @params);
     }
 
     private async Task UpdateCheckpoint(Checkpoint checkpoint)

@@ -1,52 +1,39 @@
 using Core.Entities;
+using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Classes;
 
 public class RawBunch
 {
-    public string Id { get; }
-    public string Slug { get; }
-    public string DisplayName { get; }
-    public string Description { get; }
-    public string HouseRules { get; }
-    public string TimezoneName { get; }
-    public int DefaultBuyin { get; }
-    public string CurrencyLayout { get; }
-    public string CurrencySymbol { get; }
-    public bool CashgamesEnabled { get; }
-    public bool TournamentsEnabled { get; }
-    public bool VideosEnabled { get; }
-
-    public RawBunch(string id, string slug, string displayName, string description, string houseRules, string timezoneName, int defaultBuyin, string currencyLayout, string currencySymbol, bool cashgamesEnabled, bool tournamentsEnabled, bool videosEnabled)
-    {
-        Id = id;
-        Slug = slug;
-        DisplayName = displayName;
-        Description = description;
-        HouseRules = houseRules;
-        TimezoneName = timezoneName;
-        DefaultBuyin = defaultBuyin;
-        CurrencyLayout = currencyLayout;
-        CurrencySymbol = currencySymbol;
-        CashgamesEnabled = cashgamesEnabled;
-        TournamentsEnabled = tournamentsEnabled;
-        VideosEnabled = videosEnabled;
-    }
+    [UsedImplicitly] public string Bunch_Id { get; set; }
+    [UsedImplicitly] public string Name { get; set; }
+    [UsedImplicitly] public string Display_Name { get; set; }
+    [UsedImplicitly] public string Description { get; set; }
+    [UsedImplicitly] public string House_Rules { get; set; }
+    [UsedImplicitly] public string Timezone { get; set; }
+    [UsedImplicitly] public int Default_Buyin { get; set; }
+    [UsedImplicitly] public string Currency_Layout { get; set; }
+    [UsedImplicitly] public string Currency { get; set; }
+    [UsedImplicitly] public bool Cashgames_Enabled { get; set; }
+    [UsedImplicitly] public bool Tournaments_Enabled { get; set; }
+    [UsedImplicitly] public bool Videos_Enabled { get; set; }
 
     public static RawBunch Create(Bunch bunch)
     {
-        return new RawBunch(
-            bunch.Id,
-            bunch.Slug,
-            bunch.DisplayName,
-            bunch.Description,
-            bunch.HouseRules,
-            bunch.Timezone.Id,
-            bunch.DefaultBuyin,
-            bunch.Currency.Layout,
-            bunch.Currency.Symbol,
-            bunch.CashgamesEnabled,
-            bunch.TournamentsEnabled,
-            bunch.VideosEnabled);
+        return new RawBunch
+        {
+            Bunch_Id = bunch.Id,
+            Name = bunch.Slug,
+            Display_Name = bunch.DisplayName,
+            Description = bunch.Description,
+            House_Rules = bunch.HouseRules,
+            Timezone = bunch.Timezone.Id,
+            Default_Buyin = bunch.DefaultBuyin,
+            Currency_Layout = bunch.Currency.Layout,
+            Currency = bunch.Currency.Symbol,
+            Cashgames_Enabled = bunch.CashgamesEnabled,
+            Tournaments_Enabled = bunch.TournamentsEnabled,
+            Videos_Enabled = bunch.VideosEnabled
+        };
     }
 }

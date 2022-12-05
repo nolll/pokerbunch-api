@@ -83,12 +83,13 @@ public class SqlEventDb
             INSERT INTO pb_event (name, bunch_id)
             VALUES (@name, @bunchId) RETURNING event_id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new StringParam("@name", e.Name),
-            new IntParam("@bunchId", e.BunchId)
+            name = e.Name,
+            bunchId = int.Parse(e.BunchId)
         };
-        return (await _db.Insert(sql, parameters)).ToString();
+
+        return (await _db.Insert(sql, @params)).ToString();
     }
 
     public async Task AddCashgame(string eventId, string cashgameId)
@@ -97,12 +98,13 @@ public class SqlEventDb
             INSERT INTO pb_event_cashgame (event_id, cashgame_id)
             VALUES (@eventId, @cashgameId)";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@eventId", eventId),
-            new IntParam("@cashgameId", cashgameId)
+            eventId = int.Parse(eventId),
+            cashgameId = int.Parse(cashgameId)
         };
-        await _db.Insert(sql, parameters);
+
+        await _db.Insert(sql, @params);
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)
@@ -112,12 +114,13 @@ public class SqlEventDb
             WHERE event_id = @eventId
             AND cashgame_id = @cashgameId";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@eventId", eventId),
-            new IntParam("@cashgameId", cashgameId)
+            eventId = int.Parse(eventId),
+            cashgameId = int.Parse(cashgameId)
         };
-        await _db.Insert(sql, parameters);
+
+        await _db.Execute(sql, @params);
     }
 
     private static Event CreateEvent(RawEvent rawEvent)

@@ -25,10 +25,12 @@ public class SqlLocationDb
     public async Task<Location> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
+
         var parameters = new List<SqlParam>
         {
             new IntParam("@id", id)
         };
+
         var reader = await _db.Query(sql, parameters);
         return reader.ReadOne(CreateLocation);
     }
@@ -60,12 +62,14 @@ public class SqlLocationDb
         const string sql = @"
             INSERT INTO pb_location (name, bunch_id)
             VALUES (@name, @bunchId) RETURNING location_id";
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new StringParam("@name", location.Name),
-            new IntParam("@bunchId", location.BunchId)
+            name = location.Name,
+            bunchId = int.Parse(location.BunchId)
         };
-        return (await _db.Insert(sql, parameters)).ToString();
+
+        return (await _db.Insert(sql, @params)).ToString();
     }
 
     private Location CreateLocation(IStorageDataReader reader)

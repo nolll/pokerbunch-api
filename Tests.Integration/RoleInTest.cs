@@ -1,22 +1,10 @@
-using Infrastructure.Sql.Interfaces;
+using JetBrains.Annotations;
 
 namespace Tests.Integration;
 
+[UsedImplicitly]
 internal class RoleInTest
 {
-    private RoleInTest(int id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
-
-    public static RoleInTest Create(IStorageDataReader reader)
-    {
-        return new RoleInTest(
-            reader.GetIntValue("role_id"),
-            reader.GetStringValue("role_name"));
-    }
-
-    public int Id { get; }
-    public string Name { get; }
+    public int Role_Id { get; set; }
+    public string Role_Name { get; set; }
 }
