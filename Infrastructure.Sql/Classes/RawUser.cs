@@ -2,9 +2,9 @@ using Core.Entities;
 
 namespace Infrastructure.Sql.Classes;
 
-public class RawUser : IEntity
+public class RawUser
 {
-    public string Id { get; }
+    public int Id { get; }
     public string UserName { get; }
     public string DisplayName { get; }
     public string RealName { get; }
@@ -13,22 +13,22 @@ public class RawUser : IEntity
     public string EncryptedPassword { get; }
     public string Salt { get; }
 
-    public RawUser(string id, string userName, string displayName, string realName, string email, int globalRole, string encryptedPassword, string salt)
+    public RawUser(int user_id, string user_name, string display_name, string real_name, string email, string password, string salt, int role_id)
     {
-        Id = id;
-        UserName = userName;
-        DisplayName = displayName;
-        RealName = realName;
+        Id = user_id;
+        UserName = user_name;
+        DisplayName = display_name;
+        RealName = real_name;
         Email = email;
-        GlobalRole = globalRole;
-        EncryptedPassword = encryptedPassword;
+        GlobalRole = role_id;
+        EncryptedPassword = password;
         Salt = salt;
     }
 
     public static User CreateReal(RawUser rawUser)
     {
         return new User(
-            rawUser.Id,
+            rawUser.Id.ToString(),
             rawUser.UserName,
             rawUser.DisplayName,
             rawUser.RealName,

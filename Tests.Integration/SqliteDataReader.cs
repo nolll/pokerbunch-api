@@ -21,4 +21,13 @@ public class SqliteDataReader : StorageDataReader
 
         return Convert.ToInt32(_reader.GetInt64(ordinal));
     }
+
+    public override bool GetBooleanValue(string key)
+    {
+        var ordinal = _reader.GetOrdinal(key);
+        if (_reader.IsDBNull(ordinal))
+            return default;
+
+        return Convert.ToBoolean(_reader.GetInt64(ordinal));
+    }
 }

@@ -2,7 +2,9 @@ using System.Linq;
 using Infrastructure.Sql.Interfaces;
 using Npgsql;
 using System.Data;
+using Dapper;
 using Infrastructure.Sql.SqlParameters;
+using System.Data.Common;
 
 namespace Infrastructure.Sql;
 
@@ -30,6 +32,20 @@ public class PostgresDb : IDb
         var dt = new DataTable();
         dt.Load(mySqlReader);
         return GetDataReader(dt.CreateDataReader());
+    }
+
+    public async Task<T> Single<T>(string sql, object @params)
+    {
+        await using var connection = GetConnection();
+        connection.Open();
+        return (await List<T>(sql, @params)).FirstOrDefault();
+    }
+
+    public async Task<IEnumerable<T>> List<T>(string sql, object @params)
+    {
+        await using var connection = GetConnection();
+        connection.Open();
+        return await connection.QueryAsync<T>(sql, @params);
     }
 
     public async Task<IStorageDataReader> Query(string sql, ListParam parameter)

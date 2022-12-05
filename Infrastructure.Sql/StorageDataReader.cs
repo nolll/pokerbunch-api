@@ -63,7 +63,7 @@ public abstract class StorageDataReader : IStorageDataReader
         return list;
     }
 
-    public bool GetBooleanValue(string key)
+    public virtual bool GetBooleanValue(string key)
     {
         var ordinal = _reader.GetOrdinal(key);
         return !_reader.IsDBNull(ordinal) && _reader.GetBoolean(ordinal);

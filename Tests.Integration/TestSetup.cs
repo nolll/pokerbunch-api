@@ -9,14 +9,15 @@ namespace Tests.Integration;
 [SetUpFixture]
 public class TestSetup
 {
-    private TestcontainerDatabase _testcontainers;
+    private const DbEngine Engine = DbEngine.Postgres;
 
-    private static WebApplicationFactoryInTest _webApplicationFactory;
+    private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
     
+    private TestcontainerDatabase _testcontainers;
+    private static WebApplicationFactoryInTest _webApplicationFactory;
+
     public static FakeEmailSender EmailSender;
     public static IDb Db;
-    private const DbEngine Engine = DbEngine.Sqlite;
-    private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
 
     [OneTimeSetUp]
     public async Task SetUp()

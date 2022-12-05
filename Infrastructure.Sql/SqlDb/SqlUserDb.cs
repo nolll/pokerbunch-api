@@ -3,13 +3,14 @@ using Core.Entities;
 using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 using Infrastructure.Sql.SqlParameters;
+using Dapper;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class SqlUserDb
 {
     private const string DataSql = @"
-        SELECT u.user_iD, u.user_name, u.display_name, u.real_name, u.email, u.password, u.salt, u.role_id
+        SELECT u.user_id, u.user_name, u.display_name, u.real_name, u.email, u.password, u.salt, u.role_id
         FROM pb_user u ";
 
     private const string SearchSql = @"
@@ -26,21 +27,29 @@ public class SqlUserDb
     public async Task<User> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE u.user_id = @userId");
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new IntParam("@userId", int.Parse(id))
+            userId = int.Parse(id)
         };
-        var reader = await _db.Query(sql, parameters);
-        var rawUser = reader.ReadOne(CreateRawUser);
+
+        var rawUser = await _db.Single<RawUser>(sql, @params);
         return rawUser != null ? RawUser.CreateReal(rawUser) : null;
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
     {
-        var sql = string.Concat(DataSql, "WHERE u.user_id IN(@ids)");
-        var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.Query(sql, parameter);
-        var rawUsers = reader.ReadList(CreateRawUser);
+        var whereClause = _db.Engine == DbEngine.Postgres
+            ? "WHERE u.user_id = ANY (@ids)"
+            : "WHERE u.user_id IN (@ids)";
+        var sql = string.Concat(DataSql, whereClause);
+
+        var @params = new
+        {
+            ids = ids.Select(int.Parse).ToArray()
+        };
+
+        var rawUsers = await _db.List<RawUser>(sql, @params);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
     }
 
@@ -124,18 +133,5 @@ public class SqlUserDb
         };
         var rowCount = await _db.Execute(sql, parameters);
         return rowCount > 0;
-    }
-
-    private static RawUser CreateRawUser(IStorageDataReader reader)
-    {
-        return new RawUser(
-            reader.GetIntValue("user_id").ToString(),
-            reader.GetStringValue("user_name"),
-            reader.GetStringValue("display_name"),
-            reader.GetStringValue("real_name"),
-            reader.GetStringValue("email"),
-            reader.GetIntValue("role_id"),
-            reader.GetStringValue("password"),
-            reader.GetStringValue("salt"));
     }
 }

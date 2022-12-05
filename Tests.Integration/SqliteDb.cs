@@ -5,6 +5,7 @@ using Microsoft.Data.Sqlite;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using System.Data;
+using Dapper;
 
 namespace Tests.Integration;
 
@@ -30,6 +31,16 @@ public class SqliteDb : IDb
         var dt = new DataTable();
         dt.Load(mySqlReader);
         return GetDataReader(dt.CreateDataReader());
+    }
+
+    public async Task<T> Single<T>(string sql, object @params)
+    {
+        return (await List<T>(sql, @params)).FirstOrDefault();
+    }
+
+    public async Task<IEnumerable<T>> List<T>(string sql, object @params)
+    {
+        return await _connection.QueryAsync<T>(sql, @params);
     }
 
     public async Task<IStorageDataReader> Query(string sql, ListParam parameter)
