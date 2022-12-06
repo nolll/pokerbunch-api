@@ -28,9 +28,10 @@ public class SqlBunchDb
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var sql = string.Concat(DataSql, " WHERE b.bunch_id IN(@ids)");
-        var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.Query(sql, parameter);
-        var rawBunches = reader.ReadList(CreateRawBunch);
+
+        var param = new ListParam("@ids", ids.Select(int.Parse));
+        
+        var rawBunches = await _db.List<RawBunch>(sql, param);
         return rawBunches.Select(CreateBunch).ToList();
     }
 
@@ -42,6 +43,7 @@ public class SqlBunchDb
         {
             id = int.Parse(id)
         };
+
         var rawBunch = await _db.Single<RawBunch>(sql, @params);
         return rawBunch != null ? CreateBunch(rawBunch) : null;
     }
@@ -169,24 +171,5 @@ public class SqlBunchDb
 
         var rowCount = await _db.Execute(sql, @params);
         return rowCount > 0;
-    }
-
-    private static RawBunch CreateRawBunch(IStorageDataReader reader)
-    {
-        return new RawBunch
-        {
-            Bunch_Id = reader.GetIntValue("bunch_id").ToString(),
-            Name = reader.GetStringValue("name"),
-            Display_Name = reader.GetStringValue("display_name"),
-            Description = reader.GetStringValue("description"),
-            House_Rules = reader.GetStringValue("house_rules"),
-            Timezone = reader.GetStringValue("timezone"),
-            Default_Buyin = reader.GetIntValue("default_buyin"),
-            Currency_Layout = reader.GetStringValue("currency_layout"),
-            Currency = reader.GetStringValue("currency"),
-            Cashgames_Enabled = reader.GetBooleanValue("cashgames_enabled"),
-            Tournaments_Enabled = reader.GetBooleanValue("tournaments_enabled"),
-            Videos_Enabled = reader.GetBooleanValue("videos_enabled")
-        };
     }
 }

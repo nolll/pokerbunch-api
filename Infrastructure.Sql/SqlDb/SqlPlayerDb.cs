@@ -54,9 +54,8 @@ public class SqlPlayerDb
         if(!ids.Any())
             return new List<Player>();
         var sql = string.Concat(DataSql, "WHERE p.player_id IN (@ids)");
-        var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.Query(sql, parameter);
-        var rawPlayers = reader.ReadList(CreateRawPlayer);
+        var param = new ListParam("@ids", ids.Select(int.Parse));
+        var rawPlayers = await _db.List<RawPlayer>(sql, param);
         return rawPlayers.Select(CreatePlayer).ToList();
     }
 
@@ -159,19 +158,5 @@ public class SqlPlayerDb
             rawPlayer.Player_Name,
             (Role)rawPlayer.Role_Id,
             rawPlayer.Color);
-    }
-
-    private static RawPlayer CreateRawPlayer(IStorageDataReader reader)
-    {
-        return new RawPlayer
-        {
-            Bunch_Id = reader.GetIntValue("bunch_id"),
-            Player_Id = reader.GetIntValue("player_id"),
-            User_Id = reader.GetIntValue("user_id"),
-            User_Name = reader.GetStringValue("user_name"),
-            Player_Name = reader.GetStringValue("player_name"),
-            Role_Id = reader.GetIntValue("role_id"),
-            Color = reader.GetStringValue("color")
-        };
     }
 }

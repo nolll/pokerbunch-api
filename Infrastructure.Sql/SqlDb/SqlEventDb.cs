@@ -1,20 +1,30 @@
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Classes;
-using Infrastructure.Sql.Interfaces;
 using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class SqlEventDb
 {
-    private const string EventSql = @"
-        SELECT e.event_id, e.bunch_id, e.name, g.location_id, g.date
+    private const string EventSql = """
+        SELECT e.event_id, e.bunch_id, e.name, c.location_id, cc.timestamp
         FROM pb_event e
-        LEFT JOIN pb_event_cashgame ecg on e.event_id = ecg.event_id
-        LEFT JOIN pb_cashgame g on ecg.cashgame_id = g.cashgame_id
+        LEFT JOIN pb_event_cashgame ec
+	        ON ec.event_id = e.event_id
+        LEFT JOIN pb_cashgame c
+	        ON ec.cashgame_id = c.cashgame_id
+        LEFT JOIN pb_cashgame_checkpoint cc
+	        ON cc.checkpoint_id = (
+		        SELECT checkpoint_id
+		        FROM pb_cashgame_checkpoint cc
+		        WHERE cashgame_id = c.cashgame_id
+		        ORDER BY cc.timestamp DESC
+		        LIMIT 1
+	        ) 
         {0}
-        ORDER BY e.event_id, g.date";
+        ORDER BY e.event_id, c.date
+""";
 
     private readonly IDb _db;
 
@@ -25,12 +35,12 @@ public class SqlEventDb
 
     public async Task<Event> Get(string id)
     {
-        const string whereClause = "WHERE e.event_id = @cashgameId";
+        const string whereClause = "WHERE e.event_id = @eventId";
         var sql = string.Format(EventSql, whereClause);
         
         var @params = new
         {
-            cashgameId = int.Parse(id)
+            eventId = int.Parse(id)
         };
         
         var rawEventDays = await _db.List<RawEventDay>(sql, @params);
@@ -41,11 +51,10 @@ public class SqlEventDb
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
-        const string whereClause = "WHERE e.event_id IN(@ids)";
-        var sql = string.Format(EventSql, whereClause);
-        var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.Query(sql, parameter);
-        var rawEvents = CreateRawEvents(reader);
+        var sql = string.Format(EventSql, "WHERE e.event_id IN (@ids)");
+        var param = new ListParam("@ids", ids.Select(int.Parse));
+        var rawEventDays = await _db.List<RawEventDay>(sql, param);
+        var rawEvents = CreateRawEvents(rawEventDays);
         return rawEvents.Select(CreateEvent).ToList();
     }
 
@@ -128,18 +137,12 @@ public class SqlEventDb
     private static Event CreateEvent(RawEvent rawEvent)
     {
         return new Event(
-            rawEvent.Id,
-            rawEvent.BunchId,
+            rawEvent.Event_Id,
+            rawEvent.Bunch_Id,
             rawEvent.Name,
-            rawEvent.LocationId,
+            rawEvent.Location_Id,
             new Date(rawEvent.StartDate),
             new Date(rawEvent.EndDate));
-    }
-
-    private static IList<RawEvent> CreateRawEvents(IStorageDataReader reader)
-    {
-        var rawEventDays = reader.ReadList(CreateRawEventDay);
-        return CreateRawEvents(rawEventDays);
     }
 
     private static IList<RawEvent> CreateRawEvents(IEnumerable<RawEventDay> rawEventDays)
@@ -166,18 +169,8 @@ public class SqlEventDb
             var item = map[key];
             var firstItem = item.First();
             var lastItem = item.Last();
-            rawEvents.Add(new RawEvent(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Date, lastItem.Date));
+            rawEvents.Add(new RawEvent(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
         }
         return rawEvents;
-    }
-
-    private static RawEventDay CreateRawEventDay(IStorageDataReader reader)
-    {
-        return new RawEventDay(
-            reader.GetIntValue("event_id").ToString(),
-            reader.GetIntValue("bunch_id").ToString(),
-            reader.GetStringValue("name"),
-            reader.GetIntValue("location_id").ToString(),
-            reader.GetDateTimeValue("date"));
     }
 }

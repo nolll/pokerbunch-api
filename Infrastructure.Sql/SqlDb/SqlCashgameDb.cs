@@ -49,9 +49,8 @@ public class SqlCashgameDb
         if(ids.Count == 0)
             return new List<Cashgame>();
         var sql = string.Concat(DataSql, "WHERE g.cashgame_id IN (@idList) ORDER BY g.cashgame_id");
-        var parameter = new IntListParam("@idList", ids);
-        var reader = await _db.Query(sql, parameter);
-        var rawCashgames = reader.ReadList(CreateRawCashgame);
+        var param = new ListParam("@idList", ids.Select(int.Parse));
+        var rawCashgames = await _db.List<RawCashgame>(sql, param);
         var rawCheckpoints = await GetCheckpoints(ids);
         return CreateCashgameList(rawCashgames, rawCheckpoints);
     }
@@ -119,19 +118,7 @@ public class SqlCashgameDb
         
         return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
-
-    private RawCashgame CreateRawCashgame(IStorageDataReader reader)
-    {
-        return new RawCashgame
-        {
-            Cashgame_Id = reader.GetIntValue("cashgame_id"),
-            Bunch_Id = reader.GetIntValue("bunch_id"),
-            Location_Id = reader.GetIntValue("location_id"),
-            Event_Id = reader.GetIntValue("event_id"),
-            Status = reader.GetIntValue("status"),
-        };
-    }
-
+    
     public async Task DeleteGame(string id){
         const string sql = @"
             DELETE FROM pb_cashgame WHERE cashgame_id = @cashgameId";
@@ -332,20 +319,6 @@ public class SqlCashgameDb
         return (await _db.List<RawCheckpoint>(sql, @params)).ToList();
     }
 
-    private static RawCheckpoint CreateRawCheckpoint(IStorageDataReader reader)
-    {
-        return new RawCheckpoint
-        {
-            Cashgame_Id = reader.GetIntValue("cashgame_id"),
-            Player_Id = reader.GetIntValue("player_id"),
-            Amount = reader.GetIntValue("amount"),
-            Stack = reader.GetIntValue("stack"),
-            Timestamp = reader.GetDateTimeValue("timestamp"),
-            Checkpoint_Id = reader.GetIntValue("checkpoint_id"),
-            Type = reader.GetIntValue("type")
-        };
-    }
-
     private async Task<IList<RawCheckpoint>> GetCheckpoints(IList<string> cashgameIdList)
     {
         const string sql = @"
@@ -354,8 +327,7 @@ public class SqlCashgameDb
             WHERE cp.cashgame_id IN (@cashgameIdList)
             ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id DESC";
 
-        var parameter = new IntListParam("@cashgameIdList", cashgameIdList);
-        var reader = await _db.Query(sql, parameter);
-        return reader.ReadList(CreateRawCheckpoint);
+        var param = new ListParam("@cashgameIdList", cashgameIdList.Select(int.Parse));
+        return (await _db.List<RawCheckpoint>(sql, param)).ToList();
     }
 }

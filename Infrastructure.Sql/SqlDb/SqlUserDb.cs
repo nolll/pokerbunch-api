@@ -37,15 +37,9 @@ public class SqlUserDb
 
     public async Task<IList<User>> Get(IList<string> ids)
     {
-        var whereClause = _db.Engine == DbEngine.Postgres
-            ? "WHERE u.user_id = ANY (@ids)"
-            : "WHERE u.user_id IN (@ids)";
-        var sql = string.Concat(DataSql, whereClause);
+        var sql = string.Concat(DataSql, "WHERE u.user_id IN (@ids)");
 
-        var @params = new
-        {
-            ids = ids.Select(int.Parse).ToArray()
-        };
+        var @params = new ListParam("@ids", ids.Select(int.Parse));
 
         var rawUsers = await _db.List<RawUser>(sql, @params);
         return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();

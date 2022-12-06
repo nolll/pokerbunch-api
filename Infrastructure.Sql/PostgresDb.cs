@@ -1,7 +1,5 @@
 using System.Linq;
-using Infrastructure.Sql.Interfaces;
 using Npgsql;
-using System.Data;
 using Dapper;
 using Infrastructure.Sql.SqlParameters;
 
@@ -10,29 +8,12 @@ namespace Infrastructure.Sql;
 public class PostgresDb : IDb
 {
     private readonly string _connectionString;
-    public DbEngine Engine => DbEngine.Postgres;
-    private IStorageDataReader GetDataReader(IDataReader dataReader) => new PostgresDataReader(dataReader);
 
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
     }
-
-    public async Task<IStorageDataReader> Query(string sql, IEnumerable<SqlParam> parameters = null)
-    {
-        await using var connection = GetConnection();
-        connection.Open();
-
-        await using var command = new NpgsqlCommand(sql, connection);
-        if (parameters != null)
-            command.Parameters.AddRange(ToPostgresParams(parameters));
-
-        var mySqlReader = await command.ExecuteReaderAsync();
-        var dt = new DataTable();
-        dt.Load(mySqlReader);
-        return GetDataReader(dt.CreateDataReader());
-    }
-
+    
     public async Task<T> Single<T>(string sql, object @params)
     {
         await using var connection = GetConnection();
@@ -47,12 +28,14 @@ public class PostgresDb : IDb
         return await connection.QueryAsync<T>(sql, @params);
     }
 
-    public async Task<IStorageDataReader> Query(string sql, ListParam parameter)
+    public async Task<IEnumerable<T>> List<T>(string sql, ListParam param)
     {
-        var sqlWithIdList = sql.Replace(parameter.Name, parameter.ParameterNameList);
-        return await Query(sqlWithIdList, parameter.ParameterList);
+        var sqlWithIdList = sql.Replace(param.Name, param.ParameterNameList);
+        await using var connection = GetConnection();
+        connection.Open();
+        return await connection.QueryAsync<T>(sqlWithIdList, param.DynamicParameters);
     }
-
+    
     public async Task<int> Execute(string sql, object @params = null)
     {
         await using var connection = GetConnection();

@@ -33,7 +33,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
             return Error(new AccessDeniedError());
 
         var events = await _eventRepository.List(bunch.Id);
-        var locationIds = events.Select(o => o.LocationId).Distinct().ToList();
+        var locationIds = events.Select(o => o.LocationId).Where(o => o != null).Distinct().ToList();
         var locations = await _locationRepository.List(locationIds);
 
         var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();

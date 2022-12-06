@@ -44,9 +44,8 @@ public class SqlLocationDb
             return new List<Location>();
 
         var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
-        var parameter = new IntListParam("@ids", ids);
-        var reader = await _db.Query(sql, parameter);
-        var rawLocations = reader.ReadList(CreateRawLocation);
+        var param = new ListParam("@ids", ids.Select(int.Parse));
+        var rawLocations = await _db.List<RawLocation>(sql, param);
         return rawLocations.Select(CreateLocation).ToList();
     }
 
@@ -76,17 +75,7 @@ public class SqlLocationDb
 
         return (await _db.Insert(sql, @params)).ToString();
     }
-
-    private static RawLocation CreateRawLocation(IStorageDataReader reader)
-    {
-        return new RawLocation
-        {
-            Location_Id = reader.GetIntValue("location_id").ToString(),
-            Name = reader.GetStringValue("name"),
-            Bunch_Id = reader.GetIntValue("bunch_id").ToString()
-        };
-    }
-
+    
     private Location CreateLocation(RawLocation rawLocation)
     {
         return new Location(
