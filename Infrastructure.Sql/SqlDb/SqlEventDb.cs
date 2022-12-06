@@ -27,12 +27,14 @@ public class SqlEventDb
     {
         const string whereClause = "WHERE e.event_id = @cashgameId";
         var sql = string.Format(EventSql, whereClause);
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new IntParam("@cashgameId", id)
+            cashgameId = int.Parse(id)
         };
-        var reader = await _db.Query(sql, parameters);
-        var rawEvents = CreateRawEvents(reader);
+        
+        var rawEventDays = await _db.List<RawEventDay>(sql, @params);
+        var rawEvents = CreateRawEvents(rawEventDays);
         var rawEvent = rawEvents.FirstOrDefault();
         return rawEvent != null ? CreateEvent(rawEvent) : null;
     }
@@ -54,12 +56,12 @@ public class SqlEventDb
             FROM pb_event e
             WHERE e.bunch_id = @id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@id", bunchId)
+            id = int.Parse(bunchId)
         };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
+        
+        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCashgameId(string cashgameId)
@@ -69,12 +71,12 @@ public class SqlEventDb
             FROM pb_event_cashgame ecg
             WHERE ecg.cashgame_id = @id";
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@id", cashgameId)
+            id = int.Parse(cashgameId)
         };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadIntList("event_id").Select(o => o.ToString()).ToList();
+
+        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<string> Add(Event e)
@@ -137,18 +139,23 @@ public class SqlEventDb
     private static IList<RawEvent> CreateRawEvents(IStorageDataReader reader)
     {
         var rawEventDays = reader.ReadList(CreateRawEventDay);
+        return CreateRawEvents(rawEventDays);
+    }
+
+    private static IList<RawEvent> CreateRawEvents(IEnumerable<RawEventDay> rawEventDays)
+    {
         var map = new Dictionary<string, IList<RawEventDay>>();
         foreach (var day in rawEventDays)
         {
             IList<RawEventDay> list;
-            if (map.ContainsKey(day.Id))
+            if (map.ContainsKey(day.Event_Id))
             {
-                list = map[day.Id];
+                list = map[day.Event_Id];
             }
             else
             {
                 list = new List<RawEventDay>();
-                map[day.Id] = list;
+                map[day.Event_Id] = list;
             }
             list.Add(day);
         }
@@ -159,7 +166,7 @@ public class SqlEventDb
             var item = map[key];
             var firstItem = item.First();
             var lastItem = item.Last();
-            rawEvents.Add(new RawEvent(firstItem.Id, firstItem.BunchId, firstItem.Name, firstItem.LocationId, firstItem.Date, lastItem.Date));
+            rawEvents.Add(new RawEvent(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Date, lastItem.Date));
         }
         return rawEvents;
     }

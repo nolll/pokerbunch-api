@@ -27,13 +27,12 @@ public class SqlLocationDb
     {
         var sql = string.Concat(DataSql, "WHERE l.location_id = @id");
 
-        var parameters = new List<SqlParam>
+        var @params = new
         {
-            new IntParam("@id", id)
+            id = int.Parse(id)
         };
 
-        var reader = await _db.Query(sql, parameters);
-        var rawLocation =  reader.ReadOne(CreateRawLocation);
+        var rawLocation = await _db.Single<RawLocation>(sql, @params);
         return rawLocation != null
             ? CreateLocation(rawLocation)
             : null;
@@ -54,12 +53,13 @@ public class SqlLocationDb
     public async Task<IList<string>> Find(string bunchId)
     {
         var sql = string.Concat(SearchIdSql, "WHERE l.bunch_id = @bunchId");
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new IntParam("@bunchId", bunchId)
+            bunchId = int.Parse(bunchId)
         };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadIntList("location_id").Select(o => o.ToString()).ToList();
+        
+        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Location location)
