@@ -29,7 +29,9 @@ public class CashgameRepository : ICashgameRepository
 
     public async Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null)
     {
-        var ids = await _cashgameDb.FindFinished(bunchId, year);
+        var ids = year == null
+            ? await _cashgameDb.FindFinished(bunchId)
+            : await _cashgameDb.FindFinished(bunchId, year.Value);
         return await Get(ids);
     }
 
