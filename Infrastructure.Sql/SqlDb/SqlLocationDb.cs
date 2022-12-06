@@ -1,5 +1,6 @@
 using System.Linq;
 using Core.Entities;
+using Infrastructure.Sql.Classes;
 using Infrastructure.Sql.Interfaces;
 using Infrastructure.Sql.SqlParameters;
 
@@ -32,7 +33,10 @@ public class SqlLocationDb
         };
 
         var reader = await _db.Query(sql, parameters);
-        return reader.ReadOne(CreateLocation);
+        var rawLocation =  reader.ReadOne(CreateRawLocation);
+        return rawLocation != null
+            ? CreateLocation(rawLocation)
+            : null;
     }
         
     public async Task<IList<Location>> Get(IList<string> ids)
@@ -43,7 +47,8 @@ public class SqlLocationDb
         var sql = string.Concat(DataSql, "WHERE l.location_id IN (@ids)");
         var parameter = new IntListParam("@ids", ids);
         var reader = await _db.Query(sql, parameter);
-        return reader.ReadList(CreateLocation);
+        var rawLocations = reader.ReadList(CreateRawLocation);
+        return rawLocations.Select(CreateLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)
@@ -72,11 +77,21 @@ public class SqlLocationDb
         return (await _db.Insert(sql, @params)).ToString();
     }
 
-    private Location CreateLocation(IStorageDataReader reader)
+    private static RawLocation CreateRawLocation(IStorageDataReader reader)
+    {
+        return new RawLocation
+        {
+            Location_Id = reader.GetIntValue("location_id").ToString(),
+            Name = reader.GetStringValue("name"),
+            Bunch_Id = reader.GetIntValue("bunch_id").ToString()
+        };
+    }
+
+    private Location CreateLocation(RawLocation rawLocation)
     {
         return new Location(
-            reader.GetIntValue("location_id").ToString(),
-            reader.GetStringValue("name"),
-            reader.GetIntValue("bunch_id").ToString());
+            rawLocation.Location_Id,
+            rawLocation.Name,
+            rawLocation.Bunch_Id);
     }
 }
