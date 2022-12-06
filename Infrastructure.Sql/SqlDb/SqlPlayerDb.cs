@@ -27,25 +27,26 @@ public class SqlPlayerDb
     public async Task<IList<string>> Find(string bunchId)
     {
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId");
-        var parameters = new List<SqlParam>
-        {
-            new IntParam("@bunchId", bunchId)
-        };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
 
+        var @params = new
+        {
+            bunchId = int.Parse(bunchId)
+        };
+        
+        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {
         var sql = string.Concat(SearchSql, "WHERE p.bunch_id = @bunchId AND p.user_id = @userId");
-        var parameters = new List<SqlParam>
+        
+        var @params = new
         {
-            new IntParam("@bunchId", bunchId),
-            new IntParam("@userId", userId)
+            bunchId = int.Parse(bunchId),
+            userId = int.Parse(userId)
         };
-        var reader = await _db.Query(sql, parameters);
-        return reader.ReadIntList("player_id").Select(o => o.ToString()).ToList();
+        
+        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<Player>> Get(IList<string> ids)
@@ -62,12 +63,13 @@ public class SqlPlayerDb
     public async Task<Player> Get(string id)
     {
         var sql = string.Concat(DataSql, "WHERE p.player_id = @id");
-        var parameters = new List<SqlParam>
+
+        var @params = new
         {
-            new IntParam("@id", id)
+            id = int.Parse(id)
         };
-        var reader = await _db.Query(sql, parameters);
-        var rawPlayer = reader.ReadOne(CreateRawPlayer);
+
+        var rawPlayer = await _db.Single<RawPlayer>(sql, @params);
         return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
     }
 
@@ -150,29 +152,26 @@ public class SqlPlayerDb
     private Player CreatePlayer(RawPlayer rawPlayer)
     {
         return new Player(
-            rawPlayer.BunchId,
-            rawPlayer.Id,
-            rawPlayer.UserId,
-            rawPlayer.UserName,
-            rawPlayer.DisplayName,
-            (Role)rawPlayer.Role,
+            rawPlayer.Bunch_Id.ToString(),
+            rawPlayer.Player_Id.ToString(),
+            rawPlayer.User_Id != 0 ? rawPlayer.User_Id.ToString() : null,
+            rawPlayer.User_Name,
+            rawPlayer.Player_Name,
+            (Role)rawPlayer.Role_Id,
             rawPlayer.Color);
     }
 
     private static RawPlayer CreateRawPlayer(IStorageDataReader reader)
     {
-        var intUserId = reader.GetIntValue("user_id");
-        var userId = intUserId != 0
-            ? intUserId.ToString()
-            : null;
-
-        return new RawPlayer(
-            reader.GetIntValue("bunch_id").ToString(),
-            reader.GetIntValue("player_id").ToString(),
-            userId,
-            reader.GetStringValue("user_name"),
-            reader.GetStringValue("player_name"),
-            reader.GetIntValue("role_id"),
-            reader.GetStringValue("color"));
+        return new RawPlayer
+        {
+            Bunch_Id = reader.GetIntValue("bunch_id"),
+            Player_Id = reader.GetIntValue("player_id"),
+            User_Id = reader.GetIntValue("user_id"),
+            User_Name = reader.GetStringValue("user_name"),
+            Player_Name = reader.GetStringValue("player_name"),
+            Role_Id = reader.GetIntValue("role_id"),
+            Color = reader.GetStringValue("color")
+        };
     }
 }
