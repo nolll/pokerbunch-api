@@ -8,6 +8,7 @@ namespace Tests.Integration;
 public class SqliteDb : IDb
 {
     private readonly SqliteConnection _connection;
+    public DbEngine Engine => DbEngine.Sqlite;
 
     public SqliteDb(string connectionString)
     {

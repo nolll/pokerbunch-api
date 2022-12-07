@@ -9,7 +9,7 @@ namespace Tests.Integration;
 [SetUpFixture]
 public class TestSetup
 {
-    private const DbEngine Engine = DbEngine.Postgres;
+    private const DbEngine Engine = DbEngine.Sqlite;
 
     private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
     

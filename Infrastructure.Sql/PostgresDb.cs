@@ -8,12 +8,13 @@ namespace Infrastructure.Sql;
 public class PostgresDb : IDb
 {
     private readonly string _connectionString;
-
+    public DbEngine Engine => DbEngine.Postgres;
+    
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
     }
-    
+
     public async Task<T> Single<T>(string sql, object @params)
     {
         await using var connection = GetConnection();

@@ -69,7 +69,10 @@ public class SqlCashgameDb
 
     public async Task<IList<string>> FindFinished(string bunchId, int year)
     {
-        var sql = string.Concat(SearchSql, "WHERE g.bunch_id = @bunchId AND g.status = @status AND DATE_PART('year', g.date) = @year");
+        var whereClause = _db.Engine == DbEngine.Postgres
+            ? "WHERE g.bunch_id = @bunchId AND g.status = @status AND DATE_PART('year', g.date) = @year"
+            : "WHERE g.bunch_id = @bunchId AND g.status = @status AND strftime('%Y', g.date) = cast(@year as text)";
+        var sql = string.Concat(SearchSql, whereClause);
 
         var @params = new
         {
