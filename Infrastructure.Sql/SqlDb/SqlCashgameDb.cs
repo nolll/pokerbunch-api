@@ -2,7 +2,6 @@ using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Infrastructure.Sql.Classes;
-using Infrastructure.Sql.Interfaces;
 using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
