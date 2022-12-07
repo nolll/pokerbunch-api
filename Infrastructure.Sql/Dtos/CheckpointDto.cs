@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Dtos;
 
-public class RawCheckpoint
+public class CheckpointDto
 {
     [UsedImplicitly] public int Cashgame_Id { get; set; }
     [UsedImplicitly] public int Player_Id { get; set; }
@@ -13,15 +13,15 @@ public class RawCheckpoint
     [UsedImplicitly] public int Checkpoint_Id { get; set; }
     [UsedImplicitly] public int Type { get; set; }
     
-    public static Checkpoint CreateReal(RawCheckpoint rawCheckpoint)
+    public static Checkpoint CreateReal(CheckpointDto checkpointDto)
     {
         return Checkpoint.Create(
-            rawCheckpoint.Cashgame_Id.ToString(),
-            rawCheckpoint.Player_Id.ToString(),
-            TimeZoneInfo.ConvertTimeToUtc(rawCheckpoint.Timestamp),
-            (CheckpointType)rawCheckpoint.Type,
-            rawCheckpoint.Stack,
-            rawCheckpoint.Amount,
-            rawCheckpoint.Checkpoint_Id.ToString());
+            checkpointDto.Cashgame_Id.ToString(),
+            checkpointDto.Player_Id.ToString(),
+            TimeZoneInfo.ConvertTimeToUtc(checkpointDto.Timestamp),
+            (CheckpointType)checkpointDto.Type,
+            checkpointDto.Stack,
+            checkpointDto.Amount,
+            checkpointDto.Checkpoint_Id.ToString());
     }
 }

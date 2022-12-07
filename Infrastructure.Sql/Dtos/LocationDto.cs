@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Dtos;
 
-public class RawLocation
+public class LocationDto
 {
     [UsedImplicitly] public string Location_Id { get; set; }
     [UsedImplicitly] public string Name { get; set; }

@@ -1,6 +1,6 @@
 namespace Infrastructure.Sql.Dtos;
 
-public class RawEvent
+public class EventDto
 {
     public string Event_Id { get; }
     public string Bunch_Id { get; }
@@ -9,7 +9,7 @@ public class RawEvent
     public DateTime StartDate { get; }
     public DateTime EndDate { get; }
     
-    public RawEvent(string id, string bunchId, string name, string locationId, DateTime startDate, DateTime endDate)
+    public EventDto(string id, string bunchId, string name, string locationId, DateTime startDate, DateTime endDate)
     {
         Event_Id = id;
         Bunch_Id = bunchId;

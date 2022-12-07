@@ -21,16 +21,16 @@ public class UserDb
             userId = int.Parse(id)
         };
 
-        var rawUser = await _db.Single<RawUser>(UserSql.GetByIdQuery, @params);
-        return rawUser != null ? RawUser.CreateReal(rawUser) : null;
+        var rawUser = await _db.Single<UserDto>(UserSql.GetByIdQuery, @params);
+        return rawUser != null ? UserDto.CreateReal(rawUser) : null;
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var @params = new ListParam("@ids", ids.Select(int.Parse));
 
-        var rawUsers = await _db.List<RawUser>(UserSql.GetByIdsQuery, @params);
-        return rawUsers.Select(RawUser.CreateReal).OrderBy(o => o.DisplayName).ToList();
+        var rawUsers = await _db.List<UserDto>(UserSql.GetByIdsQuery, @params);
+        return rawUsers.Select(UserDto.CreateReal).OrderBy(o => o.DisplayName).ToList();
     }
 
     public async Task<IList<string>> Find()

@@ -40,7 +40,7 @@ public class PlayerDb
         if(!ids.Any())
             return new List<Player>();
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawPlayers = await _db.List<RawPlayer>(PlayerSql.GetByIdsQuery, param);
+        var rawPlayers = await _db.List<PlayerDto>(PlayerSql.GetByIdsQuery, param);
         return rawPlayers.Select(CreatePlayer).ToList();
     }
 
@@ -51,7 +51,7 @@ public class PlayerDb
             id = int.Parse(id)
         };
 
-        var rawPlayer = await _db.Single<RawPlayer>(PlayerSql.GetByIdQuery, @params);
+        var rawPlayer = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
         return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
     }
 
@@ -110,15 +110,15 @@ public class PlayerDb
         await _db.Execute(PlayerSql.DeleteQuery, @params);
     }
 
-    private Player CreatePlayer(RawPlayer rawPlayer)
+    private Player CreatePlayer(PlayerDto playerDto)
     {
         return new Player(
-            rawPlayer.Bunch_Id.ToString(),
-            rawPlayer.Player_Id.ToString(),
-            rawPlayer.User_Id != 0 ? rawPlayer.User_Id.ToString() : null,
-            rawPlayer.User_Name,
-            rawPlayer.Player_Name,
-            (Role)rawPlayer.Role_Id,
-            rawPlayer.Color);
+            playerDto.Bunch_Id.ToString(),
+            playerDto.Player_Id.ToString(),
+            playerDto.User_Id != 0 ? playerDto.User_Id.ToString() : null,
+            playerDto.User_Name,
+            playerDto.Player_Name,
+            (Role)playerDto.Role_Id,
+            playerDto.Color);
     }
 }

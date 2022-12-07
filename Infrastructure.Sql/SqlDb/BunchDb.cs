@@ -19,8 +19,8 @@ public class BunchDb
     {
         var param = new ListParam("@ids", ids.Select(int.Parse));
 
-        var rawBunches = await _db.List<RawBunch>(BunchSql.GetByIdsQuery, param);
-        return rawBunches.Select(CreateBunch).ToList();
+        var dtos = await _db.List<BunchDto>(BunchSql.GetByIdsQuery, param);
+        return dtos.Select(CreateBunch).ToList();
     }
 
     public async Task<Bunch> Get(string id)
@@ -30,8 +30,8 @@ public class BunchDb
             id = int.Parse(id)
         };
 
-        var rawBunch = await _db.Single<RawBunch>(BunchSql.GetByIdQuery, @params);
-        return rawBunch != null ? CreateBunch(rawBunch) : null;
+        var dto = await _db.Single<BunchDto>(BunchSql.GetByIdQuery, @params);
+        return dto != null ? CreateBunch(dto) : null;
     }
 
     public async Task<IList<string>> Search()
@@ -64,20 +64,20 @@ public class BunchDb
 
     public async Task<string> Add(Bunch bunch)
     {
-        var rawBunch = RawBunch.Create(bunch);
+        var dto = BunchDto.Create(bunch);
 
         var @params = new
         {
-            slug = rawBunch.Name,
-            displayName = rawBunch.Display_Name,
-            description = rawBunch.Description,
-            currencySymbol = rawBunch.Currency,
-            currencyLayout = rawBunch.Currency_Layout,
-            timeZone = rawBunch.Timezone,
-            cashgamesEnabled = rawBunch.Cashgames_Enabled,
-            tournamentsEnabled = rawBunch.Tournaments_Enabled,
-            videosEnabled = rawBunch.Videos_Enabled,
-            @houseRules = rawBunch.House_Rules
+            slug = dto.Name,
+            displayName = dto.Display_Name,
+            description = dto.Description,
+            currencySymbol = dto.Currency,
+            currencyLayout = dto.Currency_Layout,
+            timeZone = dto.Timezone,
+            cashgamesEnabled = dto.Cashgames_Enabled,
+            tournamentsEnabled = dto.Tournaments_Enabled,
+            videosEnabled = dto.Videos_Enabled,
+            @houseRules = dto.House_Rules
         };
 
         return (await _db.Insert(BunchSql.AddQuery, @params)).ToString();
@@ -85,40 +85,40 @@ public class BunchDb
 
     public async Task Update(Bunch bunch)
     {
-        var rawBunch = RawBunch.Create(bunch);
+        var dto = BunchDto.Create(bunch);
 
         var @params = new
         {
-            slug = rawBunch.Name,
-            displayName = rawBunch.Display_Name,
-            description = rawBunch.Description,
-            houseRules = rawBunch.House_Rules,
-            currencySymbol = rawBunch.Currency,
-            currencyLayout = rawBunch.Currency_Layout,
-            timeZone = rawBunch.Timezone,
-            defaultBuyin = rawBunch.Default_Buyin,
-            cashgamesEnabled = rawBunch.Cashgames_Enabled,
-            tournamentsEnabled = rawBunch.Tournaments_Enabled,
-            videosEnabled = rawBunch.Videos_Enabled,
-            id = int.Parse(rawBunch.Bunch_Id)
+            slug = dto.Name,
+            displayName = dto.Display_Name,
+            description = dto.Description,
+            houseRules = dto.House_Rules,
+            currencySymbol = dto.Currency,
+            currencyLayout = dto.Currency_Layout,
+            timeZone = dto.Timezone,
+            defaultBuyin = dto.Default_Buyin,
+            cashgamesEnabled = dto.Cashgames_Enabled,
+            tournamentsEnabled = dto.Tournaments_Enabled,
+            videosEnabled = dto.Videos_Enabled,
+            id = int.Parse(dto.Bunch_Id)
         };
 
         await _db.Execute(BunchSql.UpdateQuery, @params);
     }
 
-    private static Bunch CreateBunch(RawBunch rawBunch)
+    private static Bunch CreateBunch(BunchDto bunchDto)
     {
         var culture = CultureInfo.CreateSpecificCulture("sv-SE");
-        var currency = new Currency(rawBunch.Currency, rawBunch.Currency_Layout, culture);
+        var currency = new Currency(bunchDto.Currency, bunchDto.Currency_Layout, culture);
 
         return new Bunch(
-            rawBunch.Bunch_Id,
-            rawBunch.Name,
-            rawBunch.Display_Name,
-            rawBunch.Description,
-            rawBunch.House_Rules,
-            TimeZoneInfo.FindSystemTimeZoneById(rawBunch.Timezone),
-            rawBunch.Default_Buyin,
+            bunchDto.Bunch_Id,
+            bunchDto.Name,
+            bunchDto.Display_Name,
+            bunchDto.Description,
+            bunchDto.House_Rules,
+            TimeZoneInfo.FindSystemTimeZoneById(bunchDto.Timezone),
+            bunchDto.Default_Buyin,
             currency);
     }
 

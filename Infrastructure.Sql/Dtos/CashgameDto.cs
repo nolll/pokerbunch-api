@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Dtos;
 
-public class RawCashgame
+public class CashgameDto
 {
     [UsedImplicitly] public int Cashgame_Id { get; set; }
     [UsedImplicitly] public int Bunch_Id { get; set; }

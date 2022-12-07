@@ -21,7 +21,7 @@ public class EventDb
             eventId = int.Parse(id)
         };
         
-        var rawEventDays = await _db.List<RawEventDay>(EventSql.GetByIdQuery, @params);
+        var rawEventDays = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
         var rawEvents = CreateRawEvents(rawEventDays);
         var rawEvent = rawEvents.FirstOrDefault();
         return rawEvent != null ? CreateEvent(rawEvent) : null;
@@ -30,7 +30,7 @@ public class EventDb
     public async Task<IList<Event>> Get(IList<string> ids)
     {
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawEventDays = await _db.List<RawEventDay>(EventSql.GetByIdsQuery, param);
+        var rawEventDays = await _db.List<EventDayDto>(EventSql.GetByIdsQuery, param);
         var rawEvents = CreateRawEvents(rawEventDays);
         return rawEvents.Select(CreateEvent).ToList();
     }
@@ -88,42 +88,42 @@ public class EventDb
         await _db.Execute(EventSql.RemoveCashgameQuery, @params);
     }
 
-    private static Event CreateEvent(RawEvent rawEvent)
+    private static Event CreateEvent(EventDto eventDto)
     {
         return new Event(
-            rawEvent.Event_Id,
-            rawEvent.Bunch_Id,
-            rawEvent.Name,
-            rawEvent.Location_Id,
-            new Date(rawEvent.StartDate),
-            new Date(rawEvent.EndDate));
+            eventDto.Event_Id,
+            eventDto.Bunch_Id,
+            eventDto.Name,
+            eventDto.Location_Id,
+            new Date(eventDto.StartDate),
+            new Date(eventDto.EndDate));
     }
 
-    private static IList<RawEvent> CreateRawEvents(IEnumerable<RawEventDay> rawEventDays)
+    private static IList<EventDto> CreateRawEvents(IEnumerable<EventDayDto> rawEventDays)
     {
-        var map = new Dictionary<string, IList<RawEventDay>>();
+        var map = new Dictionary<string, IList<EventDayDto>>();
         foreach (var day in rawEventDays)
         {
-            IList<RawEventDay> list;
+            IList<EventDayDto> list;
             if (map.ContainsKey(day.Event_Id))
             {
                 list = map[day.Event_Id];
             }
             else
             {
-                list = new List<RawEventDay>();
+                list = new List<EventDayDto>();
                 map[day.Event_Id] = list;
             }
             list.Add(day);
         }
 
-        var rawEvents = new List<RawEvent>();
+        var rawEvents = new List<EventDto>();
         foreach (var key in map.Keys)
         {
             var item = map[key];
             var firstItem = item.First();
             var lastItem = item.Last();
-            rawEvents.Add(new RawEvent(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
+            rawEvents.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
         }
         return rawEvents;
     }

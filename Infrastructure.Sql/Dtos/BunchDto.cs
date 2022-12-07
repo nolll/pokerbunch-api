@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Dtos;
 
-public class RawBunch
+public class BunchDto
 {
     [UsedImplicitly] public string Bunch_Id { get; set; }
     [UsedImplicitly] public string Name { get; set; }
@@ -18,9 +18,9 @@ public class RawBunch
     [UsedImplicitly] public bool Tournaments_Enabled { get; set; }
     [UsedImplicitly] public bool Videos_Enabled { get; set; }
 
-    public static RawBunch Create(Bunch bunch)
+    public static BunchDto Create(Bunch bunch)
     {
-        return new RawBunch
+        return new BunchDto
         {
             Bunch_Id = bunch.Id,
             Name = bunch.Slug,

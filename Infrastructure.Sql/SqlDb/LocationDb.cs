@@ -21,7 +21,7 @@ public class LocationDb
             id = int.Parse(id)
         };
 
-        var rawLocation = await _db.Single<RawLocation>(LocationSql.GetByIdQuery, @params);
+        var rawLocation = await _db.Single<LocationDto>(LocationSql.GetByIdQuery, @params);
         return rawLocation != null
             ? CreateLocation(rawLocation)
             : null;
@@ -33,7 +33,7 @@ public class LocationDb
             return new List<Location>();
 
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawLocations = await _db.List<RawLocation>(LocationSql.GetByIdsQuery, param);
+        var rawLocations = await _db.List<LocationDto>(LocationSql.GetByIdsQuery, param);
         return rawLocations.Select(CreateLocation).ToList();
     }
 
@@ -58,11 +58,11 @@ public class LocationDb
         return (await _db.Insert(LocationSql.AddQuery, @params)).ToString();
     }
     
-    private Location CreateLocation(RawLocation rawLocation)
+    private Location CreateLocation(LocationDto locationDto)
     {
         return new Location(
-            rawLocation.Location_Id,
-            rawLocation.Name,
-            rawLocation.Bunch_Id);
+            locationDto.Location_Id,
+            locationDto.Name,
+            locationDto.Bunch_Id);
     }
 }

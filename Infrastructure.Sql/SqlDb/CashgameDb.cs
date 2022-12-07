@@ -22,10 +22,10 @@ public class CashgameDb
             cashgameId = int.Parse(cashgameId)
         };
         
-        var rawGame = await _db.Single<RawCashgame>(CashgameSql.GetByIdQuery, @params);
-        var rawCheckpoints = await GetCheckpoints(cashgameId);
-        var checkpoints = CreateCheckpoints(rawCheckpoints);
-        return CreateCashgame(rawGame, checkpoints);
+        var cashgameDto = await _db.Single<CashgameDto>(CashgameSql.GetByIdQuery, @params);
+        var checkpointDtos = await GetCheckpoints(cashgameId);
+        var checkpoints = CreateCheckpoints(checkpointDtos);
+        return CreateCashgame(cashgameDto, checkpoints);
     }
         
     public async Task<IList<Cashgame>> Get(IList<string> ids)
@@ -33,9 +33,9 @@ public class CashgameDb
         if(ids.Count == 0)
             return new List<Cashgame>();
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawCashgames = await _db.List<RawCashgame>(CashgameSql.GetByIdsQuery, param);
-        var rawCheckpoints = await GetCheckpoints(ids);
-        return CreateCashgameList(rawCashgames, rawCheckpoints);
+        var cashgameDtos = await _db.List<CashgameDto>(CashgameSql.GetByIdsQuery, param);
+        var checkpointDtos = await GetCheckpoints(ids);
+        return CreateCashgameList(cashgameDtos, checkpointDtos);
     }
 
     public async Task<IList<string>> FindFinished(string bunchId)
@@ -158,48 +158,48 @@ public class CashgameDb
         return (await _db.List<int>(CashgameSql.SearchByPlayerIdQuery, @params)).Select(o => o.ToString()).ToList();
     }
     
-    private static Cashgame CreateCashgame(RawCashgame rawGame, IList<Checkpoint> checkpoints)
+    private static Cashgame CreateCashgame(CashgameDto game, IList<Checkpoint> checkpoints)
     {
         return new Cashgame(
-            rawGame.Bunch_Id.ToString(),
-            rawGame.Location_Id.ToString(),
-            rawGame.Event_Id != 0 ? rawGame.Event_Id.ToString() : null,
-            (GameStatus)rawGame.Status,
-            rawGame.Cashgame_Id.ToString(),
+            game.Bunch_Id.ToString(),
+            game.Location_Id.ToString(),
+            game.Event_Id != 0 ? game.Event_Id.ToString() : null,
+            (GameStatus)game.Status,
+            game.Cashgame_Id.ToString(),
             checkpoints);
     }
 
-    private static IList<Checkpoint> CreateCheckpoints(IEnumerable<RawCheckpoint> checkpoints)
+    private static IList<Checkpoint> CreateCheckpoints(IEnumerable<CheckpointDto> checkpoints)
     {
-        return checkpoints.Select(RawCheckpoint.CreateReal).ToList();
+        return checkpoints.Select(CheckpointDto.CreateReal).ToList();
     } 
 
-    private static IList<Cashgame> CreateCashgameList(IEnumerable<RawCashgame> rawGames, IEnumerable<RawCheckpoint> rawCheckpoints)
+    private static IList<Cashgame> CreateCashgameList(IEnumerable<CashgameDto> cashgameDtos, IEnumerable<CheckpointDto> rawCheckpoints)
     {
         var checkpointMap = GetGameCheckpointMap(rawCheckpoints);
 
         var cashgames = new List<Cashgame>();
-        foreach (var rawGame in rawGames)
+        foreach (var cashgameDto in cashgameDtos)
         {
-            if (!checkpointMap.TryGetValue(rawGame.Cashgame_Id, out var gameCheckpoints))
+            if (!checkpointMap.TryGetValue(cashgameDto.Cashgame_Id, out var gameCheckpoints))
             {
-                gameCheckpoints = new List<RawCheckpoint>();
+                gameCheckpoints = new List<CheckpointDto>();
             }
             var checkpoints = CreateCheckpoints(gameCheckpoints);
-            var cashgame = CreateCashgame(rawGame, checkpoints);
+            var cashgame = CreateCashgame(cashgameDto, checkpoints);
             cashgames.Add(cashgame);
         }
         return cashgames;
     }
 
-    private static IDictionary<int, IList<RawCheckpoint>> GetGameCheckpointMap(IEnumerable<RawCheckpoint> checkpoints)
+    private static IDictionary<int, IList<CheckpointDto>> GetGameCheckpointMap(IEnumerable<CheckpointDto> checkpoints)
     {
-        var checkpointMap = new Dictionary<int, IList<RawCheckpoint>>();
+        var checkpointMap = new Dictionary<int, IList<CheckpointDto>>();
         foreach (var checkpoint in checkpoints)
         {
             if (!checkpointMap.TryGetValue(checkpoint.Cashgame_Id, out var checkpointList))
             {
-                checkpointList = new List<RawCheckpoint>();
+                checkpointList = new List<CheckpointDto>();
                 checkpointMap.Add(checkpoint.Cashgame_Id, checkpointList);
             }
             checkpointList.Add(checkpoint);
@@ -245,19 +245,19 @@ public class CashgameDb
         await _db.Execute(CashgameSql.DeleteCheckpointQuery, @params);
     }
 
-    private async Task<IList<RawCheckpoint>> GetCheckpoints(string cashgameId)
+    private async Task<IList<CheckpointDto>> GetCheckpoints(string cashgameId)
     {
         var @params = new
         {
             cashgameId = int.Parse(cashgameId)
         };
 
-        return (await _db.List<RawCheckpoint>(CashgameSql.GetCheckpointsByCashgameQuery, @params)).ToList();
+        return (await _db.List<CheckpointDto>(CashgameSql.GetCheckpointsByCashgameQuery, @params)).ToList();
     }
 
-    private async Task<IList<RawCheckpoint>> GetCheckpoints(IList<string> cashgameIdList)
+    private async Task<IList<CheckpointDto>> GetCheckpoints(IList<string> cashgameIdList)
     {
         var param = new ListParam("@cashgameIds", cashgameIdList.Select(int.Parse));
-        return (await _db.List<RawCheckpoint>(CashgameSql.GetCheckpointsByCashgamesQuery, param)).ToList();
+        return (await _db.List<CheckpointDto>(CashgameSql.GetCheckpointsByCashgamesQuery, param)).ToList();
     }
 }

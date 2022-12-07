@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Infrastructure.Sql.Dtos;
 
 [UsedImplicitly]
-public class RawUser
+public class UserDto
 {
     [UsedImplicitly] public int User_Id { get; set; }
     [UsedImplicitly] public string User_Name { get; set; }
@@ -15,16 +15,16 @@ public class RawUser
     [UsedImplicitly] public string Password { get; set; }
     [UsedImplicitly] public string Salt { get; set; }
 
-    public static User CreateReal(RawUser rawUser)
+    public static User CreateReal(UserDto userDto)
     {
         return new User(
-            rawUser.User_Id.ToString(),
-            rawUser.User_Name,
-            rawUser.Display_Name,
-            rawUser.Real_Name,
-            rawUser.Email,
-            (Role)rawUser.Role_Id,
-            rawUser.Password,
-            rawUser.Salt);
+            userDto.User_Id.ToString(),
+            userDto.User_Name,
+            userDto.Display_Name,
+            userDto.Real_Name,
+            userDto.Email,
+            (Role)userDto.Role_Id,
+            userDto.Password,
+            userDto.Salt);
     }
 }
