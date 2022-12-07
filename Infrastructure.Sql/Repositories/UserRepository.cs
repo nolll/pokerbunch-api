@@ -7,12 +7,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly SqlUserDb _userDb;
+    private readonly UserDb _userDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public UserRepository(PostgresDb db, ICacheContainer cacheContainer)
+    public UserRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _userDb = new SqlUserDb(db);
+        _userDb = new UserDb(db);
         _cacheContainer = cacheContainer;
     }
 
@@ -37,7 +37,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
     {
-        var id = await _userDb.FindByNameOrEmail(nameOrEmail.ToLower());
+        var id = await _userDb.FindByUserNameOrEmail(nameOrEmail.ToLower());
         if (id == null)
             return null;
         return await GetAndCache(id);
@@ -45,7 +45,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetByUserName(string name)
     {
-        var id = await _userDb.FindByName(name.ToLower());
+        var id = await _userDb.FindByUserName(name.ToLower());
         if (id == null)
             return null;
         return await GetAndCache(id);

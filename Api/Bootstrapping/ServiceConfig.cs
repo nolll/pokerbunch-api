@@ -92,7 +92,7 @@ public class ServiceConfig
         _services.AddSingleton<ILocationRepository, LocationRepository>();
         _services.AddSingleton<IPlayerRepository, PlayerRepository>();
         _services.AddSingleton(GetEmailSender());
-        _services.AddSingleton(new PostgresDb(connectionString));
+        _services.AddSingleton<IDb>(new PostgresDb(connectionString));
         _services.AddSingleton<IRandomizer, Randomizer>();
 
         // Admin

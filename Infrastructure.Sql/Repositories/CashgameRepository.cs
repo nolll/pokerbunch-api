@@ -8,12 +8,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class CashgameRepository : ICashgameRepository
 {
-    private readonly SqlCashgameDb _cashgameDb;
+    private readonly CashgameDb _cashgameDb;
     private readonly ICacheContainer _cacheContainer;
 
-    public CashgameRepository(PostgresDb db, ICacheContainer cacheContainer)
+    public CashgameRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _cashgameDb = new SqlCashgameDb(db);
+        _cashgameDb = new CashgameDb(db);
         _cacheContainer = cacheContainer;
     }
 
@@ -29,7 +29,9 @@ public class CashgameRepository : ICashgameRepository
 
     public async Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null)
     {
-        var ids = await _cashgameDb.FindFinished(bunchId, year);
+        var ids = year == null
+            ? await _cashgameDb.FindFinished(bunchId)
+            : await _cashgameDb.FindFinished(bunchId, year.Value);
         return await Get(ids);
     }
 

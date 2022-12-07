@@ -19,9 +19,9 @@ public class Cashgame : IEntity
     public DateTime? EndTime { get; private set; }
     public IList<CashgameResult> Results { get; private set; }
     public int PlayerCount { get; private set; }
-    public int Turnover { get; private set; }
-    public int AverageBuyin { get; private set; }
-        
+    public int Turnover { get; private set; } // todo: remove
+    public int AverageBuyin { get; private set; } // todo: remove
+
     public Cashgame(string bunchId, string locationId, string eventId, GameStatus status, string id = null, IList<Checkpoint> checkpoints = null)
     {
         Id = id;
