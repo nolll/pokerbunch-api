@@ -8,12 +8,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class BunchRepository : IBunchRepository
 {
-    private readonly SqlBunchDb _bunchDb;
+    private readonly BunchDb _bunchDb;
     private readonly ICacheContainer _cacheContainer;
 
     public BunchRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _bunchDb = new SqlBunchDb(db);
+        _bunchDb = new BunchDb(db);
         _cacheContainer = cacheContainer;
     }
 
