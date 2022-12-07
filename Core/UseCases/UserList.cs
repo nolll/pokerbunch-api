@@ -16,7 +16,7 @@ public class UserList : UseCase<UserList.Request, UserList.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         if (!AccessControl.CanListUsers(user))
             return Error(new AccessDeniedError());
 

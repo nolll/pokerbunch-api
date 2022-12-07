@@ -30,7 +30,7 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var player = await _playerRepository.Get(bunch.Id, user.Id);
 

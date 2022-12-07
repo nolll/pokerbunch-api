@@ -13,6 +13,8 @@ public static class UserSql
         SELECT u.user_id
         FROM pb_user u";
 
+    public static string FindByUsernameQuery => $"{FindQuery} WHERE u.user_name = @name";
+    public static string FindByEmailQuery => $"{FindQuery} WHERE u.email = @email";
     public static string FindByUsernameOrEmailQuery => $"{FindQuery} WHERE (u.user_name = @query OR u.email = @query)";
     public static string FindAllQuery => $"{FindQuery} ORDER BY u.display_name";
 

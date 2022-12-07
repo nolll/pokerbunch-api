@@ -23,7 +23,7 @@ public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         var player = await _playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListLocations(user, player))

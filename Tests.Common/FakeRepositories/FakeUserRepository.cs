@@ -24,6 +24,16 @@ public class FakeUserRepository : IUserRepository
         return Task.FromResult(_list);
     }
 
+    public Task<User> GetByUserName(string userName)
+    {
+        return Task.FromResult(_list.FirstOrDefault(o => o.UserName == userName));
+    }
+
+    public Task<User> GetByUserEmail(string email)
+    {
+        return Task.FromResult(_list.FirstOrDefault(o => o.Email == email));
+    }
+
     public Task<User> GetByUserNameOrEmail(string userNameOrEmail)
     {
         return Task.FromResult(_list.FirstOrDefault(o => o.UserName == userNameOrEmail || o.Email == userNameOrEmail));

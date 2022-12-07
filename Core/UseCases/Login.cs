@@ -16,16 +16,16 @@ public class Login : UseCase<Login.Request, Login.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await GetLoggedInUser(request.LoginName, request.Password);
+        var user = await GetLoggedInUser(request.UserNameOrEmail, request.Password);
 
         if (user == null)
             return Error(new LoginError("There was something wrong with your username or password. Please try again."));
         return Success(new Result(user.UserName));
     }
     
-    private async Task<User> GetLoggedInUser(string loginName, string password)
+    private async Task<User> GetLoggedInUser(string userNameOrEmail, string password)
     {
-        var user = await _userRepository.GetByUserNameOrEmail(loginName);
+        var user = await _userRepository.GetByUserNameOrEmail(userNameOrEmail);
         if (user == null)
             return null;
 
@@ -35,12 +35,12 @@ public class Login : UseCase<Login.Request, Login.Result>
 
     public class Request 
     {
-        public string LoginName { get; }
+        public string UserNameOrEmail { get; }
         public string Password { get; }
 
-        public Request(string loginName, string password)
+        public Request(string userNameOrEmail, string password)
         {
-            LoginName = loginName;
+            UserNameOrEmail = userNameOrEmail;
             Password = password;
         }
     }

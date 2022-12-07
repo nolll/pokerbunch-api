@@ -38,9 +38,43 @@ public class UserDb
         return await GetIds();
     }
 
-    public async Task<string> Find(string nameOrEmail)
+    public async Task<string> FindByUserName(string name)
     {
-        return await GetIdByNameOrEmail(nameOrEmail);
+        if (string.IsNullOrEmpty(name))
+            return null;
+
+        var @params = new
+        {
+            name = name
+        };
+
+        return (await _db.Single<int?>(UserSql.FindByUsernameQuery, @params))?.ToString();
+    }
+
+    public async Task<string> FindByEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return null;
+
+        var @params = new
+        {
+            email = email
+        };
+
+        return (await _db.Single<int?>(UserSql.FindByEmailQuery, @params))?.ToString();
+    }
+
+    public async Task<string> FindByUserNameOrEmail(string nameOrEmail)
+    {
+        if (string.IsNullOrEmpty(nameOrEmail))
+            return null;
+
+        var @params = new
+        {
+            query = nameOrEmail
+        };
+
+        return (await _db.Single<int?>(UserSql.FindByUsernameOrEmailQuery, @params))?.ToString();
     }
 
     public async Task Update(User user)
@@ -70,19 +104,6 @@ public class UserDb
         };
 
         return (await _db.Insert(UserSql.AddQuery, @params)).ToString();
-    }
-        
-    private async Task<string> GetIdByNameOrEmail(string nameOrEmail)
-    {
-        if (string.IsNullOrEmpty(nameOrEmail))
-            return null;
-
-        var @params = new
-        {
-            query = nameOrEmail
-        };
-
-        return (await _db.Single<int?>(UserSql.FindByUsernameOrEmailQuery, @params))?.ToString();
     }
 
     private async Task<IList<string>> GetIds()

@@ -22,13 +22,13 @@ public abstract class Arrange : UseCaseTest<UserDetails>
     {
         if (ViewingOwnUser)
         {
-            Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(ViewUserName)).Returns(Task.FromResult(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role)));
+            Mock<IUserRepository>().Setup(s => s.GetByUserName(ViewUserName)).Returns(Task.FromResult(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role)));
             _currentUserName = ViewUserName;
         }
         else
         {
-            Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(_currentUserName)).Returns(Task.FromResult(new User(CurrentUserId, _currentUserName, globalRole: Role)));
-            Mock<IUserRepository>().Setup(s => s.GetByUserNameOrEmail(ViewUserName)).Returns(Task.FromResult(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role)));
+            Mock<IUserRepository>().Setup(s => s.GetByUserName(_currentUserName)).Returns(Task.FromResult(new User(CurrentUserId, _currentUserName, globalRole: Role)));
+            Mock<IUserRepository>().Setup(s => s.GetByUserName(ViewUserName)).Returns(Task.FromResult(new User(ViewUserId, ViewUserName, DisplayName, RealName, Email, Role)));
         }
     }
 

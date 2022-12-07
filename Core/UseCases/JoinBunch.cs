@@ -32,7 +32,7 @@ public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
         if (player == null)
             return Error(new InvalidJoinCodeError());
 
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         await _playerRepository.JoinBunch(player, bunch, user.Id);
         return Success(new Result(bunch.Slug, player.Id));
     }

@@ -23,7 +23,7 @@ public class ChangePassword : UseCase<ChangePassword.Request, ChangePassword.Res
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
         if (!isCurrentPwdValid)
             return Error(new AuthError("The old password was not correct"));

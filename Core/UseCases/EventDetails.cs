@@ -27,7 +27,7 @@ public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
         var e = await _eventRepository.Get(request.EventId);
         var location = e.LocationId != null ? await _locationRepository.Get(e.LocationId) : null;
         var bunch = await _bunchRepository.Get(e.BunchId);
-        var user = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var user = await _userRepository.GetByUserName(request.UserName);
         var player = await _playerRepository.Get(e.BunchId, user.Id);
 
         if (!AccessControl.CanSeeEventDetails(user, player))

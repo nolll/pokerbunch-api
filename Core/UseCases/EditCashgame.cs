@@ -30,7 +30,7 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
             return Error(new ValidationError(validator));
 
         var cashgame = await _cashgameRepository.Get(request.Id);
-        var currentUser = await _userRepository.GetByUserNameOrEmail(request.UserName);
+        var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
         if (!AccessControl.CanEditCashgame(currentUser, currentPlayer))
