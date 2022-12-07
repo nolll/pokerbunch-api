@@ -1,5 +1,3 @@
-using Infrastructure.Sql.SqlParameters;
-
 namespace Infrastructure.Sql;
 
 public interface IDb : IDisposable

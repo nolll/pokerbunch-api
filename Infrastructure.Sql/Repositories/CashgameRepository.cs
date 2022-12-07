@@ -8,12 +8,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class CashgameRepository : ICashgameRepository
 {
-    private readonly SqlCashgameDb _cashgameDb;
+    private readonly CashgameDb _cashgameDb;
     private readonly ICacheContainer _cacheContainer;
 
     public CashgameRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _cashgameDb = new SqlCashgameDb(db);
+        _cashgameDb = new CashgameDb(db);
         _cacheContainer = cacheContainer;
     }
 

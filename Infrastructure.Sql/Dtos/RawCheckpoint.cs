@@ -1,7 +1,7 @@
 using Core.Entities.Checkpoints;
 using JetBrains.Annotations;
 
-namespace Infrastructure.Sql.Classes;
+namespace Infrastructure.Sql.Dtos;
 
 public class RawCheckpoint
 {

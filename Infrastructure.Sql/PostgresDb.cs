@@ -1,7 +1,6 @@
 using System.Linq;
 using Npgsql;
 using Dapper;
-using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql;
 
@@ -56,19 +55,6 @@ public class PostgresDb : IDb
     private NpgsqlConnection GetConnection()
     {
         return new NpgsqlConnection(_connectionString);
-    }
-
-    private static NpgsqlParameter[] ToPostgresParams(IEnumerable<SqlParam> parameters)
-    {
-        return parameters.Select(ToPostgresParams).ToArray();
-    }
-
-    private static NpgsqlParameter ToPostgresParams(SqlParam p)
-    {
-        return new NpgsqlParameter(p.Name, p.Type)
-        {
-            Value = p.Value
-        };
     }
 
     public void Dispose()

@@ -1,9 +1,8 @@
 using System.Globalization;
 using System.Linq;
 using Core.Entities;
-using Infrastructure.Sql.Classes;
+using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Sql;
-using Infrastructure.Sql.SqlParameters;
 
 namespace Infrastructure.Sql.SqlDb;
 

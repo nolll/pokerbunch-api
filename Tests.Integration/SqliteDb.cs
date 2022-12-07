@@ -1,5 +1,4 @@
 using Infrastructure.Sql;
-using Infrastructure.Sql.SqlParameters;
 using Microsoft.Data.Sqlite;
 using Dapper;
 
@@ -13,7 +12,7 @@ public class SqliteDb : IDb
     public SqliteDb(string connectionString)
     {
         _connection = new SqliteConnection(connectionString);
-        _connection.Open();
+        _connection.Open(); // todo: don't reuse the same connection
     }
     
     public async Task<T> Single<T>(string sql, object @params)
@@ -41,20 +40,7 @@ public class SqliteDb : IDb
     {
         return await _connection.ExecuteScalarAsync<int>(sql, @params);
     }
-
-    private static SqliteParameter[] ToSqliteParams(IEnumerable<SqlParam> parameters)
-    {
-        return parameters.Select(ToSqliteParam).ToArray();
-    }
-
-    private static SqliteParameter ToSqliteParam(SqlParam p)
-    {
-        return new SqliteParameter(p.Name, p.Type)
-        {
-            Value = p.Value
-        };
-    }
-
+    
     public void Dispose()
     {
         _connection?.Dispose();

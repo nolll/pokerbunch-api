@@ -1,43 +1,28 @@
 using System.Linq;
 using Core.Entities;
 using Core.Entities.Checkpoints;
-using Infrastructure.Sql.Classes;
-using Infrastructure.Sql.SqlParameters;
+using Infrastructure.Sql.Dtos;
+using Infrastructure.Sql.Sql;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class SqlCashgameDb
+public class CashgameDb
 {
-    private const string DataSql = @"
-        SELECT g.cashgame_id, g.bunch_id, g.location_id, ecg.event_id, g.status
-        FROM pb_cashgame g
-        LEFT JOIN pb_event_cashgame ecg ON ecg.cashgame_id = g.cashgame_id ";
-
-    private const string SearchSql = @"
-        SELECT g.cashgame_id
-        FROM pb_cashgame g ";
-
-    private const string SearchByCheckpointSql = @"
-        SELECT cp.cashgame_id
-        FROM pb_cashgame_checkpoint cp ";
-        
     private readonly IDb _db;
 
-    public SqlCashgameDb(IDb db)
+    public CashgameDb(IDb db)
     {
         _db = db;
     }
 
     public async Task<Cashgame> Get(string cashgameId)
     {
-        var sql = string.Concat(DataSql, "WHERE g.cashgame_id = @cashgameId ORDER BY g.cashgame_id");
-        
         var @params = new
         {
             cashgameId = int.Parse(cashgameId)
         };
         
-        var rawGame = await _db.Single<RawCashgame>(sql, @params);
+        var rawGame = await _db.Single<RawCashgame>(CashgameSql.GetByIdQuery, @params);
         var rawCheckpoints = await GetCheckpoints(cashgameId);
         var checkpoints = CreateCheckpoints(rawCheckpoints);
         return CreateCashgame(rawGame, checkpoints);
@@ -47,33 +32,35 @@ public class SqlCashgameDb
     {
         if(ids.Count == 0)
             return new List<Cashgame>();
-        var sql = string.Concat(DataSql, "WHERE g.cashgame_id IN (@idList) ORDER BY g.cashgame_id");
-        var param = new ListParam("@idList", ids.Select(int.Parse));
-        var rawCashgames = await _db.List<RawCashgame>(sql, param);
+        var param = new ListParam("@ids", ids.Select(int.Parse));
+        var rawCashgames = await _db.List<RawCashgame>(CashgameSql.GetByIdsQuery, param);
         var rawCheckpoints = await GetCheckpoints(ids);
         return CreateCashgameList(rawCashgames, rawCheckpoints);
     }
 
     public async Task<IList<string>> FindFinished(string bunchId)
     {
-        var sql = string.Concat(SearchSql, "WHERE g.bunch_id = @bunchId AND g.status = @status");
+        return await FindByBunchAndStatus(bunchId, GameStatus.Finished);
+    }
 
+    public async Task<IList<string>> FindRunning(string bunchId)
+    {
+        return await FindByBunchAndStatus(bunchId, GameStatus.Running);
+    }
+
+    private async Task<IList<string>> FindByBunchAndStatus(string bunchId, GameStatus status)
+    {
         var @params = new
         {
             bunchId = int.Parse(bunchId),
-            status = (int)GameStatus.Finished,
+            status = (int)status,
         };
 
-        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList(); ;
+        return (await _db.List<int>(CashgameSql.SearchByBunchAndStatusQuery, @params)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindFinished(string bunchId, int year)
     {
-        var whereClause = _db.Engine == DbEngine.Postgres
-            ? "WHERE g.bunch_id = @bunchId AND g.status = @status AND DATE_PART('year', g.date) = @year"
-            : "WHERE g.bunch_id = @bunchId AND g.status = @status AND strftime('%Y', g.date) = cast(@year as text)";
-        var sql = string.Concat(SearchSql, whereClause);
-
         var @params = new
         {
             bunchId = int.Parse(bunchId),
@@ -81,64 +68,42 @@ public class SqlCashgameDb
             year = year
         };
         
-        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(CashgameSql.SearchByBunchAndStatusAndYearQuery(_db.Engine), @params))
+            .Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByEvent(string eventId)
     {
-        var sql = string.Concat(SearchSql, "WHERE g.cashgame_id IN (SELECT ecg.cashgame_id FROM pb_event_cashgame ecg WHERE ecg.event_id = @eventId)");
-        
         var @params = new
         {
             eventId = int.Parse(eventId)
         };
         
-        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
-    }
-
-    public async Task<IList<string>> FindRunning(string bunchId)
-    {
-        var sql = string.Concat(SearchSql, "WHERE g.bunch_id = @bunchId AND g.status = @status");
-
-        var @params = new
-        {
-            bunchId = int.Parse(bunchId),
-            status = (int)GameStatus.Running
-        };
-
-        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList(); ;
+        return (await _db.List<int>(CashgameSql.SearchByEvent, @params)).Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCheckpoint(string checkpointId)
     {
-        var sql = string.Concat(SearchByCheckpointSql, "WHERE cp.checkpoint_id = @checkpointId");
-        
         var @params = new
         {
             checkpointId = int.Parse(checkpointId)
         };
         
-        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(CashgameSql.SearchByCheckpointSql, @params)).Select(o => o.ToString()).ToList();
     }
     
-    public async Task DeleteGame(string id){
-        const string sql = @"
-            DELETE FROM pb_cashgame WHERE cashgame_id = @cashgameId";
-
+    public async Task DeleteGame(string id)
+    {
         var @params = new
         {
             cashgameId = int.Parse(id)
         };
 
-        await _db.Execute(sql, @params);
+        await _db.Execute(CashgameSql.DeleteQuery, @params);
     }
         
     public async Task<string> AddGame(Bunch bunch, Cashgame cashgame)
     {
-        const string sql = @"
-            INSERT INTO pb_cashgame (bunch_id, location_id, status, date)
-            VALUES (@bunchId, @locationId, @status, @date) RETURNING cashgame_id";
-
         var @params = new
         {
             bunchId = int.Parse(bunch.Id),
@@ -147,16 +112,11 @@ public class SqlCashgameDb
             date = TimeZoneInfo.ConvertTime(DateTime.UtcNow, bunch.Timezone)
         };
 
-        return (await _db.Insert(sql, @params)).ToString();
+        return (await _db.Insert(CashgameSql.AddQuery, @params)).ToString();
     }
         
     public async Task UpdateGame(Cashgame cashgame)
     {
-        const string sql = @"
-            UPDATE pb_cashgame
-            SET location_id = @locationId, status = @status
-            WHERE cashgame_id = @cashgameId";
-
         var @params = new
         {
             locationId = int.Parse(cashgame.LocationId),
@@ -185,22 +145,17 @@ public class SqlCashgameDb
                 await DeleteCheckpoint(checkpoint);
             }
         }
-        await _db.Execute(sql, @params);
+        await _db.Execute(CashgameSql.UpdateQuery, @params);
     }
         
     public async Task<IList<string>> FindByPlayerId(string playerId)
     {
-        const string sql = @"
-            SELECT DISTINCT cashgame_id
-            FROM pb_cashgame_checkpoint
-            WHERE player_id = @playerId";
-
         var @params = new
         {
             playerId = int.Parse(playerId)
         };
 
-        return (await _db.List<int>(sql, @params)).Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(CashgameSql.SearchByPlayerId, @params)).Select(o => o.ToString()).ToList();
     }
     
     private static Cashgame CreateCashgame(RawCashgame rawGame, IList<Checkpoint> checkpoints)
@@ -254,10 +209,6 @@ public class SqlCashgameDb
 
     private async Task<int> AddCheckpoint(Checkpoint checkpoint)
     {
-        const string sql = @"
-            INSERT INTO pb_cashgame_checkpoint (cashgame_id, player_id, type, amount, stack, timestamp)
-            VALUES (@cashgameId, @playerId, @type, @amount, @stack, @timestamp) RETURNING checkpoint_id";
-
         var @params = new
         {
             cashgameId = int.Parse(checkpoint.CashgameId),
@@ -268,18 +219,11 @@ public class SqlCashgameDb
             timestamp = checkpoint.Timestamp.ToUniversalTime()
         };
 
-        return await _db.Insert(sql, @params);
+        return await _db.Insert(CashgameSql.AddCheckpointQuery, @params);
     }
 
     private async Task UpdateCheckpoint(Checkpoint checkpoint)
     {
-        const string sql = @"
-            UPDATE pb_cashgame_checkpoint
-            SET timestamp = @timestamp,
-                amount = @amount,
-                stack = @stack
-            WHERE checkpoint_id = @checkpointId";
-
         var @params = new
         {
             timestamp = checkpoint.Timestamp,
@@ -288,48 +232,32 @@ public class SqlCashgameDb
             checkpointId = int.Parse(checkpoint.Id)
         };
 
-        await _db.Execute(sql, @params);
+        await _db.Execute(CashgameSql.UpdateCheckpointQuery, @params);
     }
 
     private async Task DeleteCheckpoint(Checkpoint checkpoint)
     {
-        const string sql = @"
-            DELETE FROM pb_cashgame_checkpoint
-            WHERE checkpoint_id = @checkpointId";
-
         var @params = new
         {
             checkpointId = int.Parse(checkpoint.Id)
         };
 
-        await _db.Execute(sql, @params);
+        await _db.Execute(CashgameSql.DeleteCheckpointQuery, @params);
     }
 
     private async Task<IList<RawCheckpoint>> GetCheckpoints(string cashgameId)
     {
-        const string sql = @"
-            SELECT cp.cashgame_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
-            FROM pb_cashgame_checkpoint cp
-            WHERE cp.cashgame_id = @cashgameId
-            ORDER BY cp.player_id, cp.timestamp";
-
         var @params = new
         {
             cashgameId = int.Parse(cashgameId)
         };
 
-        return (await _db.List<RawCheckpoint>(sql, @params)).ToList();
+        return (await _db.List<RawCheckpoint>(CashgameSql.GetCheckpointsByCashgameQuery, @params)).ToList();
     }
 
     private async Task<IList<RawCheckpoint>> GetCheckpoints(IList<string> cashgameIdList)
     {
-        const string sql = @"
-            SELECT cp.cashgame_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
-            FROM pb_cashgame_checkpoint cp
-            WHERE cp.cashgame_id IN (@cashgameIdList)
-            ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id DESC";
-
-        var param = new ListParam("@cashgameIdList", cashgameIdList.Select(int.Parse));
-        return (await _db.List<RawCheckpoint>(sql, param)).ToList();
+        var param = new ListParam("@cashgameIds", cashgameIdList.Select(int.Parse));
+        return (await _db.List<RawCheckpoint>(CashgameSql.GetCheckpointsByCashgamesQuery, param)).ToList();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Core.Entities;
-using Infrastructure.Sql.Classes;
-using Infrastructure.Sql.SqlParameters;
+using Infrastructure.Sql.Dtos;
 
 namespace Infrastructure.Sql.SqlDb;
 

@@ -1,9 +1,7 @@
-using System;
-using System.Data;
 using System.Linq;
 using Dapper;
 
-namespace Infrastructure.Sql.SqlParameters;
+namespace Infrastructure.Sql;
 
 public class ListParam
 {
@@ -28,15 +26,7 @@ public class ListParam
             return string.Join(",", list);
         }
     }
-
-    public IList<SqlParam> ParameterList
-    {
-        get
-        {
-            return _idList.Select((t, i) => new SqlParam(GetIdParameterName(i), DbType.Int32, t)).ToList();
-        }
-    }
-
+    
     public DynamicParameters DynamicParameters
     {
         get

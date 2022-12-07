@@ -1,7 +1,7 @@
 using Core.Entities;
 using JetBrains.Annotations;
 
-namespace Infrastructure.Sql.Classes;
+namespace Infrastructure.Sql.Dtos;
 
 [UsedImplicitly]
 public class RawUser
