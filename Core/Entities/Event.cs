@@ -3,8 +3,8 @@ namespace Core.Entities;
 public class Event : IEntity
 {
     public string Id { get; }
-    public string BunchId { get; private set; }
-    public string Name { get; private set; }
+    public string BunchId { get; }
+    public string Name { get; }
     public string LocationId { get; }
     public Date StartDate { get; }
     public Date EndDate { get; }

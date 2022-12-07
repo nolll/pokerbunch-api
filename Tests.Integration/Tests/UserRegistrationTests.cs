@@ -1,6 +1,5 @@
 using System.Net;
 using Api.Models.UserModels;
-using Infrastructure.Sql;
 
 namespace Tests.Integration.Tests;
 
@@ -16,10 +15,9 @@ public class UserRegistrationTests
         var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
         var result = await TestClient.User.Add(parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        var db = new PostgresDb(TestSetup.ConnectionString);
-        await db.Execute("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
+        await TestSetup.Db.Execute("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
     }
-
+    
     [Test]
     [Order(2)]
     public async Task RegisterManagerReturns200()
