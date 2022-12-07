@@ -8,12 +8,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class EventRepository : IEventRepository
 {
-    private readonly SqlEventDb _eventDb;
+    private readonly EventDb _eventDb;
     private readonly ICacheContainer _cacheContainer;
 
     public EventRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _eventDb = new SqlEventDb(db);
+        _eventDb = new EventDb(db);
         _cacheContainer = cacheContainer;
     }
 

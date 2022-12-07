@@ -1,6 +1,6 @@
 namespace Infrastructure.Sql.Sql;
 
-public class CashgameSql
+public static class CashgameSql
 {
     private const string GetQuery = @"
         SELECT g.cashgame_id, g.bunch_id, g.location_id, ecg.event_id, g.status
@@ -26,7 +26,7 @@ public class CashgameSql
         FROM pb_cashgame_checkpoint cp
         WHERE cp.checkpoint_id = @checkpointId";
 
-    public const string SearchByPlayerId = @"
+    public const string SearchByPlayerIdQuery = @"
         SELECT DISTINCT cashgame_id
         FROM pb_cashgame_checkpoint
         WHERE player_id = @playerId";

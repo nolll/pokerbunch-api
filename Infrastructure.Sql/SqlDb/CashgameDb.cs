@@ -155,7 +155,7 @@ public class CashgameDb
             playerId = int.Parse(playerId)
         };
 
-        return (await _db.List<int>(CashgameSql.SearchByPlayerId, @params)).Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(CashgameSql.SearchByPlayerIdQuery, @params)).Select(o => o.ToString()).ToList();
     }
     
     private static Cashgame CreateCashgame(RawCashgame rawGame, IList<Checkpoint> checkpoints)

@@ -8,12 +8,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class PlayerRepository : IPlayerRepository
 {
-    private readonly SqlPlayerDb _playerDb;
+    private readonly PlayerDb _playerDb;
     private readonly ICacheContainer _cacheContainer;
 
     public PlayerRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _playerDb = new SqlPlayerDb(db);
+        _playerDb = new PlayerDb(db);
         _cacheContainer = cacheContainer;
     }
 

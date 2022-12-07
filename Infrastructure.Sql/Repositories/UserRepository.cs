@@ -7,12 +7,12 @@ namespace Infrastructure.Sql.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly SqlUserDb _userDb;
+    private readonly UserDb _userDb;
     private readonly ICacheContainer _cacheContainer;
 
     public UserRepository(IDb db, ICacheContainer cacheContainer)
     {
-        _userDb = new SqlUserDb(db);
+        _userDb = new UserDb(db);
         _cacheContainer = cacheContainer;
     }
 
