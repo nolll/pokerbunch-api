@@ -144,7 +144,7 @@ public class SqlCashgameDb
             bunchId = int.Parse(bunch.Id),
             locationId = int.Parse(cashgame.LocationId),
             status = (int)cashgame.Status,
-            date = DateTime.UtcNow
+            date = TimeZoneInfo.ConvertTime(DateTime.UtcNow, bunch.Timezone)
         };
 
         return (await _db.Insert(sql, @params)).ToString();
