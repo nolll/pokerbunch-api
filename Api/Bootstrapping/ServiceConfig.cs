@@ -218,7 +218,7 @@ public class ServiceConfig
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Auth.Secret)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(_settings.Auth.Secret))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     LifetimeValidator = CustomLifetimeValidator

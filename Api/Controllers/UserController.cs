@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Api.Auth;
+using Api.Bootstrapping;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Api.Routes;
@@ -163,7 +164,7 @@ public class UserController : BaseController
     private string CreateToken(string userName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(AppSettings.Auth.Secret);
+        var key = Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(AppSettings.Auth.Secret));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
