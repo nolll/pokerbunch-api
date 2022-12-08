@@ -12,45 +12,16 @@ COPY Api/*.csproj ./Api/
 COPY Tests.Common/*.csproj ./Tests.Common/
 COPY Tests.Core/*.csproj ./Tests.Core/
 COPY Tests.Integration/*.csproj ./Tests.Integration/
-
 RUN dotnet restore .
-COPY . .
-WORKDIR /Core
-RUN dotnet build -c Release -o /app
 
-WORKDIR /Infrastructure.Cache
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Infrastructure.Email
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Infrastructure.Sql
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Api
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Tests.Common
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Tests.Core
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Tests.Integration
-RUN dotnet build -c Release -o /app
-
-WORKDIR /Tests.Core
-RUN dotnet test
-
-WORKDIR /Tests.Integration
-RUN dotnet test
-
-FROM build AS publish
-RUN dotnet publish -c Release -o /app
+COPY . ./
+RUN dotnet test Tests.Core -c Release
+RUN dotnet test Tests.Integration -c Release
+RUN dotnet publish Api -c Release -o /out
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=build /out .
 ENTRYPOINT ["dotnet", "Api.dll"]
 
 #docker build --t pokerbunch-api .
