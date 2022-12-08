@@ -42,8 +42,8 @@ RUN dotnet build -c Release -o /app
 WORKDIR /Tests.Core
 RUN dotnet test
 
-#WORKDIR /Tests.Integration
-#RUN dotnet test
+WORKDIR /Tests.Integration
+RUN dotnet test
 
 FROM build AS publish
 RUN dotnet publish -c Release -o /app
