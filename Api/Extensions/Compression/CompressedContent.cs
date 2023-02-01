@@ -12,14 +12,8 @@ public class CompressedContent : HttpContent
 
     public CompressedContent(HttpContent content, ICompressor compressor)
     {
-        if (content == null)
-            throw new ArgumentNullException(nameof(content));
-
-        if (compressor == null)
-            throw new ArgumentNullException(nameof(compressor));
-
-        _content = content;
-        _compressor = compressor;
+        _content = content ?? throw new ArgumentNullException(nameof(content));
+        _compressor = compressor ?? throw new ArgumentNullException(nameof(compressor));
 
         AddHeaders();
     }

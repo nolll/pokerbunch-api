@@ -7,7 +7,7 @@ namespace Tests.Core;
 
 public class Mocker
 {
-    readonly Dictionary<Type, Mock> _mocks = new Dictionary<Type, Mock>();
+    private readonly Dictionary<Type, Mock> _mocks = new();
 
     public Mock<T> MockOf<T>() where T : class => _mocks[typeof(T)] as Mock<T>;
 

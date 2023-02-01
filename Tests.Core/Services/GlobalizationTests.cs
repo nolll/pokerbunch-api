@@ -1,5 +1,4 @@
 using System;
-using Core.Entities;
 using Core.Services;
 
 namespace Tests.Core.Services;

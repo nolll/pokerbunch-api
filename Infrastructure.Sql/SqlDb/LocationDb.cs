@@ -1,6 +1,7 @@
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
+using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
 
 namespace Infrastructure.Sql.SqlDb;
@@ -21,10 +22,8 @@ public class LocationDb
             id = int.Parse(id)
         };
 
-        var rawLocation = await _db.Single<LocationDto>(LocationSql.GetByIdQuery, @params);
-        return rawLocation != null
-            ? CreateLocation(rawLocation)
-            : null;
+        var locationDto = await _db.Single<LocationDto>(LocationSql.GetByIdQuery, @params);
+        return locationDto?.ToLocation();
     }
         
     public async Task<IList<Location>> Get(IList<string> ids)
@@ -34,7 +33,7 @@ public class LocationDb
 
         var param = new ListParam("@ids", ids.Select(int.Parse));
         var rawLocations = await _db.List<LocationDto>(LocationSql.GetByIdsQuery, param);
-        return rawLocations.Select(CreateLocation).ToList();
+        return rawLocations.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)
@@ -56,13 +55,5 @@ public class LocationDb
         };
 
         return (await _db.Insert(LocationSql.AddQuery, @params)).ToString();
-    }
-    
-    private Location CreateLocation(LocationDto locationDto)
-    {
-        return new Location(
-            locationDto.Location_Id,
-            locationDto.Name,
-            locationDto.Bunch_Id);
     }
 }

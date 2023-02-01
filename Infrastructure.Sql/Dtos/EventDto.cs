@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace Infrastructure.Sql.Dtos;
 
 public class EventDto

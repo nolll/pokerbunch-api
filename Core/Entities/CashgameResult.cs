@@ -12,12 +12,10 @@ public class CashgameResult
     public IList<Checkpoint> Checkpoints { get; }
     public DateTime? BuyinTime { get; }
     public DateTime? CashoutTime { get; }
-    public int PlayedTime { get; }
     public int Stack { get; }
     public DateTime LastReportTime { get; }
     public Checkpoint CashoutCheckpoint { get; }
     public bool HasCachedOut => CashoutCheckpoint != null;
-    public int WinRate { get; }
 
     public CashgameResult(string playerId, IList<Checkpoint> checkpoints)
     {
@@ -30,8 +28,6 @@ public class CashgameResult
         CashoutCheckpoint = GetCashoutCheckpoint(checkpoints);
         if (CashoutCheckpoint != null)
             CashoutTime = CashoutCheckpoint.Timestamp;
-        PlayedTime = GetPlayedTime(BuyinTime, CashoutTime);
-        WinRate = GetWinRate(Winnings, PlayedTime);
         Checkpoints = checkpoints;
     }
 
@@ -49,21 +45,14 @@ public class CashgameResult
     private static int GetStack(IList<Checkpoint> checkpoints)
     {
         var checkpoint = GetLastCheckpoint(checkpoints);
-        return checkpoint != null ? checkpoint.Stack : 0;
+        return checkpoint?.Stack ?? 0;
     }
 
     private static Checkpoint GetLastCheckpoint(IList<Checkpoint> checkpoints)
     {
-        return checkpoints.Count > 0 ? checkpoints[checkpoints.Count - 1] : null;
+        return checkpoints.Count > 0 ? checkpoints[^1] : null;
     }
-
-    private int GetWinRate(int winnings, int playedTime)
-    {
-        if (playedTime > 0)
-            return (int)Math.Round((double)winnings / playedTime * 60);
-        return 0;
-    }
-
+    
     private static DateTime? GetBuyinTime(IEnumerable<Checkpoint> checkpoints)
     {
         var checkpoint = GetFirstBuyinCheckpoint(checkpoints);
@@ -86,15 +75,7 @@ public class CashgameResult
     {
         return checkpoints.FirstOrDefault(checkpoint => checkpoint.Type == type);
     }
-
-    private int GetPlayedTime(DateTime? startTime = null, DateTime? endTime = null)
-    {
-        if (!startTime.HasValue || !endTime.HasValue)
-            return 0;
-        var timespan = endTime - startTime;
-        return (int)Math.Round(timespan.Value.TotalMinutes);
-    }
-
+    
     private DateTime GetLastReportTime(IList<Checkpoint> checkpoints)
     {
         var checkpoint = GetLastCheckpoint(checkpoints);

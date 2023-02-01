@@ -21,18 +21,17 @@ public class EventDb
             eventId = int.Parse(id)
         };
         
-        var rawEventDays = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
-        var rawEvents = CreateRawEvents(rawEventDays);
-        var rawEvent = rawEvents.FirstOrDefault();
-        return rawEvent != null ? CreateEvent(rawEvent) : null;
+        var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
+        var events = eventDayDtos.ToEvents();
+        var @event = events.FirstOrDefault();
+        return @event;
     }
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawEventDays = await _db.List<EventDayDto>(EventSql.GetByIdsQuery, param);
-        var rawEvents = CreateRawEvents(rawEventDays);
-        return rawEvents.Select(CreateEvent).ToList();
+        var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdsQuery, param);
+        return eventDayDtos.ToEvents();
     }
 
     public async Task<IList<string>> FindByBunchId(string bunchId)
@@ -87,8 +86,17 @@ public class EventDb
 
         await _db.Execute(EventSql.RemoveCashgameQuery, @params);
     }
+}
 
-    private static Event CreateEvent(EventDto eventDto)
+internal static class EventMapper
+{
+    internal static List<Event> ToEvents(this IEnumerable<EventDayDto> eventDayDtos)
+    {
+        var eventDtos = ToEventDtos(eventDayDtos);
+        return eventDtos.Select(ToEvent).ToList();
+    }
+
+    private static Event ToEvent(this EventDto eventDto)
     {
         return new Event(
             eventDto.Event_Id,
@@ -99,7 +107,7 @@ public class EventDb
             new Date(eventDto.EndDate));
     }
 
-    private static IList<EventDto> CreateRawEvents(IEnumerable<EventDayDto> rawEventDays)
+    private static IList<EventDto> ToEventDtos(IEnumerable<EventDayDto> rawEventDays)
     {
         var map = new Dictionary<string, IList<EventDayDto>>();
         foreach (var day in rawEventDays)

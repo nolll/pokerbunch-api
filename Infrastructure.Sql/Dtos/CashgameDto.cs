@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Dtos;

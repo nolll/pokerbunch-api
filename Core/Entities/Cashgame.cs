@@ -19,8 +19,6 @@ public class Cashgame : IEntity
     public DateTime? EndTime { get; private set; }
     public IList<CashgameResult> Results { get; private set; }
     public int PlayerCount { get; private set; }
-    public int Turnover { get; private set; } // todo: remove
-    public int AverageBuyin { get; private set; } // todo: remove
 
     public Cashgame(string bunchId, string locationId, string eventId, GameStatus status, string id = null, IList<Checkpoint> checkpoints = null)
     {
@@ -55,8 +53,6 @@ public class Cashgame : IEntity
         StartTime = GetStartTime(Results);
         EndTime = GetEndTime(Results);
         PlayerCount = Results.Count;
-        Turnover = GetBuyinSum(Results);
-        AverageBuyin = GetAverageBuyin(Turnover, PlayerCount);
     }
 
     public Checkpoint GetCheckpoint(string checkpointId)
@@ -69,8 +65,7 @@ public class Cashgame : IEntity
         var map = new Dictionary<string, IList<Checkpoint>>();
         foreach (var checkpoint in checkpoints)
         {
-            IList<Checkpoint> list;
-            if (!map.TryGetValue(checkpoint.PlayerId, out list))
+            if (!map.TryGetValue(checkpoint.PlayerId, out var list))
             {
                 list = new List<Checkpoint>();
                 map.Add(checkpoint.PlayerId, list);
@@ -113,19 +108,7 @@ public class Cashgame : IEntity
         }
         return endTime;
     }
-
-    private static int GetBuyinSum(IEnumerable<CashgameResult> results)
-    {
-        return results.Sum(result => result.Buyin);
-    }
-
-    private static int GetAverageBuyin(int turnover, int playerCount)
-    {
-        if (playerCount == 0)
-            return 0;
-        return (int)Math.Round(turnover / (double)playerCount);
-    }
-
+    
     public void AddCheckpoint(Checkpoint checkpoint)
     {
         Checkpoints.Add(checkpoint);
@@ -147,18 +130,7 @@ public class Cashgame : IEntity
         DeletedCheckpoints.Add(checkpoint);
         CheckpointsUpdated();
     }
-        
-    public int Duration
-    {
-        get
-        {
-            if (!StartTime.HasValue || !EndTime.HasValue)
-                return 0;
-            var timespan = EndTime - StartTime;
-            return (int) Math.Round(timespan.Value.TotalMinutes);
-        }
-    }
-
+    
     public CashgameResult GetResult(string playerId)
     {
         return Results.FirstOrDefault(result => result.PlayerId == playerId);
@@ -167,23 +139,5 @@ public class Cashgame : IEntity
     public bool IsInGame(string playerId)
     {
         return GetResult(playerId) != null;
-    }
-
-    public bool IsBestResult(CashgameResult resultToCheck)
-    {
-        var bestResult = GetBestResult();
-        return bestResult != null && resultToCheck.Winnings == bestResult.Winnings;
-    }
-
-    public CashgameResult GetBestResult()
-    {
-        CashgameResult bestResult = null;
-        foreach(var result in Results)
-        {
-            if(bestResult == null || result.Winnings > bestResult.Winnings){
-                bestResult = result;
-            }
-        }
-        return bestResult;
     }
 }

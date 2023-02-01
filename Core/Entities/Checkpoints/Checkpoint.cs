@@ -4,13 +4,13 @@ namespace Core.Entities.Checkpoints;
 
 public abstract class Checkpoint
 {
-    public string CashgameId { get; private set; }
-    public string PlayerId { get; private set; }
-    public int Amount { get; private set; }
-    public int Stack { get; private set; }
-    public DateTime Timestamp { get; private set; }
-    public CheckpointType Type { get; private set; }
-    public string Id { get; private set; }
+    public string CashgameId { get; }
+    public string PlayerId { get; }
+    public int Amount { get; }
+    public int Stack { get; }
+    public DateTime Timestamp { get; }
+    public CheckpointType Type { get; }
+    public string Id { get; }
         
     protected Checkpoint(
         string cashgameId,

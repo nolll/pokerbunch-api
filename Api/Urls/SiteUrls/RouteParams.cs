@@ -11,16 +11,16 @@ public class RouteReplace
         Value = value;
     }
 
-    public static RouteReplace ActionId(string actionId) => new RouteReplace(nameof(actionId), actionId);
-    public static RouteReplace AppId(string appId) => new RouteReplace(nameof(appId), appId);
-    public static RouteReplace BunchId(string bunchId) => new RouteReplace(nameof(bunchId), bunchId);
-    public static RouteReplace CashgameId(string cashgameId) => new RouteReplace(nameof(cashgameId), cashgameId);
-    public static RouteReplace Code(string code) => new RouteReplace(nameof(code), code);
-    public static RouteReplace EventId(string eventId) => new RouteReplace(nameof(eventId), eventId);
-    public static RouteReplace LocationId(string locationId) => new RouteReplace(nameof(locationId), locationId);
-    public static RouteReplace PlayerId(string playerId) => new RouteReplace(nameof(playerId), playerId);
-    public static RouteReplace UserName(string userName) => new RouteReplace(nameof(userName), userName);
-    public static RouteReplace Year(int year) => new RouteReplace(nameof(year), year.ToString());
+    public static RouteReplace ActionId(string actionId) => new(nameof(actionId), actionId);
+    public static RouteReplace AppId(string appId) => new(nameof(appId), appId);
+    public static RouteReplace BunchId(string bunchId) => new(nameof(bunchId), bunchId);
+    public static RouteReplace CashgameId(string cashgameId) => new(nameof(cashgameId), cashgameId);
+    public static RouteReplace Code(string code) => new(nameof(code), code);
+    public static RouteReplace EventId(string eventId) => new(nameof(eventId), eventId);
+    public static RouteReplace LocationId(string locationId) => new(nameof(locationId), locationId);
+    public static RouteReplace PlayerId(string playerId) => new(nameof(playerId), playerId);
+    public static RouteReplace UserName(string userName) => new(nameof(userName), userName);
+    public static RouteReplace Year(int year) => new(nameof(year), year.ToString());
 }
 
 public static class RouteParams
