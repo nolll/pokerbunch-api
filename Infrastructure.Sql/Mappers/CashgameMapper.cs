@@ -20,9 +20,9 @@ internal static class CashgameMapper
             checkpoints);
     }
 
-    internal static IList<Cashgame> ToCashgameList(this IEnumerable<CashgameDto> dtos, IEnumerable<CheckpointDto> rawCheckpoints)
+    internal static IList<Cashgame> ToCashgameList(this IEnumerable<CashgameDto> dtos, IEnumerable<CheckpointDto> checkpointDtos)
     {
-        var checkpointMap = GetGameCheckpointMap(rawCheckpoints);
+        var checkpointMap = GetGameCheckpointMap(checkpointDtos);
 
         var cashgames = new List<Cashgame>();
         foreach (var cashgameDto in dtos)

@@ -32,8 +32,8 @@ public class LocationDb
             return new List<Location>();
 
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawLocations = await _db.List<LocationDto>(LocationSql.GetByIdsQuery, param);
-        return rawLocations.Select(LocationMapper.ToLocation).ToList();
+        var locationDtos = await _db.List<LocationDto>(LocationSql.GetByIdsQuery, param);
+        return locationDtos.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)

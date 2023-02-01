@@ -107,10 +107,10 @@ internal static class EventMapper
             new Date(eventDto.EndDate));
     }
 
-    private static IList<EventDto> ToEventDtos(IEnumerable<EventDayDto> rawEventDays)
+    private static IList<EventDto> ToEventDtos(IEnumerable<EventDayDto> eventDayDtos)
     {
         var map = new Dictionary<string, IList<EventDayDto>>();
-        foreach (var day in rawEventDays)
+        foreach (var day in eventDayDtos)
         {
             IList<EventDayDto> list;
             if (map.ContainsKey(day.Event_Id))
@@ -125,14 +125,14 @@ internal static class EventMapper
             list.Add(day);
         }
 
-        var rawEvents = new List<EventDto>();
+        var eventDtos = new List<EventDto>();
         foreach (var key in map.Keys)
         {
             var item = map[key];
             var firstItem = item.First();
             var lastItem = item.Last();
-            rawEvents.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
+            eventDtos.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
         }
-        return rawEvents;
+        return eventDtos;
     }
 }

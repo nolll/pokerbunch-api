@@ -41,8 +41,8 @@ public class PlayerDb
         if(!ids.Any())
             return new List<Player>();
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawPlayers = await _db.List<PlayerDto>(PlayerSql.GetByIdsQuery, param);
-        return rawPlayers.Select(PlayerMapper.ToPlayer).ToList();
+        var playerDtos = await _db.List<PlayerDto>(PlayerSql.GetByIdsQuery, param);
+        return playerDtos.Select(PlayerMapper.ToPlayer).ToList();
     }
 
     public async Task<Player> Get(string id)
@@ -52,8 +52,8 @@ public class PlayerDb
             id = int.Parse(id)
         };
 
-        var rawPlayer = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
-        return rawPlayer?.ToPlayer();
+        var playerDto = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
+        return playerDto?.ToPlayer();
     }
 
     public async Task<string> Add(Player player)
