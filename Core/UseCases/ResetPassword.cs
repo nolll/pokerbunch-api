@@ -72,18 +72,8 @@ public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result
             _loginUrl = loginUrl;
         }
 
-        public string Subject
-        {
-            get { return "Poker Bunch Password Recovery"; }
-        }
-
-        public string Body
-        {
-            get
-            {
-                return string.Format(BodyFormat, _password, _loginUrl);
-            }
-        }
+        public string Subject => "Poker Bunch Password Recovery";
+        public string Body => string.Format(BodyFormat, _password, _loginUrl);
 
         private const string BodyFormat =
             @"Here is your new password for Poker Bunch:

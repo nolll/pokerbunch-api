@@ -1,6 +1,7 @@
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
+using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
 
 namespace Infrastructure.Sql.SqlDb;
@@ -40,8 +41,8 @@ public class PlayerDb
         if(!ids.Any())
             return new List<Player>();
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawPlayers = await _db.List<PlayerDto>(PlayerSql.GetByIdsQuery, param);
-        return rawPlayers.Select(CreatePlayer).ToList();
+        var playerDtos = await _db.List<PlayerDto>(PlayerSql.GetByIdsQuery, param);
+        return playerDtos.Select(PlayerMapper.ToPlayer).ToList();
     }
 
     public async Task<Player> Get(string id)
@@ -51,8 +52,8 @@ public class PlayerDb
             id = int.Parse(id)
         };
 
-        var rawPlayer = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
-        return rawPlayer != null ? CreatePlayer(rawPlayer) : null;
+        var playerDto = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
+        return playerDto?.ToPlayer();
     }
 
     public async Task<string> Add(Player player)
@@ -108,17 +109,5 @@ public class PlayerDb
         };
 
         await _db.Execute(PlayerSql.DeleteQuery, @params);
-    }
-
-    private Player CreatePlayer(PlayerDto playerDto)
-    {
-        return new Player(
-            playerDto.Bunch_Id.ToString(),
-            playerDto.Player_Id.ToString(),
-            playerDto.User_Id != 0 ? playerDto.User_Id.ToString() : null,
-            playerDto.User_Name,
-            playerDto.Player_Name,
-            (Role)playerDto.Role_Id,
-            playerDto.Color);
     }
 }

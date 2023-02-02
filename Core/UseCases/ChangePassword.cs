@@ -32,7 +32,7 @@ public class ChangePassword : UseCase<ChangePassword.Request, ChangePassword.Res
         var encryptedPassword = EncryptionService.Encrypt(request.NewPassword, salt);
         user = CreateUser(user, encryptedPassword, salt);
 
-        _userRepository.Update(user);
+        await _userRepository.Update(user);
 
         return Success(new Result());
     }

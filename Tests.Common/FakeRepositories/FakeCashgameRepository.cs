@@ -115,8 +115,8 @@ public class FakeCashgameRepository : ICashgameRepository
 
         return new List<Cashgame>
         {
-            new Cashgame(TestData.BunchA.Id, TestData.LocationIdA, null, GameStatus.Finished, TestData.CashgameIdA, checkpoints1),
-            new Cashgame(TestData.BunchA.Id, TestData.LocationIdB, null, GameStatus.Finished, TestData.CashgameIdB, checkpoints2)
+            new(TestData.BunchA.Id, TestData.LocationIdA, null, GameStatus.Finished, TestData.CashgameIdA, checkpoints1),
+            new(TestData.BunchA.Id, TestData.LocationIdB, null, GameStatus.Finished, TestData.CashgameIdB, checkpoints2)
         };
     }
 

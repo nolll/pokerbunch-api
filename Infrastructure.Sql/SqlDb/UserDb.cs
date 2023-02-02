@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
+using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
 
 namespace Infrastructure.Sql.SqlDb;
@@ -21,16 +22,16 @@ public class UserDb
             userId = int.Parse(id)
         };
 
-        var rawUser = await _db.Single<UserDto>(UserSql.GetByIdQuery, @params);
-        return rawUser != null ? UserDto.CreateReal(rawUser) : null;
+        var userDto = await _db.Single<UserDto>(UserSql.GetByIdQuery, @params);
+        return userDto?.ToUser();
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var @params = new ListParam("@ids", ids.Select(int.Parse));
 
-        var rawUsers = await _db.List<UserDto>(UserSql.GetByIdsQuery, @params);
-        return rawUsers.Select(UserDto.CreateReal).OrderBy(o => o.DisplayName).ToList();
+        var userDtos = await _db.List<UserDto>(UserSql.GetByIdsQuery, @params);
+        return userDtos.Select(UserMapper.ToUser).OrderBy(o => o.DisplayName).ToList();
     }
 
     public async Task<IList<string>> Find()
@@ -45,7 +46,7 @@ public class UserDb
 
         var @params = new
         {
-            name = name
+            name
         };
 
         return (await _db.Single<int?>(UserSql.FindByUsernameQuery, @params))?.ToString();
@@ -58,7 +59,7 @@ public class UserDb
 
         var @params = new
         {
-            email = email
+            email
         };
 
         return (await _db.Single<int?>(UserSql.FindByEmailQuery, @params))?.ToString();

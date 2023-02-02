@@ -1,4 +1,4 @@
-using Core.Entities;
+// ReSharper disable InconsistentNaming
 using JetBrains.Annotations;
 
 namespace Infrastructure.Sql.Dtos;
@@ -14,17 +14,4 @@ public class UserDto
     [UsedImplicitly] public int Role_Id { get; set; }
     [UsedImplicitly] public string Password { get; set; }
     [UsedImplicitly] public string Salt { get; set; }
-
-    public static User CreateReal(UserDto userDto)
-    {
-        return new User(
-            userDto.User_Id.ToString(),
-            userDto.User_Name,
-            userDto.Display_Name,
-            userDto.Real_Name,
-            userDto.Email,
-            (Role)userDto.Role_Id,
-            userDto.Password,
-            userDto.Salt);
-    }
 }

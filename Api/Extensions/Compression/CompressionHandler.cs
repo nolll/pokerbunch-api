@@ -23,13 +23,13 @@ public class CompressionHandler : DelegatingHandler
     {
         var response = await base.SendAsync(request, cancellationToken);
 
-        if (request.Headers.AcceptEncoding != null && request.Headers.AcceptEncoding.Any())
+        if (request.Headers.AcceptEncoding.Any())
         {
             var encoding = request.Headers.AcceptEncoding.First();
 
             var compressor = Compressors.FirstOrDefault(c => c.EncodingType.Equals(encoding.Value, StringComparison.InvariantCultureIgnoreCase));
 
-            if (response.Content != null && compressor != null)
+            if (compressor != null)
             {
                 response.Content = new CompressedContent(response.Content, compressor);
             }

@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using System.Text;
 using Api.Extensions;
@@ -226,7 +225,7 @@ public class ServiceConfig
             });
     }
 
-    private bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters @param)
+    private bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters param)
     {
         if (expires != null)
             return expires > DateTime.UtcNow;

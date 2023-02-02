@@ -55,20 +55,20 @@ public static class TestData
     public static readonly TimeZoneInfo TimeZoneLocal = TimeZoneInfo.FindSystemTimeZoneById(LocalTimeZoneName);
     public static readonly TimeZoneInfo TimeZoneUtc = TimeZoneInfo.Utc;
 
-    public static User UserA { get { return new User(UserIdA, UserNameA, UserDisplayNameA, UserRealNameA, UserEmailA, Role.Player, UserEncryptedPasswordA, UserSaltA); } }
-    public static User UserB { get { return new User(UserIdB, UserNameB, UserDisplayNameB, UserRealNameB, UserEmailB, Role.Admin, UserEncryptedPasswordB, UserSaltB); } }
-    public static User UserC { get { return new User(UserIdC, UserNameC, UserDisplayNameC, UserRealNameC, UserEmailC, Role.Player, UserEncryptedPasswordC, UserSaltC); } }
-    public static User UserD { get { return new User(UserIdD, UserNameD, UserDisplayNameD, UserRealNameD, UserEmailD, Role.Player, UserEncryptedPasswordD, UserSaltD); } }
-    public static User AdminUser { get { return UserB; } }
-    public static User ManagerUser { get { return UserC; } }
+    public static User UserA => new(UserIdA, UserNameA, UserDisplayNameA, UserRealNameA, UserEmailA, Role.Player, UserEncryptedPasswordA, UserSaltA);
+    public static User UserB => new(UserIdB, UserNameB, UserDisplayNameB, UserRealNameB, UserEmailB, Role.Admin, UserEncryptedPasswordB, UserSaltB);
+    public static User UserC => new(UserIdC, UserNameC, UserDisplayNameC, UserRealNameC, UserEmailC, Role.Player, UserEncryptedPasswordC, UserSaltC);
+    public static User UserD => new(UserIdD, UserNameD, UserDisplayNameD, UserRealNameD, UserEmailD, Role.Player, UserEncryptedPasswordD, UserSaltD);
+    public static User AdminUser => UserB;
+    public static User ManagerUser => UserC;
 
-    public static readonly Bunch BunchA = new Bunch(BunchIdA, SlugA, BunchNameA, DescriptionA, HouseRulesA, TimeZoneUtc, DefaultBuyinA, Currency.Default);
-    public static readonly Bunch BunchB = new Bunch(BunchIdB, SlugB, BunchNameB, DescriptionB, HouseRulesB, TimeZoneLocal, DefaultBuyinB, Currency.Default);
+    public static readonly Bunch BunchA = new(BunchIdA, SlugA, BunchNameA, DescriptionA, HouseRulesA, TimeZoneUtc, DefaultBuyinA, Currency.Default);
+    public static readonly Bunch BunchB = new(BunchIdB, SlugB, BunchNameB, DescriptionB, HouseRulesB, TimeZoneLocal, DefaultBuyinB, Currency.Default);
 
-    public static readonly Player PlayerA = new Player(BunchIdA, PlayerIdA, UserIdA, UserNameA, PlayerNameA, Role.Player, "#9e9e9e");
-    public static readonly Player PlayerB = new Player(BunchIdA, PlayerIdB, UserIdB, UserNameB, PlayerNameB, Role.Player, "#9e9e9e");
-    public static readonly Player PlayerC = new Player(BunchIdA, PlayerIdC, UserIdC, UserNameC, PlayerNameC, Role.Manager, "#9e9e9e");
-    public static readonly Player PlayerD = new Player(BunchIdA, PlayerIdD, default, default, PlayerNameD, Role.Player, "#9e9e9e");
+    public static readonly Player PlayerA = new(BunchIdA, PlayerIdA, UserIdA, UserNameA, PlayerNameA, Role.Player, "#9e9e9e");
+    public static readonly Player PlayerB = new(BunchIdA, PlayerIdB, UserIdB, UserNameB, PlayerNameB, Role.Player, "#9e9e9e");
+    public static readonly Player PlayerC = new(BunchIdA, PlayerIdC, UserIdC, UserNameC, PlayerNameC, Role.Manager, "#9e9e9e");
+    public static readonly Player PlayerD = new(BunchIdA, PlayerIdD, default, default, PlayerNameD, Role.Player, "#9e9e9e");
     public static readonly Player ManagerPlayer = PlayerC;
 
     public const string BuyinCheckpointId = "1";
@@ -118,15 +118,10 @@ public static class TestData
 
     public const string TestUrl = "https://pokerbunch.com/test";
 
-    public static IList<Checkpoint> RunningGameCheckpoints
-    {
-        get
+    public static IList<Checkpoint> RunningGameCheckpoints =>
+        new List<Checkpoint>
         {
-            return new List<Checkpoint>
-            {
-                Checkpoint.Create(CashgameIdC, PlayerIdA, StartTimeC, CheckpointType.Buyin, 200, 200, "12"),
-                Checkpoint.Create(CashgameIdC, PlayerIdB, StartTimeC, CheckpointType.Buyin, 200, 200, "13")
-            };
-        }
-    }
+            Checkpoint.Create(CashgameIdC, PlayerIdA, StartTimeC, CheckpointType.Buyin, 200, 200, "12"),
+            Checkpoint.Create(CashgameIdC, PlayerIdB, StartTimeC, CheckpointType.Buyin, 200, 200, "13")
+        };
 }

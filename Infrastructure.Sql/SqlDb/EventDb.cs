@@ -1,6 +1,7 @@
 using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
+using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
 
 namespace Infrastructure.Sql.SqlDb;
@@ -21,18 +22,17 @@ public class EventDb
             eventId = int.Parse(id)
         };
         
-        var rawEventDays = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
-        var rawEvents = CreateRawEvents(rawEventDays);
-        var rawEvent = rawEvents.FirstOrDefault();
-        return rawEvent != null ? CreateEvent(rawEvent) : null;
+        var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
+        var events = eventDayDtos.ToEvents();
+        var @event = events.FirstOrDefault();
+        return @event;
     }
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
         var param = new ListParam("@ids", ids.Select(int.Parse));
-        var rawEventDays = await _db.List<EventDayDto>(EventSql.GetByIdsQuery, param);
-        var rawEvents = CreateRawEvents(rawEventDays);
-        return rawEvents.Select(CreateEvent).ToList();
+        var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdsQuery, param);
+        return eventDayDtos.ToEvents();
     }
 
     public async Task<IList<string>> FindByBunchId(string bunchId)
@@ -86,45 +86,5 @@ public class EventDb
         };
 
         await _db.Execute(EventSql.RemoveCashgameQuery, @params);
-    }
-
-    private static Event CreateEvent(EventDto eventDto)
-    {
-        return new Event(
-            eventDto.Event_Id,
-            eventDto.Bunch_Id,
-            eventDto.Name,
-            eventDto.Location_Id,
-            new Date(eventDto.StartDate),
-            new Date(eventDto.EndDate));
-    }
-
-    private static IList<EventDto> CreateRawEvents(IEnumerable<EventDayDto> rawEventDays)
-    {
-        var map = new Dictionary<string, IList<EventDayDto>>();
-        foreach (var day in rawEventDays)
-        {
-            IList<EventDayDto> list;
-            if (map.ContainsKey(day.Event_Id))
-            {
-                list = map[day.Event_Id];
-            }
-            else
-            {
-                list = new List<EventDayDto>();
-                map[day.Event_Id] = list;
-            }
-            list.Add(day);
-        }
-
-        var rawEvents = new List<EventDto>();
-        foreach (var key in map.Keys)
-        {
-            var item = map[key];
-            var firstItem = item.First();
-            var lastItem = item.Last();
-            rawEvents.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
-        }
-        return rawEvents;
     }
 }

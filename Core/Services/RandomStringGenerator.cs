@@ -5,7 +5,7 @@ namespace Core.Services;
 
 public static class RandomStringGenerator
 {
-    private static readonly Random Random = new Random();
+    private static readonly Random Random = new();
 
     public static string GetString(int stringLength, string allowedCharacters)
     {

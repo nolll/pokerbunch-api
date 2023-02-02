@@ -38,7 +38,7 @@ public class TestSetup
 
     private async Task<IDb> InitPostgresEngine()
     {
-        _testcontainers = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+        _testcontainers = new ContainerBuilder<PostgreSqlTestcontainer>()
             .WithDatabase(new PostgreSqlTestcontainerConfiguration
             {
                 Database = "db",
