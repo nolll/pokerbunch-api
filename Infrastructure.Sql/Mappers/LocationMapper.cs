@@ -8,8 +8,8 @@ internal static class LocationMapper
     internal static Location ToLocation(this LocationDto locationDto)
     {
         return new Location(
-            locationDto.Location_Id,
+            locationDto.Location_Id.ToString(),
             locationDto.Name,
-            locationDto.Bunch_Id);
+            locationDto.Bunch_Id.ToString());
     }
 }

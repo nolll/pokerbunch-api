@@ -12,7 +12,7 @@ internal static class BunchMapper
         var currency = new Currency(bunchDto.Currency, bunchDto.Currency_Layout, culture);
 
         return new Bunch(
-            bunchDto.Bunch_Id,
+            bunchDto.Bunch_Id.ToString(),
             bunchDto.Name,
             bunchDto.Display_Name,
             bunchDto.Description,
