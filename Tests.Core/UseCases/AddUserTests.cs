@@ -101,8 +101,8 @@ Please sign in here: /loginUrl";
         await Sut.Execute(request);
 
         Assert.That(Deps.EmailSender.To, Is.EqualTo(ValidEmail));
-        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
-        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
+        Assert.That(Deps.EmailSender.Message?.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message?.Body, Is.EqualTo(body));
     }
 
     private AddUser Sut => new(

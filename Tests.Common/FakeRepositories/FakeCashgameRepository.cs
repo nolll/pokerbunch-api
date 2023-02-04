@@ -7,10 +7,10 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakeCashgameRepository : ICashgameRepository
 {
-    private IList<Cashgame> _list;
-    public Cashgame Added { get; private set; }
-    public string Deleted { get; private set; }
-    public Cashgame Updated { get; private set; }
+    private IList<Cashgame> _list = new List<Cashgame>();
+    public Cashgame? Added { get; private set; }
+    public string? Deleted { get; private set; }
+    public Cashgame? Updated { get; private set; }
         
     public FakeCashgameRepository()
     {
@@ -19,7 +19,7 @@ public class FakeCashgameRepository : ICashgameRepository
 
     public Task<Cashgame> Get(string cashgameId)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.Id == cashgameId));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == cashgameId))!;
     }
 
     public Task<IList<Cashgame>> Get(IList<string> ids)
@@ -49,12 +49,12 @@ public class FakeCashgameRepository : ICashgameRepository
 
     public Task<Cashgame> GetRunning(string bunchId)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.Status == GameStatus.Running));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Status == GameStatus.Running))!;
     }
 
     public Task<Cashgame> GetByCheckpoint(string checkpointId)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.Checkpoints.Any(p => p.Id == checkpointId)));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Checkpoints.Any(p => p.Id == checkpointId)))!;
     }
 
     public Task DeleteGame(string id)

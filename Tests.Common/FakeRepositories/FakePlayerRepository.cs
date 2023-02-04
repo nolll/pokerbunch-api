@@ -5,9 +5,9 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakePlayerRepository : IPlayerRepository
 {
-    public Player Added { get; private set; }
-    public string Deleted { get; private set; }
-    public JoinedData Joined { get; private set; }
+    public Player? Added { get; private set; }
+    public string? Deleted { get; private set; }
+    public JoinedData? Joined { get; private set; }
     private readonly IList<Player> _list;
 
     public FakePlayerRepository()
@@ -22,7 +22,7 @@ public class FakePlayerRepository : IPlayerRepository
 
     public Task<Player> Get(string bunchId, string userId)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId));
+        return Task.FromResult(_list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId))!;
     }
 
     public Task<IList<Player>> Get(IList<string> ids)
@@ -32,7 +32,7 @@ public class FakePlayerRepository : IPlayerRepository
 
     public Task<Player> Get(string id)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id))!;
     }
 
     public Task<string> Add(Player player)

@@ -6,7 +6,7 @@ namespace Tests.Common.FakeRepositories;
 public class FakeLocationRepository : ILocationRepository
 {
     private readonly IList<Location> _list;
-    public Location Added { get; private set; }
+    public Location? Added { get; private set; }
         
     public FakeLocationRepository()
     {
@@ -15,7 +15,7 @@ public class FakeLocationRepository : ILocationRepository
 
     public Task<Location> Get(string id)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id))!;
     }
 
     public Task<IList<Location>> List(IList<string> ids)
