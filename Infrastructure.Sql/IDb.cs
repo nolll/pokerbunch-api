@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace Infrastructure.Sql;
 
 public interface IDb : IDisposable

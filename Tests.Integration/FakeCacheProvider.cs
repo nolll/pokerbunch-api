@@ -4,7 +4,7 @@ namespace Tests.Integration;
 
 public class FakeCacheProvider : ICacheProvider
 {
-    public object Get(string key)
+    public object? Get(string key)
     {
         return null;
     }

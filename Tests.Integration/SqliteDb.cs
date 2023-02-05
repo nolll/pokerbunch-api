@@ -15,7 +15,7 @@ public class SqliteDb : IDb
         _connection.Open(); // todo: don't reuse the same connection
     }
     
-    public async Task<T> Single<T>(string sql, object @params)
+    public async Task<T?> Single<T>(string sql, object @params)
     {
         return (await List<T>(sql, @params)).FirstOrDefault();
     }
@@ -31,12 +31,12 @@ public class SqliteDb : IDb
         return await _connection.QueryAsync<T>(sqlWithIdList, param.DynamicParameters);
     }
     
-    public async Task<int> Execute(string sql, object @params = null)
+    public async Task<int> Execute(string sql, object? @params = null)
     {
         return await _connection.ExecuteAsync(sql, @params);
     }
     
-    public async Task<int> Insert(string sql, object @params = null)
+    public async Task<int> Insert(string sql, object? @params = null)
     {
         return await _connection.ExecuteScalarAsync<int>(sql, @params);
     }

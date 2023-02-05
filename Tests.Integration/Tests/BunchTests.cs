@@ -47,7 +47,8 @@ public class BunchTests
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
         var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerId, inviteParameters);
-        var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage!);
+        var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? string.Empty;
+        var verificationCode = GetVerificationCode(lastMessageBody);
         Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(verificationCode, Is.Not.Null);
 
@@ -160,10 +161,10 @@ public class BunchTests
         Assert.That(result.Model?.Count(), Is.EqualTo(0));
     }
 
-    private string GetVerificationCode(IMessage message)
+    private string GetVerificationCode(string messageBody)
     {
         var regex = new Regex("verification code: (.+)");
-        return regex.Match(message.Body).Groups[1].Value.Trim();
+        return regex.Match(messageBody).Groups[1].Value.Trim();
     }
 
     private async Task AddPlayer(string? token, string playerName)

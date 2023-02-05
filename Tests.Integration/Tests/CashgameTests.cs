@@ -55,7 +55,7 @@ public class CashgameTests
     {
         var result1 = await TestClient.Cashgame.Current(TestData.UserToken, TestData.BunchId);
         Assert.That(result1.Model, Is.Not.Null);
-        Assert.That(result1.Model?.Count, Is.EqualTo(1));
+        Assert.That(result1.Model?.Count(), Is.EqualTo(1));
         Assert.That(result1.Model?.First().Id, Is.EqualTo(TestData.CashgameId));
     }
 
@@ -162,8 +162,8 @@ public class CashgameTests
         var result = await TestClient.Cashgame.ListByEvent(TestData.UserToken, TestData.EventId);
         Assert.That(result.Success, Is.True);
 
-        var list = result.Model.ToList();
-        Assert.That(list.Count, Is.EqualTo(1));
+        var list = result.Model?.ToList();
+        Assert.That(list?.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -173,8 +173,8 @@ public class CashgameTests
         var result = await TestClient.Cashgame.ListByPlayer(TestData.UserToken, TestData.PlayerPlayerId);
         Assert.That(result.Success, Is.True);
 
-        var list = result.Model.ToList();
-        Assert.That(list.Count, Is.EqualTo(1));
+        var list = result.Model?.ToList();
+        Assert.That(list?.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -192,7 +192,7 @@ public class CashgameTests
         var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, null);
         var result = await TestClient.Cashgame.Update(TestData.ManagerToken, TestData.CashgameId, parameters);
         Assert.That(result.Success, Is.True);
-        Assert.That(result.Model.Event, Is.Null);
+        Assert.That(result.Model?.Event, Is.Null);
     }
 
     [Test]
@@ -209,6 +209,9 @@ public class CashgameTests
     {
         var cashgameResult = await TestClient.Cashgame.Get(TestData.ManagerToken, TestData.CashgameId);
         var cashgame = cashgameResult.Model;
+        if (cashgame == null)
+            return;
+
         foreach (var player in cashgame.Players)
         {
             foreach (var action in player.Actions.Reverse())

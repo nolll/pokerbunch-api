@@ -84,7 +84,7 @@ public static class TestClient
             return await GetAsync<IEnumerable<ApiCurrentGame>>(token, new ApiBunchCashgamesCurrentUrl(bunchId));
         }
 
-        public static async Task<TestClientResult> Delete(string token, string cashgameId)
+        public static async Task<TestClientResult> Delete(string? token, string cashgameId)
         {
             return await DeleteAsync(token, new ApiCashgameDeleteUrl(cashgameId));
         }
@@ -104,7 +104,7 @@ public static class TestClient
             return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiEventCashgamesUrl(eventId));
         }
 
-        public static async Task<TestClientResult<IEnumerable<CashgameListItemModel>>> ListByPlayer(string token, string playerId)
+        public static async Task<TestClientResult<IEnumerable<CashgameListItemModel>>> ListByPlayer(string? token, string playerId)
         {
             return await GetAsync<IEnumerable<CashgameListItemModel>>(token, new ApiPlayerCashgamesUrl(playerId));
         }
@@ -117,17 +117,17 @@ public static class TestClient
 
     public static class Event
     {
-        public static async Task<TestClientResult<EventModel>> Add(string token, string bunchId, EventAddPostModel parameters)
+        public static async Task<TestClientResult<EventModel>> Add(string? token, string bunchId, EventAddPostModel parameters)
         {
             return await PostAsync<EventModel>(token, new ApiEventAddUrl(bunchId), parameters);
         }
 
-        public static async Task<TestClientResult<EventModel>> Get(string token, string eventId)
+        public static async Task<TestClientResult<EventModel>> Get(string? token, string eventId)
         {
             return await GetAsync<EventModel>(token, new ApiEventUrl(eventId));
         }
 
-        public static async Task<TestClientResult<List<EventModel>>> List(string token, string bunchId)
+        public static async Task<TestClientResult<List<EventModel>>> List(string? token, string bunchId)
         {
             return await GetAsync<List<EventModel>>(token, new ApiEventListUrl(bunchId));
         }
@@ -168,17 +168,17 @@ public static class TestClient
 
     public static class Location
     {
-        public static async Task<TestClientResult<LocationModel>> Add(string token, string bunchId, LocationAddPostModel parameters)
+        public static async Task<TestClientResult<LocationModel>> Add(string? token, string bunchId, LocationAddPostModel parameters)
         {
             return await PostAsync<LocationModel>(token, new ApiLocationAddUrl(bunchId), parameters);
         }
 
-        public static async Task<TestClientResult<LocationModel>> Get(string token, string locationId)
+        public static async Task<TestClientResult<LocationModel>> Get(string? token, string locationId)
         {
             return await GetAsync<LocationModel>(token, new ApiLocationUrl(locationId));
         }
 
-        public static async Task<TestClientResult<List<LocationModel>>> List(string token, string bunchId)
+        public static async Task<TestClientResult<List<LocationModel>>> List(string? token, string bunchId)
         {
             return await GetAsync<List<LocationModel>>(token, new ApiLocationListUrl(bunchId));
         }
@@ -191,12 +191,12 @@ public static class TestClient
             return await PostAsync<PlayerModel>(token, new ApiPlayerAddUrl(bunchId), parameters);
         }
 
-        public static async Task<TestClientResult> Delete(string token, string playerId)
+        public static async Task<TestClientResult> Delete(string? token, string playerId)
         {
             return await DeleteAsync(token, new ApiPlayerDeleteUrl(playerId));
         }
 
-        public static async Task<TestClientResult<PlayerModel>> Get(string token, string playerId)
+        public static async Task<TestClientResult<PlayerModel>> Get(string? token, string playerId)
         {
             return await GetAsync<PlayerModel>(token, new ApiPlayerUrl(playerId));
         }
@@ -206,7 +206,7 @@ public static class TestClient
             return await PostAsync(token, new ApiPlayerInviteUrl(TestData.UserPlayerId), parameters);
         }
 
-        public static async Task<TestClientResult<List<PlayerListItemModel>>> List(string token, string bunchId)
+        public static async Task<TestClientResult<List<PlayerListItemModel>>> List(string? token, string bunchId)
         {
             return await GetAsync<List<PlayerListItemModel>>(token, new ApiPlayerListUrl(bunchId));
         }
@@ -229,27 +229,27 @@ public static class TestClient
             return await GetAsync<UserModel>(TestData.UserToken, new ApiUserUrl(userName));
         }
 
-        public static async Task<TestClientResult<List<UserModel>>> List(string token)
+        public static async Task<TestClientResult<List<UserModel>>> List(string? token)
         {
             return await GetAsync<List<UserModel>>(token, new ApiUserListUrl());
         }
 
-        public static async Task<TestClientResult> PasswordChange(string token, ChangePasswordPostModel parameters)
+        public static async Task<TestClientResult> PasswordChange(string? token, ChangePasswordPostModel parameters)
         {
             return await PutAsync(token, new ApiUserChangePasswordUrl(), parameters);
         }
 
-        public static async Task<TestClientResult> PasswordReset(string token, ResetPasswordPostModel parameters)
+        public static async Task<TestClientResult> PasswordReset(string? token, ResetPasswordPostModel parameters)
         {
             return await PostAsync(token, new ApiUserResetPasswordUrl(), parameters);
         }
 
-        public static async Task<TestClientResult<FullUserModel>> Profile(string token)
+        public static async Task<TestClientResult<FullUserModel>> Profile(string? token)
         {
             return await GetAsync<FullUserModel>(token, new ApiUserProfileUrl());
         }
 
-        public static async Task<TestClientResult<FullUserModel>> Update(string token, string userName, UpdateUserPostModel parameters)
+        public static async Task<TestClientResult<FullUserModel>> Update(string? token, string userName, UpdateUserPostModel parameters)
         {
             return await PutAsync<FullUserModel>(token, new ApiUserUpdateUrl(userName), parameters);
         }

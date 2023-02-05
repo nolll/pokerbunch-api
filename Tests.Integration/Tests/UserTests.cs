@@ -15,8 +15,8 @@ public class UserTests
         var result = await TestClient.User.GetAsAdmin(TestData.AdminUserName);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        Assert.That(result.Model?.UserName, Is.EqualTo(TestData.AdminUserName));
+        Assert.That(result.Model?.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
     }
 
     [Test]
@@ -26,8 +26,8 @@ public class UserTests
         var result = await TestClient.User.GetAsUser(TestData.AdminUserName);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        Assert.That(result.Model?.UserName, Is.EqualTo(TestData.AdminUserName));
+        Assert.That(result.Model?.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
     }
 
     [Test]
@@ -37,13 +37,13 @@ public class UserTests
         var result = await TestClient.User.List(TestData.AdminToken);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.Count, Is.EqualTo(3));
-        Assert.That(result.Model[0].UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.Model[0].DisplayName, Is.EqualTo(TestData.AdminDisplayName));
-        Assert.That(result.Model[1].UserName, Is.EqualTo(TestData.ManagerUserName));
-        Assert.That(result.Model[1].DisplayName, Is.EqualTo(TestData.ManagerDisplayName));
-        Assert.That(result.Model[2].UserName, Is.EqualTo(TestData.UserUserName));
-        Assert.That(result.Model[2].DisplayName, Is.EqualTo(TestData.UserDisplayName));
+        Assert.That(result.Model?.Count, Is.EqualTo(3));
+        Assert.That(result.Model?[0].UserName, Is.EqualTo(TestData.AdminUserName));
+        Assert.That(result.Model?[0].DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        Assert.That(result.Model?[1].UserName, Is.EqualTo(TestData.ManagerUserName));
+        Assert.That(result.Model?[1].DisplayName, Is.EqualTo(TestData.ManagerDisplayName));
+        Assert.That(result.Model?[2].UserName, Is.EqualTo(TestData.UserUserName));
+        Assert.That(result.Model?[2].DisplayName, Is.EqualTo(TestData.UserDisplayName));
     }
 
     [Test]
@@ -61,8 +61,8 @@ public class UserTests
         var result = await TestClient.User.Profile(TestData.UserToken);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.UserName, Is.EqualTo(TestData.UserUserName));
-        Assert.That(result.Model.DisplayName, Is.EqualTo(TestData.UserDisplayName));
+        Assert.That(result.Model?.UserName, Is.EqualTo(TestData.UserUserName));
+        Assert.That(result.Model?.DisplayName, Is.EqualTo(TestData.UserDisplayName));
     }
 
     [Test]
@@ -81,7 +81,7 @@ public class UserTests
         var parameters = new ResetPasswordPostModel(TestData.UserEmail);
         var result = await TestClient.User.PasswordReset(TestData.UserToken, parameters);
         Assert.That(result.Success, Is.True);
-        Assert.That(TestSetup.EmailSender.To, Is.EqualTo(TestData.UserEmail));
+        Assert.That(TestSetup.EmailSender?.To, Is.EqualTo(TestData.UserEmail));
     }
 
     [Test]
@@ -93,8 +93,8 @@ public class UserTests
         var parameters = new UpdateUserPostModel(displayName, TestData.UserEmail, realName);
         var result = await TestClient.User.Update(TestData.AdminToken, TestData.UserUserName, parameters);
         Assert.That(result.Success, Is.True);
-        Assert.That(result.Model.DisplayName, Is.EqualTo(displayName));
-        Assert.That(result.Model.RealName, Is.EqualTo(realName));
+        Assert.That(result.Model?.DisplayName, Is.EqualTo(displayName));
+        Assert.That(result.Model?.RealName, Is.EqualTo(realName));
 
         var changeBackParameters = new UpdateUserPostModel(TestData.UserDisplayName, TestData.UserEmail, null);
         var changeBackResult = await TestClient.User.Update(TestData.AdminToken, TestData.UserUserName, changeBackParameters);

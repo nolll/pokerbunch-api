@@ -1,3 +1,4 @@
+using Core;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -10,19 +11,30 @@ namespace Tests.Integration;
 public class TestSetup
 {
     private const DbEngine Engine = DbEngine.Sqlite;
+    private static IDb? _db;
 
     private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
     
-    private TestcontainerDatabase _testcontainers;
-    private static WebApplicationFactoryInTest _webApplicationFactory;
+    private TestcontainerDatabase? _testcontainers;
+    private static WebApplicationFactoryInTest? _webApplicationFactory;
 
-    public static FakeEmailSender EmailSender;
-    public static IDb Db;
+    public static FakeEmailSender? EmailSender;
+    
+    public static IDb Db
+    {
+        get
+        {
+            if (_db is null)
+                throw new PokerBunchException("Db was not initialized.");
+
+            return _db;
+        }
+    }
 
     [OneTimeSetUp]
     public async Task SetUp()
     {
-        Db = await InitDbEngine();
+        _db = await InitDbEngine();
         EmailSender = new FakeEmailSender();
         _webApplicationFactory = new WebApplicationFactoryInTest(EmailSender, Db);
         await CreateTables();
@@ -60,10 +72,17 @@ public class TestSetup
             await DestroyPostgresEngine();
     }
 
-    private async Task DestroyPostgresEngine() => await _testcontainers.DisposeAsync().AsTask();
+    private async Task DestroyPostgresEngine()
+    {
+        if(_testcontainers != null)
+            await _testcontainers.DisposeAsync().AsTask();
+    }
 
     public static HttpClient GetClient(string? token = null)
     {
+        if (_webApplicationFactory == null)
+            throw new PokerBunchException("WebApplicationFactory was not initialized.");
+
         var client = _webApplicationFactory.CreateClient();
         if(token != null)
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
