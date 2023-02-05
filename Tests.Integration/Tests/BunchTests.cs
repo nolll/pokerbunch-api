@@ -19,19 +19,19 @@ public class BunchTests
         var result = await TestClient.Bunch.Add(TestData.ManagerToken, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.Name, Is.EqualTo(TestData.BunchDisplayName));
-        Assert.That(result.Model.Id, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Model.DefaultBuyin, Is.EqualTo(0));
-        Assert.That(result.Model.CurrencySymbol, Is.EqualTo(TestData.CurrencySymbol));
-        Assert.That(result.Model.CurrencyLayout, Is.EqualTo(TestData.CurrencyLayout));
-        Assert.That(result.Model.CurrencyFormat, Is.EqualTo("${0}"));
-        Assert.That(result.Model.Description, Is.EqualTo(TestData.BunchDescription));
-        Assert.That(result.Model.HouseRules, Is.EqualTo(""));
-        Assert.That(result.Model.Role, Is.EqualTo("manager"));
-        Assert.That(result.Model.Timezone, Is.EqualTo(TestData.TimeZone));
-        Assert.That(result.Model.ThousandSeparator, Is.EqualTo(" "));
-        Assert.That(result.Model.Player.Id, Is.EqualTo("1"));
-        Assert.That(result.Model.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
+        Assert.That(result.Model?.Name, Is.EqualTo(TestData.BunchDisplayName));
+        Assert.That(result.Model?.Id, Is.EqualTo(TestData.BunchId));
+        Assert.That(result.Model?.DefaultBuyin, Is.EqualTo(0));
+        Assert.That(result.Model?.CurrencySymbol, Is.EqualTo(TestData.CurrencySymbol));
+        Assert.That(result.Model?.CurrencyLayout, Is.EqualTo(TestData.CurrencyLayout));
+        Assert.That(result.Model?.CurrencyFormat, Is.EqualTo("${0}"));
+        Assert.That(result.Model?.Description, Is.EqualTo(TestData.BunchDescription));
+        Assert.That(result.Model?.HouseRules, Is.EqualTo(""));
+        Assert.That(result.Model?.Role, Is.EqualTo("manager"));
+        Assert.That(result.Model?.Timezone, Is.EqualTo(TestData.TimeZone));
+        Assert.That(result.Model?.ThousandSeparator, Is.EqualTo(" "));
+        Assert.That(result.Model?.Player.Id, Is.EqualTo("1"));
+        Assert.That(result.Model?.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class BunchTests
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
         var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerId, inviteParameters);
-        var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage);
+        var verificationCode = GetVerificationCode(TestSetup.EmailSender.LastMessage!);
         Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(verificationCode, Is.Not.Null);
 
@@ -70,8 +70,8 @@ public class BunchTests
         var result = await TestClient.Bunch.Get(TestData.AdminToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
-        Assert.That(result.Model.Role, Is.EqualTo("admin"));
-        Assert.That(result.Model.Player, Is.Null);
+        Assert.That(result.Model?.Role, Is.EqualTo("admin"));
+        Assert.That(result.Model?.Player, Is.Null);
     }
 
     [Test]
@@ -81,9 +81,9 @@ public class BunchTests
         var result = await TestClient.Bunch.Get(TestData.ManagerToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
-        Assert.That(result.Model.Role, Is.EqualTo("manager"));
-        Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.ManagerPlayerId));
-        Assert.That(result.Model.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
+        Assert.That(result.Model?.Role, Is.EqualTo("manager"));
+        Assert.That(result.Model?.Player.Id, Is.EqualTo(TestData.ManagerPlayerId));
+        Assert.That(result.Model?.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
     [Test]
@@ -93,9 +93,9 @@ public class BunchTests
         var result = await TestClient.Bunch.Get(TestData.UserToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
-        Assert.That(result.Model.Role, Is.EqualTo("player"));
-        Assert.That(result.Model.Player.Id, Is.EqualTo(TestData.UserPlayerId));
-        Assert.That(result.Model.Player.Name, Is.EqualTo(TestData.UserDisplayName));
+        Assert.That(result.Model?.Role, Is.EqualTo("player"));
+        Assert.That(result.Model?.Player.Id, Is.EqualTo(TestData.UserPlayerId));
+        Assert.That(result.Model?.Player.Name, Is.EqualTo(TestData.UserDisplayName));
     }
 
     [Test]
@@ -108,14 +108,14 @@ public class BunchTests
 
         var parameters = new UpdateBunchPostModel(newDescription, houseRules, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout, defaultBuyin);
         var updateResult = await TestClient.Bunch.Update(TestData.ManagerToken, TestData.BunchId, parameters);
-        Assert.That(updateResult.Model.Description, Is.EqualTo(newDescription));
-        Assert.That(updateResult.Model.HouseRules, Is.EqualTo(houseRules));
-        Assert.That(updateResult.Model.DefaultBuyin, Is.EqualTo(defaultBuyin));
+        Assert.That(updateResult.Model?.Description, Is.EqualTo(newDescription));
+        Assert.That(updateResult.Model?.HouseRules, Is.EqualTo(houseRules));
+        Assert.That(updateResult.Model?.DefaultBuyin, Is.EqualTo(defaultBuyin));
 
         var getResult = await TestClient.Bunch.Get(TestData.ManagerToken, TestData.BunchId);
-        Assert.That(getResult.Model.Description, Is.EqualTo(newDescription));
-        Assert.That(getResult.Model.HouseRules, Is.EqualTo(houseRules));
-        Assert.That(getResult.Model.DefaultBuyin, Is.EqualTo(defaultBuyin));
+        Assert.That(getResult.Model?.Description, Is.EqualTo(newDescription));
+        Assert.That(getResult.Model?.HouseRules, Is.EqualTo(houseRules));
+        Assert.That(getResult.Model?.DefaultBuyin, Is.EqualTo(defaultBuyin));
     }
 
     [Test]
@@ -124,10 +124,10 @@ public class BunchTests
     {
         var result = await TestClient.Bunch.List(TestData.AdminToken);
         Assert.That(result.Success, Is.True);
-        var list = result.Model.ToList();
-        var first = list.First();
-        Assert.That(list.Count, Is.EqualTo(1));
-        Assert.That(first.Name, Is.EqualTo(TestData.BunchDisplayName));
+        var list = result.Model?.ToList();
+        var first = list?.First();
+        Assert.That(list?.Count, Is.EqualTo(1));
+        Assert.That(first?.Name, Is.EqualTo(TestData.BunchDisplayName));
     }
 
     [Test]
@@ -145,10 +145,10 @@ public class BunchTests
     {
         var result = await TestClient.Bunch.ListForUser(TestData.ManagerToken);
         Assert.That(result.Success, Is.True);
-        var list = result.Model.ToList();
-        var first = list.First();
-        Assert.That(list.Count, Is.EqualTo(1));
-        Assert.That(first.Name, Is.EqualTo(TestData.BunchDisplayName));
+        var list = result.Model?.ToList();
+        var first = list?.First();
+        Assert.That(list?.Count, Is.EqualTo(1));
+        Assert.That(first?.Name, Is.EqualTo(TestData.BunchDisplayName));
     }
 
     [Test]
@@ -157,7 +157,7 @@ public class BunchTests
     {
         var result = await TestClient.Bunch.ListForUser(TestData.AdminToken);
         Assert.That(result.Success, Is.True);
-        Assert.That(result.Model.Count(), Is.EqualTo(0));
+        Assert.That(result.Model?.Count(), Is.EqualTo(0));
     }
 
     private string GetVerificationCode(IMessage message)
@@ -166,24 +166,24 @@ public class BunchTests
         return regex.Match(message.Body).Groups[1].Value.Trim();
     }
 
-    private async Task AddPlayer(string token, string playerName)
+    private async Task AddPlayer(string? token, string playerName)
     {
         var parameters = new PlayerAddPostModel(playerName);
         var result = await TestClient.Player.Add(token, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
-    private void AssertCommonProperties(BunchModel bunch)
+    private void AssertCommonProperties(BunchModel? bunch)
     {
-        Assert.That(bunch.Name, Is.EqualTo(TestData.BunchDisplayName));
-        Assert.That(bunch.Id, Is.EqualTo(TestData.BunchId));
-        Assert.That(bunch.DefaultBuyin, Is.EqualTo(0));
-        Assert.That(bunch.CurrencySymbol, Is.EqualTo(TestData.CurrencySymbol));
-        Assert.That(bunch.CurrencyLayout, Is.EqualTo(TestData.CurrencyLayout));
-        Assert.That(bunch.CurrencyFormat, Is.EqualTo("${0}"));
-        Assert.That(bunch.Description, Is.EqualTo(TestData.BunchDescription));
-        Assert.That(bunch.HouseRules, Is.EqualTo(""));
-        Assert.That(bunch.Timezone, Is.EqualTo(TestData.TimeZone));
-        Assert.That(bunch.ThousandSeparator, Is.EqualTo(" "));
+        Assert.That(bunch?.Name, Is.EqualTo(TestData.BunchDisplayName));
+        Assert.That(bunch?.Id, Is.EqualTo(TestData.BunchId));
+        Assert.That(bunch?.DefaultBuyin, Is.EqualTo(0));
+        Assert.That(bunch?.CurrencySymbol, Is.EqualTo(TestData.CurrencySymbol));
+        Assert.That(bunch?.CurrencyLayout, Is.EqualTo(TestData.CurrencyLayout));
+        Assert.That(bunch?.CurrencyFormat, Is.EqualTo("${0}"));
+        Assert.That(bunch?.Description, Is.EqualTo(TestData.BunchDescription));
+        Assert.That(bunch?.HouseRules, Is.EqualTo(""));
+        Assert.That(bunch?.Timezone, Is.EqualTo(TestData.TimeZone));
+        Assert.That(bunch?.ThousandSeparator, Is.EqualTo(" "));
     }
 }

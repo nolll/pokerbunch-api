@@ -62,7 +62,7 @@ public class TestSetup
 
     private async Task DestroyPostgresEngine() => await _testcontainers.DisposeAsync().AsTask();
 
-    public static HttpClient GetClient(string token = null)
+    public static HttpClient GetClient(string? token = null)
     {
         var client = _webApplicationFactory.CreateClient();
         if(token != null)
