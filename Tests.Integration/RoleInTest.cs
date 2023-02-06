@@ -6,5 +6,5 @@ namespace Tests.Integration;
 internal class RoleInTest
 {
     public int Role_Id { get; set; }
-    public string Role_Name { get; set; } = string.Empty;
+    public string Role_Name { get; set; } = "";
 }

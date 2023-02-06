@@ -50,7 +50,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
             SlugGenerator.GetSlug(request.DisplayName),
             request.DisplayName,
             request.Description,
-            string.Empty,
+            "",
             TimeZoneInfo.FindSystemTimeZoneById(request.TimeZone),
             0,
             new Currency(request.CurrencySymbol, request.CurrencyLayout));

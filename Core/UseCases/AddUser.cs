@@ -55,7 +55,7 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
             null,
             request.UserName,
             request.DisplayName,
-            string.Empty,
+            "",
             request.Email,
             Role.Player,
             encryptedPassword,

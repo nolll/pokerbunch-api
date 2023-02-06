@@ -10,7 +10,7 @@ public static class RandomStringGenerator
     public static string GetString(int stringLength, string allowedCharacters)
     {
         if (string.IsNullOrEmpty(allowedCharacters))
-            return string.Empty;
+            return "";
         var max = allowedCharacters.Length - 1;
         var str = new StringBuilder();
         for(var i = 0; i < stringLength; i++)

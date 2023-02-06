@@ -8,10 +8,10 @@ public class SmtpEmailSender : EmailSender
 {
     private readonly string _smtpHost;
     private readonly int _port;
-    private readonly string _userName;
-    private readonly string _password;
+    private readonly string? _userName;
+    private readonly string? _password;
 
-    public SmtpEmailSender(string smtpHost, int port, string userName = null, string password = null)
+    public SmtpEmailSender(string smtpHost, int port, string? userName = null, string? password = null)
     {
         _smtpHost = smtpHost;
         _port = port;

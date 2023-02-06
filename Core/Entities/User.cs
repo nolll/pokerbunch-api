@@ -23,12 +23,12 @@ public class User : IEntity
     {
         Id = id;
         UserName = userName;
-        DisplayName = displayName ?? string.Empty;
-        RealName = realName ?? string.Empty;
-        Email = email ?? string.Empty;
+        DisplayName = displayName ?? "";
+        RealName = realName ?? "";
+        Email = email ?? "";
         GlobalRole = globalRole;
-        EncryptedPassword = encryptedPassword ?? string.Empty;
-        Salt = salt ?? string.Empty;
+        EncryptedPassword = encryptedPassword ?? "";
+        Salt = salt ?? "";
     }
 
     public bool IsAdmin => GlobalRole == Role.Admin;

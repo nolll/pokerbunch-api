@@ -47,7 +47,7 @@ public class BunchTests
     {
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
         var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerId, inviteParameters);
-        var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? string.Empty;
+        var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? "";
         var verificationCode = GetVerificationCode(lastMessageBody);
         Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(verificationCode, Is.Not.Null);

@@ -28,9 +28,9 @@ public class Bunch : IEntity
     {
         Id = id;
         Slug = slug;
-        DisplayName = displayName ?? string.Empty;
-        Description = description ?? string.Empty;
-        HouseRules = houseRules ?? string.Empty;
+        DisplayName = displayName ?? "";
+        Description = description ?? "";
+        HouseRules = houseRules ?? "";
         Timezone = timezone ?? TimeZoneInfo.Utc;
         DefaultBuyin = defaultBuyin;
         Currency = currency ?? Currency.Default;

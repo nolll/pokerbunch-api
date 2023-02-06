@@ -39,7 +39,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
         var cashgames = await _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
-        var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : string.Empty;
+        var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
 
         return Success(new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl));
     }

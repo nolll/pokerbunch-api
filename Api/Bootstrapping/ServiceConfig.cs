@@ -155,7 +155,7 @@ public class ServiceConfig
     {
         var databaseUrl = _configuration.GetValue<string>("DATABASE_URL");
         if (string.IsNullOrEmpty(databaseUrl))
-            return string.Empty;
+            return "";
 
         var databaseUri = new Uri(databaseUrl);
         var userInfo = databaseUri.UserInfo.Split(':');
