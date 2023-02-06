@@ -32,7 +32,7 @@ public class AddCashgameTests : TestBase
         Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 
-    private static AddCashgame.Request CreateRequest(string locationId = null)
+    private static AddCashgame.Request CreateRequest(string? locationId = null)
     {
         return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId);
     }

@@ -7,6 +7,6 @@ public class WithNoRole : Arrange
     [Test]
     public void AccessDenied()
     {
-        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
+        Assert.That(Result?.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
     }
 }

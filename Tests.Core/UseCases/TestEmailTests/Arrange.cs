@@ -10,12 +10,12 @@ namespace Tests.Core.UseCases.TestEmailTests;
 
 public abstract class Arrange : UseCaseTest<TestEmail>
 {
-    protected UseCaseResult<TestEmail.Result> Result;
+    protected UseCaseResult<TestEmail.Result>? Result;
 
     protected abstract Role Role { get; }
-    protected string To;
-    protected string Subject;
-    protected string Body;
+    protected string? To;
+    protected string? Subject;
+    protected string? Body;
 
     private const string UserName = "user-name-1";
 

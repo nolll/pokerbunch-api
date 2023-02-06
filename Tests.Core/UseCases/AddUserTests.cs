@@ -79,14 +79,14 @@ class AddUserTests : TestBase
 
         var user = Deps.User.Added;
 
-        Assert.That(user.Id, Is.Null);
-        Assert.That(user.UserName, Is.EqualTo(ValidUserName));
-        Assert.That(user.DisplayName, Is.EqualTo(ValidDisplayName));
-        Assert.That(user.RealName, Is.EqualTo(""));
-        Assert.That(user.Email, Is.EqualTo(ValidEmail));
-        Assert.That(user.GlobalRole, Is.EqualTo(Role.Player));
-        Assert.That(user.EncryptedPassword, Is.EqualTo(expectedEncryptedPassword));
-        Assert.That(user.Salt, Is.EqualTo(expectedSalt));
+        Assert.That(user?.Id, Is.Null);
+        Assert.That(user?.UserName, Is.EqualTo(ValidUserName));
+        Assert.That(user?.DisplayName, Is.EqualTo(ValidDisplayName));
+        Assert.That(user?.RealName, Is.EqualTo(""));
+        Assert.That(user?.Email, Is.EqualTo(ValidEmail));
+        Assert.That(user?.GlobalRole, Is.EqualTo(Role.Player));
+        Assert.That(user?.EncryptedPassword, Is.EqualTo(expectedEncryptedPassword));
+        Assert.That(user?.Salt, Is.EqualTo(expectedSalt));
     }
 
     [Test]

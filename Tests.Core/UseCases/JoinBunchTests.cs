@@ -43,9 +43,9 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
         await Sut.Execute(request);
-        Assert.That(Deps.Player.Joined.PlayerId, Is.EqualTo(TestData.PlayerA.Id));
-        Assert.That(Deps.Player.Joined.BunchId, Is.EqualTo(TestData.BunchA.Id));
-        Assert.That(Deps.Player.Joined.UserId, Is.EqualTo(TestData.UserA.Id));
+        Assert.That(Deps.Player.Joined?.PlayerId, Is.EqualTo(TestData.PlayerA.Id));
+        Assert.That(Deps.Player.Joined?.BunchId, Is.EqualTo(TestData.BunchA.Id));
+        Assert.That(Deps.Player.Joined?.UserId, Is.EqualTo(TestData.UserA.Id));
     }
 
     private JoinBunch Sut => new(

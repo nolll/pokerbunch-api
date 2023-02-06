@@ -10,6 +10,6 @@ public class WithPlayer : Arrange
     [Test]
     public void ReturnsError()
     {
-        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
+        Assert.That(Result?.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
     }
 }

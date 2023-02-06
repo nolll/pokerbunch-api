@@ -7,6 +7,12 @@ public abstract class UseCaseTest<T> where T : class
     private Mocker _mocker;
     protected T Sut { get; private set; }
 
+    protected UseCaseTest()
+    {
+        _mocker = new Mocker();
+        Sut = _mocker.New<T>();
+    }
+
     [SetUp]
     public void UseCaseSetup()
     {

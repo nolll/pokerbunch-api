@@ -14,7 +14,7 @@ public class AddLocationTests : TestBase
         var request = new AddLocation.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
-        Assert.That(Deps.Location.Added.Name, Is.EqualTo(addedEventName));
+        Assert.That(Deps.Location.Added?.Name, Is.EqualTo(addedEventName));
     }
 
     [Test]

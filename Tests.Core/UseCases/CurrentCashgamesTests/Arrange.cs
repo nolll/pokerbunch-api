@@ -7,7 +7,7 @@ namespace Tests.Core.UseCases.CurrentCashgamesTests;
 
 public abstract class Arrange : UseCaseTest<CurrentCashgames>
 {
-    protected UseCaseResult<CurrentCashgames.Result> Result;
+    protected UseCaseResult<CurrentCashgames.Result>? Result;
 
     private const string UserName = "default-current-user";
     private const string UserId = "1";
@@ -27,7 +27,7 @@ public abstract class Arrange : UseCaseTest<CurrentCashgames>
         Mock<IUserRepository>().Setup(s => s.GetByUserName(UserName)).Returns(Task.FromResult<User>(user));
         Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult<Bunch>(bunch));
         Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult<Player>(player));
-        Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(Task.FromResult<Cashgame>(cashgame));
+        Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(Task.FromResult<Cashgame?>(cashgame));
     }
 
     protected override async Task ExecuteAsync()

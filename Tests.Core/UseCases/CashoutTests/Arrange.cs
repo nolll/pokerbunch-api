@@ -10,7 +10,7 @@ namespace Tests.Core.UseCases.CashoutTests;
 
 public abstract class Arrange : UseCaseTest<Cashout>
 {
-    protected UseCaseResult<Cashout.Result> Result;
+    protected UseCaseResult<Cashout.Result>? Result;
 
     private const string BunchId = "1";
     private const string CashgameId = "2";
@@ -26,7 +26,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
     protected virtual bool HasCashedOutBefore => false;
 
     protected int CheckpointCountBeforeCashout;
-    protected Cashgame UpdatedCashgame;
+    protected Cashgame? UpdatedCashgame;
 
     protected override void Setup()
     {

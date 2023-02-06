@@ -20,7 +20,13 @@ public class Cashgame : IEntity
     public IList<CashgameResult> Results { get; private set; }
     public int PlayerCount { get; private set; }
 
-    public Cashgame(string bunchId, string locationId, string eventId, GameStatus status, string id = null, IList<Checkpoint> checkpoints = null)
+    public Cashgame(
+        string bunchId,
+        string locationId,
+        string eventId,
+        GameStatus status,
+        string id = null,
+        IList<Checkpoint> checkpoints = null)
     {
         Id = id;
         BunchId = bunchId;

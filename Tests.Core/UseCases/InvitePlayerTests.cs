@@ -40,8 +40,8 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
         await Sut.Execute(request);
 
         Assert.That(Deps.EmailSender.To, Is.EqualTo(TestData.UserEmailA));
-        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
-        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
+        Assert.That(Deps.EmailSender.Message?.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message?.Body, Is.EqualTo(body));
     }
 
     private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)

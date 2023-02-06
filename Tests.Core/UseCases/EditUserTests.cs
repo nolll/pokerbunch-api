@@ -53,9 +53,9 @@ public class EditUserTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.User.Saved.UserName, Is.EqualTo(TestData.UserNameA));
-        Assert.That(Deps.User.Saved.DisplayName, Is.EqualTo(ChangedDisplayName));
-        Assert.That(Deps.User.Saved.Email, Is.EqualTo(ChangedEmail));
+        Assert.That(Deps.User.Saved?.UserName, Is.EqualTo(TestData.UserNameA));
+        Assert.That(Deps.User.Saved?.DisplayName, Is.EqualTo(ChangedDisplayName));
+        Assert.That(Deps.User.Saved?.Email, Is.EqualTo(ChangedEmail));
     }
 
     private EditUser Sut => new(Deps.User);

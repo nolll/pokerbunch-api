@@ -57,12 +57,12 @@ public class EditBunchTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.Bunch.Saved.Description, Is.EqualTo(Description));
-        Assert.That(Deps.Bunch.Saved.Currency.Symbol, Is.EqualTo(ValidCurrencySymbol));
-        Assert.That(Deps.Bunch.Saved.Currency.Layout, Is.EqualTo(ValidCurrencyLayout));
-        Assert.That(Deps.Bunch.Saved.Timezone.Id, Is.EqualTo(ValidTimeZone));
-        Assert.That(Deps.Bunch.Saved.HouseRules, Is.EqualTo(HouseRules));
-        Assert.That(Deps.Bunch.Saved.DefaultBuyin, Is.EqualTo(DefaultBuyin));
+        Assert.That(Deps.Bunch.Saved?.Description, Is.EqualTo(Description));
+        Assert.That(Deps.Bunch.Saved?.Currency.Symbol, Is.EqualTo(ValidCurrencySymbol));
+        Assert.That(Deps.Bunch.Saved?.Currency.Layout, Is.EqualTo(ValidCurrencyLayout));
+        Assert.That(Deps.Bunch.Saved?.Timezone.Id, Is.EqualTo(ValidTimeZone));
+        Assert.That(Deps.Bunch.Saved?.HouseRules, Is.EqualTo(HouseRules));
+        Assert.That(Deps.Bunch.Saved?.DefaultBuyin, Is.EqualTo(DefaultBuyin));
     }
 
     [Test]

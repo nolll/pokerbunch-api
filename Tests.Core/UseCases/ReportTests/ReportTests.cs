@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases.ReportTests;
 
 public class Arrange : UseCaseTest<Report>
 {
-    protected UseCaseResult<Report.Result> Result;
+    protected UseCaseResult<Report.Result>? Result;
 
     private const string Username = "username";
     private const string UserId = "1";
@@ -18,7 +18,7 @@ public class Arrange : UseCaseTest<Report>
     private const string BunchId = "4";
     protected virtual int Stack => 5;
     private static DateTime CurrentTime => DateTime.MinValue;
-    protected Cashgame UpdatedCashgame;
+    protected Cashgame? UpdatedCashgame;
 
     protected override void Setup()
     {

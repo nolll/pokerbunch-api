@@ -31,8 +31,8 @@ public class EditCashgameTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.Cashgame.Updated.Id, Is.EqualTo(TestData.BunchA.Id));
-        Assert.That(Deps.Cashgame.Updated.LocationId, Is.EqualTo(TestData.ChangedLocationId));
+        Assert.That(Deps.Cashgame.Updated?.Id, Is.EqualTo(TestData.BunchA.Id));
+        Assert.That(Deps.Cashgame.Updated?.LocationId, Is.EqualTo(TestData.ChangedLocationId));
     }
 
     [Test]

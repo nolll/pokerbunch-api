@@ -10,8 +10,8 @@ namespace Tests.Core.UseCases;
 
 public class ChangePasswordTests : MockBase
 {
-    private Mock<IUserRepository> _userRepositoryMock;
-    private Mock<IRandomizer> _randomizerMock;
+    private Mock<IUserRepository> _userRepositoryMock = new();
+    private Mock<IRandomizer> _randomizerMock = new();
 
     [SetUp]
     public void SetUp()
@@ -47,7 +47,7 @@ public class ChangePasswordTests : MockBase
         var user = new User("1", TestData.UserNameA, salt: "123456", encryptedPassword: "9217510d5221554de3230b5634a3f81e3cf19d94");
         _userRepositoryMock.Setup(o => o.GetByUserName(TestData.UserNameA)).Returns(Task.FromResult(user));
 
-        User savedUser = null;
+        User? savedUser = null;
         _userRepositoryMock.Setup(o => o.Update(It.IsAny<User>())).Callback((User u) => savedUser = u);
 
         _randomizerMock.Setup(o => o.GetAllowedChars()).Returns("a");
@@ -55,7 +55,7 @@ public class ChangePasswordTests : MockBase
         var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
         await Sut.Execute(request);
             
-        Assert.That(savedUser.EncryptedPassword, Is.EqualTo("cebb55b2a2b59b692bf5c81c9359b59c3244fe86"));
+        Assert.That(savedUser?.EncryptedPassword, Is.EqualTo("cebb55b2a2b59b692bf5c81c9359b59c3244fe86"));
     }
         
     private ChangePassword Sut => new(

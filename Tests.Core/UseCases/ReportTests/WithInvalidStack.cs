@@ -9,6 +9,6 @@ public class WithInvalidStack : Arrange
     [Test]
     public void ReturnsValidationError()
     {
-        Assert.That(Result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(Result?.Error.Type, Is.EqualTo(ErrorType.Validation));
     }
 }

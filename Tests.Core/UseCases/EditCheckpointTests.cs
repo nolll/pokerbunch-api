@@ -46,11 +46,11 @@ public class EditCheckpointTests : TestBase
 
         await Sut.Execute(request);
 
-        var updatedCheckpoint = Deps.Cashgame.Updated.UpdatedCheckpoints.First();
-        Assert.That(updatedCheckpoint.Type, Is.EqualTo(CheckpointType.Buyin));
-        Assert.That(updatedCheckpoint.Id, Is.EqualTo(TestData.BuyinCheckpointId));
-        Assert.That(updatedCheckpoint.Stack, Is.EqualTo(ChangedStack));
-        Assert.That(updatedCheckpoint.Amount, Is.EqualTo(ChangedAmount));
+        var updatedCheckpoint = Deps.Cashgame.Updated?.UpdatedCheckpoints.First();
+        Assert.That(updatedCheckpoint?.Type, Is.EqualTo(CheckpointType.Buyin));
+        Assert.That(updatedCheckpoint?.Id, Is.EqualTo(TestData.BuyinCheckpointId));
+        Assert.That(updatedCheckpoint?.Stack, Is.EqualTo(ChangedStack));
+        Assert.That(updatedCheckpoint?.Amount, Is.EqualTo(ChangedAmount));
     }
 
     private EditCheckpoint Sut => new(
