@@ -23,7 +23,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = await _playerRepository.Get(request.PlayerId);
+        var player = await GetPlayerOrNull(request.PlayerId);
         if (player == null)
             return Error(new PlayerNotFoundError(request.PlayerId));
 
@@ -42,6 +42,18 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
 
         return Success(new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl));
+    }
+
+    private async Task<Player> GetPlayerOrNull(string id)
+    {
+        try
+        {
+            return await _playerRepository.Get(id);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public class Request

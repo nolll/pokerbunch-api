@@ -22,7 +22,7 @@ public class BunchRepository : IBunchRepository
         return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public async Task<Bunch> GetBySlug(string slug)
+    public async Task<Bunch?> GetBySlug(string slug)
     {
         var ids = await Search(slug);
         if (ids.Any())

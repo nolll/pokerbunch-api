@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
@@ -31,6 +32,10 @@ public class BunchDb
         };
 
         var dto = await _db.Single<BunchDto>(BunchSql.GetByIdQuery, @params);
+
+        if (dto is null)
+            throw new PokerBunchException($"Bunch with id {id} was not found");
+
         return dto.ToBunch();
     }
 

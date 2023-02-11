@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
@@ -53,7 +54,12 @@ public class PlayerDb
         };
 
         var playerDto = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
-        return playerDto?.ToPlayer();
+        var player = playerDto?.ToPlayer();
+        
+        if (player is null)
+            throw new PokerBunchException($"Player with id {id} was not found");
+
+        return player;
     }
 
     public async Task<string> Add(Player player)

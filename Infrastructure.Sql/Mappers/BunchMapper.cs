@@ -10,6 +10,9 @@ internal static class BunchMapper
     {
         var culture = CultureInfo.CreateSpecificCulture("sv-SE");
         var currency = new Currency(bunchDto.Currency, bunchDto.Currency_Layout, culture);
+        var timezone = bunchDto.Timezone is not null
+            ? TimeZoneInfo.FindSystemTimeZoneById(bunchDto.Timezone)
+            : TimeZoneInfo.Utc;
 
         return new Bunch(
             bunchDto.Bunch_Id.ToString(),
@@ -17,7 +20,7 @@ internal static class BunchMapper
             bunchDto.Display_Name,
             bunchDto.Description,
             bunchDto.House_Rules,
-            TimeZoneInfo.FindSystemTimeZoneById(bunchDto.Timezone),
+            timezone,
             bunchDto.Default_Buyin,
             currency);
     }

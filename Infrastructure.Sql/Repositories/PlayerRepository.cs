@@ -33,13 +33,12 @@ public class PlayerRepository : IPlayerRepository
         return await Get(ids);
     }
 
-    public async Task<Player> Get(string bunchId, string userId)
+    public async Task<Player?> Get(string bunchId, string userId)
     {
         var ids = await _playerDb.FindByUser(bunchId, userId);
         if (!ids.Any())
             return null;
         return (await Get(ids)).First();
-
     }
 
     public async Task<string> Add(Player player)

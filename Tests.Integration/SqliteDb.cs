@@ -20,7 +20,7 @@ public class SqliteDb : IDb
         return (await List<T>(sql, @params)).FirstOrDefault();
     }
 
-    public async Task<IEnumerable<T>> List<T>(string sql, object @params)
+    public async Task<IEnumerable<T>> List<T>(string sql, object? @params)
     {
         return await _connection.QueryAsync<T>(sql, @params);
     }
@@ -43,6 +43,6 @@ public class SqliteDb : IDb
     
     public void Dispose()
     {
-        _connection?.Dispose();
+        _connection.Dispose();
     }
 }

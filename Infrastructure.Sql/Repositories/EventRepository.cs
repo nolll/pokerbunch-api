@@ -33,7 +33,7 @@ public class EventRepository : IEventRepository
         return await Get(ids);
     }
 
-    public async Task<Event> GetByCashgame(string cashgameId)
+    public async Task<Event?> GetByCashgame(string cashgameId)
     {
         var ids = await _eventDb.FindByCashgameId(cashgameId);
         return (await Get(ids)).FirstOrDefault();

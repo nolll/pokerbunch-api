@@ -26,6 +26,10 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
+        var timezone = GetTimezone(request.TimeZone);
+        if (timezone is null)
+            return Error(new ValidationError($"Invalid timezone: {request.TimeZone}"));
+
         var bunch = await _bunchRepository.GetBySlug(request.Slug);
         var currentUser = await _userRepository.GetByUserName(request.UserName);
         var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
@@ -33,13 +37,25 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
         if (!AccessControl.CanEditBunch(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var postedBunch = CreateBunch(bunch, request);
+        var postedBunch = CreateBunch(bunch, request, timezone);
         await _bunchRepository.Update(postedBunch);
 
         return Success(new Result(postedBunch, currentPlayer));
     }
-    
-    private static Bunch CreateBunch(Bunch bunch, Request request)
+
+    private static TimeZoneInfo GetTimezone(string id)
+    {
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById(id);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static Bunch CreateBunch(Bunch bunch, Request request, TimeZoneInfo timezone)
     {
         return new Bunch(
             bunch.Id,
@@ -47,7 +63,7 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
             bunch.DisplayName,
             request.Description,
             request.HouseRules,
-            TimeZoneInfo.FindSystemTimeZoneById(request.TimeZone),
+            timezone,
             request.DefaultBuyin,
             new Currency(request.CurrencySymbol, request.CurrencyLayout));
     }

@@ -47,7 +47,7 @@ public class CashgameRepository : ICashgameRepository
         return await Get(ids);
     }
 
-    public async Task<Cashgame> GetRunning(string bunchId)
+    public async Task<Cashgame?> GetRunning(string bunchId)
     {
         var ids = await _cashgameDb.FindRunning(bunchId);
         return (await Get(ids)).FirstOrDefault();
@@ -56,7 +56,7 @@ public class CashgameRepository : ICashgameRepository
     public async Task<Cashgame> GetByCheckpoint(string checkpointId)
     {
         var ids = await _cashgameDb.FindByCheckpoint(checkpointId);
-        return (await Get(ids)).FirstOrDefault();
+        return (await Get(ids)).First();
     }
 
     public async Task DeleteGame(string id)

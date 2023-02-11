@@ -27,7 +27,7 @@ public class UserRepository : IUserRepository
         return await GetAndCache(ids);
     }
 
-    public async Task<User> GetByUserEmail(string email)
+    public async Task<User?> GetByUserEmail(string email)
     {
         var id = await _userDb.FindByEmail(email.ToLower());
         if (id == null)
@@ -35,7 +35,7 @@ public class UserRepository : IUserRepository
         return await GetAndCache(id);
     }
 
-    public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
+    public async Task<User?> GetByUserNameOrEmail(string nameOrEmail)
     {
         var id = await _userDb.FindByUserNameOrEmail(nameOrEmail.ToLower());
         if (id == null)
@@ -43,7 +43,7 @@ public class UserRepository : IUserRepository
         return await GetAndCache(id);
     }
 
-    public async Task<User> GetByUserName(string name)
+    public async Task<User?> GetByUserName(string name)
     {
         var id = await _userDb.FindByUserName(name.ToLower());
         if (id == null)
