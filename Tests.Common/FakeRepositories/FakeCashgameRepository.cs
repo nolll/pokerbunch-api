@@ -47,7 +47,7 @@ public class FakeCashgameRepository : ICashgameRepository
         return Task.FromResult<IList<Cashgame>>(games);
     }
 
-    public Task<Cashgame> GetRunning(string bunchId)
+    public Task<Cashgame?> GetRunning(string bunchId)
     {
         return Task.FromResult(_list.FirstOrDefault(o => o.Status == GameStatus.Running))!;
     }
@@ -94,23 +94,23 @@ public class FakeCashgameRepository : ICashgameRepository
     {
         var checkpoints1 = new List<Checkpoint>
         {
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, TestData.StartTimeA, CheckpointType.Buyin, 200, 200, "1"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdB, TestData.StartTimeA.AddMinutes(1), CheckpointType.Buyin, 200, 200, "2"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdB, TestData.StartTimeA.AddMinutes(30), CheckpointType.Report, 250, 0, "3"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, TestData.StartTimeA.AddMinutes(61), CheckpointType.Cashout, 50, 0, "4"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdB, TestData.StartTimeA.AddMinutes(62), CheckpointType.Cashout, 350, 0, "5")
+            Checkpoint.Create("1", TestData.CashgameIdA, TestData.PlayerIdA, TestData.StartTimeA, CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("2", TestData.CashgameIdA, TestData.PlayerIdB, TestData.StartTimeA.AddMinutes(1), CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("3", TestData.CashgameIdA, TestData.PlayerIdB, TestData.StartTimeA.AddMinutes(30), CheckpointType.Report, 250, 0),
+            Checkpoint.Create("4", TestData.CashgameIdA, TestData.PlayerIdA, TestData.StartTimeA.AddMinutes(61), CheckpointType.Cashout, 50, 0),
+            Checkpoint.Create("5", TestData.CashgameIdA, TestData.PlayerIdB, TestData.StartTimeA.AddMinutes(62), CheckpointType.Cashout, 350, 0)
         };
 
         var startTime2 = secondGameStartTime ?? TestData.StartTimeB;
 
         var checkpoints2 = new List<Checkpoint>
         {
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, startTime2, CheckpointType.Buyin, 200, 200, "6"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdB, startTime2.AddMinutes(1), CheckpointType.Buyin, 200, 200, "7"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdB, startTime2.AddMinutes(2), CheckpointType.Buyin, 200, 200, "8"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, startTime2.AddMinutes(30), CheckpointType.Report, 450, 45, "9"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, startTime2.AddMinutes(91), CheckpointType.Cashout, 550, 0, "10"),
-            Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdB, startTime2.AddMinutes(92), CheckpointType.Cashout, 50, 0, "11")
+            Checkpoint.Create("6", TestData.CashgameIdA, TestData.PlayerIdA, startTime2, CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("7", TestData.CashgameIdA, TestData.PlayerIdB, startTime2.AddMinutes(1), CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("8", TestData.CashgameIdA, TestData.PlayerIdB, startTime2.AddMinutes(2), CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("9", TestData.CashgameIdA, TestData.PlayerIdA, startTime2.AddMinutes(30), CheckpointType.Report, 450, 45),
+            Checkpoint.Create("10", TestData.CashgameIdA, TestData.PlayerIdA, startTime2.AddMinutes(91), CheckpointType.Cashout, 550, 0),
+            Checkpoint.Create("11", TestData.CashgameIdA, TestData.PlayerIdB, startTime2.AddMinutes(92), CheckpointType.Cashout, 50, 0)
         };
 
         return new List<Cashgame>
@@ -128,8 +128,8 @@ public class FakeCashgameRepository : ICashgameRepository
         {
             var checkpoints = new List<Checkpoint>
             {
-                Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, startTime, CheckpointType.Buyin, 200, 200, "1"),
-                Checkpoint.Create(TestData.CashgameIdA, TestData.PlayerIdA, startTime.AddMinutes(61), CheckpointType.Cashout, 200, 0, "2"),
+                Checkpoint.Create("1", TestData.CashgameIdA, TestData.PlayerIdA, startTime, CheckpointType.Buyin, 200, 200),
+                Checkpoint.Create("2", TestData.CashgameIdA, TestData.PlayerIdA, startTime.AddMinutes(61), CheckpointType.Cashout, 200, 0),
             };
             games.Add(new Cashgame(TestData.BunchA.Id, TestData.LocationIdA, null, GameStatus.Finished, TestData.CashgameIdA, checkpoints));
             startTime = startTime.AddDays(1);
@@ -146,9 +146,9 @@ public class FakeCashgameRepository : ICashgameRepository
     {
         var checkpoints1 = new List<Checkpoint>
         {
-            Checkpoint.Create(TestData.CashgameIdC, TestData.PlayerIdA, TestData.StartTimeC, CheckpointType.Buyin, 200, 200, "1"),
-            Checkpoint.Create(TestData.CashgameIdC, TestData.PlayerIdB, TestData.StartTimeC, CheckpointType.Buyin, 200, 200, "2"),
-            Checkpoint.Create(TestData.CashgameIdC, TestData.PlayerIdA, TestData.StartTimeC.AddMinutes(1), CheckpointType.Cashout, 200, 0, "3"),
+            Checkpoint.Create("1", TestData.CashgameIdC, TestData.PlayerIdA, TestData.StartTimeC, CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("2", TestData.CashgameIdC, TestData.PlayerIdB, TestData.StartTimeC, CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("3", TestData.CashgameIdC, TestData.PlayerIdA, TestData.StartTimeC.AddMinutes(1), CheckpointType.Cashout, 200, 0),
         };
 
         _list.Add(new Cashgame(TestData.BunchA.Id, TestData.LocationIdC, null, GameStatus.Running, TestData.CashgameIdC, checkpoints1));

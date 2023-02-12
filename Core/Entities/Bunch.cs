@@ -19,12 +19,12 @@ public class Bunch : IEntity
     public Bunch(
         string id, 
         string slug, 
-        string displayName = null, 
-        string description = null, 
-        string houseRules = null, 
-        TimeZoneInfo timezone = null, 
-        int defaultBuyin = 0, 
-        Currency currency = null)
+        string? displayName = null, 
+        string? description = null, 
+        string? houseRules = null, 
+        TimeZoneInfo? timezone = null, 
+        int? defaultBuyin = null, 
+        Currency? currency = null)
     {
         Id = id;
         Slug = slug;
@@ -32,7 +32,7 @@ public class Bunch : IEntity
         Description = description ?? "";
         HouseRules = houseRules ?? "";
         Timezone = timezone ?? TimeZoneInfo.Utc;
-        DefaultBuyin = defaultBuyin;
+        DefaultBuyin = defaultBuyin ?? 0;
         Currency = currency ?? Currency.Default;
         CashgamesEnabled = true;
         TournamentsEnabled = false;

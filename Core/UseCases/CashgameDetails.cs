@@ -37,9 +37,10 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         if (!AccessControl.CanSeeCashgame(user, player))
             return Error(new AccessDeniedError());
 
-        var players = await _playerRepository.Get(GetPlayerIds(cashgame));
+        var playerIds = GetPlayerIds(cashgame);
+        var players = await _playerRepository.Get(playerIds);
 
-        var role = user.IsAdmin ? Role.Manager : player.Role;
+        var role = user.IsAdmin ? Role.Manager : player!.Role;
 
         var location = await _locationRepository.Get(cashgame.LocationId);
         var @event = cashgame.EventId != null ? await _eventRepository.Get(cashgame.EventId) : null;
@@ -61,7 +62,7 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         var result = new Result(
             bunch.Slug,
             bunch.Timezone.Id,
-            player.Id,
+            player!.Id,
             cashgame.Id,
             startTime,
             updatedTime,
@@ -98,7 +99,7 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
 
     private static IList<string> GetPlayerIds(Cashgame cashgame)
     {
-        return cashgame.Results.Select(o => o.PlayerId).ToList();
+        return cashgame.Checkpoints.Select(o => o.PlayerId).Distinct().ToList();
     }
 
     private static IList<RunningCashgamePlayerItem> GetPlayerItems(Cashgame cashgame, IList<Player> players)
@@ -147,8 +148,8 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         public DateTime UpdatedTime { get; }
         public string LocationName { get; }
         public string LocationId { get; }
-        public string EventName { get; set; }
-        public string EventId { get; set; }
+        public string? EventName { get; }
+        public string? EventId { get; }
         public IList<RunningCashgamePlayerItem> PlayerItems { get; }
         public int DefaultBuyin { get; }
         public string CurrencyFormat { get; }
@@ -168,8 +169,8 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
             DateTime updatedTime,
             string locationName,
             string locationId,
-            string eventName,
-            string eventId,
+            string? eventName,
+            string? eventId,
             IList<RunningCashgamePlayerItem> playerItems,
             int defaultBuyin,
             string currencyFormat,
@@ -224,17 +225,16 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
     {
         public string PlayerId { get; }
         public string Name { get; }
-        public string Color { get; }
+        public string? Color { get; }
         public string CashgameId { get; }
         public bool HasCashedOut { get; }
         public int Buyin { get; }
         public int Stack { get; }
-        public int Winnings { get; }
         public DateTime BuyinTime { get; }
         public DateTime UpdatedTime { get; }
         public IList<RunningCashgameActionItem> Checkpoints { get; }
 
-        public RunningCashgamePlayerItem(string playerId, string name, string color, string cashgameId, bool hasCashedOut, IList<Checkpoint> checkpoints)
+        public RunningCashgamePlayerItem(string playerId, string name, string? color, string cashgameId, bool hasCashedOut, IList<Checkpoint> checkpoints)
         {
             PlayerId = playerId;
             Name = name;
@@ -246,7 +246,6 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
             Checkpoints = list.Select(o => new RunningCashgameActionItem(o)).ToList();
             Buyin = list.Sum(o => o.Amount);
             Stack = lastCheckpoint.Stack;
-            Winnings = Stack - Buyin;
             BuyinTime = checkpoints.First().Timestamp;
             UpdatedTime = lastCheckpoint.Timestamp;
         }

@@ -121,7 +121,7 @@ public static class TestData
     public static IList<Checkpoint> RunningGameCheckpoints =>
         new List<Checkpoint>
         {
-            Checkpoint.Create(CashgameIdC, PlayerIdA, StartTimeC, CheckpointType.Buyin, 200, 200, "12"),
-            Checkpoint.Create(CashgameIdC, PlayerIdB, StartTimeC, CheckpointType.Buyin, 200, 200, "13")
+            Checkpoint.Create("12", CashgameIdC, PlayerIdA, StartTimeC, CheckpointType.Buyin, 200, 200),
+            Checkpoint.Create("13", CashgameIdC, PlayerIdB, StartTimeC, CheckpointType.Buyin, 200, 200)
         };
 }

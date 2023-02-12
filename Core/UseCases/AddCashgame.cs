@@ -37,7 +37,7 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
         if (!AccessControl.CanAddCashgame(user, player))
             return Error(new AccessDeniedError()); 
 
-        var location = await _locationRepository.Get(request.LocationId);
+        var location = await _locationRepository.Get(request.LocationId!);
         var cashgame = new Cashgame(bunch.Id, location.Id, null, GameStatus.Running);
         var cashgameId = await _cashgameRepository.Add(bunch, cashgame);
 
@@ -49,9 +49,9 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
         public string UserName { get; }
         public string Slug { get; }
         [Required(ErrorMessage = "Please select a location")]
-        public string LocationId { get; }
+        public string? LocationId { get; }
 
-        public Request(string userName, string slug, string locationId)
+        public Request(string userName, string slug, string? locationId)
         {
             UserName = userName;
             Slug = slug;

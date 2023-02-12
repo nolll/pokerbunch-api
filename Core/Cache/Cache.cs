@@ -5,11 +5,11 @@ using Core.Services;
 
 namespace Core.Cache;
 
-public class CacheContainer : ICacheContainer
+public class Cache : ICache
 {
     private readonly ICacheProvider _cacheProvider;
 
-    public CacheContainer(ICacheProvider cacheProvider)
+    public Cache(ICacheProvider cacheProvider)
     {
         _cacheProvider = cacheProvider;
     }
@@ -26,67 +26,51 @@ public class CacheContainer : ICacheContainer
 
     public T GetAndStore<T>(Func<T> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
     {
-        var foundInCache = TryGet(cacheKey, out T cachedObject);
+        var foundInCache = TryGet(cacheKey, out T? cachedObject);
 
         if (foundInCache)
-        {
-            return cachedObject;
-        }
+            return cachedObject!;
+        
         cachedObject = sourceExpression();
-        if (cachedObject != null)
-        {
-            Insert(cacheKey, cachedObject, cacheTime);
-        }
+        Insert(cacheKey, cachedObject, cacheTime);
         return cachedObject;
     }
 
     public async Task<T> GetAndStoreAsync<T>(Func<Task<T>> sourceExpression, TimeSpan cacheTime, string cacheKey) where T : class
     {
-        var foundInCache = TryGet(cacheKey, out T cachedObject);
+        var foundInCache = TryGet(cacheKey, out T? cachedObject);
 
         if (foundInCache)
-        {
-            return cachedObject;
-        }
+            return cachedObject!;
+        
         cachedObject = await sourceExpression();
-        if (cachedObject != null)
-        {
-            Insert(cacheKey, cachedObject, cacheTime);
-        }
+        Insert(cacheKey, cachedObject, cacheTime);
         return cachedObject;
     }
 
     public T GetAndStore<T>(Func<string, T> sourceExpression, string id, TimeSpan cacheTime) where T : class, IEntity
     {
         var cacheKey = CacheKeyProvider.GetKey<T>(id);
-        var foundInCache = TryGet(cacheKey, out T cachedObject);
+        var foundInCache = TryGet(cacheKey, out T? cachedObject);
 
         if (foundInCache)
-        {
-            return cachedObject;
-        }
+            return cachedObject!;
+
         cachedObject = sourceExpression(id);
-        if (cachedObject != null)
-        {
-            Insert(cacheKey, cachedObject, cacheTime);
-        }
+        Insert(cacheKey, cachedObject, cacheTime);
         return cachedObject;
     }
 
     public async Task<T> GetAndStoreAsync<T>(Func<string, Task<T>> sourceExpression, string id, TimeSpan cacheTime) where T : class, IEntity
     {
         var cacheKey = CacheKeyProvider.GetKey<T>(id);
-        var foundInCache = TryGet(cacheKey, out T cachedObject);
+        var foundInCache = TryGet(cacheKey, out T? cachedObject);
 
         if (foundInCache)
-        {
-            return cachedObject;
-        }
+            return cachedObject!;
+
         cachedObject = await sourceExpression(id);
-        if (cachedObject != null)
-        {
-            Insert(cacheKey, cachedObject, cacheTime);
-        }
+        Insert(cacheKey, cachedObject, cacheTime);
         return cachedObject;
     }
 
@@ -97,14 +81,13 @@ public class CacheContainer : ICacheContainer
         foreach (var id in ids)
         {
             var cacheKey = CacheKeyProvider.GetKey<T>(id);
-            var foundInCache = TryGet(cacheKey, out T cachedObject);
+            var foundInCache = TryGet(cacheKey, out T? cachedObject);
             if (foundInCache)
-                list.Add(cachedObject);
+                list.Add(cachedObject!);
             else
-            {
                 notInCache.Add(id);
-            }
         }
+
         if (notInCache.Any())
         {
             var sourceItems = sourceExpression(notInCache);
@@ -120,6 +103,7 @@ public class CacheContainer : ICacheContainer
             list = list.Concat(sourceItems.Where(o => o != null)).ToList();
             return OrderItemsByIdList(ids, list);
         }
+
         return list;
     }
 
@@ -130,14 +114,13 @@ public class CacheContainer : ICacheContainer
         foreach (var id in ids)
         {
             var cacheKey = CacheKeyProvider.GetKey<T>(id);
-            var foundInCache = TryGet(cacheKey, out T cachedObject);
+            var foundInCache = TryGet(cacheKey, out T? cachedObject);
             if (foundInCache)
-                list.Add(cachedObject);
+                list.Add(cachedObject!);
             else
-            {
                 notInCache.Add(id);
-            }
         }
+
         if (notInCache.Any())
         {
             var sourceItems = await sourceExpression(notInCache);
@@ -159,10 +142,10 @@ public class CacheContainer : ICacheContainer
     private static IList<T> OrderItemsByIdList<T>(IEnumerable<string> ids, IEnumerable<T> list) where T : class, IEntity
     {
         var result = ids.Select(id => list.FirstOrDefault(i => i.Id == id)).ToList();
-        return result.Where(r => r != null).ToList();
+        return result.Where(r => r != null).ToList()!;
     }
 
-    private bool TryGet<T>(string key, out T value) where T : class
+    private bool TryGet<T>(string key, out T? value) where T : class
     {
         // Uncomment this row to temporarily disable cache in development
         //value = null; return false;

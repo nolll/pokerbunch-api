@@ -7,7 +7,7 @@ public interface IPlayerRepository
     Task<Player> Get(string id);
     Task<IList<Player>> Get(IList<string> ids);
     Task<IList<Player>> List(string bunchId);
-    Task<Player> Get(string bunchId, string userId);
+    Task<Player?> Get(string bunchId, string userId);
     Task<bool> JoinBunch(Player player, Bunch bunch, string userId);
     Task<string> Add(Player player);
     Task Delete(string playerId);

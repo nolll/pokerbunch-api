@@ -7,9 +7,9 @@ public class PlayerInTest : Player
     public PlayerInTest(
         string bunchId = "",
         string id = "",
-        string userId = "", 
-        string userName = "",
-        string? displayName = null, 
+        string? userId = null, 
+        string? userName = null,
+        string displayName = "", 
         Role role = Role.Player, 
         string? color = null)
         : base(

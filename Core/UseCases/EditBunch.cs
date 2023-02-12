@@ -40,10 +40,10 @@ public class EditBunch : UseCase<EditBunch.Request, EditBunch.Result>
         var postedBunch = CreateBunch(bunch, request, timezone);
         await _bunchRepository.Update(postedBunch);
 
-        return Success(new Result(postedBunch, currentPlayer));
+        return Success(new Result(postedBunch, currentPlayer!));
     }
 
-    private static TimeZoneInfo GetTimezone(string id)
+    private static TimeZoneInfo? GetTimezone(string id)
     {
         try
         {

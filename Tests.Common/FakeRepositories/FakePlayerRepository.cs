@@ -20,7 +20,7 @@ public class FakePlayerRepository : IPlayerRepository
         return Task.FromResult<IList<Player>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Task<Player> Get(string bunchId, string userId)
+    public Task<Player?> Get(string bunchId, string userId)
     {
         return Task.FromResult(_list.FirstOrDefault(o => o.BunchId == bunchId && o.UserId == userId))!;
     }

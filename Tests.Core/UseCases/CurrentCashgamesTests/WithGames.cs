@@ -10,7 +10,7 @@ public class WithGames : Arrange
     [Test]
     public void ReturnsListOfGames()
     {
-        var games = Result?.Data.Games;
+        var games = Result?.Data?.Games;
         Assert.That(games?.Count, Is.EqualTo(1));
         var game = games?.First();
         Assert.That(game?.Slug, Is.EqualTo(Slug));

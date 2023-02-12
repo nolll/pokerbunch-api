@@ -10,6 +10,6 @@ public class InvalidStack : Arrange
     public void ReturnsError()
     {
         Assert.That(Result?.Success, Is.False);
-        Assert.That(Result?.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 }

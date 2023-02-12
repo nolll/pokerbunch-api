@@ -16,14 +16,14 @@ class ResetPasswordTests : TestBase
         var request = CreateRequest(InvalidEmail);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public async Task ResetPassword_UserNotFound_ReturnsError()
     {
         var result = await Sut.Execute(CreateRequest(NonExistingEmail));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.NotFound));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.NotFound));
     }
 
     [Test]

@@ -16,7 +16,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -25,7 +25,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -35,8 +35,8 @@ public class EditCheckpointTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.CashgameId, Is.EqualTo("1"));
-        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
+        Assert.That(result.Data?.CashgameId, Is.EqualTo("1"));
+        Assert.That(result.Data?.PlayerId, Is.EqualTo("1"));
     }
         
     [Test]

@@ -34,16 +34,15 @@ public class Cashout : UseCase<Cashout.Request, Cashout.Result>
             return Error(new AccessDeniedError());
 
         var result = cashgame.GetResult(request.PlayerId);
-
-        var existingCashoutCheckpoint = result.CashoutCheckpoint;
+        var existingCashoutCheckpoint = result?.CashoutCheckpoint;
+        
         var postedCheckpoint = Checkpoint.Create(
+            existingCashoutCheckpoint?.Id,
             cashgame.Id,
             request.PlayerId,
             request.CurrentTime,
             CheckpointType.Cashout,
-            request.Stack,
-            0,
-            existingCashoutCheckpoint?.Id);
+            request.Stack);
 
         if (existingCashoutCheckpoint != null)
             cashgame.UpdateCheckpoint(postedCheckpoint);

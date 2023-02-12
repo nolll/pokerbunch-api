@@ -158,7 +158,7 @@ public class UserController : BaseController
     private async Task<string> GetToken(LoginPostModel loginPostModel)
     {
         var result = await _login.Execute(new Login.Request(loginPostModel.UserName, loginPostModel.Password));
-        return CreateToken(result.Data.UserName);
+        return CreateToken(result.Data?.UserName);
     }
     
     private string CreateToken(string userName)

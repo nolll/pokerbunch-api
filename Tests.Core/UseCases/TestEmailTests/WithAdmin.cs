@@ -18,6 +18,6 @@ public class WithAdmin : Arrange
     [Test]
     public void EmailIsSet()
     {
-        Assert.That(Result?.Data.Email, Is.EqualTo(Email));
+        Assert.That(Result?.Data?.Email, Is.EqualTo(Email));
     }
 }

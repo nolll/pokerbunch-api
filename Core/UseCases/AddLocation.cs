@@ -35,7 +35,7 @@ public class AddLocation : UseCase<AddLocation.Request, AddLocation.Result>
         if (!AccessControl.CanAddLocation(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var location = new Location(null, request.Name, bunch.Id);
+        var location = new Location("", request.Name, bunch.Id);
         var id = await _locationRepository.Add(location);
 
         return Success(new Result(bunch.Slug, id, location.Name));

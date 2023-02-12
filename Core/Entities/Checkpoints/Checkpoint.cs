@@ -19,20 +19,20 @@ public abstract class Checkpoint
         CheckpointType type,
         int stack,
         int amount,
-        string id)
+        string? id)
     {
         Timestamp = timestamp;
         Type = type;
         Stack = stack;
         Amount = amount;
-        Id = id;
+        Id = id ?? "";
         PlayerId = playerId;
         CashgameId = cashgameId;
     }
 
     public abstract string Description { get; }
 
-    public static Checkpoint Create(string cashgameId, string playerId, DateTime timestamp, CheckpointType type, int stack, int amount = 0, string id = null)
+    public static Checkpoint Create(string? id, string cashgameId, string playerId, DateTime timestamp, CheckpointType type, int stack, int amount = 0)
     {
         if (type == CheckpointType.Cashout)
             return new CashoutCheckpoint(cashgameId, playerId, timestamp, stack, amount, id);

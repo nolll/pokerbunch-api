@@ -26,7 +26,7 @@ public abstract class Arrange : UseCaseTest<CurrentCashgames>
 
         Mock<IUserRepository>().Setup(s => s.GetByUserName(UserName)).Returns(Task.FromResult<User>(user));
         Mock<IBunchRepository>().Setup(s => s.GetBySlug(Slug)).Returns(Task.FromResult<Bunch>(bunch));
-        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult<Player>(player));
+        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult<Player?>(player));
         Mock<ICashgameRepository>().Setup(s => s.GetRunning(BunchId)).Returns(Task.FromResult<Cashgame?>(cashgame));
     }
 

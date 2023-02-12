@@ -25,7 +25,7 @@ public class WebApplicationFactoryInTest : WebApplicationFactory<Program>
             services.ReplaceSingleton(_db);
             services.ReplaceSingleton(_emailSender);
             services.ReplaceSingleton<IRandomizer>(new FakeRandomizer());
-            services.ReplaceSingleton<ICacheProvider>(new FakeCacheProvider());
+            services.ReplaceSingleton<ICache>(new FakeCache());
         });
     }
 }

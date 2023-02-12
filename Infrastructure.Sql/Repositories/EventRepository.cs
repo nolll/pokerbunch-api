@@ -9,22 +9,22 @@ namespace Infrastructure.Sql.Repositories;
 public class EventRepository : IEventRepository
 {
     private readonly EventDb _eventDb;
-    private readonly ICacheContainer _cacheContainer;
+    private readonly ICache _cache;
 
-    public EventRepository(IDb db, ICacheContainer cacheContainer)
+    public EventRepository(IDb db, ICache cache)
     {
         _eventDb = new EventDb(db);
-        _cacheContainer = cacheContainer;
+        _cache = cache;
     }
 
     public async Task<Event> Get(string id)
     {
-        return await _cacheContainer.GetAndStoreAsync(_eventDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_eventDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
-        return await _cacheContainer.GetAndStoreAsync(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Event>> List(string bunchId)

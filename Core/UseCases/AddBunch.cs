@@ -27,7 +27,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
             return Error(new ValidationError(validator));
 
         var slug = SlugGenerator.GetSlug(request.DisplayName);
-        var existingBunch = await _bunchRepository.GetBySlug(slug);
+        var existingBunch = await _bunchRepository.GetBySlugOrNull(slug);
         var bunchExists = existingBunch != null;
 
         if (bunchExists)
@@ -46,7 +46,7 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
     private static Bunch CreateBunch(Request request)
     {
         return new Bunch(
-            null,
+            "",
             SlugGenerator.GetSlug(request.DisplayName),
             request.DisplayName,
             request.Description,

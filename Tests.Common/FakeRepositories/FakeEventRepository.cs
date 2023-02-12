@@ -30,9 +30,9 @@ public class FakeEventRepository : IEventRepository
         return Task.FromResult<IList<Event>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Task<Event> GetByCashgame(string cashgameId)
+    public Task<Event?> GetByCashgame(string cashgameId)
     {
-        return Task.FromResult(_list.First());
+        return Task.FromResult(_list.FirstOrDefault());
     }
 
     public Task<string> Add(Event e)

@@ -19,6 +19,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
     protected const string PlayerId = "5";
     protected const string Slug = "slug";
     protected const string UserName = "username";
+    protected const string PlayerName = "playername";
     private readonly DateTime _startTime = DateTime.Parse("2001-01-01 12:00:00");
 
     protected virtual int CashoutStack => 123;
@@ -31,7 +32,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
     protected override void Setup()
     {
         var cashgame = CreateCashgame();
-        var player = new Player(BunchId, PlayerId, UserId, UserName);
+        var player = new Player(BunchId, PlayerId, UserId, UserName, PlayerName);
         var user = new User(UserId, UserName);
 
         CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
@@ -39,7 +40,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
 
         Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(Task.FromResult(CreateCashgame()));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
-        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult(player));
+        Mock<IPlayerRepository>().Setup(s => s.Get(BunchId, UserId)).Returns(Task.FromResult<Player?>(player));
         Mock<IUserRepository>().Setup(s => s.GetByUserName(UserName)).Returns(Task.FromResult(user));
     }
 
@@ -54,8 +55,8 @@ public abstract class Arrange : UseCaseTest<Cashout>
         {
             var checkpoints1 = new List<Checkpoint>
             {
-                Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, "1"),
-                Checkpoint.Create(CashgameId, PlayerId, _startTime.AddMinutes(1), CheckpointType.Cashout, 200, 0, "3")
+                Checkpoint.Create("1", CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200),
+                Checkpoint.Create("3", CashgameId, PlayerId, _startTime.AddMinutes(1), CheckpointType.Cashout, 200, 0)
             };
 
             return new Cashgame(BunchId, LocationId, null, GameStatus.Running, CashgameId, checkpoints1);
@@ -64,7 +65,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
         {
             var checkpoints1 = new List<Checkpoint>
             {
-                Checkpoint.Create(CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200, "1")
+                Checkpoint.Create("1", CashgameId, PlayerId, _startTime, CheckpointType.Buyin, 200, 200)
             };
 
             return new Cashgame(BunchId, LocationId, null, GameStatus.Running, CashgameId, checkpoints1);

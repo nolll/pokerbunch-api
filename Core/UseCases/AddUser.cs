@@ -52,7 +52,7 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
     private static User CreateUser(Request request, string encryptedPassword, string salt)
     {
         return new User(
-            null,
+            "",
             request.UserName,
             request.DisplayName,
             "",

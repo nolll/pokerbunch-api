@@ -69,7 +69,7 @@ public class PlayerDb
             var @params = new
             {
                 bunchId = int.Parse(player.BunchId),
-                userId = int.Parse(player.UserId),
+                userId = int.Parse(player.UserId!),
                 role = (int)player.Role,
                 approved = true,
                 color = player.Color
@@ -100,7 +100,7 @@ public class PlayerDb
             userId = int.Parse(userId),
             role = (int)player.Role,
             approved = true,
-            playerId = int.Parse(player.Id)
+            playerId = int.Parse(player.Id!)
         };
 
         var rowCount = await _db.Execute(PlayerSql.UpdateQuery, @params);

@@ -1,3 +1,4 @@
+using System;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -18,19 +19,23 @@ public class Login : UseCase<Login.Request, Login.Result>
     {
         var user = await GetLoggedInUser(request.UserNameOrEmail, request.Password);
 
-        if (user == null)
-            return Error(new LoginError("There was something wrong with your username or password. Please try again."));
-        return Success(new Result(user.UserName));
+        return user is null
+            ? Error(new LoginError("There was something wrong with your username or password. Please try again."))
+            : Success(new Result(user.UserName));
     }
     
-    private async Task<User> GetLoggedInUser(string userNameOrEmail, string password)
+    private async Task<User?> GetLoggedInUser(string userNameOrEmail, string password)
     {
-        var user = await _userRepository.GetByUserNameOrEmail(userNameOrEmail);
-        if (user == null)
+        try
+        {
+            var user = await _userRepository.GetByUserNameOrEmail(userNameOrEmail);
+            var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
+            return isValid ? user : null;
+        }
+        catch
+        {
             return null;
-
-        var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
-        return isValid ? user : null;
+        }
     }
 
     public class Request 

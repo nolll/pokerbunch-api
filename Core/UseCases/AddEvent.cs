@@ -35,7 +35,7 @@ public class AddEvent : UseCase<AddEvent.Request, AddEvent.Result>
         if (!AccessControl.CanAddEvent(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var e = new Event(null, bunch.Id, request.Name);
+        var e = new Event("", bunch.Id, request.Name);
         var id = await _eventRepository.Add(e);
 
         return Success(new Result(bunch.Slug, id));

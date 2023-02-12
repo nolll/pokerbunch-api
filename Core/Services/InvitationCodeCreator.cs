@@ -2,12 +2,18 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public static class InvitationCodeCreator
+public class InvitationCodeCreator : IInvitationCodeCreator
 {
-    private const string Salt = "0lsns5kjdl";
+    private readonly ISettings _settings;
 
-    public static string GetCode(Player player)
+    public InvitationCodeCreator(ISettings settings)
     {
-        return EncryptionService.Encrypt(player.DisplayName, Salt);
+        _settings = settings;
+    }
+
+    public string GetCode(Player player)
+    {
+        var name = player.DisplayName ?? player.Id;
+        return EncryptionService.Encrypt(name, _settings.InvitationSecret);
     }
 }

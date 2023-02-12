@@ -16,7 +16,7 @@ public class EditUserTests : TestBase
         var request = new EditUser.Request(TestData.UserNameA, "", RealName, ChangedEmail);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -25,7 +25,7 @@ public class EditUserTests : TestBase
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, "");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class EditUserTests : TestBase
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, "a");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -43,7 +43,7 @@ public class EditUserTests : TestBase
         var request = new EditUser.Request(TestData.UserNameA, ChangedDisplayName, RealName, ChangedEmail);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.UserName, Is.EqualTo("user-name-a"));
+        Assert.That(result.Data?.UserName, Is.EqualTo("user-name-a"));
     }
 
     [Test]

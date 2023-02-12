@@ -17,7 +17,7 @@ public class Currency
     public string Format => Layout.Replace(SymbolPlaceholder, Symbol).Replace(AmountPlaceholder, "{0}");
     public static Currency Default => new(DefaultSymbol, DefaultLayout);
 
-    public Currency(string symbol, string layout, CultureInfo culture = null)
+    public Currency(string? symbol, string? layout, CultureInfo? culture = null)
     {
         Symbol = symbol ?? DefaultSymbol;
         Layout = layout ?? DefaultLayout;

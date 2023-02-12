@@ -36,7 +36,7 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
         if (!AccessControl.CanEditCashgame(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var location = await _locationRepository.Get(request.LocationId);
+        var location = await _locationRepository.Get(request.LocationId!);
         var @event = request.EventId != null ? await _eventRepository.Get(request.EventId) : null;
         var eventId = @event?.Id;
         var updatedCashgame = new Cashgame(cashgame.BunchId, location.Id, eventId, cashgame.Status, cashgame.Id);
@@ -59,10 +59,10 @@ public class EditCashgame : UseCase<EditCashgame.Request, EditCashgame.Result>
         public string UserName { get; }
         public string Id { get; }
         [Required(ErrorMessage = "Please select a location")]
-        public string LocationId { get; }
-        public string EventId { get; }
+        public string? LocationId { get; }
+        public string? EventId { get; }
 
-        public Request(string userName, string id, string locationId, string eventId)
+        public Request(string userName, string id, string? locationId, string? eventId)
         {
             UserName = userName;
             Id = id;

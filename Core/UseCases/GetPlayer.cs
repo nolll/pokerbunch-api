@@ -44,7 +44,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         return Success(new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl));
     }
 
-    private async Task<Player> GetPlayerOrNull(string id)
+    private async Task<Player?> GetPlayerOrNull(string id)
     {
         try
         {
@@ -74,22 +74,22 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         public string PlayerId { get; }
         public bool CanDelete { get; }
         public bool IsUser { get; }
-        public string UserId { get; }
-        public string UserName { get; }
+        public string? UserId { get; }
+        public string? UserName { get; }
         public string AvatarUrl { get; }
         public string Slug { get; }
-        public string Color { get; }
+        public string? Color { get; }
 
-        public Result(Bunch bunch, Player player, User user, bool canDelete, bool hasPlayed, string avatarUrl)
+        public Result(Bunch bunch, Player player, User? user, bool canDelete, bool hasPlayed, string avatarUrl)
         {
-            var isUser = user != null;
+            var isUser = user is not null;
 
             DisplayName = player.DisplayName;
             PlayerId = player.Id;
             CanDelete = canDelete && !hasPlayed;
             IsUser = isUser;
             UserId = user?.Id;
-            UserName = isUser ? user.UserName : null;
+            UserName = user?.UserName ?? null;
             AvatarUrl = avatarUrl;
             Color = player.Color;
             Slug = bunch.Slug;

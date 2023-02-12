@@ -11,6 +11,6 @@ public class WithPlayer : Arrange
     public void ReturnsError()
     {
         Assert.That(Result?.Success, Is.False);
-        Assert.That(Result?.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
+        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.AccessDenied));
     }
 }

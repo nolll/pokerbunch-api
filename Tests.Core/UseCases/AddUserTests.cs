@@ -20,7 +20,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request("", ValidDisplayName, ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -29,7 +29,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, "", ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -38,7 +38,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, "", ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -47,7 +47,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, "", "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -56,7 +56,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(_existingUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
@@ -65,7 +65,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, _existingEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
@@ -79,7 +79,7 @@ class AddUserTests : TestBase
 
         var user = Deps.User.Added;
 
-        Assert.That(user?.Id, Is.Null);
+        Assert.That(user?.Id, Is.EqualTo(""));
         Assert.That(user?.UserName, Is.EqualTo(ValidUserName));
         Assert.That(user?.DisplayName, Is.EqualTo(ValidDisplayName));
         Assert.That(user?.RealName, Is.EqualTo(""));

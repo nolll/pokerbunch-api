@@ -13,7 +13,7 @@ public class Cashgame : IEntity
     public string Id { get; }
     public string BunchId { get; }
     public string LocationId { get; }
-    public string EventId { get; }
+    public string? EventId { get; }
     public GameStatus Status { get; private set; }
     public DateTime? StartTime { get; private set; }
     public DateTime? EndTime { get; private set; }
@@ -23,11 +23,12 @@ public class Cashgame : IEntity
     public Cashgame(
         string bunchId,
         string locationId,
-        string eventId,
+        string? eventId,
         GameStatus status,
-        string id = null,
-        IList<Checkpoint> checkpoints = null)
+        string id = "",
+        IList<Checkpoint>? checkpoints = null)
     {
+        Results = new List<CashgameResult>();
         Id = id;
         BunchId = bunchId;
         LocationId = locationId;
@@ -63,7 +64,7 @@ public class Cashgame : IEntity
 
     public Checkpoint GetCheckpoint(string checkpointId)
     {
-        return Checkpoints.FirstOrDefault(o => o.Id == checkpointId);
+        return Checkpoints.First(o => o.Id == checkpointId);
     }
 
     private static IList<CashgameResult> CreateResults(IEnumerable<Checkpoint> checkpoints)
@@ -136,14 +137,14 @@ public class Cashgame : IEntity
         DeletedCheckpoints.Add(checkpoint);
         CheckpointsUpdated();
     }
-    
-    public CashgameResult GetResult(string playerId)
+
+    public CashgameResult? GetResult(string playerId)
     {
         return Results.FirstOrDefault(result => result.PlayerId == playerId);
     }
 
-    public bool IsInGame(string playerId)
+    public IList<Checkpoint> GetCheckpoints(string playerId)
     {
-        return GetResult(playerId) != null;
+        return Checkpoints.Where(o => o.PlayerId == playerId).ToList();
     }
 }

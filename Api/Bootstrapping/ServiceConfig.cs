@@ -5,6 +5,7 @@ using Api.Extensions;
 using Api.Extensions.Swagger;
 using Api.Settings;
 using Api.Urls.ApiUrls;
+using Core;
 using Core.Cache;
 using Core.Repositories;
 using Core.Services;
@@ -79,11 +80,12 @@ public class ServiceConfig
     private void AddDependencies(string connectionString)
     {
         _services.AddSingleton(_settings);
+        _services.AddSingleton<ISettings>(new Core.Settings(_settings.InvitationSecret));
         _services.AddSingleton(new UrlProvider(_settings.Urls.Api, _settings.Urls.Site));
 
         _services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
         _services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
-        _services.AddSingleton<ICacheContainer, CacheContainer>();
+        _services.AddSingleton<ICache, Cache>();
         _services.AddSingleton<IUserRepository, UserRepository>();
         _services.AddSingleton<IBunchRepository, BunchRepository>();
         _services.AddSingleton<ICashgameRepository, CashgameRepository>();
@@ -93,6 +95,7 @@ public class ServiceConfig
         _services.AddSingleton(GetEmailSender());
         _services.AddSingleton<IDb>(new PostgresDb(connectionString));
         _services.AddSingleton<IRandomizer, Randomizer>();
+        _services.AddSingleton<IInvitationCodeCreator, InvitationCodeCreator>();
 
         // Admin
         _services.AddSingleton<ClearCache>();

@@ -8,6 +8,6 @@ public class WithGuest : Arrange
     public void ReturnsAccessDeniedError()
     {
         Assert.That(Result?.Success, Is.False);
-        Assert.That(Result?.Error.Type, Is.EqualTo(ErrorType.AccessDenied));
+        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.AccessDenied));
     }
 }

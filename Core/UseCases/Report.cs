@@ -32,7 +32,13 @@ public class Report : UseCase<Report.Request, Report.Result>
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var checkpoint = Checkpoint.Create(cashgame.Id, request.PlayerId, request.CurrentTime, CheckpointType.Report, request.Stack);
+        var checkpoint = Checkpoint.Create(
+            "",
+            cashgame.Id, 
+            request.PlayerId, 
+            request.CurrentTime, 
+            CheckpointType.Report, 
+            request.Stack);
         cashgame.AddCheckpoint(checkpoint);
         await _cashgameRepository.Update(cashgame);
 

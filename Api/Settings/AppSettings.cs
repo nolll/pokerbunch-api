@@ -9,4 +9,5 @@ public class AppSettings
     public EmailSettings Email { get; set; }
     public LoggingSettings Logging { get; set; }
     public ErrorSettings Error { get; set; }
+    public string InvitationSecret { get; set; }
 }

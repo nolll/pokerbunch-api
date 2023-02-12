@@ -25,35 +25,35 @@ class AddBunchTests : TestBase
     public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(""));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public async Task AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(currencySymbol: ""));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public async Task AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(currencyLayout: ""));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public async Task AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(timeZone: ""));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public async Task AddBunch_WithExistingSlug_ReturnsConflictError()
     {
         var result = await Sut.Execute(CreateRequest(_existingDisplayName));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     [Test]
@@ -61,7 +61,7 @@ class AddBunchTests : TestBase
     {
         await Sut.Execute(CreateRequest());
 
-        Assert.That(Deps.Bunch.Added?.Id, Is.Null);
+        Assert.That(Deps.Bunch.Added?.Id, Is.EqualTo(""));
         Assert.That(Deps.Bunch.Added?.Slug, Is.EqualTo("a-display-name"));
         Assert.That(Deps.Bunch.Added?.DisplayName, Is.EqualTo(DisplayName));
         Assert.That(Deps.Bunch.Added?.Description, Is.EqualTo(Description));

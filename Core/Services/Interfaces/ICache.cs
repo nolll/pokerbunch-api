@@ -3,7 +3,7 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public interface ICacheContainer
+public interface ICache
 {
     void Remove(string cacheKey);
     void Remove<T>(string id);

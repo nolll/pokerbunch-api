@@ -55,12 +55,12 @@ internal static class CashgameMapper
     private static Checkpoint ToCheckpoint(this CheckpointDto checkpointDto)
     {
         return Checkpoint.Create(
+            checkpointDto.Checkpoint_Id.ToString(),
             checkpointDto.Cashgame_Id.ToString(),
             checkpointDto.Player_Id.ToString(),
             TimeZoneInfo.ConvertTimeToUtc(checkpointDto.Timestamp),
             (CheckpointType)checkpointDto.Type,
             checkpointDto.Stack,
-            checkpointDto.Amount,
-            checkpointDto.Checkpoint_Id.ToString());
+            checkpointDto.Amount);
     }
 }

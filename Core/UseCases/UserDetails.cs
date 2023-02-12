@@ -39,7 +39,7 @@ public class UserDetails : UseCase<UserDetails.Request, UserDetails.Result>
         public string CurrentUserName { get; }
         public string UserName { get; }
 
-        public Request(string currentUserName, string userName = null)
+        public Request(string currentUserName, string? userName = null)
         {
             CurrentUserName = currentUserName;
             UserName = userName ?? currentUserName;

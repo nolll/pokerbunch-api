@@ -56,11 +56,11 @@ public class EventDetails : UseCase<EventDetails.Request, EventDetails.Result>
         public string Id { get; }
         public string Name { get; }
         public string BunchId { get; }
-        public string LocationId { get; }
-        public string LocationName { get; }
+        public string? LocationId { get; }
+        public string? LocationName { get; }
         public Date StartDate { get; }
 
-        public Result(string id, string name, string bunchId, string locationId, string locationName, Date startDate)
+        public Result(string id, string name, string bunchId, string? locationId, string? locationName, Date startDate)
         {
             Id = id;
             Name = name;

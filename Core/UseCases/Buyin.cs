@@ -34,7 +34,7 @@ public class Buyin : UseCase<Buyin.Request, Buyin.Result>
             return Error(new AccessDeniedError());
 
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
-        var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount);
+        var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount, null);
         cashgame.AddCheckpoint(checkpoint);
         await _cashgameRepository.Update(cashgame);
 

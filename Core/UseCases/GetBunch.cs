@@ -27,7 +27,7 @@ public class GetBunch : UseCase<GetBunch.Request, GetBunch.Result>
         if (!AccessControl.CanGetBunch(user, player))
             return Error(new AccessDeniedError());
 
-        return Success(new Result(bunch, player));
+        return Success(new Result(bunch, player!));
     }
 
     public class Request
@@ -59,10 +59,10 @@ public class BunchResult
     public TimeZoneInfo Timezone { get; }
     public Currency Currency { get; }
     public int DefaultBuyin { get; }
-    public BunchPlayerResult Player { get; }
+    public BunchPlayerResult? Player { get; }
     public Role Role { get; }
 
-    public BunchResult(Bunch b, Player p)
+    public BunchResult(Bunch b, Player? p)
     {
         Slug = b.Slug;
         Name = b.DisplayName;

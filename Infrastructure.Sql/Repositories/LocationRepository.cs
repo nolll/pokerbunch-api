@@ -9,12 +9,12 @@ namespace Infrastructure.Sql.Repositories;
 public class LocationRepository : ILocationRepository
 {
     private readonly LocationDb _locationDb;
-    private readonly ICacheContainer _cacheContainer;
+    private readonly ICache _cache;
 
-    public LocationRepository(IDb container, ICacheContainer cacheContainer)
+    public LocationRepository(IDb container, ICache cache)
     {
         _locationDb = new LocationDb(container);
-        _cacheContainer = cacheContainer;
+        _cache = cache;
     }
 
     public async Task<Location> Get(string id)
@@ -40,11 +40,11 @@ public class LocationRepository : ILocationRepository
 
     private async Task<Location> GetAndCache(string id)
     {
-        return await _cacheContainer.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     private async Task<IList<Location>> GetAndCache(IList<string> ids)
     {
-        return await _cacheContainer.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 }

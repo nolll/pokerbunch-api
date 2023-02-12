@@ -6,7 +6,7 @@ namespace Tests.Core.UseCases;
 
 public class JoinBunchTests : TestBase
 {
-    private const string ValidCode = "d643c7857f8c3bffb1e9e7017a5448d09ef59d33";
+    private const string ValidCode = "abcdefghij";
 
     [Test]
     public async Task JoinBunch_EmptyCode_ReturnsError()
@@ -15,7 +15,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, code);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -25,7 +25,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, code);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
         var result = await Sut.Execute(request);
-        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
     }
 
     [Test]
@@ -51,5 +51,6 @@ public class JoinBunchTests : TestBase
     private JoinBunch Sut => new(
         Deps.Bunch,
         Deps.Player,
-        Deps.User);
+        Deps.User,
+        Deps.InvitationCodeCreator);
 }

@@ -30,6 +30,12 @@ public class FakeBunchRepository : IBunchRepository
         return Task.FromResult(bunch);
     }
 
+    public Task<Bunch?> GetBySlugOrNull(string slug)
+    {
+        var bunch = _list.FirstOrDefault(o => o.Slug == slug)!;
+        return Task.FromResult<Bunch?>(bunch);
+    }
+
     public Task<IList<Bunch>> GetByUserId(string userId)
     {
         return Task.FromResult(_list);
