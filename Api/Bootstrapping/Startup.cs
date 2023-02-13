@@ -13,7 +13,7 @@ public class Startup
 
     public Startup(IConfiguration configuration)
     {
-        _settings = configuration.Get<AppSettings>();
+        _settings = configuration.Get<AppSettings>()!;
         _configuration = configuration;
     }
 

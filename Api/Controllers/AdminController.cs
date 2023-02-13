@@ -32,7 +32,7 @@ public class AdminController : BaseController
     public async Task<ObjectResult> ClearCache()
     {
         var result = await _clearCache.Execute(new ClearCache.Request(CurrentUserName));
-        return Model(result, () => new MessageModel(result.Data.Message));
+        return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
     /// <summary>
