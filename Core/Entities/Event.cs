@@ -18,7 +18,7 @@ public class Event : IEntity
         EndDate = Date.Null();
     }
 
-    public Event(string id, string bunchId, string name, string locationId, Date startDate, Date endDate)
+    public Event(string id, string bunchId, string name, string? locationId, Date startDate, Date endDate)
         : this(id, bunchId, name)
     {
         LocationId = locationId;
