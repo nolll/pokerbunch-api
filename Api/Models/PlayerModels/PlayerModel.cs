@@ -12,10 +12,10 @@ public class PlayerModel
     public string Name { get; }
 
     [JsonPropertyName("userId")]
-    public string UserId { get; }
+    public string? UserId { get; }
 
     [JsonPropertyName("userName")]
-    public string UserName { get; }
+    public string? UserName { get; }
 
     [JsonPropertyName("avatarUrl")]
     public string AvatarUrl { get; }
@@ -24,7 +24,7 @@ public class PlayerModel
     public string Slug { get; }
 
     [JsonPropertyName("color")]
-    public string Color { get; }
+    public string? Color { get; }
 
     public PlayerModel(GetPlayer.Result r)
     {

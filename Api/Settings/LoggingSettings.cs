@@ -2,6 +2,6 @@
 
 public class LoggingSettings
 {
-    public LoggingLogLevelSettings LogLevel { get; set; }
-    public LoggingLoggersSettings Loggers { get; set; }
+    public LoggingLogLevelSettings LogLevel { get; set; } = new();
+    public LoggingLoggersSettings Loggers { get; set; } = new();
 }

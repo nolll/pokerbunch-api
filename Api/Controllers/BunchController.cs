@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Api.Auth;
 using Api.Models.BunchModels;
@@ -43,7 +44,8 @@ public class BunchController : BaseController
     {
         var request = new GetBunch.Request(CurrentUserName, bunchId);
         var result = await _getBunch.Execute(request);
-        return Model(result, () => new BunchModel(result.Data));
+        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Bunch.Update)]
@@ -53,7 +55,8 @@ public class BunchController : BaseController
     {
         var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
         var result = await _editBunch.Execute(request);
-        return Model(result, () => new BunchModel(result.Data));
+        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Bunch.List)]
@@ -63,7 +66,8 @@ public class BunchController : BaseController
     {
         var request = new GetBunchList.Request(CurrentUserName);
         var result = await _getBunchList.Execute(request);
-        return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
+        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
@@ -72,7 +76,8 @@ public class BunchController : BaseController
     public async Task<ObjectResult> Bunches()
     {
         var result = await _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
-        return Model(result, () => result.Data.Bunches.Select(o => new BunchModel(o)));
+        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Bunch.Add)]
@@ -82,7 +87,8 @@ public class BunchController : BaseController
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
         var result = await _addBunch.Execute(request);
-        return Model(result, () => new BunchModel(result.Data));
+        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Bunch.Join)]
@@ -92,6 +98,7 @@ public class BunchController : BaseController
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
         var result = await _joinBunch.Execute(request);
-        return Model(result, () => new PlayerJoinedModel(result.Data.PlayerId));
+        PlayerJoinedModel? CreateModel() => result.Data?.PlayerId is not null ? new PlayerJoinedModel(result.Data.PlayerId) : null;
+        return Model(result, CreateModel);
     }
 }

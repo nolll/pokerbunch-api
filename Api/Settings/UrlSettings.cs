@@ -2,6 +2,6 @@
 
 public class UrlSettings
 {
-    public string Site { get; set; }
-    public string Api { get; set; }
+    public string Site { get; set; } = "";
+    public string Api { get; set; } = "";
 }

@@ -4,6 +4,7 @@ using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Core;
 using Core.Errors;
 using Environment = Api.Services.Environment;
 
@@ -23,34 +24,45 @@ public abstract class BaseController : Controller
     {
         get
         {
-            if (User.Identity == null)
-                return null;
+            if (User.Identity is null)
+                throw new PokerBunchException("Auth failed: No identity");
+
             if (User.Identity.IsAuthenticated)
+            {
+                if(User.Identity.Name is null)
+                    throw new PokerBunchException("Auth failed: No identity");
+
                 return User.Identity.Name;
+            }
+                
             var env = new Environment(Request.Host.Host);
             if (AppSettings.Auth.Override.Enabled && env.IsDevModeAdmin)
                 return AppSettings.Auth.Override.AdminUserName;
+
             if (AppSettings.Auth.Override.Enabled && env.IsDevModePlayer)
                 return AppSettings.Auth.Override.PlayerUserName;
-            return null;
+
+            throw new PokerBunchException("Auth failed: Unknown error");
         }
     }
 
-    protected ObjectResult Model<T>(UseCaseResult<T> result, Func<object> create)
+    protected ObjectResult Model<T>(UseCaseResult<T> result, Func<object?> create)
     {
         return result.Success
             ? Success(create())
             : Error(result.Error);
     }
 
-    protected ObjectResult Success(object model)
+    protected ObjectResult Success(object? model)
     {
         return Ok(model);
     }
 
-    protected ObjectResult Error(UseCaseError error)
+    protected ObjectResult Error(UseCaseError? error)
     {
-        return Error(error.Type, error.Message);
+        return error is not null
+            ? Error(error.Type, error.Message)
+            : Error(ErrorType.Unknown, "Unknown error");
     }
 
     protected ObjectResult Error(ErrorType errorType, string errorMessage)
