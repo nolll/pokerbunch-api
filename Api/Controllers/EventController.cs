@@ -31,7 +31,7 @@ public class EventController : BaseController
     public async Task<ObjectResult> Get(string eventId)
     {
         var result = await _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
-        return Model(result, () => new EventModel(result.Data));
+        return Model(result, () => result.Data is not null ? new EventModel(result.Data) : null);
     }
 
     [Route(ApiRoutes.Event.ListByBunch)]
@@ -40,7 +40,7 @@ public class EventController : BaseController
     public async Task<ObjectResult> List(string bunchId)
     {
         var result = await _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
-        return Model(result, () => result.Data.Events.Select(o => new EventModel(o)));
+        return Model(result, () => result.Data?.Events.Select(o => new EventModel(o)));
     }
 
     [Route(ApiRoutes.Event.Add)]
@@ -50,7 +50,7 @@ public class EventController : BaseController
     {
         var result = await _addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
         return result.Success 
-            ? await Get(result.Data.Id) 
+            ? await Get(result.Data?.Id ?? "") 
             : Error(result.Error);
     }
 }

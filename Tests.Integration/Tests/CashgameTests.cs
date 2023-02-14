@@ -130,7 +130,7 @@ public class CashgameTests
         var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, TestData.EventId);
         var result = await TestClient.Cashgame.Update(TestData.ManagerToken, TestData.CashgameId, parameters);
         Assert.That(result.Success, Is.True);
-        Assert.That(result.Model?.Event.Name, Is.EqualTo(TestData.EventName));
+        Assert.That(result.Model?.Event?.Name, Is.EqualTo(TestData.EventName));
     }
 
     [Test]

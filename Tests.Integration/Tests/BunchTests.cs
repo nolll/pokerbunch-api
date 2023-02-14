@@ -30,8 +30,8 @@ public class BunchTests
         Assert.That(result.Model?.Role, Is.EqualTo("manager"));
         Assert.That(result.Model?.Timezone, Is.EqualTo(TestData.TimeZone));
         Assert.That(result.Model?.ThousandSeparator, Is.EqualTo(" "));
-        Assert.That(result.Model?.Player.Id, Is.EqualTo("1"));
-        Assert.That(result.Model?.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
+        Assert.That(result.Model?.Player?.Id, Is.EqualTo("1"));
+        Assert.That(result.Model?.Player?.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
     [Test]
@@ -83,8 +83,8 @@ public class BunchTests
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model?.Role, Is.EqualTo("manager"));
-        Assert.That(result.Model?.Player.Id, Is.EqualTo(TestData.ManagerPlayerId));
-        Assert.That(result.Model?.Player.Name, Is.EqualTo(TestData.ManagerDisplayName));
+        Assert.That(result.Model?.Player?.Id, Is.EqualTo(TestData.ManagerPlayerId));
+        Assert.That(result.Model?.Player?.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
     [Test]
@@ -95,8 +95,8 @@ public class BunchTests
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model?.Role, Is.EqualTo("player"));
-        Assert.That(result.Model?.Player.Id, Is.EqualTo(TestData.UserPlayerId));
-        Assert.That(result.Model?.Player.Name, Is.EqualTo(TestData.UserDisplayName));
+        Assert.That(result.Model?.Player?.Id, Is.EqualTo(TestData.UserPlayerId));
+        Assert.That(result.Model?.Player?.Name, Is.EqualTo(TestData.UserDisplayName));
     }
 
     [Test]

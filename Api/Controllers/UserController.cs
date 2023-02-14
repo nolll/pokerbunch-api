@@ -58,9 +58,15 @@ public class UserController : BaseController
     public async Task<ObjectResult> GetUser(string userName)
     {
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
-        return Model(result, () => result.Data.CanViewAll 
-            ? new FullUserModel(result.Data) 
-            : new UserModel(result.Data)
+
+        if (result.Data is null)
+            return Success(null);
+
+        var canViewAll = result.Data?.CanViewAll ?? false;
+
+        return Model(result, () => canViewAll 
+            ? new FullUserModel(result.Data!) 
+            : new UserModel(result.Data!)
         );
     }
 
@@ -73,7 +79,7 @@ public class UserController : BaseController
     public async Task<ObjectResult> List()
     {
         var result = await _userList.Execute(new UserList.Request(CurrentUserName));
-        return Model(result, () => result.Data.Users.Select(o => new UserItemModel(o, _urls)));
+        return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, _urls)));
     }
 
     /// <summary>
@@ -89,8 +95,8 @@ public class UserController : BaseController
         if (!updateResult.Success)
             return Error(updateResult.Error);
 
-        var result = await _userDetails.Execute(new UserDetails.Request(updateResult.Data.UserName));
-        return Model(result, () => new FullUserModel(result.Data));
+        var result = await _userDetails.Execute(new UserDetails.Request(updateResult.Data!.UserName));
+        return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
 
     /// <summary>
@@ -139,7 +145,7 @@ public class UserController : BaseController
     public async Task<ObjectResult> Profile()
     {
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName));
-        return Model(result, () => new FullUserModel(result.Data));
+        return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
     
     /// <summary>
@@ -158,7 +164,7 @@ public class UserController : BaseController
     private async Task<string> GetToken(LoginPostModel loginPostModel)
     {
         var result = await _login.Execute(new Login.Request(loginPostModel.UserName, loginPostModel.Password));
-        return CreateToken(result.Data?.UserName);
+        return CreateToken(result.Data?.UserName ?? "");
     }
     
     private string CreateToken(string userName)

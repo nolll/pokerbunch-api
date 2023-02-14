@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Api.Auth;
 using Api.Models.CashgameModels;
@@ -52,7 +53,8 @@ public class CashgameController : BaseController
     {
         var request = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
         var result = await _cashgameDetails.Execute(request);
-        return Model(result, () => new CashgameDetailsModel(result.Data));
+        CashgameDetailsModel? CreateModel() => result.Data is not null ? new CashgameDetailsModel(result.Data) : null;
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunch)]
@@ -61,7 +63,8 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> List(string bunchId)
     {
         var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, null));
-        return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
+        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
@@ -70,7 +73,8 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> List(string bunchId, int year)
     {
         var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, year));
-        return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
+        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
+        return Model(result, CreateModel);
     }
 
     [Route(ApiRoutes.Cashgame.ListByEvent)]
@@ -79,7 +83,7 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> EventCashgameList(string eventId)
     {
         var result = await _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
-        return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
+        return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
     }
 
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
@@ -88,7 +92,7 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> PlayerCashgameList(string playerId)
     {
         var result = await _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
-        return Model(result, () => result.Data.Items.Select(o => new CashgameListItemModel(o)));
+        return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
     }
 
     [Route(ApiRoutes.Cashgame.Add)]
@@ -101,9 +105,9 @@ public class CashgameController : BaseController
         if (!addResult.Success)
             return Error(addResult.Error);
 
-        var detailsRequest = new CashgameDetails.Request(CurrentUserName, addResult.Data.CashgameId, DateTime.UtcNow);
+        var detailsRequest = new CashgameDetails.Request(CurrentUserName, addResult.Data?.CashgameId ?? "", DateTime.UtcNow);
         var detailsResult = await _cashgameDetails.Execute(detailsRequest);
-        return Model(detailsResult, () => new CashgameDetailsModel(detailsResult.Data));
+        return Model(detailsResult, () => detailsResult.Data is not null ? new CashgameDetailsModel(detailsResult.Data!) : null);
     }
 
     [Route(ApiRoutes.Cashgame.Update)]
@@ -118,7 +122,7 @@ public class CashgameController : BaseController
 
         var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
         var detailsResult = await _cashgameDetails.Execute(detailsRequest);
-        return Model(detailsResult, () => new CashgameDetailsModel(detailsResult.Data));
+        return Model(detailsResult, () => detailsResult.Data is not null ? new CashgameDetailsModel(detailsResult.Data!) : null);
     }
 
     [Route(ApiRoutes.Cashgame.Delete)]
@@ -137,6 +141,6 @@ public class CashgameController : BaseController
     public async Task<ObjectResult> Current(string bunchId)
     {
         var result = await _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
-        return Model(result, () => result.Data.Games.Select(o => new ApiCurrentGame(o, _urls)));
+        return Model(result, () => result.Data?.Games.Select(o => new ApiCurrentGame(o, _urls)));
     }
 }
