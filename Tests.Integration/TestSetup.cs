@@ -101,7 +101,7 @@ public class TestSetup
     {
         get
         {
-            var createScript = ReadSqlFile("data/db-create.sql");
+            var createScript = ReadSqlFile("data/db-create-tables.sql");
 
             if (Engine == DbEngine.Sqlite)
             {
