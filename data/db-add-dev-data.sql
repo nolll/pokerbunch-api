@@ -1,14 +1,14 @@
 INSERT INTO pb_user
-(user_name, password, salt, role_id)
+(user_name, display_name, password, salt, role_id)
 VALUES
-('Admin', 'password', 'salt', 2);
+('admin', 'Admin', '425af12a0743502b322e93a015bcf868e324d56a', 'efgh', 3);
 
 INSERT INTO pb_user
-(user_name, password, salt, role_id)
+(user_name, display_name, password, salt, role_id)
 VALUES
-('Manager', 'password', 'salt', 2);
+('manager', 'Manager', '425af12a0743502b322e93a015bcf868e324d56a', 'efgh', 2);
 
 INSERT INTO pb_user
-(user_name, password, salt, role_id)
+(user_name, display_name, password, salt, role_id)
 VALUES
-('Player', 'password', 'salt', 2);
+('player', 'Player', '425af12a0743502b322e93a015bcf868e324d56a', 'efgh', 1);

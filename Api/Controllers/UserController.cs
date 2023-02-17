@@ -157,14 +157,10 @@ public class UserController : BaseController
     [Route(ApiRoutes.Auth.Login)]
     public async Task<ObjectResult> Login([FromBody] LoginPostModel post)
     {
-        var token = await GetToken(post);
-        return Ok(token);
-    }
-
-    private async Task<string> GetToken(LoginPostModel loginPostModel)
-    {
-        var result = await _login.Execute(new Login.Request(loginPostModel.UserName, loginPostModel.Password));
-        return CreateToken(result.Data?.UserName ?? "");
+        var result = await _login.Execute(new Login.Request(post.UserName, post.Password));
+        return result.Success
+            ? new ObjectResult(CreateToken(result.Data?.UserName ?? "")) 
+            : Error(result.Error);
     }
     
     private string CreateToken(string userName)

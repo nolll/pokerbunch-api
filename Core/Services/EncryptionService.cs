@@ -13,7 +13,7 @@ public static class EncryptionService
 
     private static string GetSha1Hash(string input)
     {
-        return string.Join("", SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(input)).Select(x => x.ToString("X2"))).ToLower();
+        return string.Concat(SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(input)).Select(x => x.ToString("X2"))).ToLower();
     }
 
     public static string GetMd5Hash(string input)

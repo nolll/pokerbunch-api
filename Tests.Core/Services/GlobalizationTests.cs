@@ -10,7 +10,7 @@ public class GlobalizationTests
     {
         var dateTime = DateTime.Parse("2010-02-01 12:28:35");
         const string expected = "2010-02-01";
-            
+
         var result = Globalization.FormatIsoDate(dateTime);
         Assert.That(result, Is.EqualTo(expected));
     }
