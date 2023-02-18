@@ -3,7 +3,7 @@
 public static class AuthSecretProvider
 {
     // todo: Injection?
-    private static readonly string SecretInTest = new Guid().ToString();
+    private static readonly string SecretInTest = Guid.NewGuid().ToString();
 
     public static string GetSecret(string? configSecret = null)
     {

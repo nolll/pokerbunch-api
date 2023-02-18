@@ -167,15 +167,21 @@ public class UserController : BaseController
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(AppSettings.Auth.Secret));
+        var symmetricKey = new SymmetricSecurityKey(key);
+        var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
+        
+        var claims = new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.Name, userName)
+        });
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, userName)
-            }),
+            Subject = claims,
             Expires = DateTime.UtcNow.AddYears(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = credentials
         };
+        
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }

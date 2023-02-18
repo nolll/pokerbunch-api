@@ -42,7 +42,7 @@ public abstract class BaseController : Controller
             if (AppSettings.Auth.Override.Enabled && env.IsDevModePlayer)
                 return AppSettings.Auth.Override.PlayerUserName;
 
-            throw new PokerBunchException("Auth failed: Unknown error");
+            throw new PokerBunchException("Auth failed: Not authenticated");
         }
     }
 
