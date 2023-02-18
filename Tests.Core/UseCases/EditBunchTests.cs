@@ -19,7 +19,7 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, "", ValidCurrencyLayout, ValidTimeZone, HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, "", ValidTimeZone, HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -37,17 +37,16 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "", HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
-    // todo: Have a look at this test. Unknown error can't be good
     [Test]
     public async Task EditBunch_InvalidTimeZone_ReturnsError()
     {
-        var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "a", HouseRules, DefaultBuyin);
+        var request = new EditBunch.Request(TestData.ManagerUser.UserName, TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "invalid", HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Unknown));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -57,12 +56,12 @@ public class EditBunchTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.Bunch.Saved.Description, Is.EqualTo(Description));
-        Assert.That(Deps.Bunch.Saved.Currency.Symbol, Is.EqualTo(ValidCurrencySymbol));
-        Assert.That(Deps.Bunch.Saved.Currency.Layout, Is.EqualTo(ValidCurrencyLayout));
-        Assert.That(Deps.Bunch.Saved.Timezone.Id, Is.EqualTo(ValidTimeZone));
-        Assert.That(Deps.Bunch.Saved.HouseRules, Is.EqualTo(HouseRules));
-        Assert.That(Deps.Bunch.Saved.DefaultBuyin, Is.EqualTo(DefaultBuyin));
+        Assert.That(Deps.Bunch.Saved?.Description, Is.EqualTo(Description));
+        Assert.That(Deps.Bunch.Saved?.Currency.Symbol, Is.EqualTo(ValidCurrencySymbol));
+        Assert.That(Deps.Bunch.Saved?.Currency.Layout, Is.EqualTo(ValidCurrencyLayout));
+        Assert.That(Deps.Bunch.Saved?.Timezone.Id, Is.EqualTo(ValidTimeZone));
+        Assert.That(Deps.Bunch.Saved?.HouseRules, Is.EqualTo(HouseRules));
+        Assert.That(Deps.Bunch.Saved?.DefaultBuyin, Is.EqualTo(DefaultBuyin));
     }
 
     [Test]
@@ -72,7 +71,7 @@ public class EditBunchTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
     }
 
     private EditBunch Sut => new(

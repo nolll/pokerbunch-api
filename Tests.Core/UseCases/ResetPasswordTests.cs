@@ -16,14 +16,14 @@ class ResetPasswordTests : TestBase
         var request = CreateRequest(InvalidEmail);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
     public async Task ResetPassword_UserNotFound_ReturnsError()
     {
         var result = await Sut.Execute(CreateRequest(NonExistingEmail));
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.NotFound));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.NotFound));
     }
 
     [Test]
@@ -37,8 +37,8 @@ Please sign in here: loginUrl";
         await Sut.Execute(CreateRequest());
 
         Assert.That(Deps.EmailSender.To, Is.EqualTo(ValidEmail));
-        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
-        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
+        Assert.That(Deps.EmailSender.Message?.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message?.Body, Is.EqualTo(body));
     }
 
     [Test]
@@ -47,8 +47,8 @@ Please sign in here: loginUrl";
         await Sut.Execute(CreateRequest());
 
         var savedUser = Deps.User.Saved;
-        Assert.That(savedUser.EncryptedPassword, Is.EqualTo("0478095c8ece0bbc11f94663ac2c4f10b29666de"));
-        Assert.That(savedUser.Salt, Is.EqualTo("aaaaaaaaaa"));
+        Assert.That(savedUser?.EncryptedPassword, Is.EqualTo("0478095c8ece0bbc11f94663ac2c4f10b29666de"));
+        Assert.That(savedUser?.Salt, Is.EqualTo("aaaaaaaaaa"));
     }
 
     private ResetPassword.Request CreateRequest(string email = ValidEmail)

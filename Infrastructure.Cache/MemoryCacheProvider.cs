@@ -8,11 +8,7 @@ public class MemoryCacheProvider : ICacheProvider
 {
     private static MemoryCache _cache = new("memcache");
 
-    public MemoryCacheProvider()
-    {
-    }
-
-    public object Get(string key)
+    public object? Get(string key)
     {
         return _cache.Get(key);
     }

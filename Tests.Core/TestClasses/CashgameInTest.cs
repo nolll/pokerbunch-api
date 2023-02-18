@@ -7,19 +7,19 @@ namespace Tests.Core.TestClasses;
 public class CashgameInTest : Cashgame
 {
     public CashgameInTest(
-        string bunchId = null,
-        string locationId = null,
-        string eventId = null,
+        string bunchId = "",
+        string locationId = "",
+        string eventId = "",
         GameStatus status = GameStatus.Finished,
-        string id = null, 
-        IList<Checkpoint> checkpoints = null)
+        string id = "", 
+        IList<Checkpoint>? checkpoints = null)
         : base(
             bunchId, 
             locationId, 
             eventId,
             status, 
-            id, 
-            checkpoints)
+            id,
+            checkpoints ?? new List<Checkpoint>())
     {
     }
 }

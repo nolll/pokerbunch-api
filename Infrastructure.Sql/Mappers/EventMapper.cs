@@ -18,7 +18,7 @@ internal static class EventMapper
             eventDto.Event_Id.ToString(),
             eventDto.Bunch_Id.ToString(),
             eventDto.Name,
-            eventDto.Location_Id.ToString(),
+            eventDto.Location_Id?.ToString(),
             new Date(eventDto.StartDate),
             new Date(eventDto.EndDate));
     }

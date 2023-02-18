@@ -13,8 +13,8 @@ public class DeletePlayerTests : TestBase
         var request = new DeletePlayer.Request(TestData.ManagerUser.UserName, playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.Slug, Is.EqualTo(TestData.SlugA));
-        Assert.That(result.Data.PlayerId, Is.EqualTo(playerIdThatHasNotPlayed));
+        Assert.That(result.Data?.Slug, Is.EqualTo(TestData.SlugA));
+        Assert.That(result.Data?.PlayerId, Is.EqualTo(playerIdThatHasNotPlayed));
         Assert.That(Deps.Player.Deleted, Is.EqualTo(playerIdThatHasNotPlayed));
     }
 

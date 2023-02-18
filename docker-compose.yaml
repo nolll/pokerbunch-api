@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports: #make db accessible locally
+      - "5431:5432"
+    expose:
+    - 5431
+    volumes:
+      - ./data/db-create.sql:/docker-entrypoint-initdb.d/1-create-database.sql
+      - ./data/db-create-tables.sql:/docker-entrypoint-initdb.d/2-create-tables.sql
+      - ./data/db-add-master-data.sql:/docker-entrypoint-initdb.d/3-add-master-data.sql
+      - ./data/db-add-dev-data.sql:/docker-entrypoint-initdb.d/4-add-dev-data.sql

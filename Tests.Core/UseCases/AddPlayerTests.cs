@@ -16,7 +16,7 @@ class AddPlayerTests : TestBase
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, UniqueName);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.Id, Is.EqualTo("1"));
+        Assert.That(result.Data?.Id, Is.EqualTo("1"));
     }
 
     [Test]
@@ -24,7 +24,7 @@ class AddPlayerTests : TestBase
     {
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, EmptyName);
         var result = await Sut.Execute(request);
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -42,7 +42,7 @@ class AddPlayerTests : TestBase
         var request = new AddPlayer.Request(TestData.ManagerUser.UserName, TestData.SlugA, ExistingName);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Conflict));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
     }
 
     private AddPlayer Sut => new(

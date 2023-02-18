@@ -16,10 +16,10 @@ public class EventModel
     public string Name { get; }
     
     [JsonPropertyName("startDate")]
-    public string StartDate { get; }
+    public string? StartDate { get; }
     
     [JsonPropertyName("location")]
-    public SmallLocationModel Location { get; }
+    public SmallLocationModel? Location { get; }
 
     public EventModel(EventList.Event e)
     {

@@ -14,14 +14,14 @@ public class PostgresDb : IDb
         _connectionString = connectionString;
     }
 
-    public async Task<T> Single<T>(string sql, object @params)
+    public async Task<T?> Single<T>(string sql, object @params)
     {
         await using var connection = GetConnection();
         connection.Open();
         return (await List<T>(sql, @params)).FirstOrDefault();
     }
 
-    public async Task<IEnumerable<T>> List<T>(string sql, object @params)
+    public async Task<IEnumerable<T>> List<T>(string sql, object? @params)
     {
         await using var connection = GetConnection();
         connection.Open();
@@ -36,7 +36,7 @@ public class PostgresDb : IDb
         return await connection.QueryAsync<T>(sqlWithIdList, param.DynamicParameters);
     }
     
-    public async Task<int> Execute(string sql, object @params = null)
+    public async Task<int> Execute(string sql, object? @params = null)
     {
         await using var connection = GetConnection();
         connection.Open();
@@ -44,7 +44,7 @@ public class PostgresDb : IDb
         return await connection.ExecuteAsync(sql, @params);
     }
     
-    public async Task<int> Insert(string sql, object @params = null)
+    public async Task<int> Insert(string sql, object? @params = null)
     {
         await using var connection = GetConnection();
         connection.Open();

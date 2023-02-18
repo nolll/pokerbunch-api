@@ -27,7 +27,7 @@ public class CashgameDetailsModel
     public SmallLocationModel Location { get; }
     
     [JsonPropertyName("event")]
-    public CashgameDetailsEventModel Event { get; }
+    public CashgameDetailsEventModel? Event { get; }
     
     [JsonPropertyName("players")]
     public IList<CashgameDetailsPlayerModel> Players { get; }
@@ -40,7 +40,7 @@ public class CashgameDetailsModel
         UpdatedTime = details.UpdatedTime;
         Bunch = new CashgameBunchModel(details);
         Location = new SmallLocationModel(details);
-        Event = details.EventId != null ? new CashgameDetailsEventModel(details) : null;
+        Event = details.EventId != null ? new CashgameDetailsEventModel(details.EventId, details.EventName) : null;
         Players = details.PlayerItems.Select(o => new CashgameDetailsPlayerModel(o)).ToList();
     }
 

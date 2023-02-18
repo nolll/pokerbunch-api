@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
@@ -25,6 +26,10 @@ public class EventDb
         var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
         var events = eventDayDtos.ToEvents();
         var @event = events.FirstOrDefault();
+
+        if (@event is null)
+            throw new PokerBunchException($"Event with id {id} was not found");
+
         return @event;
     }
 

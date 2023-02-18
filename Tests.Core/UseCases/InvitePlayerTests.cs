@@ -12,7 +12,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest();
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
+        Assert.That(result.Data?.PlayerId, Is.EqualTo("1"));
     }
 
     [TestCase("")]
@@ -22,7 +22,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest(email);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -31,8 +31,8 @@ public class InvitePlayerTests : TestBase
         const string subject = "Invitation to Poker Bunch: Bunch A";
         const string body = @"You have been invited to join the poker game: Bunch A.
 
-Use this link to accept the invitation: https://pokerbunch.com/fakejoin/bunch-a/d643c7857f8c3bffb1e9e7017a5448d09ef59d33. If the link doesn't work in your email client,
-use this link instead, https://pokerbunch.com/fakejoin/bunch-a, and enter this verification code: d643c7857f8c3bffb1e9e7017a5448d09ef59d33
+Use this link to accept the invitation: https://pokerbunch.com/fakejoin/bunch-a/abcdefghij. If the link doesn't work in your email client,
+use this link instead, https://pokerbunch.com/fakejoin/bunch-a, and enter this verification code: abcdefghij
 
 If you don't have an account, you can register at https://pokerbunch.com/test";
         var request = CreateRequest();
@@ -40,8 +40,8 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
         await Sut.Execute(request);
 
         Assert.That(Deps.EmailSender.To, Is.EqualTo(TestData.UserEmailA));
-        Assert.That(Deps.EmailSender.Message.Subject, Is.EqualTo(subject));
-        Assert.That(Deps.EmailSender.Message.Body, Is.EqualTo(body));
+        Assert.That(Deps.EmailSender.Message?.Subject, Is.EqualTo(subject));
+        Assert.That(Deps.EmailSender.Message?.Body, Is.EqualTo(body));
     }
 
     private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)
@@ -53,5 +53,6 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
         Deps.Bunch,
         Deps.Player,
         Deps.EmailSender,
-        Deps.User);
+        Deps.User,
+        Deps.InvitationCodeCreator);
 }

@@ -5,9 +5,9 @@ namespace Tests.Common.FakeServices;
 
 public class FakeEmailSender : IEmailSender
 {
-    public string To { get; private set; }
-    public IMessage Message { get; private set; }
-    public IMessage LastMessage { get; private set; }
+    public string? To { get; private set; }
+    public IMessage? Message { get; private set; }
+    public IMessage? LastMessage { get; private set; }
 
     public void Send(string to, IMessage message)
     {

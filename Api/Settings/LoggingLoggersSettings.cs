@@ -2,6 +2,6 @@
 
 public class LoggingLoggersSettings
 {
-    public bool Debug { get; set; }
-    public bool Console { get; set; }
+    public bool Debug { get; set; } = false;
+    public bool Console { get; set; } = false;
 }

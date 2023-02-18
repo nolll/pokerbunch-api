@@ -14,7 +14,7 @@ public class CashgameDetailsPlayerModel
     public string Name { get; }
     
     [JsonPropertyName("color")]
-    public string Color { get; }
+    public string? Color { get; }
     
     [JsonPropertyName("startTime")]
     public DateTime StartTime { get; }

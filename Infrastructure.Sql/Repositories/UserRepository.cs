@@ -1,3 +1,4 @@
+using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -8,12 +9,12 @@ namespace Infrastructure.Sql.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly UserDb _userDb;
-    private readonly ICacheContainer _cacheContainer;
+    private readonly ICache _cache;
 
-    public UserRepository(IDb db, ICacheContainer cacheContainer)
+    public UserRepository(IDb db, ICache cache)
     {
         _userDb = new UserDb(db);
-        _cacheContainer = cacheContainer;
+        _cache = cache;
     }
 
     public async Task<User> GetById(string id)
@@ -31,7 +32,8 @@ public class UserRepository : IUserRepository
     {
         var id = await _userDb.FindByEmail(email.ToLower());
         if (id == null)
-            return null;
+            throw new PokerBunchException($"User not found: {email}");
+
         return await GetAndCache(id);
     }
 
@@ -39,7 +41,8 @@ public class UserRepository : IUserRepository
     {
         var id = await _userDb.FindByUserNameOrEmail(nameOrEmail.ToLower());
         if (id == null)
-            return null;
+            throw new PokerBunchException($"User not found: {nameOrEmail}");
+
         return await GetAndCache(id);
     }
 
@@ -47,14 +50,15 @@ public class UserRepository : IUserRepository
     {
         var id = await _userDb.FindByUserName(name.ToLower());
         if (id == null)
-            return null;
+            throw new PokerBunchException($"User not found: {name}");
+
         return await GetAndCache(id);
     }
 
     public async Task Update(User user)
     {
         await _userDb.Update(user);
-        _cacheContainer.Remove<User>(user.Id);
+        _cache.Remove<User>(user.Id);
     }
 
     public async Task<string> Add(User user)
@@ -64,11 +68,11 @@ public class UserRepository : IUserRepository
 
     private async Task<User> GetAndCache(string id)
     {
-        return await _cacheContainer.GetAndStoreAsync(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     private async Task<IList<User>> GetAndCache(IList<string> ids)
     {
-        return await _cacheContainer.GetAndStoreAsync(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 }

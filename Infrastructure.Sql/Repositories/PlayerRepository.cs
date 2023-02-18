@@ -9,22 +9,22 @@ namespace Infrastructure.Sql.Repositories;
 public class PlayerRepository : IPlayerRepository
 {
     private readonly PlayerDb _playerDb;
-    private readonly ICacheContainer _cacheContainer;
+    private readonly ICache _cache;
 
-    public PlayerRepository(IDb db, ICacheContainer cacheContainer)
+    public PlayerRepository(IDb db, ICache cache)
     {
         _playerDb = new PlayerDb(db);
-        _cacheContainer = cacheContainer;
+        _cache = cache;
     }
 
     public async Task<Player> Get(string id)
     {
-        return await _cacheContainer.GetAndStoreAsync(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Player>> Get(IList<string> ids)
     {
-        return await _cacheContainer.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Player>> List(string bunchId)
@@ -33,13 +33,12 @@ public class PlayerRepository : IPlayerRepository
         return await Get(ids);
     }
 
-    public async Task<Player> Get(string bunchId, string userId)
+    public async Task<Player?> Get(string bunchId, string userId)
     {
         var ids = await _playerDb.FindByUser(bunchId, userId);
         if (!ids.Any())
             return null;
         return (await Get(ids)).First();
-
     }
 
     public async Task<string> Add(Player player)
@@ -55,6 +54,6 @@ public class PlayerRepository : IPlayerRepository
     public async Task Delete(string playerId)
     {
         await _playerDb.Delete(playerId);
-        _cacheContainer.Remove<Player>(playerId);
+        _cache.Remove<Player>(playerId);
     }
 }

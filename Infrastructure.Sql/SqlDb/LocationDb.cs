@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
@@ -23,7 +24,12 @@ public class LocationDb
         };
 
         var locationDto = await _db.Single<LocationDto>(LocationSql.GetByIdQuery, @params);
-        return locationDto?.ToLocation();
+        var location = locationDto?.ToLocation();
+
+        if (location is null)
+            throw new PokerBunchException($"Location with id {id} was not found");
+
+        return location;
     }
         
     public async Task<IList<Location>> Get(IList<string> ids)

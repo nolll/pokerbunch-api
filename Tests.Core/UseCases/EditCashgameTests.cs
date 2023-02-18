@@ -12,7 +12,7 @@ public class EditCashgameTests : TestBase
         var request = new EditCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA, null, null);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -31,8 +31,8 @@ public class EditCashgameTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.Cashgame.Updated.Id, Is.EqualTo(TestData.BunchA.Id));
-        Assert.That(Deps.Cashgame.Updated.LocationId, Is.EqualTo(TestData.ChangedLocationId));
+        Assert.That(Deps.Cashgame.Updated?.Id, Is.EqualTo(TestData.BunchA.Id));
+        Assert.That(Deps.Cashgame.Updated?.LocationId, Is.EqualTo(TestData.ChangedLocationId));
     }
 
     [Test]

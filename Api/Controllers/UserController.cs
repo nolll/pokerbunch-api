@@ -58,9 +58,15 @@ public class UserController : BaseController
     public async Task<ObjectResult> GetUser(string userName)
     {
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
-        return Model(result, () => result.Data.CanViewAll 
-            ? new FullUserModel(result.Data) 
-            : new UserModel(result.Data)
+
+        if (result.Data is null)
+            return Success(null);
+
+        var canViewAll = result.Data?.CanViewAll ?? false;
+
+        return Model(result, () => canViewAll 
+            ? new FullUserModel(result.Data!) 
+            : new UserModel(result.Data!)
         );
     }
 
@@ -73,7 +79,7 @@ public class UserController : BaseController
     public async Task<ObjectResult> List()
     {
         var result = await _userList.Execute(new UserList.Request(CurrentUserName));
-        return Model(result, () => result.Data.Users.Select(o => new UserItemModel(o, _urls)));
+        return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, _urls)));
     }
 
     /// <summary>
@@ -89,8 +95,8 @@ public class UserController : BaseController
         if (!updateResult.Success)
             return Error(updateResult.Error);
 
-        var result = await _userDetails.Execute(new UserDetails.Request(updateResult.Data.UserName));
-        return Model(result, () => new FullUserModel(result.Data));
+        var result = await _userDetails.Execute(new UserDetails.Request(updateResult.Data!.UserName));
+        return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
 
     /// <summary>
@@ -139,7 +145,7 @@ public class UserController : BaseController
     public async Task<ObjectResult> Profile()
     {
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName));
-        return Model(result, () => new FullUserModel(result.Data));
+        return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
     
     /// <summary>
@@ -151,29 +157,31 @@ public class UserController : BaseController
     [Route(ApiRoutes.Auth.Login)]
     public async Task<ObjectResult> Login([FromBody] LoginPostModel post)
     {
-        var token = await GetToken(post);
-        return Ok(token);
-    }
-
-    private async Task<string> GetToken(LoginPostModel loginPostModel)
-    {
-        var result = await _login.Execute(new Login.Request(loginPostModel.UserName, loginPostModel.Password));
-        return CreateToken(result.Data.UserName);
+        var result = await _login.Execute(new Login.Request(post.UserName, post.Password));
+        return result.Success
+            ? new ObjectResult(CreateToken(result.Data?.UserName ?? "")) 
+            : Error(result.Error);
     }
     
     private string CreateToken(string userName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(AppSettings.Auth.Secret));
+        var symmetricKey = new SymmetricSecurityKey(key);
+        var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
+        
+        var claims = new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.Name, userName)
+        });
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, userName)
-            }),
+            Subject = claims,
             Expires = DateTime.UtcNow.AddYears(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = credentials
         };
+        
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }

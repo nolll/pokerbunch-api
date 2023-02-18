@@ -7,5 +7,5 @@ public class OtherUserAsAdmin : Arrange
     protected override Role Role => Role.Admin;
 
     [Test]
-    public void CanViewAllIsTrue() => Assert.That(Result.Data.CanViewAll, Is.True);
+    public void CanViewAllIsTrue() => Assert.That(Result?.Data?.CanViewAll, Is.True);
 }

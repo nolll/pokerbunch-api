@@ -1,4 +1,5 @@
-﻿using Tests.Common.FakeRepositories;
+﻿using Core.Services;
+using Tests.Common.FakeRepositories;
 using Tests.Common.FakeServices;
 
 namespace Tests.Common;
@@ -14,6 +15,7 @@ public class TestDependencies
 
     public FakeEmailSender EmailSender { get; }
     public FakeRandomizer Randomizer { get; }
+    public FakeInvitationCodeCreator InvitationCodeCreator { get; }
 
     public TestDependencies()
     {
@@ -26,6 +28,7 @@ public class TestDependencies
 
         EmailSender = new FakeEmailSender();
         Randomizer = new FakeRandomizer();
+        InvitationCodeCreator = new FakeInvitationCodeCreator();
     }
 
     public void Clear()

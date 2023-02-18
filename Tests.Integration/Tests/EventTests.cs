@@ -16,7 +16,7 @@ public class EventTests
         var result = await TestClient.Event.Add(TestData.ManagerToken, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.Id, Is.EqualTo(TestData.EventId));
+        Assert.That(result.Model?.Id, Is.EqualTo(TestData.EventId));
     }
 
     [Test]
@@ -26,11 +26,11 @@ public class EventTests
         var result = await TestClient.Event.List(TestData.ManagerToken, TestData.BunchId);
 
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.Count, Is.EqualTo(1));
-        var @event = result.Model[0];
-        Assert.That(@event.Id, Is.EqualTo(TestData.EventId));
-        Assert.That(@event.Name, Is.EqualTo(TestData.EventName));
-        Assert.That(@event.BunchId, Is.EqualTo(TestData.BunchId));
+        Assert.That(result.Model?.Count, Is.EqualTo(1));
+        var @event = result.Model?[0];
+        Assert.That(@event?.Id, Is.EqualTo(TestData.EventId));
+        Assert.That(@event?.Name, Is.EqualTo(TestData.EventName));
+        Assert.That(@event?.BunchId, Is.EqualTo(TestData.BunchId));
     }
 
     [Test]
@@ -41,8 +41,8 @@ public class EventTests
 
         Assert.That(result.Success, Is.True);
         Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model.Id, Is.EqualTo(TestData.EventId));
-        Assert.That(result.Model.Name, Is.EqualTo(TestData.EventName));
-        Assert.That(result.Model.BunchId, Is.EqualTo(TestData.BunchId));
+        Assert.That(result.Model?.Id, Is.EqualTo(TestData.EventId));
+        Assert.That(result.Model?.Name, Is.EqualTo(TestData.EventName));
+        Assert.That(result.Model?.BunchId, Is.EqualTo(TestData.BunchId));
     }
 }

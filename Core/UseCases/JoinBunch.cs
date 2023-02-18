@@ -11,12 +11,18 @@ public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
     private readonly IBunchRepository _bunchRepository;
     private readonly IPlayerRepository _playerRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IInvitationCodeCreator _invitationCodeCreator;
 
-    public JoinBunch(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
+    public JoinBunch(
+        IBunchRepository bunchRepository, 
+        IPlayerRepository playerRepository, 
+        IUserRepository userRepository,
+        IInvitationCodeCreator invitationCodeCreator)
     {
         _bunchRepository = bunchRepository;
         _playerRepository = playerRepository;
         _userRepository = userRepository;
+        _invitationCodeCreator = invitationCodeCreator;
     }
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -37,11 +43,11 @@ public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
         return Success(new Result(bunch.Slug, player.Id));
     }
     
-    private static Player GetMatchedPlayer(IEnumerable<Player> players, string postedCode)
+    private Player? GetMatchedPlayer(IEnumerable<Player> players, string postedCode)
     {
         foreach (var player in players)
         {
-            var code = InvitationCodeCreator.GetCode(player);
+            var code = _invitationCodeCreator.GetCode(player);
             if (code == postedCode)
                 return player;
         }

@@ -11,11 +11,11 @@ public class DeleteCheckpointTests : TestBase
         var request = new DeleteCheckpoint.Request(TestData.ManagerUser.UserName, TestData.ReportCheckpointId);
         var result = await Sut.Execute(request);
 
-        var deletedCheckpointIds = Deps.Cashgame.Updated.DeletedCheckpoints.Select(o => o.Id);
-        Assert.That(deletedCheckpointIds.Contains(TestData.ReportCheckpointId), Is.True);
-        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
-        Assert.That(result.Data.CashgameId, Is.EqualTo("1"));
-        Assert.That(result.Data.GameIsRunning, Is.False);
+        var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
+        Assert.That(deletedCheckpointIds?.Contains(TestData.ReportCheckpointId), Is.True);
+        Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data?.CashgameId, Is.EqualTo("1"));
+        Assert.That(result.Data?.GameIsRunning, Is.False);
     }
 
     [Test]
@@ -26,11 +26,11 @@ public class DeleteCheckpointTests : TestBase
         var request = new DeleteCheckpoint.Request(TestData.ManagerUser.UserName, "12");
         var result = await Sut.Execute(request);
 
-        var deletedCheckpointIds = Deps.Cashgame.Updated.DeletedCheckpoints.Select(o => o.Id);
-        Assert.That(deletedCheckpointIds.Contains("12"), Is.True);
-        Assert.That(result.Data.Slug, Is.EqualTo("bunch-a"));
-        Assert.That(result.Data.CashgameId, Is.EqualTo("3"));
-        Assert.That(result.Data.GameIsRunning, Is.True);
+        var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
+        Assert.That(deletedCheckpointIds?.Contains("12"), Is.True);
+        Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
+        Assert.That(result.Data?.CashgameId, Is.EqualTo("3"));
+        Assert.That(result.Data?.GameIsRunning, Is.True);
     }
 
     private DeleteCheckpoint Sut => new(

@@ -38,13 +38,13 @@ public class EditCheckpoint : UseCase<EditCheckpoint.Request, EditCheckpoint.Res
             return Error(new AccessDeniedError());
 
         var postedCheckpoint = Checkpoint.Create(
+            existingCheckpoint.Id,
             existingCheckpoint.CashgameId,
             existingCheckpoint.PlayerId,
             request.Timestamp.UtcDateTime,
             existingCheckpoint.Type,
             request.Stack,
-            request.Amount,
-            existingCheckpoint.Id);
+            request.Amount);
 
         cashgame.UpdateCheckpoint(postedCheckpoint);
         await _cashgameRepository.Update(cashgame);

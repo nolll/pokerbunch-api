@@ -47,9 +47,9 @@ public class SmallLocationModel
     }
 
     [JsonConstructor]
-    public SmallLocationModel(string id, string name)
+    public SmallLocationModel(string? id, string? name)
     {
-        Id = id;
-        Name = name;
+        Id = id ?? "";
+        Name = name ?? "";
     }
 }

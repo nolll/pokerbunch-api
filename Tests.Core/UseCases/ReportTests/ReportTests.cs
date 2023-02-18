@@ -9,7 +9,7 @@ namespace Tests.Core.UseCases.ReportTests;
 
 public class Arrange : UseCaseTest<Report>
 {
-    protected UseCaseResult<Report.Result> Result;
+    protected UseCaseResult<Report.Result>? Result;
 
     private const string Username = "username";
     private const string UserId = "1";
@@ -18,7 +18,7 @@ public class Arrange : UseCaseTest<Report>
     private const string BunchId = "4";
     protected virtual int Stack => 5;
     private static DateTime CurrentTime => DateTime.MinValue;
-    protected Cashgame UpdatedCashgame;
+    protected Cashgame? UpdatedCashgame;
 
     protected override void Setup()
     {
@@ -28,7 +28,7 @@ public class Arrange : UseCaseTest<Report>
 
         Mock<ICashgameRepository>().Setup(o => o.Get(CashgameId)).Returns(Task.FromResult<Cashgame>(cashgame));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame cg) => UpdatedCashgame = cg);
-        Mock<IPlayerRepository>().Setup(o => o.Get(BunchId, UserId)).Returns(Task.FromResult<Player>(player));
+        Mock<IPlayerRepository>().Setup(o => o.Get(BunchId, UserId)).Returns(Task.FromResult<Player?>(player));
         Mock<IUserRepository>().Setup(o => o.GetByUserName(Username)).Returns(Task.FromResult<User>(user));
     }
 

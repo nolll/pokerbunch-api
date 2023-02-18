@@ -4,6 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
 	<IsPublishable>false</IsPublishable>
+	<Nullable>enable</Nullable>
+	<WarningsAsErrors>Nullable</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

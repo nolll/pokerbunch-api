@@ -7,12 +7,12 @@ public class MessageModel
     [JsonPropertyName("message")]
     public virtual string Message { get; }
 
-    public MessageModel()
+    public MessageModel() : this(null)
     {
     }
 
-    public MessageModel(string message)
+    public MessageModel(string? message)
     {
-        Message = message;
+        Message = message ?? "";
     }
 }

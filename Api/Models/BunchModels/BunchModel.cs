@@ -36,7 +36,7 @@ public class BunchModel
     public int DefaultBuyin { get; }
 
     [JsonPropertyName("player")]
-    public BunchPlayerModel Player { get; }
+    public BunchPlayerModel? Player { get; }
 
     [JsonPropertyName("role")]
     public string Role { get; }
@@ -51,7 +51,7 @@ public class BunchModel
         CurrencyFormat = r.Currency.Format;
         ThousandSeparator = r.Currency.ThousandSeparator;
         DefaultBuyin = r.DefaultBuyin;
-        Player = r.Player != null ? new BunchPlayerModel(r.Player?.Id, r.Player?.Name) : null;
+        Player = r.Player != null ? new BunchPlayerModel(r.Player.Id, r.Player.Name) : null;
         Role = r.Role.ToString().ToLower();
     }
 
@@ -65,6 +65,15 @@ public class BunchModel
         Id = id;
         Name = name;
         Description = description;
+        HouseRules = "";
+        Timezone = "";
+        CurrencySymbol = "";
+        CurrencyLayout = "";
+        CurrencyFormat = "";
+        ThousandSeparator = "";
+        DefaultBuyin = 0;
+        Player = null;
+        Role = "";
     }
 
     [JsonConstructor]

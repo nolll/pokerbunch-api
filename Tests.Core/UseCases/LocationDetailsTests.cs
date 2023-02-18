@@ -11,9 +11,9 @@ public class LocationDetailsTests : TestBase
         var request = new GetLocation.Request(TestData.UserA.UserName, TestData.LocationIdA);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.Id, Is.EqualTo(TestData.BunchA.Id));
-        Assert.That(result.Data.Name, Is.EqualTo(TestData.LocationNameA));
-        Assert.That(result.Data.Slug, Is.EqualTo(TestData.BunchA.Slug));
+        Assert.That(result.Data?.Id, Is.EqualTo(TestData.BunchA.Id));
+        Assert.That(result.Data?.Name, Is.EqualTo(TestData.LocationNameA));
+        Assert.That(result.Data?.Slug, Is.EqualTo(TestData.BunchA.Slug));
     }
 
     private GetLocation Sut => new(

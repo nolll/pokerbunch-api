@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Core.Entities.Checkpoints;
 using Infrastructure.Sql.Dtos;
@@ -25,6 +26,10 @@ public class CashgameDb
         
         var cashgameDto = await _db.Single<CashgameDto>(CashgameSql.GetByIdQuery, @params);
         var checkpointDtos = await GetCheckpoints(cashgameId);
+
+        if (cashgameDto is null)
+            throw new PokerBunchException($"Cashgame with id {cashgameId} was not found");
+
         return cashgameDto.ToCashgame(checkpointDtos);
     }
         

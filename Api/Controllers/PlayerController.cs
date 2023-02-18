@@ -44,7 +44,7 @@ public class PlayerController : BaseController
     public async Task<ObjectResult> Get(string playerId)
     {
         var result = await _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
-        return Model(result, () => new PlayerModel(result.Data));
+        return Model(result, () => result.Data is not null ? new PlayerModel(result.Data) : null);
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ public class PlayerController : BaseController
     public async Task<ObjectResult> GetList(string bunchId)
     {
         var result = await _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
-        return Model(result, () => result.Data.Players.Select(o => new PlayerListItemModel(o)));
+        return Model(result, () => result.Data?.Players.Select(o => new PlayerListItemModel(o)));
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class PlayerController : BaseController
     {
         var result = await _addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
         return result.Success 
-            ? await Get(result.Data.Id) 
+            ? await Get(result.Data?.Id ?? "")
             : Error(result.Error);
     }
 

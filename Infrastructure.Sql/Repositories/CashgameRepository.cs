@@ -9,22 +9,22 @@ namespace Infrastructure.Sql.Repositories;
 public class CashgameRepository : ICashgameRepository
 {
     private readonly CashgameDb _cashgameDb;
-    private readonly ICacheContainer _cacheContainer;
+    private readonly ICache _cache;
 
-    public CashgameRepository(IDb db, ICacheContainer cacheContainer)
+    public CashgameRepository(IDb db, ICache cache)
     {
         _cashgameDb = new CashgameDb(db);
-        _cacheContainer = cacheContainer;
+        _cache = cache;
     }
 
     public async Task<Cashgame> Get(string cashgameId)
     {
-        return await _cacheContainer.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     private async Task<IList<Cashgame>> Get(IList<string> ids)
     {
-        return await _cacheContainer.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null)
@@ -47,7 +47,7 @@ public class CashgameRepository : ICashgameRepository
         return await Get(ids);
     }
 
-    public async Task<Cashgame> GetRunning(string bunchId)
+    public async Task<Cashgame?> GetRunning(string bunchId)
     {
         var ids = await _cashgameDb.FindRunning(bunchId);
         return (await Get(ids)).FirstOrDefault();
@@ -56,13 +56,13 @@ public class CashgameRepository : ICashgameRepository
     public async Task<Cashgame> GetByCheckpoint(string checkpointId)
     {
         var ids = await _cashgameDb.FindByCheckpoint(checkpointId);
-        return (await Get(ids)).FirstOrDefault();
+        return (await Get(ids)).First();
     }
 
     public async Task DeleteGame(string id)
     {
         await _cashgameDb.DeleteGame(id);
-        _cacheContainer.Remove<Cashgame>(id);
+        _cache.Remove<Cashgame>(id);
     }
 
     public async Task<string> Add(Bunch bunch, Cashgame cashgame)
@@ -73,6 +73,6 @@ public class CashgameRepository : ICashgameRepository
     public async Task Update(Cashgame cashgame)
     {
         await _cashgameDb.UpdateGame(cashgame);
-        _cacheContainer.Remove<Cashgame>(cashgame.Id);
+        _cache.Remove<Cashgame>(cashgame.Id);
     }
 }

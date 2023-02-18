@@ -11,13 +11,20 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
     private readonly IPlayerRepository _playerRepository;
     private readonly IEmailSender _emailSender;
     private readonly IUserRepository _userRepository;
+    private readonly IInvitationCodeCreator _invitationCodeCreator;
 
-    public InvitePlayer(IBunchRepository bunchRepository, IPlayerRepository playerRepository, IEmailSender emailSender, IUserRepository userRepository)
+    public InvitePlayer(
+        IBunchRepository bunchRepository, 
+        IPlayerRepository playerRepository, 
+        IEmailSender emailSender, 
+        IUserRepository userRepository,
+        IInvitationCodeCreator invitationCodeCreator)
     {
         _bunchRepository = bunchRepository;
         _playerRepository = playerRepository;
         _emailSender = emailSender;
         _userRepository = userRepository;
+        _invitationCodeCreator = invitationCodeCreator;
     }
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -35,7 +42,7 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
         if (!AccessControl.CanInvitePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var invitationCode = InvitationCodeCreator.GetCode(player);
+        var invitationCode = _invitationCodeCreator.GetCode(player);
         var joinUrl = string.Format(request.JoinUrlFormat, bunch.Slug);
         var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, bunch.Slug, invitationCode);
         var message = new InvitationMessage(bunch.DisplayName, invitationCode, request.RegisterUrl, joinUrl, joinWithCodeUrl);
@@ -68,7 +75,7 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
 
     public class Result
     {
-        public string PlayerId { get; private set; }
+        public string PlayerId { get; }
 
         public Result(string playerId)
         {

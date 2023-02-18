@@ -12,21 +12,21 @@ public class PlayerListItemModel
     public string Name { get; }
 
     [JsonPropertyName("userId")]
-    public string UserId { get; }
+    public string? UserId { get; }
 
     [JsonPropertyName("userName")]
-    public string UserName { get; }
+    public string? UserName { get; }
 
     [JsonPropertyName("color")]
-    public string Color { get; }
+    public string? Color { get; }
 
     public PlayerListItemModel(GetPlayerList.ResultItem r)
     {
         Id = r.Id;
         Name = r.Name;
-        Color = r.Color;
         UserId = r.UserId;
         UserName = r.UserName;
+        Color = r.Color;
     }
 
     [JsonConstructor]

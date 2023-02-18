@@ -31,7 +31,7 @@ public class LocationController : BaseController
     public async Task<ObjectResult> Get(string locationId)
     {
         var result = await _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
-        return Model(result, () => new LocationModel(result.Data));
+        return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 
     [Route(ApiRoutes.Location.ListByBunch)]
@@ -40,7 +40,7 @@ public class LocationController : BaseController
     public async Task<ObjectResult> GetList(string bunchId)
     {
         var result = await _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
-        return Model(result, () => result.Data.Locations.Select(o => new LocationModel(o)));
+        return Model(result, () => result.Data?.Locations.Select(o => new LocationModel(o)));
     }
 
     [Route(ApiRoutes.Location.Add)]
@@ -49,6 +49,6 @@ public class LocationController : BaseController
     public async Task<ObjectResult> Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
         var result = await _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
-        return Model(result, () => new LocationModel(result.Data));
+        return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 }

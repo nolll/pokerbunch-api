@@ -2,9 +2,10 @@
 
 public static class AuthSecretProvider
 {
-    private static readonly string SecretInTest = new Guid().ToString();
+    // todo: Injection?
+    private static readonly string SecretInTest = Guid.NewGuid().ToString();
 
-    public static string GetSecret(string configSecret = null)
+    public static string GetSecret(string? configSecret = null)
     {
         return !string.IsNullOrEmpty(configSecret)
             ? configSecret

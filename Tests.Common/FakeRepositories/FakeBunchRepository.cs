@@ -5,9 +5,9 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakeBunchRepository : IBunchRepository
 {
-    public Bunch Added { get; private set; }
-    public Bunch Saved { get; private set; }
-    private IList<Bunch> _list; 
+    public Bunch? Added { get; private set; }
+    public Bunch? Saved { get; private set; }
+    private IList<Bunch> _list = new List<Bunch>(); 
 
     public FakeBunchRepository()
     {
@@ -26,8 +26,14 @@ public class FakeBunchRepository : IBunchRepository
 
     public Task<Bunch> GetBySlug(string slug)
     {
-        var bunch = _list.FirstOrDefault(o => o.Slug == slug);
+        var bunch = _list.FirstOrDefault(o => o.Slug == slug)!;
         return Task.FromResult(bunch);
+    }
+
+    public Task<Bunch?> GetBySlugOrNull(string slug)
+    {
+        var bunch = _list.FirstOrDefault(o => o.Slug == slug)!;
+        return Task.FromResult<Bunch?>(bunch);
     }
 
     public Task<IList<Bunch>> GetByUserId(string userId)

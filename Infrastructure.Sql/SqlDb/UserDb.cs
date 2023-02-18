@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
@@ -23,7 +24,12 @@ public class UserDb
         };
 
         var userDto = await _db.Single<UserDto>(UserSql.GetByIdQuery, @params);
-        return userDto?.ToUser();
+        var user = userDto?.ToUser();
+        
+        if (user is null)
+            throw new PokerBunchException($"User with id {id} was not found");
+        
+        return user;
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
@@ -39,7 +45,7 @@ public class UserDb
         return await GetIds();
     }
 
-    public async Task<string> FindByUserName(string name)
+    public async Task<string?> FindByUserName(string name)
     {
         if (string.IsNullOrEmpty(name))
             return null;
@@ -52,7 +58,7 @@ public class UserDb
         return (await _db.Single<int?>(UserSql.FindByUsernameQuery, @params))?.ToString();
     }
 
-    public async Task<string> FindByEmail(string email)
+    public async Task<string?> FindByEmail(string email)
     {
         if (string.IsNullOrEmpty(email))
             return null;
@@ -65,7 +71,7 @@ public class UserDb
         return (await _db.Single<int?>(UserSql.FindByEmailQuery, @params))?.ToString();
     }
 
-    public async Task<string> FindByUserNameOrEmail(string nameOrEmail)
+    public async Task<string?> FindByUserNameOrEmail(string nameOrEmail)
     {
         if (string.IsNullOrEmpty(nameOrEmail))
             return null;

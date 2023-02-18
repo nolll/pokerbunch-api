@@ -14,21 +14,21 @@ public class User : IEntity
     public User(
         string id, 
         string userName, 
-        string displayName = null, 
-        string realName = null, 
-        string email = null, 
+        string? displayName = null, 
+        string? realName = null, 
+        string? email = null, 
         Role globalRole = Role.Player,
-        string encryptedPassword = null,
-        string salt = null)
+        string? encryptedPassword = null,
+        string? salt = null)
     {
         Id = id;
         UserName = userName;
-        DisplayName = displayName ?? string.Empty;
-        RealName = realName ?? string.Empty;
-        Email = email ?? string.Empty;
+        DisplayName = displayName ?? "";
+        RealName = realName ?? "";
+        Email = email ?? "";
         GlobalRole = globalRole;
-        EncryptedPassword = encryptedPassword ?? string.Empty;
-        Salt = salt ?? string.Empty;
+        EncryptedPassword = encryptedPassword ?? "";
+        Salt = salt ?? "";
     }
 
     public bool IsAdmin => GlobalRole == Role.Admin;

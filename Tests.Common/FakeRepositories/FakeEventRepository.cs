@@ -5,8 +5,8 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakeEventRepository : IEventRepository
 {
-    public Event Added { get; private set; }
-    public string AddedCashgameId { get; private set; }
+    public Event? Added { get; private set; }
+    public string? AddedCashgameId { get; private set; }
 
     private readonly IList<Event> _list;
 
@@ -17,7 +17,7 @@ public class FakeEventRepository : IEventRepository
 
     public Task<Event> Get(string id)
     {
-        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id));
+        return Task.FromResult(_list.FirstOrDefault(o => o.Id == id))!;
     }
         
     public Task<IList<Event>> Get(IList<string> ids)
@@ -30,9 +30,9 @@ public class FakeEventRepository : IEventRepository
         return Task.FromResult<IList<Event>>(_list.Where(o => o.BunchId == bunchId).ToList());
     }
 
-    public Task<Event> GetByCashgame(string cashgameId)
+    public Task<Event?> GetByCashgame(string cashgameId)
     {
-        return Task.FromResult(_list.First());
+        return Task.FromResult(_list.FirstOrDefault());
     }
 
     public Task<string> Add(Event e)

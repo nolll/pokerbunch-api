@@ -19,14 +19,14 @@ public class ErrorController : Controller
         return new ErrorModel(message);
     }
 
-    private string GetMessage(Exception exception)
+    private string GetMessage(Exception? exception)
     {
         return exception != null 
             ? exception.Message 
             : "Not found";
     }
 
-    private Exception GetException()
+    private Exception? GetException()
     {
         var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         return exceptionHandlerPathFeature?.Error;

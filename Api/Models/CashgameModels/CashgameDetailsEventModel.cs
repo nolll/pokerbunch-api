@@ -11,16 +11,10 @@ public class CashgameDetailsEventModel
     [JsonPropertyName("name")]
     public string Name { get; }
 
-    public CashgameDetailsEventModel(CashgameDetails.Result details)
-    {
-        Id = details.EventId;
-        Name = details.EventName;
-    }
-
     [JsonConstructor]
-    public CashgameDetailsEventModel(string id, string name)
+    public CashgameDetailsEventModel(string? id, string? name)
     {
-        Id = id;
-        Name = name;
+        Id = id ?? "";
+        Name = name ?? "";
     }
 }

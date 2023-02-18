@@ -64,9 +64,9 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
     {
         public string Name { get; }
         public string Id { get; }
-        public string Color { get; }
-        public string UserId { get; }
-        public string UserName { get; }
+        public string? Color { get; }
+        public string? UserId { get; }
+        public string? UserName { get; }
 
         public ResultItem(Player player)
         {

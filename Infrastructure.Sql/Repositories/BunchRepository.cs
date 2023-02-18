@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -9,30 +10,40 @@ namespace Infrastructure.Sql.Repositories;
 public class BunchRepository : IBunchRepository
 {
     private readonly BunchDb _bunchDb;
-    private readonly ICacheContainer _cacheContainer;
+    private readonly ICache _cache;
 
-    public BunchRepository(IDb db, ICacheContainer cacheContainer)
+    public BunchRepository(IDb db, ICache cache)
     {
         _bunchDb = new BunchDb(db);
-        _cacheContainer = cacheContainer;
+        _cache = cache;
     }
 
     public async Task<Bunch> Get(string id)
     {
-        return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<Bunch> GetBySlug(string slug)
     {
         var ids = await Search(slug);
+        if (!ids.Any())
+            throw new PokerBunchException($"Bunch with slug {slug} was not found");
+        
+        return await Get(ids.First());
+    }
+
+    public async Task<Bunch?> GetBySlugOrNull(string slug)
+    {
+        var ids = await Search(slug);
         if (ids.Any())
             return await Get(ids.First());
+
         return null;
     }
 
     private async Task<IList<Bunch>> List(IList<string> ids)
     {
-        return await _cacheContainer.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return await _cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Bunch>> List()
@@ -60,6 +71,6 @@ public class BunchRepository : IBunchRepository
     public async Task Update(Bunch bunch)
     {
         await _bunchDb.Update(bunch);
-        _cacheContainer.Remove<Bunch>(bunch.Id);
+        _cache.Remove<Bunch>(bunch.Id);
     }
 }

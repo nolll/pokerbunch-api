@@ -32,7 +32,7 @@ public class Date : IComparable<Date>
         return new Date(d.Year, d.Month, d.Day);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var other = obj as Date;
         return other != null && Year == other.Year && Month == other.Month && Day == other.Day;
@@ -48,9 +48,9 @@ public class Date : IComparable<Date>
         return HashCode.Combine(Month, Day, Year);
     }
 
-    public int CompareTo(Date that)
+    public int CompareTo(Date? that)
     {
-        return UtcMidninght.CompareTo(that.UtcMidninght);
+        return UtcMidninght.CompareTo(that?.UtcMidninght);
     }
 
     public bool IsNull
@@ -60,5 +60,10 @@ public class Date : IComparable<Date>
             var minDate = new Date(DateTime.MinValue);
             return CompareTo(minDate) == 0;
         }
+    }
+
+    public static Date Null()
+    {
+        return new Date(DateTime.MinValue);
     }
 }

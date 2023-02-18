@@ -5,14 +5,12 @@ namespace Tests.Core.UseCases;
 
 class CashgameListTests : TestBase
 {
-    private const int Year = 2001;
-
     [Test]
     public async Task CashgameList_SlugIsSet()
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data.Slug, Is.EqualTo(TestData.SlugA));
+        Assert.That(result.Data?.Slug, Is.EqualTo(TestData.SlugA));
     }
 
     [Test]
@@ -22,7 +20,7 @@ class CashgameListTests : TestBase
 
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data.Items.Count, Is.EqualTo(0));
+        Assert.That(result.Data?.Items.Count, Is.EqualTo(0));
     }
 
     [Test]
@@ -30,7 +28,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data.Items[0].LocationName, Is.EqualTo(TestData.LocationNameB));
+        Assert.That(result.Data?.Items[0].LocationName, Is.EqualTo(TestData.LocationNameB));
     }
 
     [Test]
@@ -38,7 +36,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data.Items[0].CashgameId, Is.EqualTo("2"));
+        Assert.That(result.Data?.Items[0].CashgameId, Is.EqualTo("2"));
     }
     
     private CashgameList.Request CreateRequest(int? year = null)

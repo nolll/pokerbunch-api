@@ -16,7 +16,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -25,7 +25,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(TestData.ManagerUser.UserName, TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error.Type, Is.EqualTo(ErrorType.Validation));
+        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
     [Test]
@@ -35,8 +35,8 @@ public class EditCheckpointTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data.CashgameId, Is.EqualTo("1"));
-        Assert.That(result.Data.PlayerId, Is.EqualTo("1"));
+        Assert.That(result.Data?.CashgameId, Is.EqualTo("1"));
+        Assert.That(result.Data?.PlayerId, Is.EqualTo("1"));
     }
         
     [Test]
@@ -46,11 +46,11 @@ public class EditCheckpointTests : TestBase
 
         await Sut.Execute(request);
 
-        var updatedCheckpoint = Deps.Cashgame.Updated.UpdatedCheckpoints.First();
-        Assert.That(updatedCheckpoint.Type, Is.EqualTo(CheckpointType.Buyin));
-        Assert.That(updatedCheckpoint.Id, Is.EqualTo(TestData.BuyinCheckpointId));
-        Assert.That(updatedCheckpoint.Stack, Is.EqualTo(ChangedStack));
-        Assert.That(updatedCheckpoint.Amount, Is.EqualTo(ChangedAmount));
+        var updatedCheckpoint = Deps.Cashgame.Updated?.UpdatedCheckpoints.First();
+        Assert.That(updatedCheckpoint?.Type, Is.EqualTo(CheckpointType.Buyin));
+        Assert.That(updatedCheckpoint?.Id, Is.EqualTo(TestData.BuyinCheckpointId));
+        Assert.That(updatedCheckpoint?.Stack, Is.EqualTo(ChangedStack));
+        Assert.That(updatedCheckpoint?.Amount, Is.EqualTo(ChangedAmount));
     }
 
     private EditCheckpoint Sut => new(

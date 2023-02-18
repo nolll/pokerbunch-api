@@ -23,7 +23,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
 
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = await _playerRepository.Get(request.PlayerId);
+        var player = await GetPlayerOrNull(request.PlayerId);
         if (player == null)
             return Error(new PlayerNotFoundError(request.PlayerId));
 
@@ -39,9 +39,21 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
         var cashgames = await _cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
-        var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : string.Empty;
+        var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
 
         return Success(new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl));
+    }
+
+    private async Task<Player?> GetPlayerOrNull(string id)
+    {
+        try
+        {
+            return await _playerRepository.Get(id);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public class Request
@@ -62,22 +74,22 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         public string PlayerId { get; }
         public bool CanDelete { get; }
         public bool IsUser { get; }
-        public string UserId { get; }
-        public string UserName { get; }
+        public string? UserId { get; }
+        public string? UserName { get; }
         public string AvatarUrl { get; }
         public string Slug { get; }
-        public string Color { get; }
+        public string? Color { get; }
 
-        public Result(Bunch bunch, Player player, User user, bool canDelete, bool hasPlayed, string avatarUrl)
+        public Result(Bunch bunch, Player player, User? user, bool canDelete, bool hasPlayed, string avatarUrl)
         {
-            var isUser = user != null;
+            var isUser = user is not null;
 
             DisplayName = player.DisplayName;
             PlayerId = player.Id;
             CanDelete = canDelete && !hasPlayed;
             IsUser = isUser;
             UserId = user?.Id;
-            UserName = isUser ? user.UserName : null;
+            UserName = user?.UserName ?? null;
             AvatarUrl = avatarUrl;
             Color = player.Color;
             Slug = bunch.Slug;

@@ -6,10 +6,10 @@ namespace Core.UseCases;
 
 public class ClearCache : UseCase<ClearCache.Request, ClearCache.Result>
 {
-    private readonly ICacheContainer _cache;
+    private readonly ICache _cache;
     private readonly IUserRepository _userRepository;
 
-    public ClearCache(ICacheContainer cache, IUserRepository userRepository)
+    public ClearCache(ICache cache, IUserRepository userRepository)
     {
         _cache = cache;
         _userRepository = userRepository;

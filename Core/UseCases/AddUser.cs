@@ -29,11 +29,11 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var userByName = await _userRepository.GetByUserName(request.UserName);
+        var userByName = await GetExistingUserByUserName(request.UserName);
         if (userByName != null)
             return Error(new UserExistsError());
 
-        var userByEmail = await _userRepository.GetByUserEmail(request.Email);
+        var userByEmail = await GetExistingUserByEmail(request.Email);
         if (userByEmail != null)
             return Error(new EmailExistsError());
 
@@ -48,14 +48,38 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
 
         return Success(new Result());
     }
-    
+
+    private async Task<User?> GetExistingUserByUserName(string userName)
+    {
+        try
+        {
+            return await _userRepository.GetByUserName(userName);
+        }
+        catch (PokerBunchException)
+        {
+            return null;
+        }
+    }
+
+    private async Task<User?> GetExistingUserByEmail(string email)
+    {
+        try
+        {
+            return await _userRepository.GetByUserEmail(email);
+        }
+        catch (PokerBunchException)
+        {
+            return null;
+        }
+    }
+
     private static User CreateUser(Request request, string encryptedPassword, string salt)
     {
         return new User(
-            null,
+            "",
             request.UserName,
             request.DisplayName,
-            string.Empty,
+            "",
             request.Email,
             Role.Player,
             encryptedPassword,

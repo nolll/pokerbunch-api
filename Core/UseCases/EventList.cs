@@ -34,7 +34,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
 
         var events = await _eventRepository.List(bunch.Id);
         var locationIds = events.Select(o => o.LocationId).Where(o => o != null).Distinct().ToList();
-        var locations = await _locationRepository.List(locationIds);
+        var locations = await _locationRepository.List(locationIds!);
 
         var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
 
@@ -78,9 +78,9 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
         public string EventId { get; }
         public string BunchId { get; }
         public string Name { get; }
-        public string LocationId { get; }
-        public string LocationName { get; }
-        public Date StartDate { get; }
+        public string? LocationId { get; }
+        public string? LocationName { get; }
+        public Date? StartDate { get; }
 
         public Event(string id, string bunchId, string name)
         {
@@ -89,7 +89,7 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
             Name = name;
         }
             
-        public Event(string id, string bunchId, string name, string locationId, string locationName, Date startDate)
+        public Event(string id, string bunchId, string name, string? locationId, string? locationName, Date startDate)
             : this(id, bunchId, name)
         {
             LocationId = locationId;

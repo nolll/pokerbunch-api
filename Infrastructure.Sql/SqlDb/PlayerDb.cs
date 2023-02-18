@@ -1,4 +1,5 @@
 using System.Linq;
+using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
@@ -53,7 +54,12 @@ public class PlayerDb
         };
 
         var playerDto = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
-        return playerDto?.ToPlayer();
+        var player = playerDto?.ToPlayer();
+        
+        if (player is null)
+            throw new PokerBunchException($"Player with id {id} was not found");
+
+        return player;
     }
 
     public async Task<string> Add(Player player)
@@ -63,7 +69,7 @@ public class PlayerDb
             var @params = new
             {
                 bunchId = int.Parse(player.BunchId),
-                userId = int.Parse(player.UserId),
+                userId = int.Parse(player.UserId!),
                 role = (int)player.Role,
                 approved = true,
                 color = player.Color
@@ -94,7 +100,7 @@ public class PlayerDb
             userId = int.Parse(userId),
             role = (int)player.Role,
             approved = true,
-            playerId = int.Parse(player.Id)
+            playerId = int.Parse(player.Id!)
         };
 
         var rowCount = await _db.Execute(PlayerSql.UpdateQuery, @params);

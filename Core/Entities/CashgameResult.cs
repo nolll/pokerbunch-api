@@ -14,7 +14,7 @@ public class CashgameResult
     public DateTime? CashoutTime { get; }
     public int Stack { get; }
     public DateTime LastReportTime { get; }
-    public Checkpoint CashoutCheckpoint { get; }
+    public Checkpoint? CashoutCheckpoint { get; }
     public bool HasCachedOut => CashoutCheckpoint != null;
 
     public CashgameResult(string playerId, IList<Checkpoint> checkpoints)
@@ -48,7 +48,7 @@ public class CashgameResult
         return checkpoint?.Stack ?? 0;
     }
 
-    private static Checkpoint GetLastCheckpoint(IList<Checkpoint> checkpoints)
+    private static Checkpoint? GetLastCheckpoint(IList<Checkpoint> checkpoints)
     {
         return checkpoints.Count > 0 ? checkpoints[^1] : null;
     }
@@ -61,24 +61,24 @@ public class CashgameResult
         return checkpoint.Timestamp;
     }
 
-    private static Checkpoint GetFirstBuyinCheckpoint(IEnumerable<Checkpoint> checkpoints)
+    private static Checkpoint? GetFirstBuyinCheckpoint(IEnumerable<Checkpoint> checkpoints)
     {
         return GetCheckpointOfType(checkpoints, CheckpointType.Buyin);
     }
 
-    private static Checkpoint GetCashoutCheckpoint(IEnumerable<Checkpoint> checkpoints)
+    private static Checkpoint? GetCashoutCheckpoint(IEnumerable<Checkpoint> checkpoints)
     {
         return GetCheckpointOfType(checkpoints, CheckpointType.Cashout);
     }
 
-    private static Checkpoint GetCheckpointOfType(IEnumerable<Checkpoint> checkpoints, CheckpointType type)
+    private static Checkpoint? GetCheckpointOfType(IEnumerable<Checkpoint> checkpoints, CheckpointType type)
     {
         return checkpoints.FirstOrDefault(checkpoint => checkpoint.Type == type);
     }
     
-    private DateTime GetLastReportTime(IList<Checkpoint> checkpoints)
+    private static DateTime GetLastReportTime(IList<Checkpoint> checkpoints)
     {
         var checkpoint = GetLastCheckpoint(checkpoints);
-        return checkpoint.Timestamp;
+        return checkpoint?.Timestamp ?? DateTime.MinValue;
     }
 }

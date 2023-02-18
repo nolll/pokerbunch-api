@@ -4,10 +4,10 @@ namespace Api.Urls.SiteUrls;
 
 public class JoinBunchUrl : SiteUrl
 {
-    private readonly string _code;
+    private readonly string? _code;
     private readonly string _bunchId;
 
-    public JoinBunchUrl(string bunchId, string code = null)
+    public JoinBunchUrl(string bunchId, string? code = null)
     {
         _bunchId = bunchId;
         _code = code;

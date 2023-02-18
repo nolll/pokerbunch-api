@@ -14,7 +14,7 @@ public class Validator
         System.ComponentModel.DataAnnotations.Validator.TryValidateObject(subject, context, _errors, true);
     }
 
-    public IEnumerable<string> Errors => _errors.Select(o => o.ErrorMessage);
+    public IEnumerable<string> Errors => _errors.Select(o => o.ErrorMessage ?? "Unknown error");
     private bool HasErrors => _errors.Count > 0;
     public bool IsValid => !HasErrors;
 }
