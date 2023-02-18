@@ -23,7 +23,7 @@ public class LocationDb
             id = int.Parse(id)
         };
 
-        var locationDto = await _db.Single<LocationDto>(LocationSql.GetByIdQuery, @params);
+        var locationDto = await _db.Single<LocationDto>(LocationSql.GetByIdQuery2(int.Parse(id)));
         var location = locationDto?.ToLocation();
 
         if (location is null)

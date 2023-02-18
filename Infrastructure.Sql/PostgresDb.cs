@@ -1,17 +1,21 @@
 using System.Linq;
 using Npgsql;
 using Dapper;
+using SqlKata;
+using SqlKata.Compilers;
 
 namespace Infrastructure.Sql;
 
 public class PostgresDb : IDb
 {
     private readonly string _connectionString;
+    private readonly PostgresCompiler _compiler;
     public DbEngine Engine => DbEngine.Postgres;
     
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
+        _compiler = new PostgresCompiler();
     }
 
     public async Task<T?> Single<T>(string sql, object @params)
@@ -21,11 +25,26 @@ public class PostgresDb : IDb
         return (await List<T>(sql, @params)).FirstOrDefault();
     }
 
+    public async Task<T?> Single<T>(Query query)
+    {
+        await using var connection = GetConnection();
+        connection.Open();
+        return (await List<T>(query)).FirstOrDefault();
+    }
+
     public async Task<IEnumerable<T>> List<T>(string sql, object? @params)
     {
         await using var connection = GetConnection();
         connection.Open();
         return await connection.QueryAsync<T>(sql, @params);
+    }
+
+    public async Task<IEnumerable<T>> List<T>(Query query)
+    {
+        await using var connection = GetConnection();
+        connection.Open();
+        var compiledQuery = Compile(query);
+        return await connection.QueryAsync<T>(compiledQuery.Sql, compiledQuery.Bindings);
     }
 
     public async Task<IEnumerable<T>> List<T>(string sql, ListParam param)
@@ -55,6 +74,11 @@ public class PostgresDb : IDb
     private NpgsqlConnection GetConnection()
     {
         return new NpgsqlConnection(_connectionString);
+    }
+
+    private SqlResult Compile(Query query)
+    {
+        return _compiler.Compile(query);
     }
 
     public void Dispose()
