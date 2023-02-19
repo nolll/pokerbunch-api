@@ -46,6 +46,9 @@ public class SqliteDb : IDb
 
     public async Task<IEnumerable<T>> List<T>(string sql, ListParam param)
     {
+        if (param.IdCount == 0)
+            return Enumerable.Empty<T>();
+
         var sqlWithIdList = sql.Replace(param.Name, param.ParameterNameList);
         return await _connection.QueryAsync<T>(sqlWithIdList, param.DynamicParameters);
     }

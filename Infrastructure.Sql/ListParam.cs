@@ -5,8 +5,10 @@ namespace Infrastructure.Sql;
 
 public class ListParam
 {
-    public string Name { get; }
     private readonly IEnumerable<int> _idList;
+    
+    public string Name { get; }
+    public int IdCount => _idList.Count();
 
     public ListParam(string name, IEnumerable<int> idList)
     {

@@ -4,12 +4,25 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class LocationDb
 {
     private readonly IDb _db;
+
+    private static Query TableQuery => new(SqlNames.Location.Table);
+
+    private static Query GetQuery => TableQuery
+        .Select(
+            SqlNames.Location.Columns.Id,
+            SqlNames.Location.Columns.Name, 
+            SqlNames.Location.Columns.BunchId);
+
+    private static Query FindQuery => TableQuery
+        .Select(SqlNames.Location.Columns.Id);
 
     public LocationDb(IDb db)
     {
@@ -18,7 +31,8 @@ public class LocationDb
 
     public async Task<Location> Get(string id)
     {
-        var locationDto = await _db.Single<LocationDto>(LocationQueries.GetById(int.Parse(id)));
+        var query = GetQuery.Where(SqlNames.Location.Columns.Id, int.Parse(id));
+        var locationDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<LocationDto>();
         var location = locationDto?.ToLocation();
 
         if (location is null)
@@ -32,23 +46,27 @@ public class LocationDb
         if (!ids.Any())
             return new List<Location>();
 
-        var locationDtos = await _db.List<LocationDto>(LocationQueries.GetByIds(ids.Select(int.Parse)));
+        var query = GetQuery.Where(SqlNames.Location.Columns.Id, ids.Select(int.Parse));
+        var locationDtos = await _db.QueryFactory.FromQuery(query).GetAsync<LocationDto>();
         return locationDtos.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)
     {
-        return (await _db.List<int>(LocationQueries.FindByBunch(int.Parse(bunchId)))).Select(o => o.ToString()).ToList();
+        var query = FindQuery.Where(SqlNames.Location.Columns.BunchId, int.Parse(bunchId));
+        return (await _db.QueryFactory.FromQuery(query).GetAsync<int>()).Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Location location)
     {
-        var @params = new
+        var parameters = new Dictionary<string, object>
         {
-            name = location.Name,
-            bunchId = int.Parse(location.BunchId)
+            { SqlNames.Location.Columns.Name, location.Name },
+            { SqlNames.Location.Columns.BunchId, int.Parse(location.BunchId) }
         };
 
-        return (await _db.Insert(LocationSql.AddQuery, @params)).ToString();
+        var result = await _db.QueryFactory.FromQuery(TableQuery).InsertGetIdAsync<int>(parameters);
+        return result.ToString();
+
     }
 }
