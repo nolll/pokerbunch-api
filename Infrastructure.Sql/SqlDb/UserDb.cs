@@ -4,6 +4,8 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -11,6 +13,19 @@ public class UserDb
 {
     private readonly IDb _db;
 
+    private static Query TableQuery => new(SqlNames.User.Table);
+
+    private static Query GetQuery => TableQuery
+        .Select(
+            SqlNames.User.Columns.Id,
+            SqlNames.User.Columns.UserName,
+            SqlNames.User.Columns.DisplayName,
+            SqlNames.User.Columns.RealName,
+            SqlNames.User.Columns.Email,
+            SqlNames.User.Columns.Password,
+            SqlNames.User.Columns.Salt,
+            SqlNames.User.Columns.RoleId);
+    
     public UserDb(IDb db)
     {
         _db = db;
@@ -18,18 +33,11 @@ public class UserDb
 
     public async Task<User> Get(string id)
     {
-        var @params = new
-        {
-            userId = int.Parse(id)
-        };
-
-        var userDto = await _db.Single<UserDto>(UserSql.GetByIdQuery, @params);
+        var query = GetQuery.Where(SqlNames.User.Columns.Id, id);
+        var userDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<UserDto>();
         var user = userDto?.ToUser();
-        
-        if (user is null)
-            throw new PokerBunchException($"User with id {id} was not found");
-        
-        return user;
+
+        return user ?? throw new PokerBunchException($"User with id {id} was not found");
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
