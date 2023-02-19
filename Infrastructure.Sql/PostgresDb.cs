@@ -10,14 +10,14 @@ namespace Infrastructure.Sql;
 public class PostgresDb : IDb
 {
     private readonly string _connectionString;
-    private readonly PostgresCompiler _compiler;
+    public Compiler Compiler { get; }
     public DbEngine Engine => DbEngine.Postgres;
-    public QueryFactory QueryFactory => new(GetConnection(), _compiler);
+    public QueryFactory QueryFactory => new(GetConnection(), Compiler);
 
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
-        _compiler = new PostgresCompiler();
+        Compiler = new PostgresCompiler();
     }
 
     public async Task<T?> Single<T>(string sql, object @params)
@@ -81,7 +81,7 @@ public class PostgresDb : IDb
         await using var connection = GetConnection();
         connection.Open();
 
-        var compiledQuery = _compiler.Compile(query);
+        var compiledQuery = Compiler.Compile(query);
         return await connection.ExecuteScalarAsync<int>(compiledQuery.Sql, compiledQuery.NamedBindings);
     }
 
@@ -92,7 +92,7 @@ public class PostgresDb : IDb
 
     private SqlResult Compile(Query query)
     {
-        return _compiler.Compile(query);
+        return Compiler.Compile(query);
     }
 
     public void Dispose()

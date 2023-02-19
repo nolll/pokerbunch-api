@@ -4,6 +4,8 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -11,27 +13,34 @@ public class BunchDb
 {
     private readonly IDb _db;
 
+    private static Query TableQuery => new(Schema.Bunch);
+
+    private static Query GetQuery => TableQuery
+        .Select(
+            Schema.Bunch.Id,
+            Schema.Bunch.Name,
+            Schema.Bunch.DisplayName,
+            Schema.Bunch.Description,
+            Schema.Bunch.Currency,
+            Schema.Bunch.CurrencyLayout,
+            Schema.Bunch.Timezone,
+            Schema.Bunch.DefaultBuyin,
+            Schema.Bunch.CashgamesEnabled,
+            Schema.Bunch.TournamentsEnabled,
+            Schema.Bunch.VideosEnabled,
+            Schema.Bunch.HouseRules);
+
+    private static Query FindQuery => TableQuery.Select($"{Schema.Bunch.Id.FullName}");
+
     public BunchDb(IDb db)
     {
         _db = db;
     }
 
-    public async Task<IList<Bunch>> Get(IList<string> ids)
-    {
-        var param = new ListParam("@ids", ids.Select(int.Parse));
-
-        var dtos = await _db.List<BunchDto>(BunchSql.GetByIdsQuery, param);
-        return dtos.Select(BunchMapper.ToBunch).ToList();
-    }
-
     public async Task<Bunch> Get(string id)
     {
-        var @params = new
-        {
-            id = int.Parse(id)
-        };
-
-        var dto = await _db.Single<BunchDto>(BunchSql.GetByIdQuery, @params);
+        var query = GetQuery.Where(Schema.Bunch.Id, int.Parse(id));
+        var dto = await _db.QueryFactory.FromQuery(query).FirstAsync<BunchDto>();
 
         if (dto is null)
             throw new PokerBunchException($"Bunch with id {id} was not found");
@@ -39,32 +48,39 @@ public class BunchDb
         return dto.ToBunch();
     }
 
+    public async Task<IList<Bunch>> Get(IList<string> ids)
+    {
+        var param = new ListParam("@ids", ids.Select(int.Parse));
+
+        var query = GetQuery.WhereIn(Schema.Bunch.Id, ids.Select(int.Parse));
+        var dtos = await _db.QueryFactory.FromQuery(query).GetAsync<BunchDto>();
+        return dtos.Select(BunchMapper.ToBunch).ToList();
+    }
+
     public async Task<IList<string>> Search()
     {
-        return (await _db.List<int>(BunchSql.SearchQuery)).Select(o => o.ToString()).ToList();
+        var result = await _db.QueryFactory.FromQuery(FindQuery).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> Search(string slug)
     {
-        var @params = new
-        {
-            slug
-        };
+        var query = FindQuery.Where(Schema.Bunch.Name, slug);
+        var id = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<int?>();
 
-        var id = (await _db.Single<int?>(BunchSql.SearchBySlugQuery, @params))?.ToString();
-        return id != null
-            ? new List<string> { id }
+        return id is not null
+            ? new List<string> { id.Value.ToString() }
             : new List<string>();
     }
 
     public async Task<IList<string>> SearchByUser(string userId)
     {
-        var @params = new
-        {
-            userId = int.Parse(userId)
-        };
+        var query = FindQuery.Join(Schema.Player, $"{Schema.Player.BunchId.FullName}", $"{Schema.Bunch.Id.FullName}")
+            .Where($"{Schema.Player.UserId}", int.Parse(userId))
+            .OrderBy($"{Schema.Bunch.Name}");
 
-        return (await _db.List<int>(BunchSql.SearchByUserQuery, @params)).Select(o => o.ToString()).ToList();
+        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<string> Add(Bunch bunch)
@@ -109,12 +125,9 @@ public class BunchDb
 
     public async Task<bool> DeleteBunch(string id)
     {
-        var @params = new
-        {
-            id = int.Parse(id)
-        };
+        var query = TableQuery.Where(Schema.Bunch.Id, int.Parse(id));
+        var rowCount = await _db.QueryFactory.FromQuery(query).DeleteAsync();
 
-        var rowCount = await _db.Execute(BunchSql.DeleteSql, @params);
         return rowCount > 0;
     }
 }

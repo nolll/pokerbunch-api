@@ -10,16 +10,16 @@ namespace Tests.Integration;
 public class SqliteDb : IDb
 {
     private readonly SqliteConnection _connection;
-    private readonly SqliteCompiler _compiler;
     public QueryFactory QueryFactory { get; }
+    public Compiler Compiler { get; }
     public DbEngine Engine => DbEngine.Sqlite;
 
     public SqliteDb(string connectionString)
     {
-        _compiler = new SqliteCompiler();
+        Compiler = new SqliteCompiler();
         _connection = new SqliteConnection(connectionString);
         _connection.Open(); // todo: don't reuse the same
-        QueryFactory = new QueryFactory(_connection, _compiler);
+        QueryFactory = new QueryFactory(_connection, Compiler);
     }
     
     public async Task<T?> Single<T>(string sql, object @params)
@@ -71,7 +71,7 @@ public class SqliteDb : IDb
 
     private SqlResult Compile(Query query)
     {
-        return _compiler.Compile(query);
+        return Compiler.Compile(query);
     }
 
     public void Dispose()

@@ -17,7 +17,7 @@ public class GetBunchListForUser : UseCase<GetBunchListForUser.Request, GetBunch
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var user = await _userRepository.GetByUserName(request.UserName);
-        var bunches = user != null ? await _bunchRepository.List(user.Id) : new List<Bunch>();
+        var bunches = await _bunchRepository.List(user.Id);
 
         return Success(new Result(bunches));
     }
