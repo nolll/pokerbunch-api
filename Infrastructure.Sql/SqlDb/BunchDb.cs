@@ -85,42 +85,44 @@ public class BunchDb
 
     public async Task<string> Add(Bunch bunch)
     {
-        var @params = new
+        var parameters = new Dictionary<string, object>
         {
-            slug = bunch.Slug,
-            displayName = bunch.DisplayName,
-            description = bunch.Description,
-            currencySymbol = bunch.Currency.Symbol,
-            currencyLayout = bunch.Currency.Layout,
-            timeZone = bunch.Timezone.Id,
-            cashgamesEnabled = bunch.CashgamesEnabled,
-            tournamentsEnabled = bunch.TournamentsEnabled,
-            videosEnabled = bunch.VideosEnabled,
-            houseRules = bunch.HouseRules
+            { Schema.Bunch.Name, bunch.Slug },
+            { Schema.Bunch.DisplayName, bunch.DisplayName },
+            { Schema.Bunch.Description, bunch.Description },
+            { Schema.Bunch.Currency, bunch.Currency.Symbol },
+            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
+            { Schema.Bunch.Timezone, bunch.Timezone.Id },
+            { Schema.Bunch.DefaultBuyin, 0 },
+            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
+            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
+            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
+            { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
-        return (await _db.Insert(BunchSql.AddQuery, @params)).ToString();
+        var result = await _db.QueryFactory.FromQuery(TableQuery).InsertGetIdAsync<int>(parameters);
+        return result.ToString();
     }
 
     public async Task Update(Bunch bunch)
     {
-        var @params = new
+        var parameters = new Dictionary<string, object>
         {
-            slug = bunch.Slug,
-            displayName = bunch.DisplayName,
-            description = bunch.Description,
-            houseRules = bunch.HouseRules,
-            currencySymbol = bunch.Currency.Symbol,
-            currencyLayout = bunch.Currency.Layout,
-            timeZone = bunch.Timezone.Id,
-            defaultBuyin = bunch.DefaultBuyin,
-            cashgamesEnabled = bunch.CashgamesEnabled,
-            tournamentsEnabled = bunch.TournamentsEnabled,
-            videosEnabled = bunch.VideosEnabled,
-            id = int.Parse(bunch.Id)
+            { Schema.Bunch.Name, bunch.Slug },
+            { Schema.Bunch.DisplayName, bunch.DisplayName },
+            { Schema.Bunch.Description, bunch.Description },
+            { Schema.Bunch.Currency, bunch.Currency.Symbol },
+            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
+            { Schema.Bunch.Timezone, bunch.Timezone.Id },
+            { Schema.Bunch.DefaultBuyin, bunch.DefaultBuyin },
+            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
+            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
+            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
+            { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
-        await _db.Execute(BunchSql.UpdateQuery, @params);
+        var query = TableQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
+        await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
     }
 
     public async Task<bool> DeleteBunch(string id)
