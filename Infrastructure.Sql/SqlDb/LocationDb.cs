@@ -18,12 +18,7 @@ public class LocationDb
 
     public async Task<Location> Get(string id)
     {
-        var @params = new
-        {
-            id = int.Parse(id)
-        };
-
-        var locationDto = await _db.Single<LocationDto>(LocationSql.GetByIdQuery2(int.Parse(id)));
+        var locationDto = await _db.Single<LocationDto>(LocationQueries.GetById(int.Parse(id)));
         var location = locationDto?.ToLocation();
 
         if (location is null)
@@ -37,19 +32,13 @@ public class LocationDb
         if (!ids.Any())
             return new List<Location>();
 
-        var param = new ListParam("@ids", ids.Select(int.Parse));
-        var locationDtos = await _db.List<LocationDto>(LocationSql.GetByIdsQuery, param);
+        var locationDtos = await _db.List<LocationDto>(LocationQueries.GetByIds(ids.Select(int.Parse)));
         return locationDtos.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)
     {
-        var @params = new
-        {
-            bunchId = int.Parse(bunchId)
-        };
-        
-        return (await _db.List<int>(LocationSql.FindByBunch, @params)).Select(o => o.ToString()).ToList();
+        return (await _db.List<int>(LocationQueries.FindByBunch(int.Parse(bunchId)))).Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Location location)

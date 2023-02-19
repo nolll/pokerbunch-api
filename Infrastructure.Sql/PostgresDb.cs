@@ -3,6 +3,7 @@ using Npgsql;
 using Dapper;
 using SqlKata;
 using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql;
 
@@ -11,7 +12,8 @@ public class PostgresDb : IDb
     private readonly string _connectionString;
     private readonly PostgresCompiler _compiler;
     public DbEngine Engine => DbEngine.Postgres;
-    
+    public QueryFactory QueryFactory => new(GetConnection(), _compiler);
+
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
@@ -62,13 +64,22 @@ public class PostgresDb : IDb
 
         return await connection.ExecuteAsync(sql, @params);
     }
-    
+
     public async Task<int> Insert(string sql, object? @params = null)
     {
         await using var connection = GetConnection();
         connection.Open();
 
         return await connection.ExecuteScalarAsync<int>(sql, @params);
+    }
+
+    public async Task<int> Insert(Query query)
+    {
+        await using var connection = GetConnection();
+        connection.Open();
+
+        var compiledQuery = _compiler.Compile(query);
+        return await connection.ExecuteScalarAsync<int>(compiledQuery.Sql, compiledQuery.NamedBindings);
     }
 
     private NpgsqlConnection GetConnection()
