@@ -4,6 +4,8 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -11,6 +13,22 @@ public class PlayerDb
 {
     private readonly IDb _db;
 
+    private static Query TableQuery => new(Schema.Player);
+
+    private static Query GetQuery => TableQuery
+        .Select(
+            Schema.Player.BunchId.FullName,
+            Schema.Player.Id.FullName,
+            Schema.Player.UserId.FullName,
+            Schema.Player.RoleId.FullName,
+            Schema.Player.Color.FullName,
+            Schema.User.UserName.FullName
+        )
+        .SelectRaw($"COALESCE({Schema.User.DisplayName.FullName}, {Schema.Player.PlayerName.FullName}) AS {Schema.Player.PlayerName}")
+        .LeftJoin(Schema.User, Schema.User.Id.FullName, Schema.Player.UserId.FullName);
+
+    private static Query FindQuery => TableQuery.Select(Schema.Player.Id);
+    
     public PlayerDb(IDb db)
     {
         _db = db;
@@ -22,7 +40,7 @@ public class PlayerDb
         {
             bunchId = int.Parse(bunchId)
         };
-        
+
         return (await _db.List<int>(PlayerSql.FindByBunchQuery, @params)).Select(o => o.ToString()).ToList();
     }
 
@@ -41,19 +59,17 @@ public class PlayerDb
     {
         if(!ids.Any())
             return new List<Player>();
-        var param = new ListParam("@ids", ids.Select(int.Parse));
-        var playerDtos = await _db.List<PlayerDto>(PlayerSql.GetByIdsQuery, param);
+        
+        var query = GetQuery.WhereIn(Schema.Player.Id, ids.Select(int.Parse));
+        var playerDtos = await _db.QueryFactory.FromQuery(query).GetAsync<PlayerDto>();
+
         return playerDtos.Select(PlayerMapper.ToPlayer).ToList();
     }
 
     public async Task<Player> Get(string id)
     {
-        var @params = new
-        {
-            id = int.Parse(id)
-        };
-
-        var playerDto = await _db.Single<PlayerDto>(PlayerSql.GetByIdQuery, @params);
+        var query = GetQuery.Where(Schema.Player.Id, int.Parse(id));
+        var playerDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<PlayerDto?>();
         var player = playerDto?.ToPlayer();
         
         if (player is null)

@@ -2,21 +2,13 @@ namespace Infrastructure.Sql.Sql;
 
 public static class PlayerSql
 {
-    private const string GetQuery = @"
-        SELECT p.bunch_id, p.player_id, p.user_id, p.role_id, COALESCE(u.display_name, p.player_name) AS player_name, p.color, u.user_name 
-        FROM pb_player p 
-        LEFT JOIN pb_user u ON u.user_id = p.user_id ";
-
     private const string FindQuery = @"
         SELECT p.player_id
         FROM pb_player p ";
 
     public static string FindByBunchQuery => $"{FindQuery} WHERE p.bunch_id = @bunchId";
     public static string FindByUserQuery => $"{FindQuery} WHERE p.bunch_id = @bunchId AND p.user_id = @userId";
-
-    public static string GetByIdQuery => $"{GetQuery} WHERE p.player_id = @id";
-    public static string GetByIdsQuery => $"{GetQuery} WHERE p.player_id IN (@ids)";
-
+    
     public const string AddQuery = @"
         INSERT INTO pb_player (bunch_id, role_id, approved, player_name, color)
         VALUES (@bunchId, @role, @approved, @playerName, @color) RETURNING player_id";
