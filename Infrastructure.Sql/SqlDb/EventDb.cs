@@ -4,12 +4,33 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class EventDb
 {
     private readonly IDb _db;
+
+    private static Query TableQuery => new(Schema.Event);
+
+    private static Query CheckpointJoinQuery => new Query(Schema.CashgameCheckpoint)
+        .Select(Schema.CashgameCheckpoint.CheckpointId, Schema.CashgameCheckpoint.CashgameId)
+        .OrderByDesc(Schema.CashgameCheckpoint.Timestamp)
+        .Limit(1);
+
+    private static Query GetQuery => TableQuery
+        .Select(
+            Schema.Event.Id.FullName,
+            Schema.Event.BunchId.FullName,
+            Schema.Event.Name.FullName,
+            Schema.Cashgame.LocationId.FullName,
+            Schema.Cashgame.Timestamp.FullName)
+        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.EventId.FullName, Schema.Event.Id.FullName)
+        .LeftJoin(Schema.Cashgame, Schema.EventCashgame.CashgameId.FullName, Schema.Cashgame.Id.FullName)
+        .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id}", Schema.Cashgame.Id.FullName))
+        .OrderBy(Schema.Event.Id.FullName, Schema.Cashgame.Date.FullName);
 
     public EventDb(IDb db)
     {
@@ -18,12 +39,9 @@ public class EventDb
 
     public async Task<Event> Get(string id)
     {
-        var @params = new
-        {
-            eventId = int.Parse(id)
-        };
-        
-        var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdQuery, @params);
+        var query = GetQuery.Where(Schema.Event.Id.FullName, int.Parse(id));
+        var eventDayDtos = await _db.QueryFactory.FromQuery(query).GetAsync<EventDayDto>();
+
         var events = eventDayDtos.ToEvents();
         var @event = events.FirstOrDefault();
 
@@ -35,8 +53,9 @@ public class EventDb
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
-        var param = new ListParam("@ids", ids.Select(int.Parse));
-        var eventDayDtos = await _db.List<EventDayDto>(EventSql.GetByIdsQuery, param);
+        var query = GetQuery.WhereIn(Schema.Event.Id.FullName, ids.Select(int.Parse));
+        var eventDayDtos = await _db.QueryFactory.FromQuery(query).GetAsync<EventDayDto>();
+
         return eventDayDtos.ToEvents();
     }
 

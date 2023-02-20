@@ -22,8 +22,7 @@ public class PlayerDb
             Schema.Player.UserId.FullName,
             Schema.Player.RoleId.FullName,
             Schema.Player.Color.FullName,
-            Schema.User.UserName.FullName
-        )
+            Schema.User.UserName.FullName)
         .SelectRaw($"COALESCE({Schema.User.DisplayName.FullName}, {Schema.Player.PlayerName.FullName}) AS {Schema.Player.PlayerName}")
         .LeftJoin(Schema.User, Schema.User.Id.FullName, Schema.Player.UserId.FullName);
 
