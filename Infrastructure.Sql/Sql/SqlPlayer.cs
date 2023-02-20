@@ -6,6 +6,7 @@ public class SqlPlayer : SqlTable
     public SqlColumn Id { get; }
     public SqlColumn UserId { get; }
     public SqlColumn RoleId { get; }
+    public SqlColumn Approved { get; }
     public SqlColumn PlayerName { get; }
     public SqlColumn Color { get; }
     public SqlColumn UserName { get; }
@@ -16,6 +17,7 @@ public class SqlPlayer : SqlTable
         Id = new SqlColumn(this, "player_id");
         UserId = new SqlColumn(this, "user_id");
         RoleId = new SqlColumn(this, "role_id");
+        Approved = new SqlColumn(this, "approved");
         PlayerName = new SqlColumn(this, "player_name");
         Color = new SqlColumn(this, "color");
         UserName = new SqlColumn(this, "user_name");
