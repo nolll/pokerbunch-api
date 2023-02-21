@@ -95,7 +95,7 @@ public class EventDb
             { Schema.EventCashgame.CashgameId.AsParam(), int.Parse(cashgameId) }
         };
 
-        await _db.QueryFactory.FromQuery(EventCashgameQuery).InsertGetIdAsync<int>(parameters);
+        await _db.QueryFactory.FromQuery(EventCashgameQuery).InsertAsync(parameters);
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)

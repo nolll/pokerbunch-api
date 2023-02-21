@@ -35,7 +35,7 @@ public class UserDb
 
     public async Task<User> Get(string id)
     {
-        var query = GetQuery.Where(Schema.User.Id, id);
+        var query = GetQuery.Where(Schema.User.Id, int.Parse(id));
         var userDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<UserDto>();
         var user = userDto?.ToUser();
 
@@ -97,7 +97,7 @@ public class UserDb
             { Schema.User.Salt.AsParam(), user.Salt }
         };
 
-        var query = UserQuery.Where(Schema.User.Id, user.Id);
+        var query = UserQuery.Where(Schema.User.Id, int.Parse(user.Id));
         await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
     }
 

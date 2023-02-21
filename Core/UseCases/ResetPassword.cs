@@ -25,6 +25,7 @@ public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
+        // todo: Find a way to handle these cases. Null or something else.
         var user = await _userRepository.GetByUserEmail(request.Email);
         if (user == null)
             return Error(new UserNotFoundError(request.Email));

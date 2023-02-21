@@ -15,6 +15,7 @@ public class CashgameDb
     private readonly IDb _db;
 
     private static Query CashgameQuery => new(Schema.Cashgame);
+    private static Query EventCashgameQuery => new(Schema.EventCashgame);
 
     private static Query GetQuery => CashgameQuery
         .Select(
@@ -25,6 +26,11 @@ public class CashgameDb
             Schema.Cashgame.Status)
         .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id);
 
+    private static Query FindQuery => CashgameQuery.Select(Schema.Cashgame.Id);
+    private static Query FindByBunchAndStatusQuery(string bunchId, GameStatus status) => FindQuery
+        .Where(Schema.Cashgame.BunchId, int.Parse(bunchId))
+        .Where(Schema.Cashgame.Status, (int)status);
+
     public CashgameDb(IDb db)
     {
         _db = db;
@@ -32,8 +38,10 @@ public class CashgameDb
 
     public async Task<Cashgame> Get(string cashgameId)
     {
-        var query = GetQuery.Where(Schema.Cashgame.Id, cashgameId)
+        var query = GetQuery
+            .Where(Schema.Cashgame.Id, int.Parse(cashgameId))
             .OrderBy(Schema.Cashgame.Id);
+        
         var cashgameDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<CashgameDto>();
 
         if (cashgameDto is null)
@@ -68,36 +76,30 @@ public class CashgameDb
 
     private async Task<IList<string>> FindByBunchAndStatus(string bunchId, GameStatus status)
     {
-        var @params = new
-        {
-            bunchId = int.Parse(bunchId),
-            status = (int)status,
-        };
+        var query = FindByBunchAndStatusQuery(bunchId, status);
 
-        return (await _db.List<int>(CashgameSql.SearchByBunchAndStatusQuery, @params)).Select(o => o.ToString()).ToList();
+        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindFinished(string bunchId, int year)
     {
-        var @params = new
-        {
-            bunchId = int.Parse(bunchId),
-            status = (int)GameStatus.Finished,
-            year
-        };
-        
-        return (await _db.List<int>(CashgameSql.SearchByBunchAndStatusAndYearQuery(_db.Engine), @params))
-            .Select(o => o.ToString()).ToList();
+        var query = FindByBunchAndStatusQuery(bunchId, GameStatus.Finished)
+            .WhereDatePart("year", Schema.Cashgame.Date, year);
+
+        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByEvent(string eventId)
     {
-        var @params = new
-        {
-            eventId = int.Parse(eventId)
-        };
-        
-        return (await _db.List<int>(CashgameSql.SearchByEvent, @params)).Select(o => o.ToString()).ToList();
+        var subQuery = EventCashgameQuery
+            .Select(Schema.EventCashgame.CashgameId)
+            .Where(Schema.EventCashgame.EventId, int.Parse(eventId));
+
+        var query = FindQuery.WhereIn(Schema.Cashgame.Id, subQuery);
+        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCheckpoint(string checkpointId)

@@ -2,25 +2,6 @@ namespace Infrastructure.Sql.Sql;
 
 public static class CashgameSql
 {
-    private const string GetQuery = @"
-        SELECT g.cashgame_id, g.bunch_id, g.location_id, ecg.event_id, g.status
-        FROM pb_cashgame g
-        LEFT JOIN pb_event_cashgame ecg ON ecg.cashgame_id = g.cashgame_id";
-
-    public static string GetByIdQuery => $"{GetQuery} WHERE g.cashgame_id = @cashgameId ORDER BY g.cashgame_id";
-    public static string GetByIdsQuery => $"{GetQuery} WHERE g.cashgame_id IN (@ids) ORDER BY g.cashgame_id";
-
-    private const string SearchQuery = @"
-        SELECT g.cashgame_id
-        FROM pb_cashgame g";
-
-    public static string SearchByBunchAndStatusQuery => $"{SearchQuery} WHERE g.bunch_id = @bunchId AND g.status = @status";
-    public static string SearchByBunchAndStatusAndYearQuery(DbEngine engine) => engine == DbEngine.Postgres
-        ? $"{SearchByBunchAndStatusQuery} AND DATE_PART('year', g.date) = @year"
-        : $"{SearchByBunchAndStatusQuery} AND strftime('%Y', g.date) = cast(@year as text)";
-
-    public static string SearchByEvent => $"{SearchQuery} WHERE g.cashgame_id IN (SELECT ecg.cashgame_id FROM pb_event_cashgame ecg WHERE ecg.event_id = @eventId)";
-
     public const string SearchByCheckpointSql = @"
         SELECT cp.cashgame_id
         FROM pb_cashgame_checkpoint cp
