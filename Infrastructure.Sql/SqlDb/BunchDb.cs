@@ -13,9 +13,9 @@ public class BunchDb
 {
     private readonly IDb _db;
 
-    private static Query TableQuery => new(Schema.Bunch);
+    private static Query BunchQuery => new(Schema.Bunch);
 
-    private static Query GetQuery => TableQuery
+    private static Query GetQuery => BunchQuery
         .Select(
             Schema.Bunch.Id,
             Schema.Bunch.Name,
@@ -30,7 +30,7 @@ public class BunchDb
             Schema.Bunch.VideosEnabled,
             Schema.Bunch.HouseRules);
 
-    private static Query FindQuery => TableQuery.Select(Schema.Bunch.Id.FullName);
+    private static Query FindQuery => BunchQuery.Select(Schema.Bunch.Id.FullName);
 
     public BunchDb(IDb db)
     {
@@ -98,7 +98,7 @@ public class BunchDb
             { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
-        var result = await _db.QueryFactory.FromQuery(TableQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.QueryFactory.FromQuery(BunchQuery).InsertGetIdAsync<int>(parameters);
         return result.ToString();
     }
 
@@ -119,13 +119,13 @@ public class BunchDb
             { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
-        var query = TableQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
+        var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
         await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
     }
 
     public async Task<bool> DeleteBunch(string id)
     {
-        var query = TableQuery.Where(Schema.Bunch.Id, int.Parse(id));
+        var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(id));
         var rowCount = await _db.QueryFactory.FromQuery(query).DeleteAsync();
 
         return rowCount > 0;

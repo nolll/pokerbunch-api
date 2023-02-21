@@ -13,9 +13,9 @@ public class PlayerDb
 {
     private readonly IDb _db;
 
-    private static Query TableQuery => new(Schema.Player);
+    private static Query PlayerQuery => new(Schema.Player);
 
-    private static Query GetQuery => TableQuery
+    private static Query GetQuery => PlayerQuery
         .Select(
             Schema.Player.BunchId.FullName,
             Schema.Player.Id.FullName,
@@ -26,7 +26,7 @@ public class PlayerDb
         .SelectRaw($"COALESCE({Schema.User.DisplayName.FullName}, {Schema.Player.PlayerName.FullName}) AS {Schema.Player.PlayerName}")
         .LeftJoin(Schema.User, Schema.User.Id.FullName, Schema.Player.UserId.FullName);
 
-    private static Query FindQuery => TableQuery.Select(Schema.Player.Id);
+    private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
 
     public PlayerDb(IDb db)
     {
@@ -90,7 +90,7 @@ public class PlayerDb
                 { Schema.Player.Color, player.Color }
             };
 
-        var result = await _db.QueryFactory.FromQuery(TableQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.QueryFactory.FromQuery(PlayerQuery).InsertGetIdAsync<int>(parameters);
         return result.ToString();
     }
 
@@ -104,14 +104,14 @@ public class PlayerDb
             { Schema.Player.Approved, true }
         };
 
-        var query = TableQuery.Where(Schema.Player.Id, int.Parse(player.Id));
+        var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(player.Id));
         var rowCount = await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
         return rowCount > 0;
     }
 
     public async Task Delete(string playerId)
     {
-        var query = TableQuery.Where(Schema.Player.Id, int.Parse(playerId));
+        var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(playerId));
         await _db.QueryFactory.FromQuery(query).DeleteAsync();
     }
 }

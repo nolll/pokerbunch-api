@@ -13,9 +13,9 @@ public class UserDb
 {
     private readonly IDb _db;
 
-    private static Query TableQuery => new(Schema.User);
+    private static Query UserQuery => new(Schema.User);
 
-    private static Query GetQuery => TableQuery
+    private static Query GetQuery => UserQuery
         .Select(
             Schema.User.Id,
             Schema.User.UserName,
@@ -26,7 +26,7 @@ public class UserDb
             Schema.User.Salt,
             Schema.User.RoleId);
 
-    private static Query FindQuery => TableQuery.Select(Schema.User.Id);
+    private static Query FindQuery => UserQuery.Select(Schema.User.Id);
 
     public UserDb(IDb db)
     {
@@ -97,7 +97,7 @@ public class UserDb
             { Schema.User.Salt, user.Salt }
         };
 
-        var query = TableQuery.Where(Schema.User.Id, user.Id);
+        var query = UserQuery.Where(Schema.User.Id, user.Id);
         await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
     }
 
@@ -113,7 +113,7 @@ public class UserDb
             { Schema.User.Salt, user.Salt }
         };
 
-        var result = await _db.QueryFactory.FromQuery(TableQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.QueryFactory.FromQuery(UserQuery).InsertGetIdAsync<int>(parameters);
         return result.ToString();
     }
 
@@ -126,7 +126,7 @@ public class UserDb
 
     public async Task<bool> DeleteUser(string userId)
     {
-        var query = TableQuery.Where(Schema.User.Id, int.Parse(userId));
+        var query = UserQuery.Where(Schema.User.Id, int.Parse(userId));
         var rowCount = await _db.QueryFactory.FromQuery(query).DeleteAsync();
         return rowCount > 0;
     }

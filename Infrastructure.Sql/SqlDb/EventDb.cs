@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Core;
 using Core.Entities;
@@ -13,14 +14,15 @@ public class EventDb
 {
     private readonly IDb _db;
 
-    private static Query TableQuery => new(Schema.Event);
+    private static Query EventQuery => new(Schema.Event);
+    private static Query EventCashgameQuery => new(Schema.EventCashgame);
 
     private static Query CheckpointJoinQuery => new Query(Schema.CashgameCheckpoint)
         .Select(Schema.CashgameCheckpoint.CheckpointId, Schema.CashgameCheckpoint.CashgameId)
         .OrderByDesc(Schema.CashgameCheckpoint.Timestamp)
         .Limit(1);
 
-    private static Query GetQuery => TableQuery
+    private static Query GetQuery => EventQuery
         .Select(
             Schema.Event.Id.FullName,
             Schema.Event.BunchId.FullName,
@@ -61,54 +63,47 @@ public class EventDb
 
     public async Task<IList<string>> FindByBunchId(string bunchId)
     {
-        var @params = new
-        {
-            id = int.Parse(bunchId)
-        };
-        
-        return (await _db.List<int>(EventSql.SearchByIdQuery, @params)).Select(o => o.ToString()).ToList();
+        var query = EventQuery.Select(Schema.Event.Id).Where(Schema.Event.BunchId, int.Parse(bunchId));
+        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
-        var @params = new
-        {
-            id = int.Parse(cashgameId)
-        };
-
-        return (await _db.List<int>(EventSql.SearchByCashgameQuery, @params)).Select(o => o.ToString()).ToList();
+        var query = EventCashgameQuery.Select(Schema.EventCashgame.EventId).Where(Schema.EventCashgame.EventId, int.Parse(cashgameId));
+        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<string> Add(Event e)
     {
-        var @params = new
+        var parameters = new Dictionary<string, object>
         {
-            name = e.Name,
-            bunchId = int.Parse(e.BunchId)
+            { Schema.Event.Name, e.Name },
+            { Schema.Event.BunchId, int.Parse(e.BunchId) }
         };
 
-        return (await _db.Insert(EventSql.AddQuery, @params)).ToString();
+        var result = await _db.QueryFactory.FromQuery(EventQuery).InsertGetIdAsync<int>(parameters);
+        return result.ToString();
     }
 
     public async Task AddCashgame(string eventId, string cashgameId)
     {
-        var @params = new
+        var parameters = new Dictionary<string, object>
         {
-            eventId = int.Parse(eventId),
-            cashgameId = int.Parse(cashgameId)
+            { Schema.EventCashgame.EventId, int.Parse(eventId) },
+            { Schema.EventCashgame.CashgameId, int.Parse(cashgameId) }
         };
 
-        await _db.Insert(EventSql.AddCashgameQuery, @params);
+        await _db.QueryFactory.FromQuery(EventCashgameQuery).InsertGetIdAsync<int>(parameters);
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)
     {
-        var @params = new
-        {
-            eventId = int.Parse(eventId),
-            cashgameId = int.Parse(cashgameId)
-        };
+        var query = EventCashgameQuery
+            .Where(Schema.EventCashgame.EventId, int.Parse(eventId))
+            .Where(Schema.EventCashgame.CashgameId, int.Parse(cashgameId));
 
-        await _db.Execute(EventSql.RemoveCashgameQuery, @params);
+        await _db.QueryFactory.FromQuery(query).DeleteAsync();
     }
 }

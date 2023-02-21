@@ -13,15 +13,15 @@ public class LocationDb
 {
     private readonly IDb _db;
 
-    private static Query TableQuery => new(Schema.Location);
+    private static Query LocationQuery => new(Schema.Location);
 
-    private static Query GetQuery => TableQuery
+    private static Query GetQuery => LocationQuery
         .Select(
             Schema.Location.Id,
             Schema.Location.Name,
             Schema.Location.BunchId);
 
-    private static Query FindQuery => TableQuery
+    private static Query FindQuery => LocationQuery
         .Select(Schema.Location.Id);
 
     public LocationDb(IDb db)
@@ -65,7 +65,7 @@ public class LocationDb
             { Schema.Location.BunchId, int.Parse(location.BunchId) }
         };
 
-        var result = await _db.QueryFactory.FromQuery(TableQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.QueryFactory.FromQuery(LocationQuery).InsertGetIdAsync<int>(parameters);
         return result.ToString();
     }
 }
