@@ -30,7 +30,7 @@ public class BunchDb
             Schema.Bunch.VideosEnabled,
             Schema.Bunch.HouseRules);
 
-    private static Query FindQuery => TableQuery.Select($"{Schema.Bunch.Id.FullName}");
+    private static Query FindQuery => TableQuery.Select(Schema.Bunch.Id.FullName);
 
     public BunchDb(IDb db)
     {
@@ -50,8 +50,6 @@ public class BunchDb
 
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
-        var param = new ListParam("@ids", ids.Select(int.Parse));
-
         var query = GetQuery.WhereIn(Schema.Bunch.Id, ids.Select(int.Parse));
         var dtos = await _db.QueryFactory.FromQuery(query).GetAsync<BunchDto>();
         return dtos.Select(BunchMapper.ToBunch).ToList();
