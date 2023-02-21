@@ -31,7 +31,7 @@ public class EventDb
             Schema.Cashgame.Timestamp.FullName)
         .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.EventId.FullName, Schema.Event.Id.FullName)
         .LeftJoin(Schema.Cashgame, Schema.EventCashgame.CashgameId.FullName, Schema.Cashgame.Id.FullName)
-        .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id}", Schema.Cashgame.Id.FullName))
+        .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id.FullName))
         .OrderBy(Schema.Event.Id.FullName, Schema.Cashgame.Date.FullName);
 
     public EventDb(IDb db)
@@ -79,8 +79,8 @@ public class EventDb
     {
         var parameters = new Dictionary<string, object>
         {
-            { Schema.Event.Name, e.Name },
-            { Schema.Event.BunchId, int.Parse(e.BunchId) }
+            { Schema.Event.Name.AsParam(), e.Name },
+            { Schema.Event.BunchId.AsParam(), int.Parse(e.BunchId) }
         };
 
         var result = await _db.QueryFactory.FromQuery(EventQuery).InsertGetIdAsync<int>(parameters);
@@ -91,8 +91,8 @@ public class EventDb
     {
         var parameters = new Dictionary<string, object>
         {
-            { Schema.EventCashgame.EventId, int.Parse(eventId) },
-            { Schema.EventCashgame.CashgameId, int.Parse(cashgameId) }
+            { Schema.EventCashgame.EventId.AsParam(), int.Parse(eventId) },
+            { Schema.EventCashgame.CashgameId.AsParam(), int.Parse(cashgameId) }
         };
 
         await _db.QueryFactory.FromQuery(EventCashgameQuery).InsertGetIdAsync<int>(parameters);

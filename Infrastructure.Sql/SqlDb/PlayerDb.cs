@@ -23,7 +23,7 @@ public class PlayerDb
             Schema.Player.RoleId.FullName,
             Schema.Player.Color.FullName,
             Schema.User.UserName.FullName)
-        .SelectRaw($"COALESCE({Schema.User.DisplayName.FullName}, {Schema.Player.PlayerName.FullName}) AS {Schema.Player.PlayerName}")
+        .SelectRaw($"COALESCE({Schema.User.DisplayName.FullName}, {Schema.Player.PlayerName.FullName}) AS {Schema.Player.PlayerName.AsParam()}")
         .LeftJoin(Schema.User, Schema.User.Id.FullName, Schema.Player.UserId.FullName);
 
     private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
@@ -75,19 +75,19 @@ public class PlayerDb
         var parameters = player.IsUser
             ? new Dictionary<string, object?>
             {
-                { Schema.Player.BunchId, int.Parse(player.BunchId) },
-                { Schema.Player.UserId, int.Parse(player.UserId!) },
-                { Schema.Player.RoleId, (int)player.Role },
-                { Schema.Player.Approved, true },
-                { Schema.Player.Color, player.Color }
+                { Schema.Player.BunchId.AsParam(), int.Parse(player.BunchId) },
+                { Schema.Player.UserId.AsParam(), int.Parse(player.UserId!) },
+                { Schema.Player.RoleId.AsParam(), (int)player.Role },
+                { Schema.Player.Approved.AsParam(), true },
+                { Schema.Player.Color.AsParam(), player.Color }
             }
             : new Dictionary<string, object?>
             {
-                { Schema.Player.BunchId, int.Parse(player.BunchId) },
-                { Schema.Player.RoleId, (int)Role.Player },
-                { Schema.Player.Approved, true },
-                { Schema.Player.PlayerName, player.DisplayName },
-                { Schema.Player.Color, player.Color }
+                { Schema.Player.BunchId.AsParam(), int.Parse(player.BunchId) },
+                { Schema.Player.RoleId.AsParam(), (int)Role.Player },
+                { Schema.Player.Approved.AsParam(), true },
+                { Schema.Player.PlayerName.AsParam(), player.DisplayName },
+                { Schema.Player.Color.AsParam(), player.Color }
             };
 
         var result = await _db.QueryFactory.FromQuery(PlayerQuery).InsertGetIdAsync<int>(parameters);
@@ -98,10 +98,10 @@ public class PlayerDb
     {
         var parameters = new Dictionary<string, object>
         {
-            { Schema.Player.BunchId, int.Parse(bunch.Id) },
-            { Schema.Player.UserId, int.Parse(userId) },
-            { Schema.Player.RoleId, (int)player.Role },
-            { Schema.Player.Approved, true }
+            { Schema.Player.BunchId.AsParam(), int.Parse(bunch.Id) },
+            { Schema.Player.UserId.AsParam(), int.Parse(userId) },
+            { Schema.Player.RoleId.AsParam(), (int)player.Role },
+            { Schema.Player.Approved.AsParam(), true }
         };
 
         var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(player.Id));

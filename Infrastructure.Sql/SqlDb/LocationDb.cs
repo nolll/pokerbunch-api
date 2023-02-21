@@ -61,8 +61,8 @@ public class LocationDb
     {
         var parameters = new Dictionary<string, object>
         {
-            { Schema.Location.Name, location.Name },
-            { Schema.Location.BunchId, int.Parse(location.BunchId) }
+            { Schema.Location.Name.AsParam(), location.Name },
+            { Schema.Location.BunchId.AsParam(), int.Parse(location.BunchId) }
         };
 
         var result = await _db.QueryFactory.FromQuery(LocationQuery).InsertGetIdAsync<int>(parameters);

@@ -5,12 +5,25 @@ using Core.Entities.Checkpoints;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class CashgameDb
 {
     private readonly IDb _db;
+
+    private static Query CashgameQuery => new(Schema.Cashgame);
+
+    private static Query GetQuery => CashgameQuery
+        .Select(
+            Schema.Cashgame.Id.FullName,
+            Schema.Cashgame.BunchId.FullName,
+            Schema.Cashgame.LocationId.FullName,
+            Schema.EventCashgame.EventId.FullName,
+            Schema.Cashgame.Status.FullName)
+        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId.FullName, Schema.Cashgame.Id.FullName);
 
     public CashgameDb(IDb db)
     {
@@ -19,17 +32,14 @@ public class CashgameDb
 
     public async Task<Cashgame> Get(string cashgameId)
     {
-        var @params = new
-        {
-            cashgameId = int.Parse(cashgameId)
-        };
-        
-        var cashgameDto = await _db.Single<CashgameDto>(CashgameSql.GetByIdQuery, @params);
-        var checkpointDtos = await GetCheckpoints(cashgameId);
+        var query = GetQuery.Where(Schema.Cashgame.Id.FullName, cashgameId)
+            .OrderBy(Schema.Cashgame.Id.FullName);
+        var cashgameDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<CashgameDto>();
 
         if (cashgameDto is null)
             throw new PokerBunchException($"Cashgame with id {cashgameId} was not found");
 
+        var checkpointDtos = await GetCheckpoints(cashgameId);
         return cashgameDto.ToCashgame(checkpointDtos);
     }
         
@@ -37,8 +47,11 @@ public class CashgameDb
     {
         if(ids.Count == 0)
             return new List<Cashgame>();
-        var param = new ListParam("@ids", ids.Select(int.Parse));
-        var cashgameDtos = await _db.List<CashgameDto>(CashgameSql.GetByIdsQuery, param);
+
+        var query = GetQuery.WhereIn(Schema.Cashgame.Id.FullName, ids.Select(int.Parse))
+            .OrderBy(Schema.Cashgame.Id.FullName);
+
+        var cashgameDtos = await _db.QueryFactory.FromQuery(query).GetAsync<CashgameDto>();
         var checkpointDtos = await GetCheckpoints(ids);
         return cashgameDtos.ToCashgameList(checkpointDtos);
     }

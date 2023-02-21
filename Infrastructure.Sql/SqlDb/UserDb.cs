@@ -90,11 +90,11 @@ public class UserDb
     {
         var parameters = new Dictionary<string, object>
         {
-            { Schema.User.DisplayName, user.DisplayName },
-            { Schema.User.RealName, user.RealName },
-            { Schema.User.Email, user.Email },
-            { Schema.User.Password, user.EncryptedPassword },
-            { Schema.User.Salt, user.Salt }
+            { Schema.User.DisplayName.AsParam(), user.DisplayName },
+            { Schema.User.RealName.AsParam(), user.RealName },
+            { Schema.User.Email.AsParam(), user.Email },
+            { Schema.User.Password.AsParam(), user.EncryptedPassword },
+            { Schema.User.Salt.AsParam(), user.Salt }
         };
 
         var query = UserQuery.Where(Schema.User.Id, user.Id);
@@ -105,12 +105,12 @@ public class UserDb
     {
         var parameters = new Dictionary<string, object>
         {
-            { Schema.User.UserName, user.UserName },
-            { Schema.User.DisplayName, user.DisplayName },
-            { Schema.User.RoleId, (int)Role.Player },
-            { Schema.User.Email, user.Email },
-            { Schema.User.Password, user.EncryptedPassword },
-            { Schema.User.Salt, user.Salt }
+            { Schema.User.UserName.AsParam(), user.UserName },
+            { Schema.User.DisplayName.AsParam(), user.DisplayName },
+            { Schema.User.RoleId.AsParam(), (int)Role.Player },
+            { Schema.User.Email.AsParam(), user.Email },
+            { Schema.User.Password.AsParam(), user.EncryptedPassword },
+            { Schema.User.Salt.AsParam(), user.Salt }
         };
 
         var result = await _db.QueryFactory.FromQuery(UserQuery).InsertGetIdAsync<int>(parameters);

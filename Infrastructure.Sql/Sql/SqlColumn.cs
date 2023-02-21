@@ -2,19 +2,20 @@ namespace Infrastructure.Sql.Sql;
 
 public class SqlColumn
 {
-    private readonly SqlTable _table;
-    public string ColumnName { get; }
-    public string FullName => $"{_table}.{ColumnName}";
+    private readonly string _table;
+    private readonly string _columnName;
+    public string FullName => $"{_table}.{_columnName}";
+    public string AsParam() => _columnName;
 
     public SqlColumn(SqlTable table, string columnName)
     {
         _table = table;
-        ColumnName = columnName;
+        _columnName = columnName;
     }
 
     public override string ToString()
     {
-        return ColumnName;
+        return $"{_table}.{_columnName}";
     }
 
     public static implicit operator string(SqlColumn column)
