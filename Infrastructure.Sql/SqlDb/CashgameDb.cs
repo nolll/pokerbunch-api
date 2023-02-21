@@ -18,12 +18,12 @@ public class CashgameDb
 
     private static Query GetQuery => CashgameQuery
         .Select(
-            Schema.Cashgame.Id.FullName,
-            Schema.Cashgame.BunchId.FullName,
-            Schema.Cashgame.LocationId.FullName,
-            Schema.EventCashgame.EventId.FullName,
-            Schema.Cashgame.Status.FullName)
-        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId.FullName, Schema.Cashgame.Id.FullName);
+            Schema.Cashgame.Id,
+            Schema.Cashgame.BunchId,
+            Schema.Cashgame.LocationId,
+            Schema.EventCashgame.EventId,
+            Schema.Cashgame.Status)
+        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id);
 
     public CashgameDb(IDb db)
     {
@@ -32,8 +32,8 @@ public class CashgameDb
 
     public async Task<Cashgame> Get(string cashgameId)
     {
-        var query = GetQuery.Where(Schema.Cashgame.Id.FullName, cashgameId)
-            .OrderBy(Schema.Cashgame.Id.FullName);
+        var query = GetQuery.Where(Schema.Cashgame.Id, cashgameId)
+            .OrderBy(Schema.Cashgame.Id);
         var cashgameDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<CashgameDto>();
 
         if (cashgameDto is null)
@@ -48,8 +48,8 @@ public class CashgameDb
         if(ids.Count == 0)
             return new List<Cashgame>();
 
-        var query = GetQuery.WhereIn(Schema.Cashgame.Id.FullName, ids.Select(int.Parse))
-            .OrderBy(Schema.Cashgame.Id.FullName);
+        var query = GetQuery.WhereIn(Schema.Cashgame.Id, ids.Select(int.Parse))
+            .OrderBy(Schema.Cashgame.Id);
 
         var cashgameDtos = await _db.QueryFactory.FromQuery(query).GetAsync<CashgameDto>();
         var checkpointDtos = await GetCheckpoints(ids);

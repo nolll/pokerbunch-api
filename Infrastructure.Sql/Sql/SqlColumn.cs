@@ -4,7 +4,6 @@ public class SqlColumn
 {
     private readonly string _table;
     private readonly string _columnName;
-    public string FullName => $"{_table}.{_columnName}";
     public string AsParam() => _columnName;
 
     public SqlColumn(SqlTable table, string columnName)

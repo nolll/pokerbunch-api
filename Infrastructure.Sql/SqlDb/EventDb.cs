@@ -24,15 +24,15 @@ public class EventDb
 
     private static Query GetQuery => EventQuery
         .Select(
-            Schema.Event.Id.FullName,
-            Schema.Event.BunchId.FullName,
-            Schema.Event.Name.FullName,
-            Schema.Cashgame.LocationId.FullName,
-            Schema.Cashgame.Timestamp.FullName)
-        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.EventId.FullName, Schema.Event.Id.FullName)
-        .LeftJoin(Schema.Cashgame, Schema.EventCashgame.CashgameId.FullName, Schema.Cashgame.Id.FullName)
-        .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id.FullName))
-        .OrderBy(Schema.Event.Id.FullName, Schema.Cashgame.Date.FullName);
+            Schema.Event.Id,
+            Schema.Event.BunchId,
+            Schema.Event.Name,
+            Schema.Cashgame.LocationId,
+            Schema.Cashgame.Timestamp)
+        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.EventId, Schema.Event.Id)
+        .LeftJoin(Schema.Cashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id)
+        .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id))
+        .OrderBy(Schema.Event.Id, Schema.Cashgame.Date);
 
     public EventDb(IDb db)
     {
@@ -41,7 +41,7 @@ public class EventDb
 
     public async Task<Event> Get(string id)
     {
-        var query = GetQuery.Where(Schema.Event.Id.FullName, int.Parse(id));
+        var query = GetQuery.Where(Schema.Event.Id, int.Parse(id));
         var eventDayDtos = await _db.QueryFactory.FromQuery(query).GetAsync<EventDayDto>();
 
         var events = eventDayDtos.ToEvents();
@@ -55,7 +55,7 @@ public class EventDb
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
-        var query = GetQuery.WhereIn(Schema.Event.Id.FullName, ids.Select(int.Parse));
+        var query = GetQuery.WhereIn(Schema.Event.Id, ids.Select(int.Parse));
         var eventDayDtos = await _db.QueryFactory.FromQuery(query).GetAsync<EventDayDto>();
 
         return eventDayDtos.ToEvents();

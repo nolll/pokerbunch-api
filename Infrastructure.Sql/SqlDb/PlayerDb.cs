@@ -17,14 +17,14 @@ public class PlayerDb
 
     private static Query GetQuery => PlayerQuery
         .Select(
-            Schema.Player.BunchId.FullName,
-            Schema.Player.Id.FullName,
-            Schema.Player.UserId.FullName,
-            Schema.Player.RoleId.FullName,
-            Schema.Player.Color.FullName,
-            Schema.User.UserName.FullName)
-        .SelectRaw($"COALESCE({Schema.User.DisplayName.FullName}, {Schema.Player.PlayerName.FullName}) AS {Schema.Player.PlayerName.AsParam()}")
-        .LeftJoin(Schema.User, Schema.User.Id.FullName, Schema.Player.UserId.FullName);
+            Schema.Player.BunchId,
+            Schema.Player.Id,
+            Schema.Player.UserId,
+            Schema.Player.RoleId,
+            Schema.Player.Color,
+            Schema.User.UserName)
+        .SelectRaw($"COALESCE({Schema.User.DisplayName}, {Schema.Player.PlayerName}) AS {Schema.Player.PlayerName.AsParam()}")
+        .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId);
 
     private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
 

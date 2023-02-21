@@ -30,7 +30,7 @@ public class BunchDb
             Schema.Bunch.VideosEnabled,
             Schema.Bunch.HouseRules);
 
-    private static Query FindQuery => BunchQuery.Select(Schema.Bunch.Id.FullName);
+    private static Query FindQuery => BunchQuery.Select(Schema.Bunch.Id);
 
     public BunchDb(IDb db)
     {
@@ -73,7 +73,7 @@ public class BunchDb
 
     public async Task<IList<string>> SearchByUser(string userId)
     {
-        var query = FindQuery.Join(Schema.Player, $"{Schema.Player.BunchId.FullName}", $"{Schema.Bunch.Id.FullName}")
+        var query = FindQuery.Join(Schema.Player, $"{Schema.Player.BunchId}", $"{Schema.Bunch.Id}")
             .Where($"{Schema.Player.UserId}", int.Parse(userId))
             .OrderBy($"{Schema.Bunch.Name}");
 
