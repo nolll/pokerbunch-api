@@ -1,10 +1,13 @@
+using SqlKata;
 using SqlKata.Execution;
 
 namespace Infrastructure.Sql;
 
 public interface IDb : IDisposable
 {
-    DbEngine Engine { get; }
     QueryFactory QueryFactory { get; }
-    Task<int> Execute(string sql, object? @params = null);
+    Task<IEnumerable<T>> GetAsync<T>(Query query);
+    Task<int> UpdateAsync(Query query, IDictionary<string, object> parameters);
+    Task<int> DeleteAsync(Query query);
+    Task<int> ExecuteSql(string sql);
 }

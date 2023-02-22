@@ -3,6 +3,7 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
+using SqlKata;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
@@ -89,8 +90,8 @@ public class TestSetup
         return client;
     }
 
-    private static async Task CreateTables() => await Db.Execute(CreateScript);
-    private static async Task AddMasterData() => await Db.Execute(GetMasterDataSql);
+    private static async Task CreateTables() => await Db.ExecuteSql(CreateScript);
+    private static async Task AddMasterData() => await Db.ExecuteSql(GetMasterDataSql);
 
     [OneTimeTearDown]
     public async Task TearDown() => await DestroyDbEngine();

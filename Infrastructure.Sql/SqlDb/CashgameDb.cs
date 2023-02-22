@@ -70,7 +70,7 @@ public class CashgameDb
         var query = GetQuery.WhereIn(Schema.Cashgame.Id, ids.Select(int.Parse))
             .OrderBy(Schema.Cashgame.Id);
 
-        var cashgameDtos = await _db.QueryFactory.FromQuery(query).GetAsync<CashgameDto>();
+        var cashgameDtos = await _db.GetAsync<CashgameDto>(query);
         var checkpointDtos = await GetCheckpoints(ids);
         return cashgameDtos.ToCashgameList(checkpointDtos);
     }
@@ -89,7 +89,7 @@ public class CashgameDb
     {
         var query = FindByBunchAndStatusQuery(bunchId, status);
 
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -98,7 +98,7 @@ public class CashgameDb
         var query = FindByBunchAndStatusQuery(bunchId, GameStatus.Finished)
             .WhereDatePart("year", Schema.Cashgame.Date, year);
 
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -109,7 +109,7 @@ public class CashgameDb
             .Where(Schema.EventCashgame.EventId, int.Parse(eventId));
 
         var query = FindQuery.WhereIn(Schema.Cashgame.Id, subQuery);
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -118,14 +118,14 @@ public class CashgameDb
         var query = CashgameCheckpointQuery.Select(Schema.CashgameCheckpoint.CashgameId)
             .Where(Schema.CashgameCheckpoint.CheckpointId, int.Parse(checkpointId));
 
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
     
     public async Task DeleteGame(string id)
     {
         var query = CashgameQuery.Where(Schema.Cashgame.Id, int.Parse(id));
-        await _db.QueryFactory.FromQuery(query).DeleteAsync();
+        await _db.DeleteAsync(query);
     }
         
     public async Task<string> AddGame(Bunch bunch, Cashgame cashgame)
@@ -173,7 +173,7 @@ public class CashgameDb
         };
 
         var query = CashgameQuery.Where(Schema.Cashgame.Id, int.Parse(cashgame.Id));
-        await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
+        await _db.UpdateAsync(query, parameters);
     }
         
     public async Task<IList<string>> FindByPlayerId(string playerId)
@@ -183,7 +183,7 @@ public class CashgameDb
             .Distinct()
             .Where(Schema.CashgameCheckpoint.PlayerId, int.Parse(playerId));
 
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -211,16 +211,17 @@ public class CashgameDb
             { Schema.CashgameCheckpoint.Amount.AsParam(), checkpoint.Amount },
             { Schema.CashgameCheckpoint.Stack.AsParam(), checkpoint.Stack }
         };
-        
-        await _db.QueryFactory.FromQuery(CashgameCheckpointQuery)
-            .Where(Schema.CashgameCheckpoint.CheckpointId, int.Parse(checkpoint.Id))
-            .UpdateAsync(parameters);
+
+        var query = CashgameCheckpointQuery
+            .Where(Schema.CashgameCheckpoint.CheckpointId, int.Parse(checkpoint.Id));
+
+        await _db.UpdateAsync(query, parameters);
     }
 
     private async Task DeleteCheckpoint(Checkpoint checkpoint)
     {
         var query = CashgameCheckpointQuery.Where(Schema.CashgameCheckpoint.CheckpointId, int.Parse(checkpoint.Id));
-        await _db.QueryFactory.FromQuery(query).DeleteAsync();
+        await _db.DeleteAsync(query);
     }
 
     private async Task<IList<CheckpointDto>> GetCheckpoints(string cashgameId)
@@ -234,7 +235,7 @@ public class CashgameDb
                 Schema.CashgameCheckpoint.CheckpointId
             );
 
-        return (await _db.QueryFactory.FromQuery(query).GetAsync<CheckpointDto>()).ToList();
+        return (await _db.GetAsync<CheckpointDto>(query)).ToList();
     }
 
     private async Task<IList<CheckpointDto>> GetCheckpoints(IList<string> cashgameIdList)
@@ -246,6 +247,6 @@ public class CashgameDb
             .OrderBy(Schema.CashgameCheckpoint.Timestamp)
             .OrderByDesc(Schema.CashgameCheckpoint.CheckpointId);
 
-        return (await _db.QueryFactory.FromQuery(query).GetAsync<CheckpointDto>()).ToList();
+        return (await _db.GetAsync<CheckpointDto>(query)).ToList();
     }
 }

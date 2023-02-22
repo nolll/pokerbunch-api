@@ -51,13 +51,13 @@ public class BunchDb
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.Bunch.Id, ids.Select(int.Parse));
-        var dtos = await _db.QueryFactory.FromQuery(query).GetAsync<BunchDto>();
+        var dtos = await _db.GetAsync<BunchDto>(query);
         return dtos.Select(BunchMapper.ToBunch).ToList();
     }
 
     public async Task<IList<string>> Search()
     {
-        var result = await _db.QueryFactory.FromQuery(FindQuery).GetAsync<int>();
+        var result = await _db.GetAsync<int>(FindQuery);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -77,7 +77,7 @@ public class BunchDb
             .Where($"{Schema.Player.UserId}", int.Parse(userId))
             .OrderBy($"{Schema.Bunch.Name}");
 
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -120,13 +120,13 @@ public class BunchDb
         };
 
         var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
-        await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
+        await _db.UpdateAsync(query, parameters);
     }
 
     public async Task<bool> DeleteBunch(string id)
     {
         var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(id));
-        var rowCount = await _db.QueryFactory.FromQuery(query).DeleteAsync();
+        var rowCount = await _db.DeleteAsync(query);
 
         return rowCount > 0;
     }

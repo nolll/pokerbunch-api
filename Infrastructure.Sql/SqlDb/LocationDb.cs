@@ -47,14 +47,14 @@ public class LocationDb
             return new List<Location>();
 
         var query = GetQuery.WhereIn(Schema.Location.Id, ids.Select(int.Parse));
-        var locationDtos = await _db.QueryFactory.FromQuery(query).GetAsync<LocationDto>();
+        var locationDtos = await _db.GetAsync<LocationDto>(query);
         return locationDtos.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)
     {
         var query = FindQuery.Where(Schema.Location.BunchId, int.Parse(bunchId));
-        return (await _db.QueryFactory.FromQuery(query).GetAsync<int>()).Select(o => o.ToString()).ToList();
+        return (await _db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Location location)

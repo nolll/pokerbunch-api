@@ -45,7 +45,7 @@ public class UserDb
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.User.Id, ids.Select(int.Parse));
-        var userDtos = await _db.QueryFactory.FromQuery(query).GetAsync<UserDto>();
+        var userDtos = await _db.GetAsync<UserDto>(query);
         return userDtos.Select(UserMapper.ToUser).OrderBy(o => o.DisplayName).ToList();
     }
 
@@ -98,7 +98,7 @@ public class UserDb
         };
 
         var query = UserQuery.Where(Schema.User.Id, int.Parse(user.Id));
-        await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
+        await _db.UpdateAsync(query, parameters);
     }
 
     public async Task<string> Add(User user)
@@ -120,14 +120,14 @@ public class UserDb
     private async Task<IList<string>> GetIds()
     {
         var query = FindQuery.OrderBy(Schema.User.DisplayName);
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<bool> DeleteUser(string userId)
     {
         var query = UserQuery.Where(Schema.User.Id, int.Parse(userId));
-        var rowCount = await _db.QueryFactory.FromQuery(query).DeleteAsync();
+        var rowCount = await _db.DeleteAsync(query);
         return rowCount > 0;
     }
 }

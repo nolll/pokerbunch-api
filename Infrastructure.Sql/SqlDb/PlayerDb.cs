@@ -36,14 +36,14 @@ public class PlayerDb
     public async Task<IList<string>> Find(string bunchId)
     {
         var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId));
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<string>();
+        var result = await _db.GetAsync<string>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {
         var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId)).Where(Schema.Player.UserId, int.Parse(userId));
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<string>();
+        var result = await _db.GetAsync<string>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -53,7 +53,7 @@ public class PlayerDb
             return new List<Player>();
 
         var query = GetQuery.WhereIn(Schema.Player.Id, ids.Select(int.Parse));
-        var playerDtos = await _db.QueryFactory.FromQuery(query).GetAsync<PlayerDto>();
+        var playerDtos = await _db.GetAsync<PlayerDto>(query);
 
         return playerDtos.Select(PlayerMapper.ToPlayer).ToList();
     }
@@ -105,13 +105,13 @@ public class PlayerDb
         };
 
         var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(player.Id));
-        var rowCount = await _db.QueryFactory.FromQuery(query).UpdateAsync(parameters);
+        var rowCount = await _db.UpdateAsync(query, parameters);
         return rowCount > 0;
     }
 
     public async Task Delete(string playerId)
     {
         var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(playerId));
-        await _db.QueryFactory.FromQuery(query).DeleteAsync();
+        await _db.DeleteAsync(query);
     }
 }

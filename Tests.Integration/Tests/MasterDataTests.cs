@@ -17,7 +17,7 @@ public class MasterDataTests
             .Select(Schema.Role.Id, Schema.Role.Name)
             .OrderBy(Schema.Role.Id);
 
-        var roles = (await TestSetup.Db.QueryFactory.FromQuery(query).GetAsync<RoleInTest>()).ToList();
+        var roles = (await TestSetup.Db.GetAsync<RoleInTest>(query)).ToList();
 
         Assert.That(roles.Count, Is.EqualTo(3));
         Assert.That(roles[0].Role_Id, Is.EqualTo(1));

@@ -2,6 +2,7 @@ namespace Tests.Integration;
 
 public static class TestData
 {
+    public const string AdminUserId = "1";
     public const string AdminUserName = "admin";
     public const string AdminDisplayName = "Admin";
     public const string AdminEmail = "admin@example.org";

@@ -42,7 +42,7 @@ public class EventDb
     public async Task<Event> Get(string id)
     {
         var query = GetQuery.Where(Schema.Event.Id, int.Parse(id));
-        var eventDayDtos = await _db.QueryFactory.FromQuery(query).GetAsync<EventDayDto>();
+        var eventDayDtos = await _db.GetAsync<EventDayDto>(query);
 
         var events = eventDayDtos.ToEvents();
         var @event = events.FirstOrDefault();
@@ -56,7 +56,7 @@ public class EventDb
     public async Task<IList<Event>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.Event.Id, ids.Select(int.Parse));
-        var eventDayDtos = await _db.QueryFactory.FromQuery(query).GetAsync<EventDayDto>();
+        var eventDayDtos = await _db.GetAsync<EventDayDto>(query);
 
         return eventDayDtos.ToEvents();
     }
@@ -64,14 +64,14 @@ public class EventDb
     public async Task<IList<string>> FindByBunchId(string bunchId)
     {
         var query = EventQuery.Select(Schema.Event.Id).Where(Schema.Event.BunchId, int.Parse(bunchId));
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
         var query = EventCashgameQuery.Select(Schema.EventCashgame.EventId).Where(Schema.EventCashgame.EventId, int.Parse(cashgameId));
-        var result = await _db.QueryFactory.FromQuery(query).GetAsync<int>();
+        var result = await _db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -104,6 +104,6 @@ public class EventDb
             .Where(Schema.EventCashgame.EventId, int.Parse(eventId))
             .Where(Schema.EventCashgame.CashgameId, int.Parse(cashgameId));
 
-        await _db.QueryFactory.FromQuery(query).DeleteAsync();
+        await _db.DeleteAsync(query);
     }
 }
