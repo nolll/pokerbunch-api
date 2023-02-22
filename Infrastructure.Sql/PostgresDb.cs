@@ -1,63 +1,27 @@
-using System.Linq;
 using Npgsql;
-using Dapper;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql;
 
-public class PostgresDb : IDb
+public class PostgresDb : Db
 {
     private readonly string _connectionString;
-    public DbEngine Engine => DbEngine.Postgres;
-    
+    private readonly Compiler _compiler;
+    protected override QueryFactory QueryFactory => new(GetConnection(), _compiler);
+
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
-    }
-
-    public async Task<T?> Single<T>(string sql, object @params)
-    {
-        await using var connection = GetConnection();
-        connection.Open();
-        return (await List<T>(sql, @params)).FirstOrDefault();
-    }
-
-    public async Task<IEnumerable<T>> List<T>(string sql, object? @params)
-    {
-        await using var connection = GetConnection();
-        connection.Open();
-        return await connection.QueryAsync<T>(sql, @params);
-    }
-
-    public async Task<IEnumerable<T>> List<T>(string sql, ListParam param)
-    {
-        var sqlWithIdList = sql.Replace(param.Name, param.ParameterNameList);
-        await using var connection = GetConnection();
-        connection.Open();
-        return await connection.QueryAsync<T>(sqlWithIdList, param.DynamicParameters);
+        _compiler = new PostgresCompiler();
     }
     
-    public async Task<int> Execute(string sql, object? @params = null)
-    {
-        await using var connection = GetConnection();
-        connection.Open();
-
-        return await connection.ExecuteAsync(sql, @params);
-    }
-    
-    public async Task<int> Insert(string sql, object? @params = null)
-    {
-        await using var connection = GetConnection();
-        connection.Open();
-
-        return await connection.ExecuteScalarAsync<int>(sql, @params);
-    }
-
     private NpgsqlConnection GetConnection()
     {
         return new NpgsqlConnection(_connectionString);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
     }
 }

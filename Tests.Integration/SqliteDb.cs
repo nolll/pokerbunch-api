@@ -1,47 +1,24 @@
 using Infrastructure.Sql;
 using Microsoft.Data.Sqlite;
-using Dapper;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace Tests.Integration;
 
-public class SqliteDb : IDb
+public class SqliteDb : Db
 {
     private readonly SqliteConnection _connection;
-    public DbEngine Engine => DbEngine.Sqlite;
+    protected override QueryFactory QueryFactory { get; }
 
     public SqliteDb(string connectionString)
     {
+        Compiler compiler = new SqliteCompiler();
         _connection = new SqliteConnection(connectionString);
-        _connection.Open(); // todo: don't reuse the same connection
+        _connection.Open();
+        QueryFactory = new QueryFactory(_connection, compiler);
     }
     
-    public async Task<T?> Single<T>(string sql, object @params)
-    {
-        return (await List<T>(sql, @params)).FirstOrDefault();
-    }
-
-    public async Task<IEnumerable<T>> List<T>(string sql, object? @params)
-    {
-        return await _connection.QueryAsync<T>(sql, @params);
-    }
-
-    public async Task<IEnumerable<T>> List<T>(string sql, ListParam param)
-    {
-        var sqlWithIdList = sql.Replace(param.Name, param.ParameterNameList);
-        return await _connection.QueryAsync<T>(sqlWithIdList, param.DynamicParameters);
-    }
-    
-    public async Task<int> Execute(string sql, object? @params = null)
-    {
-        return await _connection.ExecuteAsync(sql, @params);
-    }
-    
-    public async Task<int> Insert(string sql, object? @params = null)
-    {
-        return await _connection.ExecuteScalarAsync<int>(sql, @params);
-    }
-    
-    public void Dispose()
+    public override void Dispose()
     {
         _connection.Dispose();
     }

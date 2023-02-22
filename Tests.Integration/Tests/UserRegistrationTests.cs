@@ -1,5 +1,8 @@
 using System.Net;
 using Api.Models.UserModels;
+using Core.Entities;
+using Infrastructure.Sql.Sql;
+using SqlKata;
 
 namespace Tests.Integration.Tests;
 
@@ -15,7 +18,19 @@ public class UserRegistrationTests
         var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
         var result = await TestClient.User.Add(parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        await TestSetup.Db.Execute("UPDATE pb_user SET role_id = 3 WHERE user_id = 1");
+
+        await SetAdminRole();
+    }
+
+    private static async Task SetAdminRole()
+    {
+        var dbParameters = new Dictionary<SqlColumn, object?>
+        {
+            { Schema.User.RoleId, (int)Role.Admin }
+        };
+
+        var query = new Query(Schema.User).Where(Schema.User.Id, int.Parse(TestData.AdminUserId));
+        await TestSetup.Db.UpdateAsync(query, dbParameters);
     }
     
     [Test]

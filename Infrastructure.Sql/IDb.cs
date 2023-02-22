@@ -1,13 +1,16 @@
-using JetBrains.Annotations;
+using Infrastructure.Sql.Sql;
+using SqlKata;
 
 namespace Infrastructure.Sql;
 
 public interface IDb : IDisposable
 {
-    DbEngine Engine { get; }
-    Task<T?> Single<T>(string sql, object @params);
-    Task<IEnumerable<T>> List<T>(string sql, object? @params = null);
-    Task<IEnumerable<T>> List<T>(string sql, ListParam param);
-    Task<int> Execute(string sql, object? @params = null);
-    Task<int> Insert(string sql, object? @params = null);
+    Task<IEnumerable<T>> GetAsync<T>(Query query);
+    Task<T> FirstAsync<T>(Query query);
+    Task<T?> FirstOrDefaultAsync<T>(Query query);
+    Task<int> InsertGetIdAsync(Query query, IDictionary<SqlColumn, object?> parameters);
+    Task InsertAsync(Query query, IDictionary<SqlColumn, object?> parameters);
+    Task<int> UpdateAsync(Query query, IDictionary<SqlColumn, object?> parameters);
+    Task<int> DeleteAsync(Query query);
+    Task<int> ExecuteSql(string sql);
 }

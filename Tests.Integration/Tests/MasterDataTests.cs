@@ -1,3 +1,7 @@
+using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
+
 namespace Tests.Integration.Tests;
 
 [TestFixture]
@@ -9,7 +13,11 @@ public class MasterDataTests
     [Order(1)]
     public async Task MasterDataExists()
     {
-        var roles = (await TestSetup.Db.List<RoleInTest>("SELECT role_id, role_name FROM pb_role ORDER BY role_id")).ToList();
+        var query = new Query(Schema.Role)
+            .Select(Schema.Role.Id, Schema.Role.Name)
+            .OrderBy(Schema.Role.Id);
+
+        var roles = (await TestSetup.Db.GetAsync<RoleInTest>(query)).ToList();
 
         Assert.That(roles.Count, Is.EqualTo(3));
         Assert.That(roles[0].Role_Id, Is.EqualTo(1));

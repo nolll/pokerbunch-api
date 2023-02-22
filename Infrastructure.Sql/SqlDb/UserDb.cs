@@ -4,12 +4,29 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
 public class UserDb
 {
     private readonly IDb _db;
+
+    private static Query UserQuery => new(Schema.User);
+
+    private static Query GetQuery => UserQuery
+        .Select(
+            Schema.User.Id,
+            Schema.User.UserName,
+            Schema.User.DisplayName,
+            Schema.User.RealName,
+            Schema.User.Email,
+            Schema.User.Password,
+            Schema.User.Salt,
+            Schema.User.RoleId);
+
+    private static Query FindQuery => UserQuery.Select(Schema.User.Id);
 
     public UserDb(IDb db)
     {
@@ -18,25 +35,17 @@ public class UserDb
 
     public async Task<User> Get(string id)
     {
-        var @params = new
-        {
-            userId = int.Parse(id)
-        };
-
-        var userDto = await _db.Single<UserDto>(UserSql.GetByIdQuery, @params);
+        var query = GetQuery.Where(Schema.User.Id, int.Parse(id));
+        var userDto = await _db.FirstOrDefaultAsync<UserDto>(query);
         var user = userDto?.ToUser();
-        
-        if (user is null)
-            throw new PokerBunchException($"User with id {id} was not found");
-        
-        return user;
+
+        return user ?? throw new PokerBunchException($"User with id {id} was not found");
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
     {
-        var @params = new ListParam("@ids", ids.Select(int.Parse));
-
-        var userDtos = await _db.List<UserDto>(UserSql.GetByIdsQuery, @params);
+        var query = GetQuery.WhereIn(Schema.User.Id, ids.Select(int.Parse));
+        var userDtos = await _db.GetAsync<UserDto>(query);
         return userDtos.Select(UserMapper.ToUser).OrderBy(o => o.DisplayName).ToList();
     }
 
@@ -50,12 +59,9 @@ public class UserDb
         if (string.IsNullOrEmpty(name))
             return null;
 
-        var @params = new
-        {
-            name
-        };
-
-        return (await _db.Single<int?>(UserSql.FindByUsernameQuery, @params))?.ToString();
+        var query = FindQuery.Where(Schema.User.UserName, name);
+        var result = await _db.FirstOrDefaultAsync<int?>(query);
+        return result?.ToString();
     }
 
     public async Task<string?> FindByEmail(string email)
@@ -63,69 +69,65 @@ public class UserDb
         if (string.IsNullOrEmpty(email))
             return null;
 
-        var @params = new
-        {
-            email
-        };
-
-        return (await _db.Single<int?>(UserSql.FindByEmailQuery, @params))?.ToString();
+        var query = FindQuery.Where(Schema.User.Email, email);
+        var result = await _db.FirstOrDefaultAsync<int?>(query);
+        return result?.ToString();
     }
 
     public async Task<string?> FindByUserNameOrEmail(string nameOrEmail)
     {
         if (string.IsNullOrEmpty(nameOrEmail))
             return null;
-
-        var @params = new
-        {
-            query = nameOrEmail
-        };
-
-        return (await _db.Single<int?>(UserSql.FindByUsernameOrEmailQuery, @params))?.ToString();
+        
+        var query = FindQuery
+            .Where(Schema.User.UserName, nameOrEmail)
+            .OrWhere(Schema.User.Email, nameOrEmail);
+        var result = await _db.FirstOrDefaultAsync<int?>(query);
+        return result?.ToString();
     }
 
     public async Task Update(User user)
     {
-        var @params = new
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            displayName = user.DisplayName,
-            realName = user.RealName,
-            email = user.Email,
-            password = user.EncryptedPassword,
-            salt = user.Salt,
-            userId = int.Parse(user.Id)
+            { Schema.User.DisplayName, user.DisplayName },
+            { Schema.User.RealName, user.RealName },
+            { Schema.User.Email, user.Email },
+            { Schema.User.Password, user.EncryptedPassword },
+            { Schema.User.Salt, user.Salt }
         };
 
-        await _db.Execute(UserSql.UpdateQuery, @params);
+        var query = UserQuery.Where(Schema.User.Id, int.Parse(user.Id));
+        await _db.UpdateAsync(query, parameters);
     }
 
     public async Task<string> Add(User user)
     {
-        var @params = new
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            userName = user.UserName,
-            displayName = user.DisplayName,
-            email = user.Email,
-            password = user.EncryptedPassword,
-            salt = user.Salt
+            { Schema.User.UserName, user.UserName },
+            { Schema.User.DisplayName, user.DisplayName },
+            { Schema.User.RoleId, (int)Role.Player },
+            { Schema.User.Email, user.Email },
+            { Schema.User.Password, user.EncryptedPassword },
+            { Schema.User.Salt, user.Salt }
         };
 
-        return (await _db.Insert(UserSql.AddQuery, @params)).ToString();
+        var result = await _db.InsertGetIdAsync(UserQuery, parameters);
+        return result.ToString();
     }
 
     private async Task<IList<string>> GetIds()
     {
-        return (await _db.List<int>(UserSql.FindAllQuery)).Select(o => o.ToString()).ToList();
+        var query = FindQuery.OrderBy(Schema.User.DisplayName);
+        var result = await _db.GetAsync<int>(query);
+        return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<bool> DeleteUser(string userId)
     {
-        var @params = new
-        {
-            userId = int.Parse(userId)
-        };
-
-        var rowCount = await _db.Execute(UserSql.DeleteQuery, @params);
+        var query = UserQuery.Where(Schema.User.Id, int.Parse(userId));
+        var rowCount = await _db.DeleteAsync(query);
         return rowCount > 0;
     }
 }
