@@ -1,10 +1,8 @@
 using System.Net;
 using Api.Models.UserModels;
 using Core.Entities;
-using Infrastructure.Sql;
 using Infrastructure.Sql.Sql;
 using SqlKata;
-using SqlKata.Execution;
 
 namespace Tests.Integration.Tests;
 
@@ -31,7 +29,7 @@ public class UserRegistrationTests
             { Schema.User.RoleId, (int)Role.Admin }
         };
 
-        var query = new Query(Schema.User).Where(Schema.User.Id, TestData.AdminUserId);
+        var query = new Query(Schema.User).Where(Schema.User.Id, int.Parse(TestData.AdminUserId));
         await TestSetup.Db.UpdateAsync(query, dbParameters);
     }
     
