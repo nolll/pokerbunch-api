@@ -27,6 +27,16 @@ public class CashgameDb
             Schema.Cashgame.Status)
         .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id);
 
+    private static Query GetCheckpointQuery => CashgameCheckpointQuery
+        .Select(
+            Schema.CashgameCheckpoint.CashgameId,
+            Schema.CashgameCheckpoint.CheckpointId,
+            Schema.CashgameCheckpoint.PlayerId,
+            Schema.CashgameCheckpoint.Type,
+            Schema.CashgameCheckpoint.Stack,
+            Schema.CashgameCheckpoint.Amount,
+            Schema.CashgameCheckpoint.Timestamp);
+
     private static Query FindQuery => CashgameQuery.Select(Schema.Cashgame.Id);
     private static Query FindByBunchAndStatusQuery(string bunchId, GameStatus status) => FindQuery
         .Where(Schema.Cashgame.BunchId, int.Parse(bunchId))
@@ -215,42 +225,27 @@ public class CashgameDb
 
     private async Task<IList<CheckpointDto>> GetCheckpoints(string cashgameId)
     {
-        var @params = new
-        {
-            cashgameId = int.Parse(cashgameId)
-        };
-
-        var query = CashgameCheckpointQuery
-            .Select(
-                Schema.CashgameCheckpoint.CashgameId,
-                Schema.CashgameCheckpoint.CheckpointId,
-                Schema.CashgameCheckpoint.PlayerId,
-                Schema.CashgameCheckpoint.Type,
-                Schema.CashgameCheckpoint.Stack,
-                Schema.CashgameCheckpoint.Amount,
-                Schema.CashgameCheckpoint.Timestamp)
+        var query = GetCheckpointQuery
             .Where(
-                Schema.CashgameCheckpoint.CashgameId, cashgameId)
+                Schema.CashgameCheckpoint.CashgameId, int.Parse(cashgameId))
             .OrderBy(
                 Schema.CashgameCheckpoint.PlayerId,
                 Schema.CashgameCheckpoint.Timestamp,
                 Schema.CashgameCheckpoint.CheckpointId
             );
 
-        /*
-        public const string GetCheckpointsByCashgameQuery = @"
-        SELECT cp.cashgame_id, cp.checkpoint_id, cp.player_id, cp.type, cp.stack, cp.amount, cp.timestamp
-        FROM pb_cashgame_checkpoint cp
-        WHERE cp.cashgame_id = @cashgameId
-        ORDER BY cp.player_id, cp.timestamp, cp.checkpoint_id";
-         */
-
-        return (await _db.List<CheckpointDto>(CashgameSql.GetCheckpointsByCashgameQuery, @params)).ToList();
+        return (await _db.QueryFactory.FromQuery(query).GetAsync<CheckpointDto>()).ToList();
     }
 
     private async Task<IList<CheckpointDto>> GetCheckpoints(IList<string> cashgameIdList)
     {
-        var param = new ListParam("@cashgameIds", cashgameIdList.Select(int.Parse));
-        return (await _db.List<CheckpointDto>(CashgameSql.GetCheckpointsByCashgamesQuery, param)).ToList();
+        var query = GetCheckpointQuery
+            .WhereIn(
+                Schema.CashgameCheckpoint.CashgameId, cashgameIdList.Select(int.Parse))
+            .OrderBy(Schema.CashgameCheckpoint.PlayerId)
+            .OrderBy(Schema.CashgameCheckpoint.Timestamp)
+            .OrderByDesc(Schema.CashgameCheckpoint.CheckpointId);
+
+        return (await _db.QueryFactory.FromQuery(query).GetAsync<CheckpointDto>()).ToList();
     }
 }
