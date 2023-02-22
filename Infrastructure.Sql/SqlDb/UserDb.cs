@@ -36,7 +36,7 @@ public class UserDb
     public async Task<User> Get(string id)
     {
         var query = GetQuery.Where(Schema.User.Id, int.Parse(id));
-        var userDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<UserDto>();
+        var userDto = await _db.FirstOrDefaultAsync<UserDto>(query);
         var user = userDto?.ToUser();
 
         return user ?? throw new PokerBunchException($"User with id {id} was not found");
@@ -60,7 +60,7 @@ public class UserDb
             return null;
 
         var query = FindQuery.Where(Schema.User.UserName, name);
-        var result = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<int?>();
+        var result = await _db.FirstOrDefaultAsync<int?>(query);
         return result?.ToString();
     }
 
@@ -70,7 +70,7 @@ public class UserDb
             return null;
 
         var query = FindQuery.Where(Schema.User.Email, email);
-        var result = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<int?>();
+        var result = await _db.FirstOrDefaultAsync<int?>(query);
         return result?.ToString();
     }
 
@@ -82,19 +82,19 @@ public class UserDb
         var query = FindQuery
             .Where(Schema.User.UserName, nameOrEmail)
             .OrWhere(Schema.User.Email, nameOrEmail);
-        var result = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<int?>();
+        var result = await _db.FirstOrDefaultAsync<int?>(query);
         return result?.ToString();
     }
 
     public async Task Update(User user)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.User.DisplayName.AsParam(), user.DisplayName },
-            { Schema.User.RealName.AsParam(), user.RealName },
-            { Schema.User.Email.AsParam(), user.Email },
-            { Schema.User.Password.AsParam(), user.EncryptedPassword },
-            { Schema.User.Salt.AsParam(), user.Salt }
+            { Schema.User.DisplayName, user.DisplayName },
+            { Schema.User.RealName, user.RealName },
+            { Schema.User.Email, user.Email },
+            { Schema.User.Password, user.EncryptedPassword },
+            { Schema.User.Salt, user.Salt }
         };
 
         var query = UserQuery.Where(Schema.User.Id, int.Parse(user.Id));
@@ -103,17 +103,17 @@ public class UserDb
 
     public async Task<string> Add(User user)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.User.UserName.AsParam(), user.UserName },
-            { Schema.User.DisplayName.AsParam(), user.DisplayName },
-            { Schema.User.RoleId.AsParam(), (int)Role.Player },
-            { Schema.User.Email.AsParam(), user.Email },
-            { Schema.User.Password.AsParam(), user.EncryptedPassword },
-            { Schema.User.Salt.AsParam(), user.Salt }
+            { Schema.User.UserName, user.UserName },
+            { Schema.User.DisplayName, user.DisplayName },
+            { Schema.User.RoleId, (int)Role.Player },
+            { Schema.User.Email, user.Email },
+            { Schema.User.Password, user.EncryptedPassword },
+            { Schema.User.Salt, user.Salt }
         };
 
-        var result = await _db.QueryFactory.FromQuery(UserQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.InsertGetIdAsync(UserQuery, parameters);
         return result.ToString();
     }
 

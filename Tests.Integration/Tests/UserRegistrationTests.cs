@@ -24,11 +24,11 @@ public class UserRegistrationTests
         await SetAdminRole();
     }
 
-    private async Task SetAdminRole()
+    private static async Task SetAdminRole()
     {
-        var dbParameters = new Dictionary<string, object>
+        var dbParameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.User.RoleId.AsParam(), (int)Role.Admin }
+            { Schema.User.RoleId, (int)Role.Admin }
         };
 
         var query = new Query(Schema.User).Where(Schema.User.Id, TestData.AdminUserId);

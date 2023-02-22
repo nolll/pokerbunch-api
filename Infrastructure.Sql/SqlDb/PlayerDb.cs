@@ -61,7 +61,7 @@ public class PlayerDb
     public async Task<Player> Get(string id)
     {
         var query = GetQuery.Where(Schema.Player.Id, int.Parse(id));
-        var playerDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<PlayerDto?>();
+        var playerDto = await _db.FirstOrDefaultAsync<PlayerDto?>(query);
         var player = playerDto?.ToPlayer();
 
         if (player is null)
@@ -73,35 +73,35 @@ public class PlayerDb
     public async Task<string> Add(Player player)
     {
         var parameters = player.IsUser
-            ? new Dictionary<string, object?>
+            ? new Dictionary<SqlColumn, object?>
             {
-                { Schema.Player.BunchId.AsParam(), int.Parse(player.BunchId) },
-                { Schema.Player.UserId.AsParam(), int.Parse(player.UserId!) },
-                { Schema.Player.RoleId.AsParam(), (int)player.Role },
-                { Schema.Player.Approved.AsParam(), true },
-                { Schema.Player.Color.AsParam(), player.Color }
+                { Schema.Player.BunchId, int.Parse(player.BunchId) },
+                { Schema.Player.UserId, int.Parse(player.UserId!) },
+                { Schema.Player.RoleId, (int)player.Role },
+                { Schema.Player.Approved, true },
+                { Schema.Player.Color, player.Color }
             }
-            : new Dictionary<string, object?>
+            : new Dictionary<SqlColumn, object?>
             {
-                { Schema.Player.BunchId.AsParam(), int.Parse(player.BunchId) },
-                { Schema.Player.RoleId.AsParam(), (int)Role.Player },
-                { Schema.Player.Approved.AsParam(), true },
-                { Schema.Player.PlayerName.AsParam(), player.DisplayName },
-                { Schema.Player.Color.AsParam(), player.Color }
+                { Schema.Player.BunchId, int.Parse(player.BunchId) },
+                { Schema.Player.RoleId, (int)Role.Player },
+                { Schema.Player.Approved, true },
+                { Schema.Player.PlayerName, player.DisplayName },
+                { Schema.Player.Color, player.Color }
             };
 
-        var result = await _db.QueryFactory.FromQuery(PlayerQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.InsertGetIdAsync(PlayerQuery, parameters);
         return result.ToString();
     }
 
     public async Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Player.BunchId.AsParam(), int.Parse(bunch.Id) },
-            { Schema.Player.UserId.AsParam(), int.Parse(userId) },
-            { Schema.Player.RoleId.AsParam(), (int)player.Role },
-            { Schema.Player.Approved.AsParam(), true }
+            { Schema.Player.BunchId, int.Parse(bunch.Id) },
+            { Schema.Player.UserId, int.Parse(userId) },
+            { Schema.Player.RoleId, (int)player.Role },
+            { Schema.Player.Approved, true }
         };
 
         var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(player.Id));

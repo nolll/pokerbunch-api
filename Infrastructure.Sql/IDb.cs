@@ -1,13 +1,16 @@
+using Infrastructure.Sql.Sql;
 using SqlKata;
-using SqlKata.Execution;
 
 namespace Infrastructure.Sql;
 
 public interface IDb : IDisposable
 {
-    QueryFactory QueryFactory { get; }
     Task<IEnumerable<T>> GetAsync<T>(Query query);
-    Task<int> UpdateAsync(Query query, IDictionary<string, object> parameters);
+    Task<T> FirstAsync<T>(Query query);
+    Task<T?> FirstOrDefaultAsync<T>(Query query);
+    Task<int> InsertGetIdAsync(Query query, IDictionary<SqlColumn, object?> parameters);
+    Task InsertAsync(Query query, IDictionary<SqlColumn, object?> parameters);
+    Task<int> UpdateAsync(Query query, IDictionary<SqlColumn, object?> parameters);
     Task<int> DeleteAsync(Query query);
     Task<int> ExecuteSql(string sql);
 }

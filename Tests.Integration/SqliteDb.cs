@@ -8,15 +8,14 @@ namespace Tests.Integration;
 public class SqliteDb : Db
 {
     private readonly SqliteConnection _connection;
-    public override QueryFactory QueryFactory { get; }
-    public Compiler Compiler { get; }
+    protected override QueryFactory QueryFactory { get; }
 
     public SqliteDb(string connectionString)
     {
-        Compiler = new SqliteCompiler();
+        Compiler compiler = new SqliteCompiler();
         _connection = new SqliteConnection(connectionString);
         _connection.Open();
-        QueryFactory = new QueryFactory(_connection, Compiler);
+        QueryFactory = new QueryFactory(_connection, compiler);
     }
     
     public override void Dispose()

@@ -32,7 +32,7 @@ public class LocationDb
     public async Task<Location> Get(string id)
     {
         var query = GetQuery.Where(Schema.Location.Id, int.Parse(id));
-        var locationDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<LocationDto>();
+        var locationDto = await _db.FirstOrDefaultAsync<LocationDto>(query);
         var location = locationDto?.ToLocation();
 
         if (location is null)
@@ -59,13 +59,13 @@ public class LocationDb
         
     public async Task<string> Add(Location location)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Location.Name.AsParam(), location.Name },
-            { Schema.Location.BunchId.AsParam(), int.Parse(location.BunchId) }
+            { Schema.Location.Name, location.Name },
+            { Schema.Location.BunchId, int.Parse(location.BunchId) }
         };
 
-        var result = await _db.QueryFactory.FromQuery(LocationQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.InsertGetIdAsync(LocationQuery, parameters);
         return result.ToString();
     }
 }

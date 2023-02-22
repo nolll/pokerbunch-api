@@ -1,5 +1,4 @@
 using Npgsql;
-using Dapper;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 
@@ -8,13 +7,13 @@ namespace Infrastructure.Sql;
 public class PostgresDb : Db
 {
     private readonly string _connectionString;
-    public Compiler Compiler { get; }
-    public override QueryFactory QueryFactory => new(GetConnection(), Compiler);
+    private readonly Compiler _compiler;
+    protected override QueryFactory QueryFactory => new(GetConnection(), _compiler);
 
     public PostgresDb(string connectionString)
     {
         _connectionString = connectionString;
-        Compiler = new PostgresCompiler();
+        _compiler = new PostgresCompiler();
     }
     
     private NpgsqlConnection GetConnection()

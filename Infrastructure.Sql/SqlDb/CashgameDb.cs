@@ -53,7 +53,7 @@ public class CashgameDb
             .Where(Schema.Cashgame.Id, int.Parse(cashgameId))
             .OrderBy(Schema.Cashgame.Id);
         
-        var cashgameDto = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<CashgameDto>();
+        var cashgameDto = await _db.FirstOrDefaultAsync<CashgameDto>(query);
 
         if (cashgameDto is null)
             throw new PokerBunchException($"Cashgame with id {cashgameId} was not found");
@@ -130,15 +130,15 @@ public class CashgameDb
         
     public async Task<string> AddGame(Bunch bunch, Cashgame cashgame)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Cashgame.BunchId.AsParam(), int.Parse(bunch.Id) },
-            { Schema.Cashgame.LocationId.AsParam(), int.Parse(cashgame.LocationId) },
-            { Schema.Cashgame.Status.AsParam(), (int)cashgame.Status },
-            { Schema.Cashgame.Date.AsParam(), TimeZoneInfo.ConvertTime(DateTime.UtcNow, bunch.Timezone) }
+            { Schema.Cashgame.BunchId, int.Parse(bunch.Id) },
+            { Schema.Cashgame.LocationId, int.Parse(cashgame.LocationId) },
+            { Schema.Cashgame.Status, (int)cashgame.Status },
+            { Schema.Cashgame.Date, TimeZoneInfo.ConvertTime(DateTime.UtcNow, bunch.Timezone) }
         };
 
-        var result = await _db.QueryFactory.FromQuery(CashgameQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.InsertGetIdAsync(CashgameQuery, parameters);
         return result.ToString();
     }
         
@@ -166,10 +166,10 @@ public class CashgameDb
             }
         }
         
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Cashgame.LocationId.AsParam(), int.Parse(cashgame.LocationId) },
-            { Schema.Cashgame.Status.AsParam(), (int)cashgame.Status }
+            { Schema.Cashgame.LocationId, int.Parse(cashgame.LocationId) },
+            { Schema.Cashgame.Status, (int)cashgame.Status }
         };
 
         var query = CashgameQuery.Where(Schema.Cashgame.Id, int.Parse(cashgame.Id));
@@ -189,27 +189,26 @@ public class CashgameDb
 
     private async Task<int> AddCheckpoint(Checkpoint checkpoint)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.CashgameCheckpoint.CashgameId.AsParam(), int.Parse(checkpoint.CashgameId) },
-            { Schema.CashgameCheckpoint.PlayerId.AsParam(), int.Parse(checkpoint.PlayerId) },
-            { Schema.CashgameCheckpoint.Type.AsParam(), (int)checkpoint.Type },
-            { Schema.CashgameCheckpoint.Amount.AsParam(), checkpoint.Amount },
-            { Schema.CashgameCheckpoint.Stack.AsParam(), checkpoint.Stack },
-            { Schema.CashgameCheckpoint.Timestamp.AsParam(), checkpoint.Timestamp.ToUniversalTime() }
+            { Schema.CashgameCheckpoint.CashgameId, int.Parse(checkpoint.CashgameId) },
+            { Schema.CashgameCheckpoint.PlayerId, int.Parse(checkpoint.PlayerId) },
+            { Schema.CashgameCheckpoint.Type, (int)checkpoint.Type },
+            { Schema.CashgameCheckpoint.Amount, checkpoint.Amount },
+            { Schema.CashgameCheckpoint.Stack, checkpoint.Stack },
+            { Schema.CashgameCheckpoint.Timestamp, checkpoint.Timestamp.ToUniversalTime() }
         };
 
-        return await _db.QueryFactory.FromQuery(CashgameCheckpointQuery)
-            .InsertGetIdAsync<int>(parameters);
+        return await _db.InsertGetIdAsync(CashgameCheckpointQuery, parameters);
     }
 
     private async Task UpdateCheckpoint(Checkpoint checkpoint)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.CashgameCheckpoint.Timestamp.AsParam(), checkpoint.Timestamp },
-            { Schema.CashgameCheckpoint.Amount.AsParam(), checkpoint.Amount },
-            { Schema.CashgameCheckpoint.Stack.AsParam(), checkpoint.Stack }
+            { Schema.CashgameCheckpoint.Timestamp, checkpoint.Timestamp },
+            { Schema.CashgameCheckpoint.Amount, checkpoint.Amount },
+            { Schema.CashgameCheckpoint.Stack, checkpoint.Stack }
         };
 
         var query = CashgameCheckpointQuery

@@ -6,7 +6,6 @@ using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
 using SqlKata;
-using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -77,25 +76,25 @@ public class EventDb
 
     public async Task<string> Add(Event e)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Event.Name.AsParam(), e.Name },
-            { Schema.Event.BunchId.AsParam(), int.Parse(e.BunchId) }
+            { Schema.Event.Name, e.Name },
+            { Schema.Event.BunchId, int.Parse(e.BunchId) }
         };
 
-        var result = await _db.QueryFactory.FromQuery(EventQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.InsertGetIdAsync(EventQuery, parameters);
         return result.ToString();
     }
 
     public async Task AddCashgame(string eventId, string cashgameId)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.EventCashgame.EventId.AsParam(), int.Parse(eventId) },
-            { Schema.EventCashgame.CashgameId.AsParam(), int.Parse(cashgameId) }
+            { Schema.EventCashgame.EventId, int.Parse(eventId) },
+            { Schema.EventCashgame.CashgameId, int.Parse(cashgameId) }
         };
 
-        await _db.QueryFactory.FromQuery(EventCashgameQuery).InsertAsync(parameters);
+        await _db.InsertAsync(EventCashgameQuery, parameters);
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)

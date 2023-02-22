@@ -40,7 +40,7 @@ public class BunchDb
     public async Task<Bunch> Get(string id)
     {
         var query = GetQuery.Where(Schema.Bunch.Id, int.Parse(id));
-        var dto = await _db.QueryFactory.FromQuery(query).FirstAsync<BunchDto>();
+        var dto = await _db.FirstAsync<BunchDto>(query);
 
         if (dto is null)
             throw new PokerBunchException($"Bunch with id {id} was not found");
@@ -64,7 +64,7 @@ public class BunchDb
     public async Task<IList<string>> Search(string slug)
     {
         var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        var id = await _db.QueryFactory.FromQuery(query).FirstOrDefaultAsync<int?>();
+        var id = await _db.FirstOrDefaultAsync<int?>(query);
 
         return id is not null
             ? new List<string> { id.Value.ToString() }
@@ -83,40 +83,40 @@ public class BunchDb
 
     public async Task<string> Add(Bunch bunch)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Bunch.Name.AsParam(), bunch.Slug },
-            { Schema.Bunch.DisplayName.AsParam(), bunch.DisplayName },
-            { Schema.Bunch.Description.AsParam(), bunch.Description },
-            { Schema.Bunch.Currency.AsParam(), bunch.Currency.Symbol },
-            { Schema.Bunch.CurrencyLayout.AsParam(), bunch.Currency.Layout },
-            { Schema.Bunch.Timezone.AsParam(), bunch.Timezone.Id },
-            { Schema.Bunch.DefaultBuyin.AsParam(), 0 },
-            { Schema.Bunch.CashgamesEnabled.AsParam(), bunch.CashgamesEnabled },
-            { Schema.Bunch.TournamentsEnabled.AsParam(), bunch.TournamentsEnabled },
-            { Schema.Bunch.VideosEnabled.AsParam(), bunch.VideosEnabled },
-            { Schema.Bunch.HouseRules.AsParam(), bunch.HouseRules }
+            { Schema.Bunch.Name, bunch.Slug },
+            { Schema.Bunch.DisplayName, bunch.DisplayName },
+            { Schema.Bunch.Description, bunch.Description },
+            { Schema.Bunch.Currency, bunch.Currency.Symbol },
+            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
+            { Schema.Bunch.Timezone, bunch.Timezone.Id },
+            { Schema.Bunch.DefaultBuyin, 0 },
+            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
+            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
+            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
+            { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
-        var result = await _db.QueryFactory.FromQuery(BunchQuery).InsertGetIdAsync<int>(parameters);
+        var result = await _db.InsertGetIdAsync(BunchQuery, parameters);
         return result.ToString();
     }
 
     public async Task Update(Bunch bunch)
     {
-        var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<SqlColumn, object?>
         {
-            { Schema.Bunch.Name.AsParam(), bunch.Slug },
-            { Schema.Bunch.DisplayName.AsParam(), bunch.DisplayName },
-            { Schema.Bunch.Description.AsParam(), bunch.Description },
-            { Schema.Bunch.Currency.AsParam(), bunch.Currency.Symbol },
-            { Schema.Bunch.CurrencyLayout.AsParam(), bunch.Currency.Layout },
-            { Schema.Bunch.Timezone.AsParam(), bunch.Timezone.Id },
-            { Schema.Bunch.DefaultBuyin.AsParam(), bunch.DefaultBuyin },
-            { Schema.Bunch.CashgamesEnabled.AsParam(), bunch.CashgamesEnabled },
-            { Schema.Bunch.TournamentsEnabled.AsParam(), bunch.TournamentsEnabled },
-            { Schema.Bunch.VideosEnabled.AsParam(), bunch.VideosEnabled },
-            { Schema.Bunch.HouseRules.AsParam(), bunch.HouseRules }
+            { Schema.Bunch.Name, bunch.Slug },
+            { Schema.Bunch.DisplayName, bunch.DisplayName },
+            { Schema.Bunch.Description, bunch.Description },
+            { Schema.Bunch.Currency, bunch.Currency.Symbol },
+            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
+            { Schema.Bunch.Timezone, bunch.Timezone.Id },
+            { Schema.Bunch.DefaultBuyin, bunch.DefaultBuyin },
+            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
+            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
+            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
+            { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
         var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
