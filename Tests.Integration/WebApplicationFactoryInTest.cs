@@ -1,4 +1,3 @@
-using Api;
 using Core.Services;
 using Infrastructure.Sql;
 using Microsoft.AspNetCore.Hosting;
