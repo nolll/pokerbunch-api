@@ -212,6 +212,8 @@ app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Version 1
 app.UseAuthentication();
 app.UseMvc();
 
+app.Run();
+
 static bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters param)
 {
     if (expires != null)
@@ -251,3 +253,5 @@ static IEmailSender GetEmailSender(IConfiguration configuration)
     var password = configuration.GetValue<string>("SMTP_PASSWORD");
     return new SmtpEmailSender(host, port, login, password);
 }
+
+public partial class Program { } // Needed for integration tests
