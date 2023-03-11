@@ -73,14 +73,16 @@ public abstract class BaseController : Controller
         return StatusCode((int)statusCode, messageModel);
     }
 
-    protected HttpStatusCode GetStatusCode(ErrorType errorType)
+    private HttpStatusCode GetStatusCode(ErrorType errorType)
     {
-        if (errorType == ErrorType.NotFound)
-            return HttpStatusCode.NotFound;
-
-        if (errorType == ErrorType.AccessDenied)
-            return HttpStatusCode.Forbidden;
-
-        return HttpStatusCode.InternalServerError;
+        return errorType switch
+        {
+            ErrorType.Validation => HttpStatusCode.BadRequest,
+            ErrorType.NotFound => HttpStatusCode.NotFound,
+            ErrorType.Auth => HttpStatusCode.Unauthorized,
+            ErrorType.AccessDenied => HttpStatusCode.Forbidden,
+            ErrorType.Conflict => HttpStatusCode.Conflict,
+            _ => HttpStatusCode.InternalServerError
+        };
     }
 }

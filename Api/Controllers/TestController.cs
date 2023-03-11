@@ -50,7 +50,7 @@ public class TestController : BaseController
     [HttpGet]
     public ObjectResult ValidationError()
     {
-        return Error(ErrorType.NotFound, "validation error");
+        return Error(ErrorType.Validation, "validation error");
     }
 
     [Route("test/conflict")]
