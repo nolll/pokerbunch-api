@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 public class TestController : BaseController
 {
     public TestController(AppSettings appSettings) : base(appSettings)

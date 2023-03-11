@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 public class HomeController : BaseController
 {
     private readonly UrlProvider _urls;
@@ -15,9 +16,6 @@ public class HomeController : BaseController
         _urls = urls;
     }
 
-    /// <summary>
-    /// The root of this api.
-    /// </summary>
     [Route(ApiRoutes.Root)]
     [HttpGet]
     [ProducesResponseType(typeof(HomeModel), 200)]

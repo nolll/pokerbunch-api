@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 public class AdminController : BaseController
 {
     private readonly AppSettings _appSettings;
@@ -23,9 +24,6 @@ public class AdminController : BaseController
         _requireAppsettingsAccess = requireAppsettingsAccess;
     }
     
-    /// <summary>
-    /// Clears all cached data.
-    /// </summary>
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [Authorize]
@@ -35,9 +33,6 @@ public class AdminController : BaseController
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
-    /// <summary>
-    /// Sends a test email.
-    /// </summary>
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [Authorize]
@@ -47,9 +42,6 @@ public class AdminController : BaseController
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
-    /// <summary>
-    /// Gets the current build version of this api.
-    /// </summary>
     [Route(ApiRoutes.Version)]
     [HttpGet]
     public ObjectResult Version()
@@ -57,9 +49,6 @@ public class AdminController : BaseController
         return Success(new VersionModel(_appSettings.Version));
     }
 
-    /// <summary>
-    /// Gets the current application settings
-    /// </summary>
     [Route(ApiRoutes.Settings)]
     [HttpGet]
     [Authorize]
