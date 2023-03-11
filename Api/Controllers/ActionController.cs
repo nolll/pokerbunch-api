@@ -1,10 +1,10 @@
-using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
 using Api.Routes;
 using Api.Settings;
 using Core.Errors;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -35,7 +35,7 @@ public class ActionController : BaseController
 
     [Route(ApiRoutes.Action.Add)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Add(string cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
         return post.Type switch
@@ -68,7 +68,7 @@ public class ActionController : BaseController
 
     [Route(ApiRoutes.Action.Update)]
     [HttpPut]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
         var result = await _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
@@ -77,7 +77,7 @@ public class ActionController : BaseController
 
     [Route(ApiRoutes.Action.Delete)]
     [HttpDelete]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
         var result = await _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using Api.Auth;
 using Api.Models.EventModels;
 using Api.Routes;
 using Api.Settings;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -27,7 +27,7 @@ public class EventController : BaseController
 
     [Route(ApiRoutes.Event.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Get(string eventId)
     {
         var result = await _eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
@@ -36,7 +36,7 @@ public class EventController : BaseController
 
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> List(string bunchId)
     {
         var result = await _eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
@@ -45,7 +45,7 @@ public class EventController : BaseController
 
     [Route(ApiRoutes.Event.Add)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] EventAddPostModel post)
     {
         var result = await _addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));

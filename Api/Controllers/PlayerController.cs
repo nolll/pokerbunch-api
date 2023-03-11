@@ -1,10 +1,10 @@
 using System.Linq;
-using Api.Auth;
 using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -40,7 +40,7 @@ public class PlayerController : BaseController
     /// </summary>
     [Route(ApiRoutes.Player.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Get(string playerId)
     {
         var result = await _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
@@ -52,7 +52,7 @@ public class PlayerController : BaseController
     /// </summary>
     [Route(ApiRoutes.Player.ListByBunch)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> GetList(string bunchId)
     {
         var result = await _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
@@ -64,7 +64,7 @@ public class PlayerController : BaseController
     /// </summary>
     [Route(ApiRoutes.Player.Add)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] PlayerAddPostModel post)
     {
         var result = await _addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
@@ -78,7 +78,7 @@ public class PlayerController : BaseController
     /// </summary>
     [Route(ApiRoutes.Player.Delete)]
     [HttpDelete]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Delete(string playerId)
     {
         var request = new DeletePlayer.Request(CurrentUserName, playerId);
@@ -91,7 +91,7 @@ public class PlayerController : BaseController
     /// </summary>
     [Route(ApiRoutes.Player.Invite)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Invite(string playerId, [FromBody] PlayerInvitePostModel post)
     {
         var registerUrl = _urls.Site.AddUser;

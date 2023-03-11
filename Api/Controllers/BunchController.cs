@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using Api.Auth;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Settings;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -39,7 +39,7 @@ public class BunchController : BaseController
 
     [Route(ApiRoutes.Bunch.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Get(string bunchId)
     {
         var request = new GetBunch.Request(CurrentUserName, bunchId);
@@ -50,7 +50,7 @@ public class BunchController : BaseController
 
     [Route(ApiRoutes.Bunch.Update)]
     [HttpPut]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Update(string bunchId, [FromBody] UpdateBunchPostModel post)
     {
         var request = new EditBunch.Request(CurrentUserName, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
@@ -61,7 +61,7 @@ public class BunchController : BaseController
 
     [Route(ApiRoutes.Bunch.List)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> List()
     {
         var request = new GetBunchList.Request(CurrentUserName);
@@ -72,7 +72,7 @@ public class BunchController : BaseController
 
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Bunches()
     {
         var result = await _getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
@@ -82,7 +82,7 @@ public class BunchController : BaseController
 
     [Route(ApiRoutes.Bunch.Add)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Add([FromBody] AddBunchPostModel post)
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
@@ -93,7 +93,7 @@ public class BunchController : BaseController
 
     [Route(ApiRoutes.Bunch.Join)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Join(string bunchId, [FromBody] JoinBunchPostModel post)
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);

@@ -13,17 +13,14 @@ public class ErrorController : Controller
     public MessageModel Index()
     {
         var exception = GetException();
-        var message = GetMessage(exception);
 
-        HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        return new ErrorModel(message);
-    }
+        if(exception is not null)
+        {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            return new ErrorModel(exception.Message);
+        }
 
-    private string GetMessage(Exception? exception)
-    {
-        return exception != null 
-            ? exception.Message 
-            : "Not found";
+        return new ErrorModel(HttpContext.Response.StatusCode.ToString());
     }
 
     private Exception? GetException()
