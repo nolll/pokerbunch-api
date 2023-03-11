@@ -12,7 +12,7 @@ public class GeneralTests
     public async Task Root()
     {
         var result = await TestClient.General.Root();
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Redirect));
     }
 
     [Test]

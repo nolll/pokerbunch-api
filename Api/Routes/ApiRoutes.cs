@@ -5,7 +5,7 @@ public static class ApiRoutes
     public const string Error = "/error";
     public const string Root = "/";
     public const string Settings = "/settings";
-    public const string Swagger = "/swagger";
+    public const string Swagger = "/swagger/index.html";
     public const string Version = "/version";
 
     public static class Action

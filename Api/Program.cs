@@ -178,7 +178,12 @@ builder.Services.AddSwaggerGen(c =>
     var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
     var xmlFile = $"{assemblyName}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Poker Bunch Api", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Poker Bunch Api", 
+        Description = "For access to protected endpoints, you will need a token from the [Login endpoints](#operations-User-post_login).",
+        Version = "v1"
+    });
     c.IncludeXmlComments(xmlPath);
     c.OperationFilter<AuthorizeCheckOperationFilter>();
     c.CustomSchemaIds(SwaggerSchema.GetSwaggerTypeName);

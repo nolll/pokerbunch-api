@@ -140,9 +140,9 @@ public static class TestClient
             return await PostAsync(token, new ApiAdminClearCacheUrl());
         }
 
-        public static async Task<TestClientResult<HomeModel>> Root()
+        public static async Task<TestClientResult> Root()
         {
-            return await GetAsync<HomeModel>(new ApiRootUrl());
+            return await GetAsync(new ApiRootUrl(), false);
         }
 
         public static async Task<TestClientResult> Settings(string? token)
@@ -255,14 +255,14 @@ public static class TestClient
         }
     }
     
-    private static async Task<TestClientResult> GetAsync(ApiUrl url)
+    private static async Task<TestClientResult> GetAsync(ApiUrl url, bool followRedirect = true)
     {
-        return await GetAsync(null, url);
+        return await GetAsync(null, url, followRedirect);
     }
 
-    private static async Task<TestClientResult> GetAsync(string? token, ApiUrl url)
+    private static async Task<TestClientResult> GetAsync(string? token, ApiUrl url, bool followRedirect = true)
     {
-        var response = await GetClient(token).GetAsync(url.Relative);
+        var response = await GetClient(token, followRedirect).GetAsync(url.Relative);
         return HandleEmptyResponse(response);
     }
 
@@ -317,9 +317,9 @@ public static class TestClient
         return HandleEmptyResponse(response);
     }
 
-    private static HttpClient GetClient(string? token = null)
+    private static HttpClient GetClient(string? token = null, bool followRedirect = true)
     {
-        return TestSetup.GetClient(token);
+        return TestSetup.GetClient(token, followRedirect);
     }
 
     private static async Task<TestClientResult<T>> HandleJsonResponse<T>(HttpResponseMessage response) where T : class
