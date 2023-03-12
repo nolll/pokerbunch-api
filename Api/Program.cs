@@ -62,7 +62,6 @@ builder.Services.AddSingleton(settings);
 builder.Services.AddSingleton<ISettings>(new Settings(settings.InvitationSecret));
 builder.Services.AddSingleton(new UrlProvider(settings.Urls.Api, settings.Urls.Site));
 
-builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
 builder.Services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
 builder.Services.AddSingleton<ICache, Cache>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
@@ -151,7 +150,6 @@ builder.Services.AddAuthorization(options =>
     options.DefaultPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
-//    options.AddPolicy("UserPolicy", policy => policy.Requirements.Add(new CustomAuthRequirement()));
 });
 
 builder.Services.AddAuthentication(x =>
