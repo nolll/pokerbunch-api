@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Api.Auth;
 using Api.Bootstrapping;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
@@ -54,7 +53,7 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.User.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> GetUser(string userName)
     {
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
@@ -75,7 +74,7 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.User.List)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> List()
     {
         var result = await _userList.Execute(new UserList.Request(CurrentUserName));
@@ -87,7 +86,7 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.User.Update)]
     [HttpPut]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Update(string userName, [FromBody] UpdateUserPostModel post)
     {
         var updateRequest = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
@@ -104,7 +103,7 @@ public class UserController : BaseController
     /// </summary>
     [Route(ApiRoutes.Profile.ChangePassword)]
     [HttpPut]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> ChangePassword([FromBody] ChangePasswordPostModel post)
     {
         var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
@@ -141,7 +140,7 @@ public class UserController : BaseController
     /// <returns>Returns the current user</returns>
     [Route(ApiRoutes.Profile.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Profile()
     {
         var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName));
@@ -162,7 +161,22 @@ public class UserController : BaseController
             ? new ObjectResult(CreateToken(result.Data?.UserName ?? "")) 
             : Error(result.Error);
     }
-    
+
+    /// <summary>
+    /// Get an auth token by posting username and password
+    /// </summary>
+    /// <returns>A token that can be used for authentication</returns>
+    [AllowAnonymous]
+    [HttpPost]
+    [Route(ApiRoutes.Auth.LoginForm)]
+    public async Task<ObjectResult> LoginForm([FromForm] string userName, [FromForm] string password)
+    {
+        var result = await _login.Execute(new Login.Request(userName, password));
+        return result.Success
+            ? new ObjectResult(CreateToken(result.Data?.UserName ?? ""))
+            : Error(result.Error);
+    }
+
     private string CreateToken(string userName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();

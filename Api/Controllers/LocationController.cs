@@ -1,9 +1,9 @@
 using System.Linq;
-using Api.Auth;
 using Api.Models.LocationModels;
 using Api.Routes;
 using Api.Settings;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -27,7 +27,7 @@ public class LocationController : BaseController
 
     [Route(ApiRoutes.Location.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Get(string locationId)
     {
         var result = await _getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
@@ -36,7 +36,7 @@ public class LocationController : BaseController
 
     [Route(ApiRoutes.Location.ListByBunch)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> GetList(string bunchId)
     {
         var result = await _getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
@@ -45,7 +45,7 @@ public class LocationController : BaseController
 
     [Route(ApiRoutes.Location.Add)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
         var result = await _addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));

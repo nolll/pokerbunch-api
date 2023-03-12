@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 public class TestController : BaseController
 {
     public TestController(AppSettings appSettings) : base(appSettings)
@@ -49,7 +50,7 @@ public class TestController : BaseController
     [HttpGet]
     public ObjectResult ValidationError()
     {
-        return Error(ErrorType.NotFound, "validation error");
+        return Error(ErrorType.Validation, "validation error");
     }
 
     [Route("test/conflict")]

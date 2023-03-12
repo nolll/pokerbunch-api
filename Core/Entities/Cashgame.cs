@@ -142,9 +142,4 @@ public class Cashgame : IEntity
     {
         return Results.FirstOrDefault(result => result.PlayerId == playerId);
     }
-
-    public IList<Checkpoint> GetCheckpoints(string playerId)
-    {
-        return Checkpoints.Where(o => o.PlayerId == playerId).ToList();
-    }
 }

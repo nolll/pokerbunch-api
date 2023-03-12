@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using Api.Auth;
 using Api.Models.CashgameModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -48,7 +48,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.Get)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Get(string cashgameId)
     {
         var request = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
@@ -59,7 +59,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.ListByBunch)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> List(string bunchId)
     {
         var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, null));
@@ -69,7 +69,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> List(string bunchId, int year)
     {
         var result = await _cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, year));
@@ -79,7 +79,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.ListByEvent)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> EventCashgameList(string eventId)
     {
         var result = await _eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
@@ -88,7 +88,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> PlayerCashgameList(string playerId)
     {
         var result = await _playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
@@ -97,7 +97,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.Add)]
     [HttpPost]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] AddCashgamePostModel post)
     {
         var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
@@ -112,7 +112,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.Update)]
     [HttpPut]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Update(string cashgameId, [FromBody] UpdateCashgamePostModel post)
     {
         var updateRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
@@ -127,7 +127,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.Delete)]
     [HttpDelete]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Delete(string cashgameId)
     {
         var request = new DeleteCashgame.Request(CurrentUserName, cashgameId);
@@ -137,7 +137,7 @@ public class CashgameController : BaseController
 
     [Route(ApiRoutes.Cashgame.ListCurrentByBunch)]
     [HttpGet]
-    [ApiAuthorize]
+    [Authorize]
     public async Task<ObjectResult> Current(string bunchId)
     {
         var result = await _currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));

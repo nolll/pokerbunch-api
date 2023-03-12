@@ -3,6 +3,7 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
+using Microsoft.AspNetCore.Mvc.Testing;
 using SqlKata;
 using Tests.Common.FakeServices;
 
@@ -79,12 +80,18 @@ public class TestSetup
             await _testcontainers.DisposeAsync().AsTask();
     }
 
-    public static HttpClient GetClient(string? token = null)
+    public static HttpClient GetClient(string? token = null, bool followRedirect = true)
     {
         if (_webApplicationFactory == null)
             throw new PokerBunchException("WebApplicationFactory was not initialized.");
 
-        var client = _webApplicationFactory.CreateClient();
+        var options = new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = !followRedirect
+        };
+        
+        var client = _webApplicationFactory.CreateClient(options);
+
         if(token != null)
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         return client;

@@ -14,5 +14,4 @@ public class SiteUrlProvider
     public string AddUser => new AddUserUrl().Absolute(_host);
     public string JoinBunch(string bunchId, string? code = null) => new JoinBunchUrl(bunchId, code).Absolute(_host);
     public string Login => new LoginUrl().Absolute(_host);
-    public string ApiDocs => new DocsUrl().Absolute(_host);
 }
