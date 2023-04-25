@@ -61,6 +61,26 @@ VALUES
     );
 
 INSERT INTO
+    pb_player (bunch_id, user_id, role_id, approved)
+VALUES
+    (
+        1,
+        2,
+        2,
+        true
+    );
+
+INSERT INTO
+    pb_player (bunch_id, user_id, role_id, approved)
+VALUES
+    (
+        1,
+        3,
+        1,
+        true
+    );
+
+INSERT INTO
     pb_location (name, bunch_id)
 VALUES
     ('Test Location', 1);
