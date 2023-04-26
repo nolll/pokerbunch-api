@@ -50,6 +50,11 @@ public abstract class Db : IDb
         return QueryFactory.StatementAsync(sql);
     }
 
+    public string GetSql(Query query)
+    {
+        return QueryFactory.Compiler.Compile(query).RawSql;
+    }
+
     private static IDictionary<string, object?> ConvertParams(IDictionary<SqlColumn, object?> parameters)
     {
         return parameters.Keys.ToDictionary(key => key.AsParam(), key => parameters[key]);
