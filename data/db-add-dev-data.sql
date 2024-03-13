@@ -50,7 +50,7 @@ VALUES
         'test-bunch',
         'Test Bunch',
         '',
-        'W. Europe Standard Time',
+        'Europe/Stockholm',
         200,
         'kr',
         '{AMOUNT} {SYMBOL}',
