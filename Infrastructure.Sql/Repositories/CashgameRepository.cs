@@ -6,25 +6,18 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class CashgameRepository : ICashgameRepository
+public class CashgameRepository(IDb db, ICache cache) : ICashgameRepository
 {
-    private readonly CashgameDb _cashgameDb;
-    private readonly ICache _cache;
+    private readonly CashgameDb _cashgameDb = new(db);
 
-    public CashgameRepository(IDb db, ICache cache)
+    public Task<Cashgame> Get(string cashgameId)
     {
-        _cashgameDb = new CashgameDb(db);
-        _cache = cache;
+        return cache.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public async Task<Cashgame> Get(string cashgameId)
+    private Task<IList<Cashgame>> Get(IList<string> ids)
     {
-        return await _cache.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
-    }
-
-    private async Task<IList<Cashgame>> Get(IList<string> ids)
-    {
-        return await _cache.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null)
@@ -62,17 +55,19 @@ public class CashgameRepository : ICashgameRepository
     public async Task DeleteGame(string id)
     {
         await _cashgameDb.DeleteGame(id);
-        _cache.Remove<Cashgame>(id);
+        cache.Remove<Cashgame>(id);
     }
 
-    public async Task<string> Add(Bunch bunch, Cashgame cashgame)
+    public Task<string> Add(Bunch bunch, Cashgame cashgame)
     {
-        return await _cashgameDb.AddGame(bunch, cashgame);
+        return _cashgameDb.AddGame(bunch, cashgame);
     }
 
     public async Task Update(Cashgame cashgame)
     {
         await _cashgameDb.UpdateGame(cashgame);
-        _cache.Remove<Cashgame>(cashgame.Id);
+        cache.Remove<Cashgame>(cashgame.Id);
+        if(cashgame.EventId is not null)
+            cache.Remove<Event>(cashgame.EventId);
     }
 }

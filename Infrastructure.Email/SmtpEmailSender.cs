@@ -30,7 +30,7 @@ public class SmtpEmailSender : EmailSender
     private SmtpClient Client
     {
         get
-        {
+        {   
             var client =  new SmtpClient(_smtpHost);
             client.Credentials = _userName != null && _password != null
                 ? new NetworkCredential(_userName, _password)

@@ -6,25 +6,18 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class PlayerRepository : IPlayerRepository
+public class PlayerRepository(IDb db, ICache cache) : IPlayerRepository
 {
-    private readonly PlayerDb _playerDb;
-    private readonly ICache _cache;
+    private readonly PlayerDb _playerDb = new(db);
 
-    public PlayerRepository(IDb db, ICache cache)
+    public Task<Player> Get(string id)
     {
-        _playerDb = new PlayerDb(db);
-        _cache = cache;
+        return cache.GetAndStoreAsync(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public async Task<Player> Get(string id)
+    public Task<IList<Player>> Get(IList<string> ids)
     {
-        return await _cache.GetAndStoreAsync(_playerDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
-    }
-
-    public async Task<IList<Player>> Get(IList<string> ids)
-    {
-        return await _cache.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Player>> List(string bunchId)
@@ -41,19 +34,19 @@ public class PlayerRepository : IPlayerRepository
         return (await Get(ids)).First();
     }
 
-    public async Task<string> Add(Player player)
+    public Task<string> Add(Player player)
     {
-        return await _playerDb.Add(player);
+        return _playerDb.Add(player);
     }
 
-    public async Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
+    public Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
     {
-        return await _playerDb.JoinBunch(player, bunch, userId);
+        return _playerDb.JoinBunch(player, bunch, userId);
     }
 
     public async Task Delete(string playerId)
     {
         await _playerDb.Delete(playerId);
-        _cache.Remove<Player>(playerId);
+        cache.Remove<Player>(playerId);
     }
 }

@@ -7,20 +7,13 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class BunchRepository : IBunchRepository
+public class BunchRepository(IDb db, ICache cache) : IBunchRepository
 {
-    private readonly BunchDb _bunchDb;
-    private readonly ICache _cache;
+    private readonly BunchDb _bunchDb = new(db);
 
-    public BunchRepository(IDb db, ICache cache)
+    public Task<Bunch> Get(string id)
     {
-        _bunchDb = new BunchDb(db);
-        _cache = cache;
-    }
-
-    public async Task<Bunch> Get(string id)
-    {
-        return await _cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<Bunch> GetBySlug(string slug)
@@ -41,9 +34,9 @@ public class BunchRepository : IBunchRepository
         return null;
     }
 
-    private async Task<IList<Bunch>> List(IList<string> ids)
+    private Task<IList<Bunch>> List(IList<string> ids)
     {
-        return await _cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Bunch>> List()
@@ -52,9 +45,9 @@ public class BunchRepository : IBunchRepository
         return await List(ids);
     }
 
-    private async Task<IList<string>> Search(string slug)
+    private Task<IList<string>> Search(string slug)
     {
-        return await _bunchDb.Search(slug);
+        return _bunchDb.Search(slug);
     }
 
     public async Task<IList<Bunch>> List(string userId)
@@ -63,14 +56,14 @@ public class BunchRepository : IBunchRepository
         return await List(ids);
     }
 
-    public async Task<string> Add(Bunch bunch)
+    public Task<string> Add(Bunch bunch)
     {
-        return await _bunchDb.Add(bunch);
+        return _bunchDb.Add(bunch);
     }
 
     public async Task Update(Bunch bunch)
     {
         await _bunchDb.Update(bunch);
-        _cache.Remove<Bunch>(bunch.Id);
+        cache.Remove<Bunch>(bunch.Id);
     }
 }

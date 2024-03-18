@@ -52,7 +52,7 @@ public abstract class Db : IDb
 
     public string GetSql(Query query)
     {
-        return QueryFactory.Compiler.Compile(query).RawSql;
+        return QueryFactory.Compiler.Compile(query).ToString();
     }
 
     private static IDictionary<string, object?> ConvertParams(IDictionary<SqlColumn, object?> parameters)

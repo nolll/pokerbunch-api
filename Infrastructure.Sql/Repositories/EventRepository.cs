@@ -6,25 +6,18 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class EventRepository : IEventRepository
+public class EventRepository(IDb db, ICache cache) : IEventRepository
 {
-    private readonly EventDb _eventDb;
-    private readonly ICache _cache;
+    private readonly EventDb _eventDb = new(db);
 
-    public EventRepository(IDb db, ICache cache)
+    public Task<Event> Get(string id)
     {
-        _eventDb = new EventDb(db);
-        _cache = cache;
+        return cache.GetAndStoreAsync(_eventDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    public async Task<Event> Get(string id)
+    public Task<IList<Event>> Get(IList<string> ids)
     {
-        return await _cache.GetAndStoreAsync(_eventDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
-    }
-
-    public async Task<IList<Event>> Get(IList<string> ids)
-    {
-        return await _cache.GetAndStoreAsync(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<IList<Event>> List(string bunchId)
@@ -39,18 +32,18 @@ public class EventRepository : IEventRepository
         return (await Get(ids)).FirstOrDefault();
     }
 
-    public async Task<string> Add(Event e)
+    public Task<string> Add(Event e)
     {
-        return await _eventDb.Add(e);
+        return _eventDb.Add(e);
     }
 
-    public async Task AddCashgame(string eventId, string cashgameId)
+    public Task AddCashgame(string eventId, string cashgameId)
     {
-        await _eventDb.AddCashgame(eventId, cashgameId);
+        return _eventDb.AddCashgame(eventId, cashgameId);
     }
 
-    public async Task RemoveCashgame(string eventId, string cashgameId)
+    public Task RemoveCashgame(string eventId, string cashgameId)
     {
-        await _eventDb.RemoveCashgame(eventId, cashgameId);
+        return _eventDb.RemoveCashgame(eventId, cashgameId);
     }
 }

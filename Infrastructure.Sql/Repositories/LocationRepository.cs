@@ -6,25 +6,18 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class LocationRepository : ILocationRepository
+public class LocationRepository(IDb container, ICache cache) : ILocationRepository
 {
-    private readonly LocationDb _locationDb;
-    private readonly ICache _cache;
+    private readonly LocationDb _locationDb = new(container);
 
-    public LocationRepository(IDb container, ICache cache)
+    public Task<Location> Get(string id)
     {
-        _locationDb = new LocationDb(container);
-        _cache = cache;
+        return GetAndCache(id);
     }
 
-    public async Task<Location> Get(string id)
+    public Task<IList<Location>> List(IList<string> ids)
     {
-        return await GetAndCache(id);
-    }
-
-    public async Task<IList<Location>> List(IList<string> ids)
-    {
-        return await GetAndCache(ids);
+        return GetAndCache(ids);
     }
 
     public async Task<IList<Location>> List(string bunchId)
@@ -33,18 +26,18 @@ public class LocationRepository : ILocationRepository
         return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
-    public async Task<string> Add(Location location)
+    public Task<string> Add(Location location)
     {
-        return await _locationDb.Add(location);
+        return _locationDb.Add(location);
     }
 
-    private async Task<Location> GetAndCache(string id)
+    private Task<Location> GetAndCache(string id)
     {
-        return await _cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
-    private async Task<IList<Location>> GetAndCache(IList<string> ids)
+    private Task<IList<Location>> GetAndCache(IList<string> ids)
     {
-        return await _cache.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
 }
