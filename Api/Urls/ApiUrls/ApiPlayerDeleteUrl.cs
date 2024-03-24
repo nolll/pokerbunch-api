@@ -3,14 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiPlayerDeleteUrl : ApiUrl
+public class ApiPlayerDeleteUrl(string playerId) : ApiUrl
 {
-    private readonly string _playerId;
-
-    public ApiPlayerDeleteUrl(string playerId)
-    {
-        _playerId = playerId;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.Player.Delete, RouteReplace.PlayerId(_playerId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Player.Delete, RouteReplace.PlayerId(playerId));
 }

@@ -3,14 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiUserUpdateUrl : ApiUrl
+public class ApiUserUpdateUrl(string userName) : ApiUrl
 {
-    private readonly string _userName;
-
-    public ApiUserUpdateUrl(string userName)
-    {
-        _userName = userName;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.User.Update, RouteReplace.UserName(_userName));
+    protected override string Input => RouteParams.Replace(ApiRoutes.User.Update, RouteReplace.UserName(userName));
 }

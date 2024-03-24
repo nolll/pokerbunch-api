@@ -3,14 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiEventUrl : ApiUrl
+public class ApiEventUrl(string eventId) : ApiUrl
 {
-    private readonly string _eventId;
-
-    public ApiEventUrl(string eventId)
-    {
-        _eventId = eventId;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.Event.Get, RouteReplace.EventId(_eventId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Event.Get, RouteReplace.EventId(eventId));
 }

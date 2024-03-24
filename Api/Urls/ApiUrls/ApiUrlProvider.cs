@@ -1,14 +1,7 @@
 namespace Api.Urls.ApiUrls;
 
-public class ApiUrlProvider
+public class ApiUrlProvider(string host)
 {
-    private readonly string _host;
-
-    public ApiUrlProvider(string host)
-    {
-        _host = host;
-    }
-
-    public string Cashgame(string cashgameId) => new ApiCashgameUrl(cashgameId).Absolute(_host);
-    public string User(string userName) => new ApiUserUrl(userName).Absolute(_host);
+    public string Cashgame(string cashgameId) => new ApiCashgameUrl(cashgameId).Absolute(host);
+    public string User(string userName) => new ApiUserUrl(userName).Absolute(host);
 }

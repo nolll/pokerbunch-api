@@ -2,18 +2,9 @@ using Api.Routes;
 
 namespace Api.Urls.SiteUrls;
 
-public class JoinBunchUrl : SiteUrl
+public class JoinBunchUrl(string bunchId, string? code = null) : SiteUrl
 {
-    private readonly string? _code;
-    private readonly string _bunchId;
-
-    public JoinBunchUrl(string bunchId, string? code = null)
-    {
-        _bunchId = bunchId;
-        _code = code;
-    }
-
-    protected override string Input => _code != null
-        ? RouteParams.Replace(SiteRoutes.JoinBunchWithCode, RouteReplace.BunchId(_bunchId), RouteReplace.Code(_code))
-        : RouteParams.Replace(SiteRoutes.JoinBunch, RouteReplace.BunchId(_bunchId));
+    protected override string Input => code != null
+        ? RouteParams.Replace(SiteRoutes.JoinBunchWithCode, RouteReplace.BunchId(bunchId), RouteReplace.Code(code))
+        : RouteParams.Replace(SiteRoutes.JoinBunch, RouteReplace.BunchId(bunchId));
 }

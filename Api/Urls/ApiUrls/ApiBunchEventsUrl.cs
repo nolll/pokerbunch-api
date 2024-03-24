@@ -3,14 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiBunchEventsUrl : ApiUrl
+public class ApiBunchEventsUrl(string bunchId) : ApiUrl
 {
-    private readonly string _bunchId;
-
-    public ApiBunchEventsUrl(string bunchId)
-    {
-        _bunchId = bunchId;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.Event.ListByBunch, RouteReplace.BunchId(_bunchId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Event.ListByBunch, RouteReplace.BunchId(bunchId));
 }
