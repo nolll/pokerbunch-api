@@ -3,16 +3,17 @@ using Core.UseCases;
 
 namespace Api.Models.LocationModels;
 
-public class LocationModel
+[method: JsonConstructor]
+public class LocationModel(string id, string name, string bunch)
 {
     [JsonPropertyName("id")]
-    public string Id { get; }
-    
+    public string Id { get; } = id;
+
     [JsonPropertyName("name")]
-    public string Name { get; }
-    
+    public string Name { get; } = name;
+
     [JsonPropertyName("bunch")]
-    public string Bunch { get; }
+    public string Bunch { get; } = bunch;
 
     public LocationModel(GetLocationList.Location location)
         : this(location.Id, location.Name, location.Slug)
@@ -27,13 +28,5 @@ public class LocationModel
     public LocationModel(AddLocation.Result location)
         : this(location.Id, location.Name, location.Slug)
     {
-    }
-
-    [JsonConstructor]
-    public LocationModel(string id, string name, string bunch)
-    {
-        Id = id;
-        Name = name;
-        Bunch = bunch;
     }
 }

@@ -6,35 +6,26 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventList : UseCase<EventList.Request, EventList.Result>
+public class EventList(
+    IBunchRepository bunchRepository,
+    IEventRepository eventRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository,
+    ILocationRepository locationRepository)
+    : UseCase<EventList.Request, EventList.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IEventRepository _eventRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly ILocationRepository _locationRepository;
-
-    public EventList(IBunchRepository bunchRepository, IEventRepository eventRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _eventRepository = eventRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-        _locationRepository = locationRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListEvents(user, player))
             return Error(new AccessDeniedError());
 
-        var events = await _eventRepository.List(bunch.Id);
+        var events = await eventRepository.List(bunch.Id);
         var locationIds = events.Select(o => o.LocationId).Where(o => o != null).Distinct().ToList();
-        var locations = await _locationRepository.List(locationIds!);
+        var locations = await locationRepository.List(locationIds!);
 
         var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
 
@@ -46,49 +37,32 @@ public class EventList : UseCase<EventList.Request, EventList.Result>
         var location = locations.FirstOrDefault(o => o.Id == e.LocationId);
         var locationName = location != null ? location.Name : "";
         var locationId = location?.Id;
-        if(e.HasGames)
-            return new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate);
-        return new Event(e.Id, slug, e.Name);
+        
+        return e.HasGames 
+            ? new Event(e.Id, slug, e.Name, locationId, locationName, e.StartDate) 
+            : new Event(e.Id, slug, e.Name);
     }
 
-    public class Request
+    public class Request(string userName, string slug)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-
-        public Request(string userName, string slug)
-        {
-            UserName = userName;
-            Slug = slug;
-        }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
     }
 
-    public class Result
+    public class Result(IList<Event> events)
     {
-        public IList<Event> Events { get; }
-
-        public Result(IList<Event> events)
-        {
-            Events = events;
-        }
+        public IList<Event> Events { get; } = events;
     }
 
-    public class Event
+    public class Event(string id, string bunchId, string name)
     {
-        public string EventId { get; }
-        public string BunchId { get; }
-        public string Name { get; }
+        public string EventId { get; } = id;
+        public string BunchId { get; } = bunchId;
+        public string Name { get; } = name;
         public string? LocationId { get; }
         public string? LocationName { get; }
         public Date? StartDate { get; }
 
-        public Event(string id, string bunchId, string name)
-        {
-            EventId = id;
-            BunchId = bunchId;
-            Name = name;
-        }
-            
         public Event(string id, string bunchId, string name, string? locationId, string? locationName, Date startDate)
             : this(id, bunchId, name)
         {

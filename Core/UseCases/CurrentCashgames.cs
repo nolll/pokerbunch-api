@@ -4,34 +4,22 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
+public class CurrentCashgames(
+    IUserRepository userRepository,
+    IBunchRepository bunchRepository,
+    ICashgameRepository cashgameRepository,
+    IPlayerRepository playerRepository)
+    : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IBunchRepository _bunchRepository;
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IPlayerRepository _playerRepository;
-
-    public CurrentCashgames(
-        IUserRepository userRepository,
-        IBunchRepository bunchRepository,
-        ICashgameRepository cashgameRepository,
-        IPlayerRepository playerRepository)
-    {
-        _userRepository = userRepository;
-        _bunchRepository = bunchRepository;
-        _cashgameRepository = cashgameRepository;
-        _playerRepository = playerRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
         if (!AccessControl.CanListCurrentGames(user, player))
             return Error(new AccessDeniedError());
 
-        var cashgame = await _cashgameRepository.GetRunning(bunch.Id);
+        var cashgame = await cashgameRepository.GetRunning(bunch.Id);
 
         var gameList = new List<Game>();
         if (cashgame != null)
@@ -40,37 +28,20 @@ public class CurrentCashgames : UseCase<CurrentCashgames.Request, CurrentCashgam
         return Success(new Result(gameList));
     }
     
-    public class Request
+    public class Request(string userName, string slug)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-
-        public Request(string userName, string slug)
-        {
-            UserName = userName;
-            Slug = slug;
-        }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
     }
 
-    public class Result
+    public class Result(List<Game> games)
     {
-        public List<Game> Games { get; }
-
-        public Result(List<Game> games)
-        {
-            Games = games;
-        }
+        public List<Game> Games { get; } = games;
     }
 
-    public class Game
+    public class Game(string slug, string id)
     {
-        public string Slug { get; }
-        public string Id { get; }
-
-        public Game(string slug, string id)
-        {
-            Slug = slug;
-            Id = id;
-        }
+        public string Slug { get; } = slug;
+        public string Id { get; } = id;
     }
 }

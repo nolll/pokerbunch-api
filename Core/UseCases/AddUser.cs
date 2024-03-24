@@ -6,22 +6,12 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddUser : UseCase<AddUser.Request, AddUser.Result>
+public class AddUser(
+    IUserRepository userRepository,
+    IRandomizer randomizer,
+    IEmailSender emailSender)
+    : UseCase<AddUser.Request, AddUser.Result>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IRandomizer _randomizer;
-    private readonly IEmailSender _emailSender;
-
-    public AddUser(
-        IUserRepository userRepository,
-        IRandomizer randomizer,
-        IEmailSender emailSender)
-    {
-        _userRepository = userRepository;
-        _randomizer = randomizer;
-        _emailSender = emailSender;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
@@ -37,14 +27,14 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
         if (userByEmail != null)
             return Error(new EmailExistsError());
 
-        var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
+        var salt = SaltGenerator.CreateSalt(randomizer.GetAllowedChars());
         var encryptedPassword = EncryptionService.Encrypt(request.Password, salt);
         var user = CreateUser(request, encryptedPassword, salt);
 
-        await _userRepository.Add(user);
+        await userRepository.Add(user);
 
         var message = new RegistrationMessage(request.LoginUrl);
-        _emailSender.Send(request.Email, message);
+        emailSender.Send(request.Email, message);
 
         return Success(new Result());
     }
@@ -53,7 +43,7 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
     {
         try
         {
-            return await _userRepository.GetByUserName(userName);
+            return await userRepository.GetByUserName(userName);
         }
         catch (PokerBunchException)
         {
@@ -65,7 +55,7 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
     {
         try
         {
-            return await _userRepository.GetByUserEmail(email);
+            return await userRepository.GetByUserEmail(email);
         }
         catch (PokerBunchException)
         {
@@ -86,31 +76,22 @@ public class AddUser : UseCase<AddUser.Request, AddUser.Result>
             salt);
     }
 
-    public class Request
+    public class Request(string userName, string displayName, string email, string password, string loginUrl)
     {
         [Required(ErrorMessage = "Login Name can't be empty")]
-        public string UserName { get; }
+        public string UserName { get; } = userName;
 
         [Required(ErrorMessage = "Display Name can't be empty")]
-        public string DisplayName { get; }
+        public string DisplayName { get; } = displayName;
 
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; }
+        public string Email { get; } = email;
 
         [Required(ErrorMessage = "Password can't be empty")]
-        public string Password { get; }
+        public string Password { get; } = password;
 
-        public string LoginUrl { get; }
-
-        public Request(string userName, string displayName, string email, string password, string loginUrl)
-        {
-            UserName = userName;
-            DisplayName = displayName;
-            Email = email;
-            Password = password;
-            LoginUrl = loginUrl;
-        }
+        public string LoginUrl { get; } = loginUrl;
     }
 
     public class Result

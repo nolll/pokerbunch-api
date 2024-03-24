@@ -1,10 +1,6 @@
 ﻿namespace Core.Errors;
 
-public abstract class NotFoundError : UseCaseError
+public abstract class NotFoundError(string message) : UseCaseError(message)
 {
     public override ErrorType Type => ErrorType.NotFound;
-
-    protected NotFoundError(string message) : base(message)
-    {
-    }
 }

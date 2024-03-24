@@ -6,38 +6,30 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
+public class GetPlayer(
+    IBunchRepository bunchRepository,
+    IPlayerRepository playerRepository,
+    ICashgameRepository cashgameRepository,
+    IUserRepository userRepository)
+    : UseCase<GetPlayer.Request, GetPlayer.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IUserRepository _userRepository;
-
-    public GetPlayer(IBunchRepository bunchRepository, IPlayerRepository playerRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _playerRepository = playerRepository;
-        _cashgameRepository = cashgameRepository;
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = await GetPlayerOrNull(request.PlayerId);
         if (player == null)
             return Error(new PlayerNotFoundError(request.PlayerId));
 
-        var bunch = await _bunchRepository.Get(player.BunchId);
+        var bunch = await bunchRepository.Get(player.BunchId);
         var user = player.UserId != null 
-            ? await _userRepository.GetById(player.UserId)
+            ? await userRepository.GetById(player.UserId)
             : null;
-        var currentUser = await _userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+        var currentUser = await userRepository.GetByUserName(request.UserName);
+        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
         if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
-        var cashgames = await _cashgameRepository.GetByPlayer(player.Id);
+        var cashgames = await cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
 
@@ -48,7 +40,7 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
     {
         try
         {
-            return await _playerRepository.Get(id);
+            return await playerRepository.Get(id);
         }
         catch
         {
@@ -56,16 +48,10 @@ public class GetPlayer : UseCase<GetPlayer.Request, GetPlayer.Result>
         }
     }
 
-    public class Request
+    public class Request(string userName, string playerId)
     {
-        public string UserName { get; }
-        public string PlayerId { get; }
-
-        public Request(string userName, string playerId)
-        {
-            UserName = userName;
-            PlayerId = playerId;
-        }
+        public string UserName { get; } = userName;
+        public string PlayerId { get; } = playerId;
     }
 
     public class Result

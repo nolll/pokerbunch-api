@@ -2,13 +2,8 @@
 
 namespace Api.Models.BunchModels;
 
-public class JoinBunchPostModel
+[method: JsonConstructor]
+public class JoinBunchPostModel(string code)
 {
-    public string Code { get; }
-
-    [JsonConstructor]
-    public JoinBunchPostModel(string code)
-    {
-        Code = code;
-    }
+    public string Code { get; } = code;
 }

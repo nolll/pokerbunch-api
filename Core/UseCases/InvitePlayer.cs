@@ -5,28 +5,14 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
+public class InvitePlayer(
+    IBunchRepository bunchRepository,
+    IPlayerRepository playerRepository,
+    IEmailSender emailSender,
+    IUserRepository userRepository,
+    IInvitationCodeCreator invitationCodeCreator)
+    : UseCase<InvitePlayer.Request, InvitePlayer.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly IEmailSender _emailSender;
-    private readonly IUserRepository _userRepository;
-    private readonly IInvitationCodeCreator _invitationCodeCreator;
-
-    public InvitePlayer(
-        IBunchRepository bunchRepository, 
-        IPlayerRepository playerRepository, 
-        IEmailSender emailSender, 
-        IUserRepository userRepository,
-        IInvitationCodeCreator invitationCodeCreator)
-    {
-        _bunchRepository = bunchRepository;
-        _playerRepository = playerRepository;
-        _emailSender = emailSender;
-        _userRepository = userRepository;
-        _invitationCodeCreator = invitationCodeCreator;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
@@ -34,52 +20,45 @@ public class InvitePlayer : UseCase<InvitePlayer.Request, InvitePlayer.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var player = await _playerRepository.Get(request.PlayerId);
-        var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = await _userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+        var player = await playerRepository.Get(request.PlayerId);
+        var bunch = await bunchRepository.Get(player.BunchId);
+        var currentUser = await userRepository.GetByUserName(request.UserName);
+        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanInvitePlayer(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var invitationCode = _invitationCodeCreator.GetCode(player);
+        var invitationCode = invitationCodeCreator.GetCode(player);
         var joinUrl = string.Format(request.JoinUrlFormat, bunch.Slug);
         var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, bunch.Slug, invitationCode);
         var message = new InvitationMessage(bunch.DisplayName, invitationCode, request.RegisterUrl, joinUrl, joinWithCodeUrl);
-        _emailSender.Send(request.Email, message);
+        emailSender.Send(request.Email, message);
 
         return Success(new Result(player.Id));
     }
 
-    public class Request
+    public class Request(
+        string userName,
+        string playerId,
+        string email,
+        string registerUrl,
+        string joinUrlFormat,
+        string joinWithCodeUrlFormat)
     {
-        public string UserName { get; }
-        public string PlayerId { get; }
+        public string UserName { get; } = userName;
+        public string PlayerId { get; } = playerId;
+
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; }
-        public string RegisterUrl { get; }
-        public string JoinUrlFormat { get; }
-        public string JoinWithCodeUrlFormat { get; }
+        public string Email { get; } = email;
 
-        public Request(string userName, string playerId, string email, string registerUrl, string joinUrlFormat, string joinWithCodeUrlFormat)
-        {
-            UserName = userName;
-            PlayerId = playerId;
-            Email = email;
-            RegisterUrl = registerUrl;
-            JoinUrlFormat = joinUrlFormat;
-            JoinWithCodeUrlFormat = joinWithCodeUrlFormat;
-        }
+        public string RegisterUrl { get; } = registerUrl;
+        public string JoinUrlFormat { get; } = joinUrlFormat;
+        public string JoinWithCodeUrlFormat { get; } = joinWithCodeUrlFormat;
     }
 
-    public class Result
+    public class Result(string playerId)
     {
-        public string PlayerId { get; }
-
-        public Result(string playerId)
-        {
-            PlayerId = playerId;
-        }
+        public string PlayerId { get; } = playerId;
     }
 }

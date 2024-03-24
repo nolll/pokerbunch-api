@@ -2,13 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace Api.Models.UserModels;
 
-public class ResetPasswordPostModel
+[method: JsonConstructor]
+public class ResetPasswordPostModel(string email)
 {
-    public string Email { get; }
-
-    [JsonConstructor]
-    public ResetPasswordPostModel(string email)
-    {
-        Email = email;
-    }
+    public string Email { get; } = email;
 }

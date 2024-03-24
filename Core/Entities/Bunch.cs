@@ -2,40 +2,26 @@ using System;
 
 namespace Core.Entities;
 
-public class Bunch : IEntity
+public class Bunch(
+    string id,
+    string slug,
+    string? displayName = null,
+    string? description = null,
+    string? houseRules = null,
+    TimeZoneInfo? timezone = null,
+    int? defaultBuyin = null,
+    Currency? currency = null)
+    : IEntity
 {
-    public string Id { get; }
-    public string Slug { get; }
-    public string DisplayName { get; }
-    public string Description { get; }
-    public string HouseRules { get; }
-    public TimeZoneInfo Timezone { get; }
-    public int DefaultBuyin { get; }
-    public Currency Currency { get; }
-    public bool CashgamesEnabled { get; }
-    public bool TournamentsEnabled { get; }
-    public bool VideosEnabled { get; }
-
-    public Bunch(
-        string id, 
-        string slug, 
-        string? displayName = null, 
-        string? description = null, 
-        string? houseRules = null, 
-        TimeZoneInfo? timezone = null, 
-        int? defaultBuyin = null, 
-        Currency? currency = null)
-    {
-        Id = id;
-        Slug = slug;
-        DisplayName = displayName ?? "";
-        Description = description ?? "";
-        HouseRules = houseRules ?? "";
-        Timezone = timezone ?? TimeZoneInfo.Utc;
-        DefaultBuyin = defaultBuyin ?? 0;
-        Currency = currency ?? Currency.Default;
-        CashgamesEnabled = true;
-        TournamentsEnabled = false;
-        VideosEnabled = false;
-    }
+    public string Id { get; } = id;
+    public string Slug { get; } = slug;
+    public string DisplayName { get; } = displayName ?? "";
+    public string Description { get; } = description ?? "";
+    public string HouseRules { get; } = houseRules ?? "";
+    public TimeZoneInfo Timezone { get; } = timezone ?? TimeZoneInfo.Utc;
+    public int DefaultBuyin { get; } = defaultBuyin ?? 0;
+    public Currency Currency { get; } = currency ?? Currency.Default;
+    public bool CashgamesEnabled { get; } = true;
+    public bool TournamentsEnabled { get; } = false;
+    public bool VideosEnabled { get; } = false;
 }

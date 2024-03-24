@@ -3,54 +3,52 @@ using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-public class CashgameBunchModel
+[method: JsonConstructor]
+public class CashgameBunchModel(
+    string id,
+    string timezone,
+    string currencyFormat,
+    string currencySymbol,
+    string currencyLayout,
+    string thousandSeparator,
+    string culture,
+    string role)
 {
     [JsonPropertyName("id")]
-    public string Id { get; }
-    
+    public string Id { get; } = id;
+
     [JsonPropertyName("timezone")]
-    public string Timezone { get; }
-    
+    public string Timezone { get; } = timezone;
+
     [JsonPropertyName("currencyFormat")]
-    public string CurrencyFormat { get; }
-    
+    public string CurrencyFormat { get; } = currencyFormat;
+
     [JsonPropertyName("currencySymbol")]
-    public string CurrencySymbol { get; }
-    
+    public string CurrencySymbol { get; } = currencySymbol;
+
     [JsonPropertyName("currencyLayout")]
-    public string CurrencyLayout { get; }
-    
+    public string CurrencyLayout { get; } = currencyLayout;
+
     [JsonPropertyName("thousandSeparator")]
-    public string ThousandSeparator { get; }
-    
+    public string ThousandSeparator { get; } = thousandSeparator;
+
     [JsonPropertyName("culture")]
-    public string Culture { get; }
-    
+    public string Culture { get; } = culture;
+
     [JsonPropertyName("role")]
-    public string Role { get; }
+    public string Role { get; } = role;
 
-    public CashgameBunchModel(CashgameDetails.Result detailsResult)
+    public CashgameBunchModel(CashgameDetails.Result detailsResult) 
+        : this(
+            detailsResult.Slug,
+            detailsResult.Timezone,
+            detailsResult.CurrencyFormat,
+            detailsResult.CurrencySymbol,
+            detailsResult.CurrencyLayout,
+            detailsResult.ThousandSeparator,
+            detailsResult.Culture,
+            detailsResult.Role.ToString()
+                .ToLower())
     {
-        Id = detailsResult.Slug;
-        Timezone = detailsResult.Timezone;
-        CurrencyFormat = detailsResult.CurrencyFormat;
-        CurrencySymbol = detailsResult.CurrencySymbol;
-        CurrencyLayout = detailsResult.CurrencyLayout;
-        ThousandSeparator = detailsResult.ThousandSeparator;
-        Culture = detailsResult.Culture;
-        Role = detailsResult.Role.ToString().ToLower();
-    }
-
-    [JsonConstructor]
-    public CashgameBunchModel(string id, string timezone, string currencyFormat, string currencySymbol, string currencyLayout, string thousandSeparator, string culture, string role)
-    {
-        Id = id;
-        Timezone = timezone;
-        CurrencyFormat = currencyFormat;
-        CurrencySymbol = currencySymbol;
-        CurrencyLayout = currencyLayout;
-        ThousandSeparator = thousandSeparator;
-        Culture = culture;
-        Role = role;
     }
 }

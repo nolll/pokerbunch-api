@@ -3,14 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiEventCashgamesUrl : ApiUrl
+public class ApiEventCashgamesUrl(string eventId) : ApiUrl
 {
-    private readonly string _eventId;
-
-    public ApiEventCashgamesUrl(string eventId)
-    {
-        _eventId = eventId;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.Cashgame.ListByEvent, RouteReplace.EventId(_eventId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Cashgame.ListByEvent, RouteReplace.EventId(eventId));
 }

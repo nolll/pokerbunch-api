@@ -6,43 +6,25 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunchList : UseCase<GetBunchList.Request, GetBunchList.Result>
+public class GetBunchList(IBunchRepository bunchRepository, IUserRepository userRepository)
+    : UseCase<GetBunchList.Request, GetBunchList.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IUserRepository _userRepository;
-
-    public GetBunchList(IBunchRepository bunchRepository, IUserRepository userRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.GetByUserName(request.UserName);
+        var user = await userRepository.GetByUserName(request.UserName);
         if (!AccessControl.CanListBunches(user))
             return Error(new AccessDeniedError());
 
-        var bunches = await _bunchRepository.List();
+        var bunches = await bunchRepository.List();
         return Success(new Result(bunches));
     }
     
-    public class Request
+    public class Request(string userName)
     {
-        public string UserName { get; }
-
-        public Request(string userName)
-        {
-            UserName = userName;
-        }
+        public string UserName { get; } = userName;
     }
 
-    public class Result : BunchListResult
-    {
-        public Result(IEnumerable<Bunch> bunches) : base(bunches)
-        {
-        }
-    }
+    public class Result(IEnumerable<Bunch> bunches) : BunchListResult(bunches);
 }
 
 public class BunchListResult
@@ -55,16 +37,9 @@ public class BunchListResult
     }
 }
 
-public class BunchListResultItem
+public class BunchListResultItem(Bunch bunch)
 {
-    public string Slug { get; }
-    public string Name { get; }
-    public string Description { get; }
-
-    public BunchListResultItem(Bunch bunch)
-    {
-        Slug = bunch.Slug;
-        Name = bunch.DisplayName;
-        Description = bunch.Description;
-    }
+    public string Slug { get; } = bunch.Slug;
+    public string Name { get; } = bunch.DisplayName;
+    public string Description { get; } = bunch.Description;
 }

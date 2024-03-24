@@ -2,23 +2,19 @@
 
 namespace Api.Models.BunchModels;
 
-public class UpdateBunchPostModel
+[method: JsonConstructor]
+public class UpdateBunchPostModel(
+    string description,
+    string houseRules,
+    string timezone,
+    string currencySymbol,
+    string currencyLayout,
+    int defaultBuyin)
 {
-    public string Description { get; }
-    public string HouseRules { get; }
-    public string Timezone { get; }
-    public string CurrencySymbol { get; }
-    public string CurrencyLayout { get; }
-    public int DefaultBuyin { get; }
-
-    [JsonConstructor]
-    public UpdateBunchPostModel(string description, string houseRules, string timezone, string currencySymbol, string currencyLayout, int defaultBuyin)
-    {
-        Description = description;
-        HouseRules = houseRules;
-        Timezone = timezone;
-        CurrencySymbol = currencySymbol;
-        CurrencyLayout = currencyLayout;
-        DefaultBuyin = defaultBuyin;
-    }
+    public string Description { get; } = description;
+    public string HouseRules { get; } = houseRules;
+    public string Timezone { get; } = timezone;
+    public string CurrencySymbol { get; } = currencySymbol;
+    public string CurrencyLayout { get; } = currencyLayout;
+    public int DefaultBuyin { get; } = defaultBuyin;
 }

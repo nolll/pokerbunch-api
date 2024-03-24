@@ -3,13 +3,14 @@ using Core.UseCases;
 
 namespace Api.Models.LocationModels;
 
-public class SmallLocationModel
+[method: JsonConstructor]
+public class SmallLocationModel(string? id, string? name)
 {
     [JsonPropertyName("id")]
-    public string Id { get; }
-    
+    public string Id { get; } = id ?? "";
+
     [JsonPropertyName("name")]
-    public string Name { get; }
+    public string Name { get; } = name ?? "";
 
     public SmallLocationModel(CashgameDetails.Result details)
         : this(details.LocationId, details.LocationName)
@@ -44,12 +45,5 @@ public class SmallLocationModel
     public SmallLocationModel(int id, string name)
         : this(id.ToString(), name)
     {
-    }
-
-    [JsonConstructor]
-    public SmallLocationModel(string? id, string? name)
-    {
-        Id = id ?? "";
-        Name = name ?? "";
     }
 }

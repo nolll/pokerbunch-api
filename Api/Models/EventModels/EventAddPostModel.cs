@@ -2,13 +2,8 @@ using Newtonsoft.Json;
 
 namespace Api.Models.EventModels;
 
-public class EventAddPostModel
+[method: JsonConstructor]
+public class EventAddPostModel(string name)
 {
-    public string Name { get; }
-
-    [JsonConstructor]
-    public EventAddPostModel(string name)
-    {
-        Name = name;
-    }
+    public string Name { get; } = name;
 }

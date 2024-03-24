@@ -5,25 +5,18 @@ using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class EditUser : UseCase<EditUser.Request, EditUser.Result>
+public class EditUser(IUserRepository userRepository) : UseCase<EditUser.Request, EditUser.Result>
 {
-    private readonly IUserRepository _userRepository;
-
-    public EditUser(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = await _userRepository.GetByUserName(request.UserName);
+        var user = await userRepository.GetByUserName(request.UserName);
         var userToSave = GetUser(user, request);
 
-        await _userRepository.Update(userToSave);
+        await userRepository.Update(userToSave);
 
         return Success(new Result(userToSave.UserName));
     }
@@ -41,32 +34,22 @@ public class EditUser : UseCase<EditUser.Request, EditUser.Result>
             user.Salt);
     }
 
-    public class Request
+    public class Request(string userName, string displayName, string? realName, string email)
     {
-        public string UserName { get; }
+        public string UserName { get; } = userName;
+
         [Required(ErrorMessage = "Display Name can't be empty")]
-        public string DisplayName { get; }
-        public string? RealName { get; }
+        public string DisplayName { get; } = displayName;
+
+        public string? RealName { get; } = realName;
+
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; }
-
-        public Request(string userName, string displayName, string? realName, string email)
-        {
-            UserName = userName;
-            DisplayName = displayName;
-            RealName = realName;
-            Email = email;
-        }
+        public string Email { get; } = email;
     }
 
-    public class Result
+    public class Result(string userName)
     {
-        public string UserName { get; }
-
-        public Result(string userName)
-        {
-            UserName = userName;
-        }
+        public string UserName { get; } = userName;
     }
 }

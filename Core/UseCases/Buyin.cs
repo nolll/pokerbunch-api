@@ -7,19 +7,12 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Buyin : UseCase<Buyin.Request, Buyin.Result>
+public class Buyin(
+    ICashgameRepository cashgameRepository,
+    IPlayerRepository playerRepository,
+    IUserRepository userRepository)
+    : UseCase<Buyin.Request, Buyin.Result>
 {
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly IUserRepository _userRepository;
-
-    public Buyin(ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository)
-    {
-        _cashgameRepository = cashgameRepository;
-        _playerRepository = playerRepository;
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
@@ -27,40 +20,39 @@ public class Buyin : UseCase<Buyin.Request, Buyin.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var cashgame = await _cashgameRepository.Get(request.CashgameId);
-        var currentUser = await _userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await _playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        var cashgame = await cashgameRepository.Get(request.CashgameId);
+        var currentUser = await userRepository.GetByUserName(request.UserName);
+        var currentPlayer = await playerRepository.Get(cashgame.BunchId, currentUser.Id);
         if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
         var checkpoint = new BuyinCheckpoint(cashgame.Id, request.PlayerId, request.CurrentTime, stackAfterBuyin, request.BuyinAmount, null);
         cashgame.AddCheckpoint(checkpoint);
-        await _cashgameRepository.Update(cashgame);
+        await cashgameRepository.Update(cashgame);
 
         return Success(new Result());
     }
     
-    public class Request
+    public class Request(
+        string userName,
+        string cashgameId,
+        string playerId,
+        int buyinAmount,
+        int stackAmount,
+        DateTime currentTime)
     {
-        public string UserName { get; }
-        public string CashgameId { get; }
-        public string PlayerId { get; }
-        [Range(1, int.MaxValue, ErrorMessage = "Amount needs to be positive")]
-        public int BuyinAmount { get; }
-        [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
-        public int StackAmount { get; }
-        public DateTime CurrentTime { get; }
+        public string UserName { get; } = userName;
+        public string CashgameId { get; } = cashgameId;
+        public string PlayerId { get; } = playerId;
 
-        public Request(string userName, string cashgameId, string playerId, int buyinAmount, int stackAmount, DateTime currentTime)
-        {
-            UserName = userName;
-            CashgameId = cashgameId;
-            PlayerId = playerId;
-            BuyinAmount = buyinAmount;
-            StackAmount = stackAmount;
-            CurrentTime = currentTime;
-        }
+        [Range(1, int.MaxValue, ErrorMessage = "Amount needs to be positive")]
+        public int BuyinAmount { get; } = buyinAmount;
+
+        [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
+        public int StackAmount { get; } = stackAmount;
+
+        public DateTime CurrentTime { get; } = currentTime;
     }
 
     public class Result

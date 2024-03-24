@@ -2,21 +2,17 @@
 
 namespace Api.Models.BunchModels;
 
-public class AddBunchPostModel
+[method: JsonConstructor]
+public class AddBunchPostModel(
+    string name,
+    string description,
+    string timezone,
+    string currencySymbol,
+    string currencyLayout)
 {
-    public string Name { get; }
-    public string Description { get; }
-    public string Timezone { get; }
-    public string CurrencySymbol { get; }
-    public string CurrencyLayout { get; }
-
-    [JsonConstructor]
-    public AddBunchPostModel(string name, string description, string timezone, string currencySymbol, string currencyLayout)
-    {
-        Name = name;
-        Description = description;
-        Timezone = timezone;
-        CurrencySymbol = currencySymbol;
-        CurrencyLayout = currencyLayout;
-    }
+    public string Name { get; } = name;
+    public string Description { get; } = description;
+    public string Timezone { get; } = timezone;
+    public string CurrencySymbol { get; } = currencySymbol;
+    public string CurrencyLayout { get; } = currencyLayout;
 }

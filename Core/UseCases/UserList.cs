@@ -5,56 +5,33 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class UserList : UseCase<UserList.Request, UserList.Result>
+public class UserList(IUserRepository userRepository) : UseCase<UserList.Request, UserList.Result>
 {
-    private readonly IUserRepository _userRepository;
-
-    public UserList(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.GetByUserName(request.UserName);
+        var user = await userRepository.GetByUserName(request.UserName);
         if (!AccessControl.CanListUsers(user))
             return Error(new AccessDeniedError());
 
-        var users = await _userRepository.List();
+        var users = await userRepository.List();
         var userItems = users.Select(o => new UserListItem(o.DisplayName, o.UserName)).ToList();
 
         return Success(new Result(userItems));
     }
 
-    public class Request
+    public class Request(string userName)
     {
-        public string UserName { get; }
-
-        public Request(string userName)
-        {
-            UserName = userName;
-        }
+        public string UserName { get; } = userName;
     }
 
-    public class Result
+    public class Result(IList<UserListItem> userItems)
     {
-        public IList<UserListItem> Users { get; }
-
-        public Result(IList<UserListItem> userItems)
-        {
-            Users = userItems;
-        }
+        public IList<UserListItem> Users { get; } = userItems;
     }
 
-    public class UserListItem
+    public class UserListItem(string displayName, string userName)
     {
-        public string DisplayName { get; }
-        public string UserName { get; }
-
-        public UserListItem(string displayName, string userName)
-        {
-            DisplayName = displayName;
-            UserName = userName;
-        }
+        public string DisplayName { get; } = displayName;
+        public string UserName { get; } = userName;
     }
 }

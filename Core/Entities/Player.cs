@@ -1,47 +1,31 @@
 namespace Core.Entities;
 
-public class Player : IEntity
+public class Player(
+    string bunchId,
+    string id,
+    string? userId,
+    string? userName,
+    string displayName,
+    Role role = Role.Player,
+    string? color = null)
+    : IEntity
 {
-    public string BunchId { get; }
-    public string Id { get; }
-    public string? UserId { get; }
-    public string? UserName { get; }
-    public string DisplayName { get; }
-    public Role Role { get; }
-    public string? Color { get; }
+    private const string DefaultColor = "#9e9e9e";
+    
+    public string BunchId { get; } = bunchId;
+    public string Id { get; } = id;
+    public string? UserId { get; } = userId;
+    public string? UserName { get; } = userName;
+    public string DisplayName { get; } = displayName;
+    public Role Role { get; } = role;
+    public string? Color { get; } = color ?? DefaultColor;
     public bool IsUser => UserId != default;
-    public const string DefaultColor = "#9e9e9e";
 
-    public Player(
-        string bunchId,
-        string id, 
-        string? userId, 
-        string? userName,
-        string displayName, 
-        Role role = Role.Player,
-        string? color = null)
-    {
-        BunchId = bunchId;
-        Id = id;
-        UserId = userId;
-        UserName = userName;
-        DisplayName = displayName;
-        Role = role;
-        Color = color ?? DefaultColor;
-    }
+    public static Player New(string bunchId, string displayName, Role role = Role.Player, string? color = null) => 
+        new(bunchId, "", null, null, displayName, role, color);
 
-    public static Player New(string bunchId, string displayName, Role role = Role.Player, string? color = null)
-    {
-        return new Player(bunchId, "", null, null, displayName, role, color);
-    }
+    public static Player New(string bunchId, string userId, string userName, Role role = Role.Player, string? color = null) => 
+        new(bunchId, "", userId, userName, "", role, color);
 
-    public static Player New(string bunchId, string userId, string userName, Role role = Role.Player, string? color = null)
-    {
-        return new Player(bunchId, "", userId, userName, "", role, color);
-    }
-
-    public bool IsInRole(Role requiredRole)
-    {
-        return Role >= requiredRole;
-    }
+    public bool IsInRole(Role requiredRole) => Role >= requiredRole;
 }

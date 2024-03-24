@@ -3,39 +3,21 @@ using Core.Repositories;
 
 namespace Core.UseCases;
 
-public class GetBunchListForUser : UseCase<GetBunchListForUser.Request, GetBunchListForUser.Result>
+public class GetBunchListForUser(IBunchRepository bunchRepository, IUserRepository userRepository)
+    : UseCase<GetBunchListForUser.Request, GetBunchListForUser.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IUserRepository _userRepository;
-
-    public GetBunchListForUser(IBunchRepository bunchRepository, IUserRepository userRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var bunches = await _bunchRepository.List(user.Id);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var bunches = await bunchRepository.List(user.Id);
 
         return Success(new Result(bunches));
     }
     
-    public class Request
+    public class Request(string userName)
     {
-        public string UserName { get; }
-
-        public Request(string userName)
-        {
-            UserName = userName;
-        }
+        public string UserName { get; } = userName;
     }
 
-    public class Result : BunchListResult
-    {
-        public Result(IEnumerable<Bunch> bunches) : base(bunches)
-        {
-        }
-    }
+    public class Result(IEnumerable<Bunch> bunches) : BunchListResult(bunches);
 }

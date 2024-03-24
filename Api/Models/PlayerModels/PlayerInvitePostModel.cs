@@ -2,13 +2,8 @@ using Newtonsoft.Json;
 
 namespace Api.Models.PlayerModels;
 
-public class PlayerInvitePostModel
+[method: JsonConstructor]
+public class PlayerInvitePostModel(string email)
 {
-    public string Email { get; }
-
-    [JsonConstructor]
-    public PlayerInvitePostModel(string email)
-    {
-        Email = email;
-    }
+    public string Email { get; } = email;
 }

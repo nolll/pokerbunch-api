@@ -1,9 +1,3 @@
 namespace Core.Errors;
 
-public class EmailExistsError : ConflictError
-{
-    public EmailExistsError()
-        : base("The Email Address is in use")
-    {
-    }
-}
+public class EmailExistsError() : ConflictError("The Email Address is in use");

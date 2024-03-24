@@ -3,14 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiPlayerAddUrl : ApiUrl
+public class ApiPlayerAddUrl(string bunchId) : ApiUrl
 {
-    private readonly string _bunchId;
-
-    public ApiPlayerAddUrl(string bunchId)
-    {
-        _bunchId = bunchId;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.Player.Add, RouteReplace.BunchId(_bunchId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Player.Add, RouteReplace.BunchId(bunchId));
 }

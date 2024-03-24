@@ -6,40 +6,28 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
+public class JoinBunch(
+    IBunchRepository bunchRepository,
+    IPlayerRepository playerRepository,
+    IUserRepository userRepository,
+    IInvitationCodeCreator invitationCodeCreator)
+    : UseCase<JoinBunch.Request, JoinBunch.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IInvitationCodeCreator _invitationCodeCreator;
-
-    public JoinBunch(
-        IBunchRepository bunchRepository, 
-        IPlayerRepository playerRepository, 
-        IUserRepository userRepository,
-        IInvitationCodeCreator invitationCodeCreator)
-    {
-        _bunchRepository = bunchRepository;
-        _playerRepository = playerRepository;
-        _userRepository = userRepository;
-        _invitationCodeCreator = invitationCodeCreator;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var players = await _playerRepository.List(bunch.Id);
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var players = await playerRepository.List(bunch.Id);
         var player = GetMatchedPlayer(players, request.Code);
 
         if (player == null)
             return Error(new InvalidJoinCodeError());
 
-        var user = await _userRepository.GetByUserName(request.UserName);
-        await _playerRepository.JoinBunch(player, bunch, user.Id);
+        var user = await userRepository.GetByUserName(request.UserName);
+        await playerRepository.JoinBunch(player, bunch, user.Id);
         return Success(new Result(bunch.Slug, player.Id));
     }
     
@@ -47,37 +35,25 @@ public class JoinBunch : UseCase<JoinBunch.Request, JoinBunch.Result>
     {
         foreach (var player in players)
         {
-            var code = _invitationCodeCreator.GetCode(player);
+            var code = invitationCodeCreator.GetCode(player);
             if (code == postedCode)
                 return player;
         }
         return null;
     }
 
-    public class Request
+    public class Request(string userName, string slug, string code)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-        [Required(ErrorMessage = "Code can't be empty")]
-        public string Code { get; }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
 
-        public Request(string userName, string slug, string code)
-        {
-            UserName = userName;
-            Slug = slug;
-            Code = code;
-        }
+        [Required(ErrorMessage = "Code can't be empty")]
+        public string Code { get; } = code;
     }
 
-    public class Result
+    public class Result(string slug, string playerId)
     {
-        public string Slug { get; private set; }
-        public string PlayerId { get; private set; }
-
-        public Result(string slug, string playerId)
-        {
-            Slug = slug;
-            PlayerId = playerId;
-        }
+        public string Slug { get; private set; } = slug;
+        public string PlayerId { get; private set; } = playerId;
     }
 }

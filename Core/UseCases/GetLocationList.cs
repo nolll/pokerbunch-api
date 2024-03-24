@@ -5,31 +5,23 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.Result>
+public class GetLocationList(
+    IBunchRepository bunchRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository,
+    ILocationRepository locationRepository)
+    : UseCase<GetLocationList.Request, GetLocationList.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly ILocationRepository _locationRepository;
-
-    public GetLocationList(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-        _locationRepository = locationRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListLocations(user, player))
             return Error(new AccessDeniedError());
 
-        var locations = await _locationRepository.List(bunch.Id);
+        var locations = await locationRepository.List(bunch.Id);
 
         var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
 
@@ -41,39 +33,21 @@ public class GetLocationList : UseCase<GetLocationList.Request, GetLocationList.
         return new Location(location.Id, location.Name, slug);
     }
 
-    public class Request
+    public class Request(string userName, string slug)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-
-        public Request(string userName, string slug)
-        {
-            UserName = userName;
-            Slug = slug;
-        }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
     }
 
-    public class Result
+    public class Result(IList<Location> locations)
     {
-        public IList<Location> Locations { get; }
-
-        public Result(IList<Location> locations)
-        {
-            Locations = locations;
-        }
+        public IList<Location> Locations { get; } = locations;
     }
 
-    public class Location
+    public class Location(string id, string name, string slug)
     {
-        public string Id { get; }
-        public string Name { get; }
-        public string Slug { get; }
-
-        public Location(string id, string name, string slug)
-        {
-            Id = id;
-            Name = name;
-            Slug = slug;
-        }
+        public string Id { get; } = id;
+        public string Name { get; } = name;
+        public string Slug { get; } = slug;
     }
 }

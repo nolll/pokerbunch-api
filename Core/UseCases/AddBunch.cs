@@ -7,19 +7,12 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
+public class AddBunch(
+    IUserRepository userRepository,
+    IBunchRepository bunchRepository,
+    IPlayerRepository playerRepository)
+    : UseCase<AddBunch.Request, AddBunch.Result>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IPlayerRepository _playerRepository;
-
-    public AddBunch(IUserRepository userRepository, IBunchRepository bunchRepository, IPlayerRepository playerRepository)
-    {
-        _userRepository = userRepository;
-        _bunchRepository = bunchRepository;
-        _playerRepository = playerRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
@@ -27,18 +20,18 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
             return Error(new ValidationError(validator));
 
         var slug = SlugGenerator.GetSlug(request.DisplayName);
-        var existingBunch = await _bunchRepository.GetBySlugOrNull(slug);
+        var existingBunch = await bunchRepository.GetBySlugOrNull(slug);
         var bunchExists = existingBunch != null;
 
         if (bunchExists)
             return Error(new BunchExistsError(slug));
 
         var bunch = CreateBunch(request);
-        var id = await _bunchRepository.Add(bunch);
-        var user = await _userRepository.GetByUserName(request.UserName);
+        var id = await bunchRepository.Add(bunch);
+        var user = await userRepository.GetByUserName(request.UserName);
         var player = Player.New(id, user.Id, user.UserName, Role.Manager);
-        var playerId = await _playerRepository.Add(player);
-        var createdPlayer = await _playerRepository.Get(playerId);
+        var playerId = await playerRepository.Add(player);
+        var createdPlayer = await playerRepository.Get(playerId);
 
         return Success(new Result(bunch, createdPlayer));
     }
@@ -80,10 +73,5 @@ public class AddBunch : UseCase<AddBunch.Request, AddBunch.Result>
         }
     }
 
-    public class Result : BunchResult
-    {
-        public Result(Bunch b, Player p) : base(b, p)
-        {
-        }
-    }
+    public class Result(Bunch b, Player p) : BunchResult(b, p);
 }

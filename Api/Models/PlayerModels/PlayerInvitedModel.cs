@@ -2,13 +2,7 @@ using Api.Models.CommonModels;
 
 namespace Api.Models.PlayerModels;
 
-public class PlayerInvitedModel : MessageModel
+public class PlayerInvitedModel(string id) : MessageModel
 {
-    private readonly string _id;
-    public override string Message => $"Player invited {_id}";
-
-    public PlayerInvitedModel(string id)
-    {
-        _id = id;
-    }
+    public override string Message => $"Player invited {id}";
 }

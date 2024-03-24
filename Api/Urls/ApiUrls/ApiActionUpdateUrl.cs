@@ -3,16 +3,7 @@ using Api.Urls.SiteUrls;
 
 namespace Api.Urls.ApiUrls;
 
-public class ApiActionUpdateUrl : ApiUrl
+public class ApiActionUpdateUrl(string cashgameId, string actionId) : ApiUrl
 {
-    private readonly string _cashgameId;
-    private readonly string _actionId;
-
-    public ApiActionUpdateUrl(string cashgameId, string actionId)
-    {
-        _cashgameId = cashgameId;
-        _actionId = actionId;
-    }
-
-    protected override string Input => RouteParams.Replace(ApiRoutes.Action.Update, RouteReplace.CashgameId(_cashgameId), RouteReplace.ActionId(_actionId));
+    protected override string Input => RouteParams.Replace(ApiRoutes.Action.Update, RouteReplace.CashgameId(cashgameId), RouteReplace.ActionId(actionId));
 }

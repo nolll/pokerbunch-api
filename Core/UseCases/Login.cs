@@ -38,25 +38,14 @@ public class Login : UseCase<Login.Request, Login.Result>
         }
     }
 
-    public class Request 
+    public class Request(string userNameOrEmail, string password)
     {
-        public string UserNameOrEmail { get; }
-        public string Password { get; }
-
-        public Request(string userNameOrEmail, string password)
-        {
-            UserNameOrEmail = userNameOrEmail;
-            Password = password;
-        }
+        public string UserNameOrEmail { get; } = userNameOrEmail;
+        public string Password { get; } = password;
     }
 
-    public class Result
+    public class Result(string userName)
     {
-        public string UserName { get; }
-
-        public Result(string userName)
-        {
-            UserName = userName;
-        }
+        public string UserName { get; } = userName;
     }
 }

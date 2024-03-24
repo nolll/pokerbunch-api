@@ -1,22 +1,13 @@
 namespace Core.Entities;
 
-public class Event : IEntity
+public class Event(string id, string bunchId, string name) : IEntity
 {
-    public string Id { get; }
-    public string BunchId { get; }
-    public string Name { get; }
+    public string Id { get; } = id;
+    public string BunchId { get; } = bunchId;
+    public string Name { get; } = name;
     public string? LocationId { get; }
-    public Date StartDate { get; }
-    public Date EndDate { get; }
-
-    public Event(string id, string bunchId, string name)
-    {
-        Id = id;
-        BunchId = bunchId;
-        Name = name;
-        StartDate = Date.Null();
-        EndDate = Date.Null();
-    }
+    public Date StartDate { get; } = Date.Null();
+    public Date EndDate { get; } = Date.Null();
 
     public Event(string id, string bunchId, string name, string? locationId, Date startDate, Date endDate)
         : this(id, bunchId, name)

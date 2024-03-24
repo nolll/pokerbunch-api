@@ -1,14 +1,10 @@
 ﻿namespace Core.Errors;
 
-public class AccessDeniedError : UseCaseError
+public class AccessDeniedError(string message) : UseCaseError(message)
 {
     public override ErrorType Type => ErrorType.AccessDenied;
 
     public AccessDeniedError() : this("Access denied")
-    {
-    }
-
-    public AccessDeniedError(string message) : base(message)
     {
     }
 }

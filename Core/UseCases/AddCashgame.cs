@@ -6,23 +6,14 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
+public class AddCashgame(
+    IBunchRepository bunchRepository,
+    ICashgameRepository cashgameRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository,
+    ILocationRepository locationRepository)
+    : UseCase<AddCashgame.Request, AddCashgame.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly ILocationRepository _locationRepository;
-
-    public AddCashgame(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _cashgameRepository = cashgameRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-        _locationRepository = locationRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
@@ -30,44 +21,32 @@ public class AddCashgame : UseCase<AddCashgame.Request, AddCashgame.Result>
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanAddCashgame(user, player))
             return Error(new AccessDeniedError()); 
 
-        var location = await _locationRepository.Get(request.LocationId!);
+        var location = await locationRepository.Get(request.LocationId!);
         var cashgame = new Cashgame(bunch.Id, location.Id, null, GameStatus.Running);
-        var cashgameId = await _cashgameRepository.Add(bunch, cashgame);
+        var cashgameId = await cashgameRepository.Add(bunch, cashgame);
 
         return Success(new Result(request.Slug, cashgameId));
     }
     
-    public class Request
+    public class Request(string userName, string slug, string? locationId)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-        [Required(ErrorMessage = "Please select a location")]
-        public string? LocationId { get; }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
 
-        public Request(string userName, string slug, string? locationId)
-        {
-            UserName = userName;
-            Slug = slug;
-            LocationId = locationId;
-        }
+        [Required(ErrorMessage = "Please select a location")]
+        public string? LocationId { get; } = locationId;
     }
 
-    public class Result
+    public class Result(string slug, string cashgameId)
     {
-        public string Slug { get; }
-        public string CashgameId { get; }
-
-        public Result(string slug, string cashgameId)
-        {
-            Slug = slug;
-            CashgameId = cashgameId;
-        }
+        public string Slug { get; } = slug;
+        public string CashgameId { get; } = cashgameId;
     }
 }

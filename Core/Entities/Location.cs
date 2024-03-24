@@ -1,15 +1,8 @@
 namespace Core.Entities;
 
-public class Location : IEntity
+public class Location(string id, string name, string bunchId) : IEntity
 {
-    public string Id { get; }
-    public string Name { get; }
-    public string BunchId { get; }
-
-    public Location(string id, string name, string bunchId)
-    {
-        Id = id;
-        Name = name;
-        BunchId = bunchId;
-    }
+    public string Id { get; } = id;
+    public string Name { get; } = name;
+    public string BunchId { get; } = bunchId;
 }
