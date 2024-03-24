@@ -7,37 +7,28 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCashgameList.Result>
+public class PlayerCashgameList(
+    IBunchRepository bunchRepository,
+    ICashgameRepository cashgameRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository,
+    ILocationRepository locationRepository)
+    : UseCase<PlayerCashgameList.Request, PlayerCashgameList.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly ILocationRepository _locationRepository;
-
-    public PlayerCashgameList(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _cashgameRepository = cashgameRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-        _locationRepository = locationRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var player = await _playerRepository.Get(request.PlayerId);
-        var bunch = await _bunchRepository.Get(player.BunchId);
-        var currentUser = await _userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+        var player = await playerRepository.Get(request.PlayerId);
+        var bunch = await bunchRepository.Get(player.BunchId);
+        var currentUser = await userRepository.GetByUserName(request.UserName);
+        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayerCashgames(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var cashgames = await _cashgameRepository.GetByPlayer(request.PlayerId);
+        var cashgames = await cashgameRepository.GetByPlayer(request.PlayerId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = await _locationRepository.List(bunch.Id);
-        var players = await _playerRepository.List(bunch.Id);
+        var locations = await locationRepository.List(bunch.Id);
+        var players = await playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));
@@ -53,26 +44,15 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
         return items.OrderByDescending(o => o.StartTime);
     }
 
-    public class Request
+    public class Request(string userName, string playerId)
     {
-        public string UserName { get; }
-        public string PlayerId { get; }
-
-        public Request(string userName, string playerId)
-        {
-            UserName = userName;
-            PlayerId = playerId;
-        }
+        public string UserName { get; } = userName;
+        public string PlayerId { get; } = playerId;
     }
 
-    public class Result
+    public class Result(IList<Item> items)
     {
-        public IList<Item> Items { get; }
-
-        public Result(IList<Item> items)
-        {
-            Items = items;
-        }
+        public IList<Item> Items { get; } = items;
     }
 
     public class Item
@@ -101,33 +81,18 @@ public class PlayerCashgameList : UseCase<PlayerCashgameList.Request, PlayerCash
         return player?.DisplayName ?? "";
     }
 
-    public class ItemResult
+    public class ItemResult(CashgameResult result, string playerName)
     {
-        public ItemPlayer Player { get; }
-        public DateTime BuyinTime { get; }
-        public DateTime UpdatedTime { get; }
-        public int Buyin { get; }
-        public int Stack { get; }
-
-        public ItemResult(CashgameResult result, string playerName)
-        {
-            Player = new ItemPlayer(result.PlayerId, playerName);
-            BuyinTime = result.BuyinTime ?? DateTime.MinValue;
-            UpdatedTime = result.LastReportTime;
-            Buyin = result.Buyin;
-            Stack = result.Stack;
-        }
+        public ItemPlayer Player { get; } = new(result.PlayerId, playerName);
+        public DateTime BuyinTime { get; } = result.BuyinTime ?? DateTime.MinValue;
+        public DateTime UpdatedTime { get; } = result.LastReportTime;
+        public int Buyin { get; } = result.Buyin;
+        public int Stack { get; } = result.Stack;
     }
 
-    public class ItemPlayer
+    public class ItemPlayer(string id, string name)
     {
-        public string Id { get; }
-        public string Name { get; }
-
-        public ItemPlayer(string id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
+        public string Id { get; } = id;
+        public string Name { get; } = name;
     }
 }

@@ -5,19 +5,9 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result>
+public class ResetPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
+    : UseCase<ResetPassword.Request, ResetPassword.Result>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IEmailSender _emailSender;
-    private readonly IRandomizer _randomizer;
-
-    public ResetPassword(IUserRepository userRepository, IEmailSender emailSender, IRandomizer randomizer)
-    {
-        _userRepository = userRepository;
-        _emailSender = emailSender;
-        _randomizer = randomizer;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var validator = new Validator(request);
@@ -26,36 +16,31 @@ public class ResetPassword : UseCase<ResetPassword.Request, ResetPassword.Result
             return Error(new ValidationError(validator));
 
         // todo: Find a way to handle these cases. Null or something else.
-        var user = await _userRepository.GetByUserEmail(request.Email);
+        var user = await userRepository.GetByUserEmail(request.Email);
         if (user == null)
             return Error(new UserNotFoundError(request.Email));
 
-        var password = PasswordService.CreatePassword(_randomizer.GetAllowedChars());
-        var salt = SaltGenerator.CreateSalt(_randomizer.GetAllowedChars());
+        var password = PasswordService.CreatePassword(randomizer.GetAllowedChars());
+        var salt = SaltGenerator.CreateSalt(randomizer.GetAllowedChars());
         var encryptedPassword = EncryptionService.Encrypt(password, salt);
 
         user.SetPassword(encryptedPassword, salt);
 
-        await _userRepository.Update(user);
+        await userRepository.Update(user);
 
         var message = new ResetPasswordMessage(password, request.LoginUrl);
-        _emailSender.Send(request.Email, message);
+        emailSender.Send(request.Email, message);
 
         return Success(new Result());
     }
 
-    public class Request
+    public class Request(string email, string loginUrl)
     {
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; }
-        public string LoginUrl { get; }
+        public string Email { get; } = email;
 
-        public Request(string email, string loginUrl)
-        {
-            Email = email;
-            LoginUrl = loginUrl;
-        }
+        public string LoginUrl { get; } = loginUrl;
     }
 
     public class Result

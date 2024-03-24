@@ -4,51 +4,32 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class TestEmail : UseCase<TestEmail.Request, TestEmail.Result>
+public class TestEmail(IEmailSender emailSender, IUserRepository userRepository)
+    : UseCase<TestEmail.Request, TestEmail.Result>
 {
-    private readonly IEmailSender _emailSender;
-    private readonly IUserRepository _userRepository;
-
-    public TestEmail(IEmailSender emailSender, IUserRepository userRepository)
-    {
-        _emailSender = emailSender;
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await _userRepository.GetByUserName(request.UserName);
+        var user = await userRepository.GetByUserName(request.UserName);
         if (!AccessControl.CanSendTestEmail(user))
             return Error(new AccessDeniedError());
 
         // todo: Move email to config
         const string email = "henriks@gmail.com";
         var message = new TestMessage();
-        _emailSender.Send(email, message);
+        emailSender.Send(email, message);
 
         return Success(new Result(email));
     }
     
-    public class Request
+    public class Request(string userName)
     {
-        public string UserName { get; }
-
-        public Request(string userName)
-        {
-            UserName = userName;
-        }
+        public string UserName { get; } = userName;
     }
 
-    public class Result
+    public class Result(string email)
     {
-        public string Email { get; }
-        public string Message { get; }
-
-        public Result(string email)
-        {
-            Email = email;
-            Message = $"An email was sent to {email}";
-    }
+        public string Email { get; } = email;
+        public string Message { get; } = $"An email was sent to {email}";
     }
 
     private class TestMessage : IMessage

@@ -8,42 +8,32 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.Result>
+public class CashgameDetails(
+    IBunchRepository bunchRepository,
+    ICashgameRepository cashgameRepository,
+    IPlayerRepository playerRepository,
+    IUserRepository userRepository,
+    ILocationRepository locationRepository,
+    IEventRepository eventRepository)
+    : UseCase<CashgameDetails.Request, CashgameDetails.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly ILocationRepository _locationRepository;
-    private readonly IEventRepository _eventRepository;
-
-    public CashgameDetails(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IPlayerRepository playerRepository, IUserRepository userRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _cashgameRepository = cashgameRepository;
-        _playerRepository = playerRepository;
-        _userRepository = userRepository;
-        _locationRepository = locationRepository;
-        _eventRepository = eventRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var cashgame = await _cashgameRepository.Get(request.Id);
-        var bunch = await _bunchRepository.Get(cashgame.BunchId);
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        var cashgame = await cashgameRepository.Get(request.Id);
+        var bunch = await bunchRepository.Get(cashgame.BunchId);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanSeeCashgame(user, player))
             return Error(new AccessDeniedError());
 
         var playerIds = GetPlayerIds(cashgame);
-        var players = await _playerRepository.Get(playerIds);
+        var players = await playerRepository.Get(playerIds);
 
         var role = user.IsAdmin ? Role.Manager : player!.Role;
 
-        var location = await _locationRepository.Get(cashgame.LocationId);
-        var @event = cashgame.EventId != null ? await _eventRepository.Get(cashgame.EventId) : null;
+        var location = await locationRepository.Get(cashgame.LocationId);
+        var @event = cashgame.EventId != null ? await eventRepository.Get(cashgame.EventId) : null;
         var eventName = @event?.Name;
         var eventId = @event?.Id;
 
@@ -83,24 +73,14 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         return Success(result);
     }
     
-    private DateTime GetStartTime(IList<RunningCashgamePlayerItem> playerItems, DateTime currentUtc)
-    {
-        if (playerItems.Any())
-            return playerItems.Min(o => o.BuyinTime);
-        return currentUtc;
-    }
+    private static DateTime GetStartTime(IList<RunningCashgamePlayerItem> playerItems, DateTime currentUtc) => 
+        playerItems.Any() ? playerItems.Min(o => o.BuyinTime) : currentUtc;
 
-    private DateTime GetUpdatedTime(IList<RunningCashgamePlayerItem> playerItems, GameStatus status, DateTime currentUtc)
-    {
-        if (status == GameStatus.Finished && playerItems.Any())
-            return playerItems.Max(o => o.UpdatedTime);
-        return currentUtc;
-    }
+    private static DateTime GetUpdatedTime(IList<RunningCashgamePlayerItem> playerItems, GameStatus status, DateTime currentUtc) => 
+        status == GameStatus.Finished && playerItems.Any() ? playerItems.Max(o => o.UpdatedTime) : currentUtc;
 
-    private static IList<string> GetPlayerIds(Cashgame cashgame)
-    {
-        return cashgame.Checkpoints.Select(o => o.PlayerId).Distinct().ToList();
-    }
+    private static IList<string> GetPlayerIds(Cashgame cashgame) => 
+        cashgame.Checkpoints.Select(o => o.PlayerId).Distinct().ToList();
 
     private static IList<RunningCashgamePlayerItem> GetPlayerItems(Cashgame cashgame, IList<Player> players)
     {
@@ -124,101 +104,62 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         return results.OrderByDescending(o => o.Winnings);
     }
 
-    public class Request
+    public class Request(string userName, string id, DateTime currentUtc)
     {
-        public string UserName { get; }
-        public string Id { get; }
-        public DateTime CurrentUtc { get; }
-
-        public Request(string userName, string id, DateTime currentUtc)
-        {
-            UserName = userName;
-            Id = id;
-            CurrentUtc = currentUtc;
-        }
+        public string UserName { get; } = userName;
+        public string Id { get; } = id;
+        public DateTime CurrentUtc { get; } = currentUtc;
     }
 
-    public class Result
+    public class Result(
+        string slug,
+        string timezone,
+        string playerId,
+        string cashgameId,
+        DateTime startTime,
+        DateTime updatedTime,
+        string locationName,
+        string locationId,
+        string? eventName,
+        string? eventId,
+        IList<RunningCashgamePlayerItem> playerItems,
+        int defaultBuyin,
+        string currencyFormat,
+        string currencySymbol,
+        string currencyLayout,
+        string thousandSeparator,
+        string culture,
+        Role role,
+        bool isRunning)
     {
-        public string Slug { get; }
-        public string Timezone { get; }
-        public string PlayerId { get; }
-        public string CashgameId { get; }
-        public DateTime StartTime { get; }
-        public DateTime UpdatedTime { get; }
-        public string LocationName { get; }
-        public string LocationId { get; }
-        public string? EventName { get; }
-        public string? EventId { get; }
-        public IList<RunningCashgamePlayerItem> PlayerItems { get; }
-        public int DefaultBuyin { get; }
-        public string CurrencyFormat { get; }
-        public string CurrencySymbol { get; }
-        public string CurrencyLayout { get; }
-        public string ThousandSeparator { get; }
-        public string Culture { get; }
-        public Role Role { get; }
-        public bool IsRunning { get; }
-
-        public Result(
-            string slug,
-            string timezone,
-            string playerId,
-            string cashgameId,
-            DateTime startTime,
-            DateTime updatedTime,
-            string locationName,
-            string locationId,
-            string? eventName,
-            string? eventId,
-            IList<RunningCashgamePlayerItem> playerItems,
-            int defaultBuyin,
-            string currencyFormat,
-            string currencySymbol,
-            string currencyLayout,
-            string thousandSeparator,
-            string culture,
-            Role role,
-            bool isRunning)
-        {
-            Slug = slug;
-            Timezone = timezone;
-            PlayerId = playerId;
-            CashgameId = cashgameId;
-            StartTime = startTime;
-            UpdatedTime = updatedTime;
-            LocationName = locationName;
-            LocationId = locationId;
-            EventName = eventName;
-            EventId = eventId;
-            PlayerItems = playerItems;
-            DefaultBuyin = defaultBuyin;
-            CurrencyFormat = currencyFormat;
-            CurrencySymbol = currencySymbol;
-            CurrencyLayout = currencyLayout;
-            ThousandSeparator = thousandSeparator;
-            Culture = culture;
-            Role = role;
-            IsRunning = isRunning;
-        }
+        public string Slug { get; } = slug;
+        public string Timezone { get; } = timezone;
+        public string PlayerId { get; } = playerId;
+        public string CashgameId { get; } = cashgameId;
+        public DateTime StartTime { get; } = startTime;
+        public DateTime UpdatedTime { get; } = updatedTime;
+        public string LocationName { get; } = locationName;
+        public string LocationId { get; } = locationId;
+        public string? EventName { get; } = eventName;
+        public string? EventId { get; } = eventId;
+        public IList<RunningCashgamePlayerItem> PlayerItems { get; } = playerItems;
+        public int DefaultBuyin { get; } = defaultBuyin;
+        public string CurrencyFormat { get; } = currencyFormat;
+        public string CurrencySymbol { get; } = currencySymbol;
+        public string CurrencyLayout { get; } = currencyLayout;
+        public string ThousandSeparator { get; } = thousandSeparator;
+        public string Culture { get; } = culture;
+        public Role Role { get; } = role;
+        public bool IsRunning { get; } = isRunning;
     }
 
-    public class RunningCashgameActionItem
+    public class RunningCashgameActionItem(Checkpoint checkpoint)
     {
-        public string Id { get; }
-        public CheckpointType Type { get; }
-        public DateTime Time { get; }
-        public int Stack { get; }
-        public int AddedMoney { get; }
-
-        public RunningCashgameActionItem(Checkpoint checkpoint)
-        {
-            Id = checkpoint.Id;
-            Type = checkpoint.Type;
-            Time = checkpoint.Timestamp;
-            Stack = checkpoint.Stack;
-            AddedMoney = checkpoint.Amount;
-        }
+        public string Id { get; } = checkpoint.Id;
+        public CheckpointType Type { get; } = checkpoint.Type;
+        public DateTime Time { get; } = checkpoint.Timestamp;
+        public int Stack { get; } = checkpoint.Stack;
+        public int AddedMoney { get; } = checkpoint.Amount;
     }
 
     public class RunningCashgamePlayerItem
@@ -234,7 +175,13 @@ public class CashgameDetails : UseCase<CashgameDetails.Request, CashgameDetails.
         public DateTime UpdatedTime { get; }
         public IList<RunningCashgameActionItem> Checkpoints { get; }
 
-        public RunningCashgamePlayerItem(string playerId, string name, string? color, string cashgameId, bool hasCashedOut, IList<Checkpoint> checkpoints)
+        public RunningCashgamePlayerItem(
+            string playerId,
+            string name,
+            string? color,
+            string cashgameId,
+            bool hasCashedOut,
+            IList<Checkpoint> checkpoints)
         {
             PlayerId = playerId;
             Name = name;

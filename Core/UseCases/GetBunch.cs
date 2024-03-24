@@ -6,84 +6,47 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunch : UseCase<GetBunch.Request, GetBunch.Result>
+public class GetBunch(
+    IBunchRepository bunchRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository)
+    : UseCase<GetBunch.Request, GetBunch.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-
-    public GetBunch(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
-        if (!AccessControl.CanGetBunch(user, player))
-            return Error(new AccessDeniedError());
-
-        return Success(new Result(bunch, player!));
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
+        
+        return !AccessControl.CanGetBunch(user, player) ? 
+            Error(new AccessDeniedError()) : 
+            Success(new Result(bunch, player!));
     }
 
-    public class Request
+    public class Request(string userName, string slug)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-
-        public Request(string userName, string slug)
-        {
-            UserName = userName;
-            Slug = slug;
-        }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
     }
 
-    public class Result : BunchResult
-    {
-        public Result(Bunch b, Player p) : base(b, p)
-        {
-        }
-    }
+    public class Result(Bunch b, Player p) : BunchResult(b, p);
 }
 
-public class BunchResult
+public class BunchResult(Bunch b, Player? p)
 {
-    public string Slug { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public string HouseRules { get; }
-    public TimeZoneInfo Timezone { get; }
-    public Currency Currency { get; }
-    public int DefaultBuyin { get; }
-    public BunchPlayerResult? Player { get; }
-    public Role Role { get; }
-
-    public BunchResult(Bunch b, Player? p)
-    {
-        Slug = b.Slug;
-        Name = b.DisplayName;
-        Description = b.Description;
-        HouseRules = b.HouseRules;
-        Timezone = b.Timezone;
-        Currency = b.Currency;
-        DefaultBuyin = b.DefaultBuyin;
-        Player = p != null ? new BunchPlayerResult(p.Id, p.DisplayName) : null;
-        Role = p?.Role ?? Role.Admin;
-    }
+    public string Slug { get; } = b.Slug;
+    public string Name { get; } = b.DisplayName;
+    public string Description { get; } = b.Description;
+    public string HouseRules { get; } = b.HouseRules;
+    public TimeZoneInfo Timezone { get; } = b.Timezone;
+    public Currency Currency { get; } = b.Currency;
+    public int DefaultBuyin { get; } = b.DefaultBuyin;
+    public BunchPlayerResult? Player { get; } = p != null ? new BunchPlayerResult(p.Id, p.DisplayName) : null;
+    public Role Role { get; } = p?.Role ?? Role.Admin;
 }
 
-public class BunchPlayerResult
+public class BunchPlayerResult(string id, string name)
 {
-    public string Id { get; }
-    public string Name { get; }
-
-    public BunchPlayerResult(string id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
+    public string Id { get; } = id;
+    public string Name { get; } = name;
 }

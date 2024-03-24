@@ -6,44 +6,31 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result>
+public class GetPlayerList(
+    IBunchRepository bunchRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository)
+    : UseCase<GetPlayerList.Request, GetPlayerList.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-
-    public GetPlayerList(IBunchRepository bunchRepository, IUserRepository userRepository, IPlayerRepository playerRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await _bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await _userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await _playerRepository.Get(bunch.Id, currentUser.Id);
+        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var currentUser = await userRepository.GetByUserName(request.UserName);
+        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
         if (!AccessControl.CanListPlayers(currentUser, currentPlayer))
             return Error(new AccessDeniedError());
 
-        var players = await _playerRepository.List(bunch.Id);
+        var players = await playerRepository.List(bunch.Id);
         var canAddPlayer = AccessControl.CanAddPlayer(currentUser, currentPlayer);
 
         return Success(new Result(bunch, players, canAddPlayer));
     }
 
-    public class Request
+    public class Request(string userName, string slug)
     {
-        public string UserName { get; }
-        public string Slug { get; }
-
-        public Request(string userName, string slug)
-        {
-            UserName = userName;
-            Slug = slug;
-        }
+        public string UserName { get; } = userName;
+        public string Slug { get; } = slug;
     }
 
     public class Result
@@ -60,21 +47,12 @@ public class GetPlayerList : UseCase<GetPlayerList.Request, GetPlayerList.Result
         }
     }
 
-    public class ResultItem
+    public class ResultItem(Player player)
     {
-        public string Name { get; }
-        public string Id { get; }
-        public string? Color { get; }
-        public string? UserId { get; }
-        public string? UserName { get; }
-
-        public ResultItem(Player player)
-        {
-            Name = player.DisplayName;
-            Id = player.Id;
-            Color = player.Color;
-            UserId = player.IsUser ? player.UserId : null;
-            UserName = player.IsUser ? player.UserName : null;
-        }
+        public string Name { get; } = player.DisplayName;
+        public string Id { get; } = player.Id;
+        public string? Color { get; } = player.Color;
+        public string? UserId { get; } = player.IsUser ? player.UserId : null;
+        public string? UserName { get; } = player.IsUser ? player.UserName : null;
     }
 }

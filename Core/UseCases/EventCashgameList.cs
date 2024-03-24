@@ -7,74 +7,49 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EventCashgameList : UseCase<EventCashgameList.Request, EventCashgameList.Result>
+public class EventCashgameList(
+    IBunchRepository bunchRepository,
+    ICashgameRepository cashgameRepository,
+    IUserRepository userRepository,
+    IPlayerRepository playerRepository,
+    ILocationRepository locationRepository,
+    IEventRepository eventRepository)
+    : UseCase<EventCashgameList.Request, EventCashgameList.Result>
 {
-    private readonly IBunchRepository _bunchRepository;
-    private readonly ICashgameRepository _cashgameRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPlayerRepository _playerRepository;
-    private readonly ILocationRepository _locationRepository;
-    private readonly IEventRepository _eventRepository;
-
-    public EventCashgameList(IBunchRepository bunchRepository, ICashgameRepository cashgameRepository, IUserRepository userRepository, IPlayerRepository playerRepository, ILocationRepository locationRepository, IEventRepository eventRepository)
-    {
-        _bunchRepository = bunchRepository;
-        _cashgameRepository = cashgameRepository;
-        _userRepository = userRepository;
-        _playerRepository = playerRepository;
-        _locationRepository = locationRepository;
-        _eventRepository = eventRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var @event = await _eventRepository.Get(request.EventId);
-        var bunch = await _bunchRepository.Get(@event.BunchId);
-        var user = await _userRepository.GetByUserName(request.UserName);
-        var player = await _playerRepository.Get(bunch.Id, user.Id);
+        var @event = await eventRepository.Get(request.EventId);
+        var bunch = await bunchRepository.Get(@event.BunchId);
+        var user = await userRepository.GetByUserName(request.UserName);
+        var player = await playerRepository.Get(bunch.Id, user.Id);
 
         if (!AccessControl.CanListEventCashgames(user, player))
             return Error(new AccessDeniedError());
 
-        var cashgames = await _cashgameRepository.GetByEvent(request.EventId);
+        var cashgames = await cashgameRepository.GetByEvent(request.EventId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = await _locationRepository.List(bunch.Id);
-        var players = await _playerRepository.List(bunch.Id);
+        var locations = await locationRepository.List(bunch.Id);
+        var players = await playerRepository.List(bunch.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));
     }
 
-    private Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations)
+    private static Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations) => 
+        locations.First(o => o.Id == cashgame.LocationId);
+
+    private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items) => 
+        items.OrderByDescending(o => o.StartTime);
+
+    public class Request(string userName, string eventId)
     {
-        return locations.First(o => o.Id == cashgame.LocationId);
+        public string UserName { get; } = userName;
+        public string EventId { get; } = eventId;
     }
 
-    private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items)
+    public class Result(IList<Item> items)
     {
-        return items.OrderByDescending(o => o.StartTime);
-    }
-
-    public class Request
-    {
-        public string UserName { get; }
-        public string EventId { get; }
-
-        public Request(string userName, string eventId)
-        {
-            UserName = userName;
-            EventId = eventId;
-        }
-    }
-
-    public class Result
-    {
-        public IList<Item> Items { get; }
-
-        public Result(IList<Item> items)
-        {
-            Items = items;
-        }
+        public IList<Item> Items { get; } = items;
     }
 
     public class Item
@@ -103,33 +78,18 @@ public class EventCashgameList : UseCase<EventCashgameList.Request, EventCashgam
         return player?.DisplayName ?? "";
     }
 
-    public class ItemResult
+    public class ItemResult(CashgameResult result, string playerName)
     {
-        public ItemPlayer Player { get; }
-        public DateTime BuyinTime { get; }
-        public DateTime UpdatedTime { get; }
-        public int Buyin { get; }
-        public int Stack { get; }
-
-        public ItemResult(CashgameResult result, string playerName)
-        {
-            Player = new ItemPlayer(result.PlayerId, playerName);
-            BuyinTime = result.BuyinTime ?? DateTime.MinValue;
-            UpdatedTime = result.LastReportTime;
-            Buyin = result.Buyin;
-            Stack = result.Stack;
-        }
+        public ItemPlayer Player { get; } = new(result.PlayerId, playerName);
+        public DateTime BuyinTime { get; } = result.BuyinTime ?? DateTime.MinValue;
+        public DateTime UpdatedTime { get; } = result.LastReportTime;
+        public int Buyin { get; } = result.Buyin;
+        public int Stack { get; } = result.Stack;
     }
 
-    public class ItemPlayer
+    public class ItemPlayer(string id, string name)
     {
-        public string Id { get; }
-        public string Name { get; }
-
-        public ItemPlayer(string id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
+        public string Id { get; } = id;
+        public string Name { get; } = name;
     }
 }
