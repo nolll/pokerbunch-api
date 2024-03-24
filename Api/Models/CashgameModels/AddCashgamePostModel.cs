@@ -2,13 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace Api.Models.CashgameModels;
 
-public class AddCashgamePostModel
+[method: JsonConstructor]
+public class AddCashgamePostModel(string locationId)
 {
-    public string LocationId { get; }
-
-    [JsonConstructor]
-    public AddCashgamePostModel(string locationId)
-    {
-        LocationId = locationId;
-    }
+    public string LocationId { get; } = locationId;
 }

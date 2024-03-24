@@ -2,17 +2,10 @@ using System.Text.Json.Serialization;
 
 namespace Api.Models.UserModels;
 
-public class UpdateUserPostModel
+[method: JsonConstructor]
+public class UpdateUserPostModel(string displayName, string email, string? realName)
 {
-    public string DisplayName { get; }
-    public string Email { get; }
-    public string? RealName { get; }
-
-    [JsonConstructor]
-    public UpdateUserPostModel(string displayName, string email, string? realName)
-    {
-        DisplayName = displayName;
-        Email = email;
-        RealName = realName;
-    }
+    public string DisplayName { get; } = displayName;
+    public string Email { get; } = email;
+    public string? RealName { get; } = realName;
 }

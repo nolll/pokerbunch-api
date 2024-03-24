@@ -1,20 +1,13 @@
 ﻿using System.Text.Json.Serialization;
-using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
 
-public class CashgameDetailsEventModel
+[method: JsonConstructor]
+public class CashgameDetailsEventModel(string? id, string? name)
 {
     [JsonPropertyName("id")]
-    public string Id { get; }
-    
-    [JsonPropertyName("name")]
-    public string Name { get; }
+    public string Id { get; } = id ?? "";
 
-    [JsonConstructor]
-    public CashgameDetailsEventModel(string? id, string? name)
-    {
-        Id = id ?? "";
-        Name = name ?? "";
-    }
+    [JsonPropertyName("name")]
+    public string Name { get; } = name ?? "";
 }

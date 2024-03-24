@@ -93,18 +93,13 @@ public class BunchModel
         Role = role;
     }
 
-    public class BunchPlayerModel
+    [method: JsonConstructor]
+    public class BunchPlayerModel(string id, string name)
     {
         [JsonPropertyName("id")]
-        public string Id { get; }
-        [JsonPropertyName("name")]
-        public string Name { get; }
+        public string Id { get; } = id;
 
-        [JsonConstructor]
-        public BunchPlayerModel(string id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
+        [JsonPropertyName("name")]
+        public string Name { get; } = name;
     }
 }

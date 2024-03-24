@@ -1,11 +1,6 @@
 namespace Api.Models.CommonModels;
 
-public class ErrorModel : MessageModel
+public class ErrorModel(string message) : MessageModel
 {
-    public override string Message { get; }
-
-    public ErrorModel(string message)
-    {
-        Message = message;
-    }
+    public override string Message { get; } = message;
 }

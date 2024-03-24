@@ -2,19 +2,11 @@ using System.Text.Json.Serialization;
 
 namespace Api.Models.UserModels;
 
-public class AddUserPostModel
+[method: JsonConstructor]
+public class AddUserPostModel(string userName, string displayName, string email, string password)
 {
-    public string UserName { get; }
-    public string DisplayName { get; }
-    public string Email { get; }
-    public string Password { get; }
-
-    [JsonConstructor]
-    public AddUserPostModel(string userName, string displayName, string email, string password)
-    {
-        UserName = userName;
-        DisplayName = displayName;
-        Email = email;
-        Password = password;
-    }
+    public string UserName { get; } = userName;
+    public string DisplayName { get; } = displayName;
+    public string Email { get; } = email;
+    public string Password { get; } = password;
 }

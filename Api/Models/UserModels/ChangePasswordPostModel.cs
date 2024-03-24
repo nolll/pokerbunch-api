@@ -2,15 +2,9 @@ using Newtonsoft.Json;
 
 namespace Api.Models.UserModels;
 
-public class ChangePasswordPostModel
+[method: JsonConstructor]
+public class ChangePasswordPostModel(string newPassword, string oldPassword)
 {
-    public string NewPassword { get; }
-    public string OldPassword { get; }
-
-    [JsonConstructor]
-    public ChangePasswordPostModel(string newPassword, string oldPassword)
-    {
-        NewPassword = newPassword;
-        OldPassword = oldPassword;
-    }
+    public string NewPassword { get; } = newPassword;
+    public string OldPassword { get; } = oldPassword;
 }

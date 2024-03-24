@@ -2,13 +2,7 @@ using Api.Models.CommonModels;
 
 namespace Api.Models.PlayerModels;
 
-public class PlayerDeletedModel : MessageModel
+public class PlayerDeletedModel(string id) : MessageModel
 {
-    private readonly string _id;
-    public override string Message => $"Player deleted {_id}";
-
-    public PlayerDeletedModel(string id)
-    {
-        _id = id;
-    }
+    public override string Message => $"Player deleted {id}";
 }

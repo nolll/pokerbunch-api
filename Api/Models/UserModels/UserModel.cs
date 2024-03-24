@@ -3,16 +3,17 @@ using Core.UseCases;
 
 namespace Api.Models.UserModels;
 
-public class UserModel
+[method: JsonConstructor]
+public class UserModel(string userName, string displayName, string avatar)
 {
     [JsonPropertyName("userName")]
-    public string UserName { get; }
+    public string UserName { get; } = userName;
 
     [JsonPropertyName("displayName")]
-    public string DisplayName { get; }
+    public string DisplayName { get; } = displayName;
 
     [JsonPropertyName("avatar")]
-    public string Avatar { get; }
+    public string Avatar { get; } = avatar;
 
     public UserModel(UserDetails.Result r)
         : this(r.UserName, r.DisplayName, r.AvatarUrl)
@@ -20,13 +21,5 @@ public class UserModel
         UserName = r.UserName;
         DisplayName = r.DisplayName;
         Avatar = r.AvatarUrl;
-    }
-
-    [JsonConstructor]
-    public UserModel(string userName, string displayName, string avatar)
-    {
-        UserName = userName;
-        DisplayName = displayName;
-        Avatar = avatar;
     }
 }

@@ -2,13 +2,8 @@
 
 namespace Api.Models.LocationModels;
 
-public class LocationAddPostModel
+[method: JsonConstructor]
+public class LocationAddPostModel(string name)
 {
-    public string Name { get; }
-
-    [JsonConstructor]
-    public LocationAddPostModel(string name)
-    {
-        Name = name;
-    }
+    public string Name { get; } = name;
 }
