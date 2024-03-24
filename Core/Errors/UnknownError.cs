@@ -2,11 +2,7 @@ using System;
 
 namespace Core.Errors;
 
-public class UnknownError : UseCaseError
+public class UnknownError(Exception e) : UseCaseError(e)
 {
-    public UnknownError(Exception e) : base(e)
-    {
-    }
-
     public override ErrorType Type => ErrorType.Unknown;
 }

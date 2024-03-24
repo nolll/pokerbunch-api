@@ -2,33 +2,22 @@ using System;
 
 namespace Core.Entities.Checkpoints;
 
-public abstract class Checkpoint
+public abstract class Checkpoint(
+    string cashgameId,
+    string playerId,
+    DateTime timestamp,
+    CheckpointType type,
+    int stack,
+    int amount,
+    string? id)
 {
-    public string CashgameId { get; }
-    public string PlayerId { get; }
-    public int Amount { get; }
-    public int Stack { get; }
-    public DateTime Timestamp { get; }
-    public CheckpointType Type { get; }
-    public string Id { get; }
-        
-    protected Checkpoint(
-        string cashgameId,
-        string playerId,
-        DateTime timestamp, 
-        CheckpointType type,
-        int stack,
-        int amount,
-        string? id)
-    {
-        Timestamp = timestamp;
-        Type = type;
-        Stack = stack;
-        Amount = amount;
-        Id = id ?? "";
-        PlayerId = playerId;
-        CashgameId = cashgameId;
-    }
+    public string CashgameId { get; } = cashgameId;
+    public string PlayerId { get; } = playerId;
+    public int Amount { get; } = amount;
+    public int Stack { get; } = stack;
+    public DateTime Timestamp { get; } = timestamp;
+    public CheckpointType Type { get; } = type;
+    public string Id { get; } = id ?? "";
 
     public abstract string Description { get; }
 

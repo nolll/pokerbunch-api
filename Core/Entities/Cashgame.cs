@@ -138,8 +138,6 @@ public class Cashgame : IEntity
         CheckpointsUpdated();
     }
 
-    public CashgameResult? GetResult(string playerId)
-    {
-        return Results.FirstOrDefault(result => result.PlayerId == playerId);
-    }
+    public CashgameResult? GetResult(string playerId) => 
+        Results.FirstOrDefault(result => result.PlayerId == playerId);
 }

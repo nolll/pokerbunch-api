@@ -1,9 +1,3 @@
 ﻿namespace Core.Errors;
 
-public class UserNotFoundError : NotFoundError
-{
-    public UserNotFoundError(string userName)
-        : base($"User not found: {userName}")
-    {
-    }
-}
+public class UserNotFoundError(string userName) : NotFoundError($"User not found: {userName}");

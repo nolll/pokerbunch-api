@@ -37,10 +37,8 @@ public class CashgameResult
         return buyinCheckpoints.Sum(checkpoint => checkpoint.Amount);
     }
 
-    private static List<Checkpoint> GetCheckpointsOfType(IEnumerable<Checkpoint> checkpoints, CheckpointType type)
-    {
-        return checkpoints.Where(checkpoint => checkpoint.Type == type).ToList();
-    }
+    private static IEnumerable<Checkpoint> GetCheckpointsOfType(IEnumerable<Checkpoint> checkpoints, CheckpointType type) => 
+        checkpoints.Where(checkpoint => checkpoint.Type == type).ToList();
 
     private static int GetStack(IList<Checkpoint> checkpoints)
     {
@@ -48,34 +46,24 @@ public class CashgameResult
         return checkpoint?.Stack ?? 0;
     }
 
-    private static Checkpoint? GetLastCheckpoint(IList<Checkpoint> checkpoints)
-    {
-        return checkpoints.Count > 0 ? checkpoints[^1] : null;
-    }
-    
+    private static Checkpoint? GetLastCheckpoint(IList<Checkpoint> checkpoints) => 
+        checkpoints.Count > 0 ? checkpoints[^1] : null;
+
     private static DateTime? GetBuyinTime(IEnumerable<Checkpoint> checkpoints)
     {
         var checkpoint = GetFirstBuyinCheckpoint(checkpoints);
-        if (checkpoint == null)
-            return null;
-        return checkpoint.Timestamp;
+        return checkpoint?.Timestamp;
     }
 
-    private static Checkpoint? GetFirstBuyinCheckpoint(IEnumerable<Checkpoint> checkpoints)
-    {
-        return GetCheckpointOfType(checkpoints, CheckpointType.Buyin);
-    }
+    private static Checkpoint? GetFirstBuyinCheckpoint(IEnumerable<Checkpoint> checkpoints) => 
+        GetCheckpointOfType(checkpoints, CheckpointType.Buyin);
 
-    private static Checkpoint? GetCashoutCheckpoint(IEnumerable<Checkpoint> checkpoints)
-    {
-        return GetCheckpointOfType(checkpoints, CheckpointType.Cashout);
-    }
+    private static Checkpoint? GetCashoutCheckpoint(IEnumerable<Checkpoint> checkpoints) => 
+        GetCheckpointOfType(checkpoints, CheckpointType.Cashout);
 
-    private static Checkpoint? GetCheckpointOfType(IEnumerable<Checkpoint> checkpoints, CheckpointType type)
-    {
-        return checkpoints.FirstOrDefault(checkpoint => checkpoint.Type == type);
-    }
-    
+    private static Checkpoint? GetCheckpointOfType(IEnumerable<Checkpoint> checkpoints, CheckpointType type) => 
+        checkpoints.FirstOrDefault(checkpoint => checkpoint.Type == type);
+
     private static DateTime GetLastReportTime(IList<Checkpoint> checkpoints)
     {
         var checkpoint = GetLastCheckpoint(checkpoints);

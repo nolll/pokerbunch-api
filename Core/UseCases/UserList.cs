@@ -24,25 +24,14 @@ public class UserList(IUserRepository userRepository) : UseCase<UserList.Request
         public string UserName { get; } = userName;
     }
 
-    public class Result
+    public class Result(IList<UserListItem> userItems)
     {
-        public IList<UserListItem> Users { get; }
-
-        public Result(IList<UserListItem> userItems)
-        {
-            Users = userItems;
-        }
+        public IList<UserListItem> Users { get; } = userItems;
     }
 
-    public class UserListItem
+    public class UserListItem(string displayName, string userName)
     {
-        public string DisplayName { get; }
-        public string UserName { get; }
-
-        public UserListItem(string displayName, string userName)
-        {
-            DisplayName = displayName;
-            UserName = userName;
-        }
+        public string DisplayName { get; } = displayName;
+        public string UserName { get; } = userName;
     }
 }

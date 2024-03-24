@@ -2,24 +2,17 @@
 
 namespace Core.Entities;
 
-public class Date : IComparable<Date>
+public class Date(int year, int month, int day) : IComparable<Date>
 {
-    public int Month { get; }
-    public int Day { get; }
-    public int Year { get; }
+    public int Month { get; } = month;
+    public int Day { get; } = day;
+    public int Year { get; } = year;
 
     private string YearString => Year.ToString("D4");
     private string MonthString => Month.ToString("D2");
     private string DayString => Day.ToString("D2");
     public string IsoString => $"{YearString}-{MonthString}-{DayString}";
-    public DateTime UtcMidninght => new(Year, Month, Day, 0, 0, 0, DateTimeKind.Utc);
-
-    public Date(int year, int month, int day)
-    {
-        Year = year;
-        Month = month;
-        Day = day;
-    }
+    private DateTime UtcMidninght => new(Year, Month, Day, 0, 0, 0, DateTimeKind.Utc);
 
     public Date(DateTime dateTime)
         : this(dateTime.Year, dateTime.Month, dateTime.Day)
@@ -38,20 +31,9 @@ public class Date : IComparable<Date>
         return other != null && Year == other.Year && Month == other.Month && Day == other.Day;
     }
 
-    protected bool Equals(Date other)
-    {
-        return Month == other.Month && Day == other.Day && Year == other.Year;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Month, Day, Year);
-    }
-
-    public int CompareTo(Date? that)
-    {
-        return UtcMidninght.CompareTo(that?.UtcMidninght);
-    }
+    protected bool Equals(Date other) => Month == other.Month && Day == other.Day && Year == other.Year;
+    public override int GetHashCode() => HashCode.Combine(Month, Day, Year);
+    public int CompareTo(Date? that) => UtcMidninght.CompareTo(that?.UtcMidninght);
 
     public bool IsNull
     {
@@ -62,8 +44,5 @@ public class Date : IComparable<Date>
         }
     }
 
-    public static Date Null()
-    {
-        return new Date(DateTime.MinValue);
-    }
+    public static Date Null() => new(DateTime.MinValue);
 }
