@@ -37,6 +37,9 @@ public class BunchController : BaseController
         _joinBunch = joinBunch;
     }
 
+    /// <summary>
+    /// Get a bunch
+    /// </summary>
     [Route(ApiRoutes.Bunch.Get)]
     [HttpGet]
     [Authorize]
@@ -48,6 +51,9 @@ public class BunchController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// Update a bunch
+    /// </summary>
     [Route(ApiRoutes.Bunch.Update)]
     [HttpPut]
     [Authorize]
@@ -59,6 +65,9 @@ public class BunchController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// List bunches
+    /// </summary>
     [Route(ApiRoutes.Bunch.List)]
     [HttpGet]
     [Authorize]
@@ -70,6 +79,9 @@ public class BunchController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// List your bunches
+    /// </summary>
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
     [HttpGet]
     [Authorize]
@@ -80,6 +92,9 @@ public class BunchController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// Add a bunch
+    /// </summary>
     [Route(ApiRoutes.Bunch.Add)]
     [HttpPost]
     [Authorize]
@@ -91,6 +106,9 @@ public class BunchController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// Join a bunch
+    /// </summary>
     [Route(ApiRoutes.Bunch.Join)]
     [HttpPost]
     [Authorize]

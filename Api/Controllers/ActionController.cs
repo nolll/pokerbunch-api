@@ -33,6 +33,9 @@ public class ActionController : BaseController
         _deleteCheckpoint = deleteCheckpoint;
     }
 
+    /// <summary>
+    /// Add an action to a cashgame
+    /// </summary>
     [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [Authorize]
@@ -66,6 +69,9 @@ public class ActionController : BaseController
         return Model(result, () => new OkModel());
     }
 
+    /// <summary>
+    /// Update an action
+    /// </summary>
     [Route(ApiRoutes.Action.Update)]
     [HttpPut]
     [Authorize]
@@ -75,6 +81,9 @@ public class ActionController : BaseController
         return Model(result, () => new OkModel());
     }
 
+    /// <summary>
+    /// Delete an action
+    /// </summary>
     [Route(ApiRoutes.Action.Delete)]
     [HttpDelete]
     [Authorize]

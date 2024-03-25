@@ -36,7 +36,7 @@ public class PlayerController : BaseController
     }
 
     /// <summary>
-    /// Gets a specific player.
+    /// Get a player
     /// </summary>
     [Route(ApiRoutes.Player.Get)]
     [HttpGet]
@@ -48,7 +48,7 @@ public class PlayerController : BaseController
     }
 
     /// <summary>
-    /// Lists all players in a bunch.
+    /// List all players in a bunch
     /// </summary>
     [Route(ApiRoutes.Player.ListByBunch)]
     [HttpGet]
@@ -60,7 +60,7 @@ public class PlayerController : BaseController
     }
 
     /// <summary>
-    /// Adds a player to a bunch.
+    /// Add a player to a bunch
     /// </summary>
     [Route(ApiRoutes.Player.Add)]
     [HttpPost]
@@ -74,7 +74,7 @@ public class PlayerController : BaseController
     }
 
     /// <summary>
-    /// Deletes a specific player.
+    /// Delete a player
     /// </summary>
     [Route(ApiRoutes.Player.Delete)]
     [HttpDelete]
@@ -87,7 +87,7 @@ public class PlayerController : BaseController
     }
 
     /// <summary>
-    /// Invites a player to a bunch.
+    /// Invite a player to a bunch
     /// </summary>
     [Route(ApiRoutes.Player.Invite)]
     [HttpPost]

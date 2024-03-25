@@ -49,7 +49,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// Get user.
+    /// Get a user
     /// </summary>
     [Route(ApiRoutes.User.Get)]
     [HttpGet]
@@ -70,7 +70,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// List users.
+    /// List users
     /// </summary>
     [Route(ApiRoutes.User.List)]
     [HttpGet]
@@ -82,7 +82,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// Update user.
+    /// Update a user
     /// </summary>
     [Route(ApiRoutes.User.Update)]
     [HttpPut]
@@ -99,7 +99,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// Change password.
+    /// Change password
     /// </summary>
     [Route(ApiRoutes.Profile.ChangePassword)]
     [HttpPut]
@@ -112,7 +112,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// Reset password.
+    /// Reset password
     /// </summary>
     [Route(ApiRoutes.Profile.ResetPassword)]
     [HttpPost]
@@ -124,7 +124,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// Add user.
+    /// Add a user.
     /// </summary>
     [Route(ApiRoutes.User.Add)]
     [HttpPost]
@@ -135,7 +135,7 @@ public class UserController : BaseController
     }
 
     /// <summary>
-    /// Get the current user.
+    /// Get the current user
     /// </summary>
     /// <returns>Returns the current user</returns>
     [Route(ApiRoutes.Profile.Get)]
@@ -148,7 +148,7 @@ public class UserController : BaseController
     }
     
     /// <summary>
-    /// Get an auth token by posting json data
+    /// Get an auth token
     /// </summary>
     /// <returns>A token that can be used for authentication</returns>
     [AllowAnonymous]
@@ -159,21 +159,6 @@ public class UserController : BaseController
         var result = await _login.Execute(new Login.Request(post.UserName, post.Password));
         return result.Success
             ? new ObjectResult(CreateToken(result.Data?.UserName ?? "")) 
-            : Error(result.Error);
-    }
-
-    /// <summary>
-    /// Get an auth token by posting username and password
-    /// </summary>
-    /// <returns>A token that can be used for authentication</returns>
-    [AllowAnonymous]
-    [HttpPost]
-    [Route(ApiRoutes.Auth.LoginForm)]
-    public async Task<ObjectResult> LoginForm([FromForm] string userName, [FromForm] string password)
-    {
-        var result = await _login.Execute(new Login.Request(userName, password));
-        return result.Success
-            ? new ObjectResult(CreateToken(result.Data?.UserName ?? ""))
             : Error(result.Error);
     }
 

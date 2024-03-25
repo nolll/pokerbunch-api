@@ -23,7 +23,10 @@ public class AdminController : BaseController
         _testEmail = testEmail;
         _requireAppsettingsAccess = requireAppsettingsAccess;
     }
-    
+
+    /// <summary>
+    /// Clear cache
+    /// </summary>
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [Authorize]
@@ -33,6 +36,9 @@ public class AdminController : BaseController
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
+    /// <summary>
+    /// Send test email
+    /// </summary>
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [Authorize]

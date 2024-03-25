@@ -25,6 +25,9 @@ public class LocationController : BaseController
         _addLocation = addLocation;
     }
 
+    /// <summary>
+    /// Get a location
+    /// </summary>
     [Route(ApiRoutes.Location.Get)]
     [HttpGet]
     [Authorize]
@@ -34,6 +37,9 @@ public class LocationController : BaseController
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 
+    /// <summary>
+    /// List locations
+    /// </summary>
     [Route(ApiRoutes.Location.ListByBunch)]
     [HttpGet]
     [Authorize]
@@ -43,6 +49,9 @@ public class LocationController : BaseController
         return Model(result, () => result.Data?.Locations.Select(o => new LocationModel(o)));
     }
 
+    /// <summary>
+    /// Add a location
+    /// </summary>
     [Route(ApiRoutes.Location.Add)]
     [HttpPost]
     [Authorize]

@@ -25,6 +25,9 @@ public class EventController : BaseController
         _addEvent = addEvent;
     }
 
+    /// <summary>
+    /// Get an event
+    /// </summary>
     [Route(ApiRoutes.Event.Get)]
     [HttpGet]
     [Authorize]
@@ -34,6 +37,9 @@ public class EventController : BaseController
         return Model(result, () => result.Data is not null ? new EventModel(result.Data) : null);
     }
 
+    /// <summary>
+    /// List events
+    /// </summary>
     [Route(ApiRoutes.Event.ListByBunch)]
     [HttpGet]
     [Authorize]
@@ -43,6 +49,9 @@ public class EventController : BaseController
         return Model(result, () => result.Data?.Events.Select(o => new EventModel(o)));
     }
 
+    /// <summary>
+    /// Add an event
+    /// </summary>
     [Route(ApiRoutes.Event.Add)]
     [HttpPost]
     [Authorize]

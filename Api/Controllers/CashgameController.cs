@@ -46,6 +46,9 @@ public class CashgameController : BaseController
         _currentCashgames = currentCashgames;
     }
 
+    /// <summary>
+    /// Get a cashgame
+    /// </summary>
     [Route(ApiRoutes.Cashgame.Get)]
     [HttpGet]
     [Authorize]
@@ -57,6 +60,9 @@ public class CashgameController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// List cashgames
+    /// </summary>
     [Route(ApiRoutes.Cashgame.ListByBunch)]
     [HttpGet]
     [Authorize]
@@ -67,6 +73,9 @@ public class CashgameController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// List cashgames by year
+    /// </summary>
     [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
     [HttpGet]
     [Authorize]
@@ -77,6 +86,9 @@ public class CashgameController : BaseController
         return Model(result, CreateModel);
     }
 
+    /// <summary>
+    /// List cashgames by event
+    /// </summary>
     [Route(ApiRoutes.Cashgame.ListByEvent)]
     [HttpGet]
     [Authorize]
@@ -86,6 +98,9 @@ public class CashgameController : BaseController
         return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
     }
 
+    /// <summary>
+    /// List cashgames by player
+    /// </summary>
     [Route(ApiRoutes.Cashgame.ListByPlayer)]
     [HttpGet]
     [Authorize]
@@ -95,6 +110,9 @@ public class CashgameController : BaseController
         return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
     }
 
+    /// <summary>
+    /// Add a cashgame
+    /// </summary>
     [Route(ApiRoutes.Cashgame.Add)]
     [HttpPost]
     [Authorize]
@@ -110,6 +128,9 @@ public class CashgameController : BaseController
         return Model(detailsResult, () => detailsResult.Data is not null ? new CashgameDetailsModel(detailsResult.Data!) : null);
     }
 
+    /// <summary>
+    /// Update a cashgame
+    /// </summary>
     [Route(ApiRoutes.Cashgame.Update)]
     [HttpPut]
     [Authorize]
@@ -125,6 +146,9 @@ public class CashgameController : BaseController
         return Model(detailsResult, () => detailsResult.Data is not null ? new CashgameDetailsModel(detailsResult.Data!) : null);
     }
 
+    /// <summary>
+    /// Delete a cashgame
+    /// </summary>
     [Route(ApiRoutes.Cashgame.Delete)]
     [HttpDelete]
     [Authorize]
@@ -135,6 +159,9 @@ public class CashgameController : BaseController
         return Model(result, () => new CashgameDeletedModel(cashgameId));
     }
 
+    /// <summary>
+    /// List running cashgames
+    /// </summary>
     [Route(ApiRoutes.Cashgame.ListCurrentByBunch)]
     [HttpGet]
     [Authorize]
