@@ -11,9 +11,14 @@ using Environment = Api.Services.Environment;
 namespace Api.Controllers;
 
 [UsedImplicitly]
-public abstract class BaseController(AppSettings appSettings) : Controller
+public abstract class BaseController : Controller
 {
-    protected AppSettings AppSettings { get; } = appSettings;
+    protected AppSettings AppSettings { get; }
+
+    protected BaseController(AppSettings appSettings)
+    {
+        AppSettings = appSettings;
+    }
 
     protected string CurrentUserName
     {

@@ -15,18 +15,39 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers;
 
-public class UserController(
-    AppSettings appSettings,
-    UrlProvider urls,
-    UserDetails userDetails,
-    UserList userList,
-    EditUser editUser,
-    AddUser addUser,
-    Login login,
-    ChangePassword changePassword,
-    ResetPassword resetPassword)
-    : BaseController(appSettings)
+public class UserController : BaseController
 {
+    private readonly UrlProvider _urls;
+    private readonly UserDetails _userDetails;
+    private readonly UserList _userList;
+    private readonly EditUser _editUser;
+    private readonly AddUser _addUser;
+    private readonly Login _login;
+    private readonly ChangePassword _changePassword;
+    private readonly ResetPassword _resetPassword;
+
+    public UserController(
+        AppSettings appSettings, 
+        UrlProvider urls, 
+        UserDetails userDetails,
+        UserList userList,
+        EditUser editUser,
+        AddUser addUser,
+        Login login,
+        ChangePassword changePassword,
+        ResetPassword resetPassword) 
+        : base(appSettings)
+    {
+        _urls = urls;
+        _userDetails = userDetails;
+        _userList = userList;
+        _editUser = editUser;
+        _addUser = addUser;
+        _login = login;
+        _changePassword = changePassword;
+        _resetPassword = resetPassword;
+    }
+
     /// <summary>
     /// Get a user
     /// </summary>
@@ -35,7 +56,7 @@ public class UserController(
     [Authorize]
     public async Task<ObjectResult> GetUser(string userName)
     {
-        var result = await userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
+        var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
 
         if (result.Data is null)
             return Success(null);
@@ -56,8 +77,8 @@ public class UserController(
     [Authorize]
     public async Task<ObjectResult> List()
     {
-        var result = await userList.Execute(new UserList.Request(CurrentUserName));
-        return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, urls)));
+        var result = await _userList.Execute(new UserList.Request(CurrentUserName));
+        return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, _urls)));
     }
 
     /// <summary>
@@ -69,11 +90,11 @@ public class UserController(
     public async Task<ObjectResult> Update(string userName, [FromBody] UpdateUserPostModel post)
     {
         var updateRequest = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
-        var updateResult = await editUser.Execute(updateRequest);
+        var updateResult = await _editUser.Execute(updateRequest);
         if (!updateResult.Success)
             return Error(updateResult.Error);
 
-        var result = await userDetails.Execute(new UserDetails.Request(updateResult.Data!.UserName));
+        var result = await _userDetails.Execute(new UserDetails.Request(updateResult.Data!.UserName));
         return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
 
@@ -86,7 +107,7 @@ public class UserController(
     public async Task<ObjectResult> ChangePassword([FromBody] ChangePasswordPostModel post)
     {
         var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
-        var result = await changePassword.Execute(request);
+        var result = await _changePassword.Execute(request);
         return Model(result, () => new OkModel());
     }
 
@@ -97,8 +118,8 @@ public class UserController(
     [HttpPost]
     public async Task<ObjectResult> ResetPassword([FromBody] ResetPasswordPostModel post)
     {
-        var request = new ResetPassword.Request(post.Email, urls.Site.Login);
-        var result = await resetPassword.Execute(request);
+        var request = new ResetPassword.Request(post.Email, _urls.Site.Login);
+        var result = await _resetPassword.Execute(request);
         return Model(result, () => new OkModel());
     }
 
@@ -109,7 +130,7 @@ public class UserController(
     [HttpPost]
     public async Task<ObjectResult> Add([FromBody] AddUserPostModel post)
     {
-        var result = await addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, urls.Site.Login));
+        var result = await _addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, _urls.Site.Login));
         return Model(result, () => new OkModel());
     }
 
@@ -122,7 +143,7 @@ public class UserController(
     [Authorize]
     public async Task<ObjectResult> Profile()
     {
-        var result = await userDetails.Execute(new UserDetails.Request(CurrentUserName));
+        var result = await _userDetails.Execute(new UserDetails.Request(CurrentUserName));
         return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
     
@@ -135,7 +156,7 @@ public class UserController(
     [Route(ApiRoutes.Auth.Login)]
     public async Task<ObjectResult> Login([FromBody] LoginPostModel post)
     {
-        var result = await login.Execute(new Login.Request(post.UserName, post.Password));
+        var result = await _login.Execute(new Login.Request(post.UserName, post.Password));
         return result.Success
             ? new ObjectResult(CreateToken(result.Data?.UserName ?? "")) 
             : Error(result.Error);

@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
-public class HomeController(AppSettings appSettings) : BaseController(appSettings)
+public class HomeController : BaseController
 {
+    public HomeController(AppSettings appSettings) : base(appSettings)
+    {
+    }
+
     [Route(ApiRoutes.Root)]
     [HttpGet]
     public ActionResult Home()
