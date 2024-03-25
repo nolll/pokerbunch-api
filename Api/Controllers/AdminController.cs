@@ -9,21 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
-public class AdminController : BaseController
+public class AdminController(
+    AppSettings appSettings,
+    ClearCache clearCache,
+    TestEmail testEmail,
+    RequireAppsettingsAccess requireAppsettingsAccess)
+    : BaseController(appSettings)
 {
-    private readonly AppSettings _appSettings;
-    private readonly ClearCache _clearCache;
-    private readonly TestEmail _testEmail;
-    private readonly RequireAppsettingsAccess _requireAppsettingsAccess;
-
-    public AdminController(AppSettings appSettings, ClearCache clearCache, TestEmail testEmail, RequireAppsettingsAccess requireAppsettingsAccess) : base(appSettings)
-    {
-        _appSettings = appSettings;
-        _clearCache = clearCache;
-        _testEmail = testEmail;
-        _requireAppsettingsAccess = requireAppsettingsAccess;
-    }
-
     /// <summary>
     /// Clear cache
     /// </summary>
@@ -32,7 +24,7 @@ public class AdminController : BaseController
     [Authorize]
     public async Task<ObjectResult> ClearCache()
     {
-        var result = await _clearCache.Execute(new ClearCache.Request(CurrentUserName));
+        var result = await clearCache.Execute(new ClearCache.Request(CurrentUserName));
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
@@ -44,7 +36,7 @@ public class AdminController : BaseController
     [Authorize]
     public async Task<ObjectResult> SendEmail()
     {
-        var result = await _testEmail.Execute(new TestEmail.Request(CurrentUserName));
+        var result = await testEmail.Execute(new TestEmail.Request(CurrentUserName));
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
@@ -52,7 +44,7 @@ public class AdminController : BaseController
     [HttpGet]
     public ObjectResult Version()
     {
-        return Success(new VersionModel(_appSettings.Version));
+        return Success(new VersionModel(appSettings.Version));
     }
 
     [Route(ApiRoutes.Settings)]
@@ -60,7 +52,7 @@ public class AdminController : BaseController
     [Authorize]
     public async Task<ObjectResult> Settings()
     {
-        var result = await _requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
-        return Model(result, () => _appSettings);
+        var result = await requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
+        return Model(result, () => appSettings);
     }
 }

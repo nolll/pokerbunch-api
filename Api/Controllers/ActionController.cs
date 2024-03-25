@@ -9,30 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-public class ActionController : BaseController
+public class ActionController(
+    AppSettings appSettings,
+    Buyin buyin,
+    Report report,
+    Cashout cashout,
+    EditCheckpoint editCheckpoint,
+    DeleteCheckpoint deleteCheckpoint)
+    : BaseController(appSettings)
 {
-    private readonly Buyin _buyin;
-    private readonly Report _report;
-    private readonly Cashout _cashout;
-    private readonly EditCheckpoint _editCheckpoint;
-    private readonly DeleteCheckpoint _deleteCheckpoint;
-
-    public ActionController(
-        AppSettings appSettings,
-        Buyin buyin,
-        Report report,
-        Cashout cashout,
-        EditCheckpoint editCheckpoint,
-        DeleteCheckpoint deleteCheckpoint) 
-        : base(appSettings)
-    {
-        _buyin = buyin;
-        _report = report;
-        _cashout = cashout;
-        _editCheckpoint = editCheckpoint;
-        _deleteCheckpoint = deleteCheckpoint;
-    }
-
     /// <summary>
     /// Add an action to a cashgame
     /// </summary>
@@ -53,19 +38,19 @@ public class ActionController : BaseController
 
     private async Task<ObjectResult> Buyin(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await _buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+        var result = await buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
     private async Task<ObjectResult> Report(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await _report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
     private async Task<ObjectResult> Cashout(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await _cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
@@ -77,7 +62,7 @@ public class ActionController : BaseController
     [Authorize]
     public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
-        var result = await _editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
+        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, post.Timestamp, post.Stack, post.Added));
         return Model(result, () => new OkModel());
     }
 
@@ -89,7 +74,7 @@ public class ActionController : BaseController
     [Authorize]
     public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
-        var result = await _deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
         return Model(result, () => new OkModel());
     }
 
