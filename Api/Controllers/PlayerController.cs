@@ -9,32 +9,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-public class PlayerController : BaseController
+public class PlayerController(
+    AppSettings appSettings,
+    UrlProvider urls,
+    GetPlayer getPlayer,
+    GetPlayerList getPlayerList,
+    AddPlayer addPlayer,
+    DeletePlayer deletePlayer,
+    InvitePlayer invitePlayer)
+    : BaseController(appSettings)
 {
-    private readonly UrlProvider _urls;
-    private readonly GetPlayer _getPlayer;
-    private readonly GetPlayerList _getPlayerList;
-    private readonly AddPlayer _addPlayer;
-    private readonly DeletePlayer _deletePlayer;
-    private readonly InvitePlayer _invitePlayer;
-
-    public PlayerController(
-        AppSettings appSettings, 
-        UrlProvider urls,
-        GetPlayer getPlayer,
-        GetPlayerList getPlayerList,
-        AddPlayer addPlayer,
-        DeletePlayer deletePlayer,
-        InvitePlayer invitePlayer) : base(appSettings)
-    {
-        _urls = urls;
-        _getPlayer = getPlayer;
-        _getPlayerList = getPlayerList;
-        _addPlayer = addPlayer;
-        _deletePlayer = deletePlayer;
-        _invitePlayer = invitePlayer;
-    }
-
     /// <summary>
     /// Get a player
     /// </summary>
@@ -43,7 +27,7 @@ public class PlayerController : BaseController
     [Authorize]
     public async Task<ObjectResult> Get(string playerId)
     {
-        var result = await _getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
+        var result = await getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
         return Model(result, () => result.Data is not null ? new PlayerModel(result.Data) : null);
     }
 
@@ -55,7 +39,7 @@ public class PlayerController : BaseController
     [Authorize]
     public async Task<ObjectResult> GetList(string bunchId)
     {
-        var result = await _getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
+        var result = await getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
         return Model(result, () => result.Data?.Players.Select(o => new PlayerListItemModel(o)));
     }
 
@@ -67,7 +51,7 @@ public class PlayerController : BaseController
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] PlayerAddPostModel post)
     {
-        var result = await _addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
+        var result = await addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
         return result.Success 
             ? await Get(result.Data?.Id ?? "")
             : Error(result.Error);
@@ -82,7 +66,7 @@ public class PlayerController : BaseController
     public async Task<ObjectResult> Delete(string playerId)
     {
         var request = new DeletePlayer.Request(CurrentUserName, playerId);
-        var result = await _deletePlayer.Execute(request);
+        var result = await deletePlayer.Execute(request);
         return Model(result, () => new PlayerDeletedModel(playerId));
     }
 
@@ -94,11 +78,11 @@ public class PlayerController : BaseController
     [Authorize]
     public async Task<ObjectResult> Invite(string playerId, [FromBody] PlayerInvitePostModel post)
     {
-        var registerUrl = _urls.Site.AddUser;
-        var joinBunchUrlFormat = _urls.Site.JoinBunch("{0}");
-        var joinBunchWithCodeUrlFormat = _urls.Site.JoinBunch("{0}", "{1}");
+        var registerUrl = urls.Site.AddUser;
+        var joinBunchUrlFormat = urls.Site.JoinBunch("{0}");
+        var joinBunchWithCodeUrlFormat = urls.Site.JoinBunch("{0}", "{1}");
         var request = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
-        var result = await _invitePlayer.Execute(request);
+        var result = await invitePlayer.Execute(request);
         return Model(result, () => new PlayerInvitedModel(playerId));
     }
 }

@@ -5,12 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
-public class TestController : BaseController
+public class TestController(AppSettings appSettings) : BaseController(appSettings)
 {
-    public TestController(AppSettings appSettings) : base(appSettings)
-    {
-    }
-
     [Route("test/exception")]
     [HttpGet]
     public ObjectResult Exception()
