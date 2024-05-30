@@ -1,10 +1,6 @@
 using Core;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
 using Infrastructure.Sql;
 using Microsoft.AspNetCore.Mvc.Testing;
-using SqlKata;
 using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
@@ -17,7 +13,6 @@ public class TestSetup
 
     private const string SqliteConnectionString = "DataSource=IntegrationTests;Mode=Memory;Cache=Shared";
     
-    private TestcontainerDatabase? _testcontainers;
     private static WebApplicationFactoryInTest? _webApplicationFactory;
 
     public static FakeEmailSender? EmailSender;
@@ -43,41 +38,18 @@ public class TestSetup
         await AddMasterData();
     }
 
-    private async Task<IDb> InitDbEngine()
+    private Task<IDb> InitDbEngine()
     {
-        return Engine == DbEngine.Postgres
-            ? await InitPostgresEngine()
-            : InitSqliteEngine();
-    }
-
-    private async Task<IDb> InitPostgresEngine()
-    {
-        _testcontainers = new ContainerBuilder<PostgreSqlTestcontainer>()
-            .WithDatabase(new PostgreSqlTestcontainerConfiguration
-            {
-                Database = "db",
-                Username = "postgres",
-                Password = "postgres",
-                Port = 49262
-            })
-            .Build();
-        await _testcontainers.StartAsync();
-        return new PostgresDb(_testcontainers.ConnectionString);
+        return Task.FromResult(InitSqliteEngine());
     }
 
     private IDb InitSqliteEngine() => new SqliteDb(SqliteConnectionString);
 
-    private async Task DestroyDbEngine()
+    private Task DestroyDbEngine()
     {
+        _webApplicationFactory?.Dispose();
         Db.Dispose();
-        if(Engine == DbEngine.Postgres)
-            await DestroyPostgresEngine();
-    }
-
-    private async Task DestroyPostgresEngine()
-    {
-        if(_testcontainers != null)
-            await _testcontainers.DisposeAsync().AsTask();
+        return Task.CompletedTask;
     }
 
     public static HttpClient GetClient(string? token = null, bool followRedirect = true)
