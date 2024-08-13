@@ -252,8 +252,7 @@ static string GetConnectionString(IConfiguration configuration)
         Port = databaseUri.Port,
         Username = userInfo[0],
         Password = userInfo[1],
-        Database = databaseUri.LocalPath.TrimStart('/'),
-        TrustServerCertificate = true
+        Database = databaseUri.LocalPath.TrimStart('/')
     };
 
     return connectionStringBuilder.ToString();
