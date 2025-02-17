@@ -58,8 +58,8 @@ public class BunchController(
     {
         var request = new GetBunchList.Request(CurrentUserName);
         var result = await getBunchList.Execute(request);
-        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
         return Model(result, CreateModel);
+        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
     }
 
     /// <summary>
@@ -71,8 +71,8 @@ public class BunchController(
     public async Task<ObjectResult> Bunches()
     {
         var result = await getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
-        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
         return Model(result, CreateModel);
+        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
     }
 
     /// <summary>
@@ -85,8 +85,8 @@ public class BunchController(
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
         var result = await addBunch.Execute(request);
-        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return Model(result, CreateModel);
+        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public class BunchController(
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);
         var result = await joinBunch.Execute(request);
-        PlayerJoinedModel? CreateModel() => result.Data?.PlayerId is not null ? new PlayerJoinedModel(result.Data.PlayerId) : null;
         return Model(result, CreateModel);
+        PlayerJoinedModel? CreateModel() => result.Data?.PlayerId is not null ? new PlayerJoinedModel(result.Data.PlayerId) : null;
     }
 }

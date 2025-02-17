@@ -148,10 +148,9 @@ public class UserController(
         var symmetricKey = new SymmetricSecurityKey(key);
         var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
         
-        var claims = new ClaimsIdentity(new[]
-        {
+        var claims = new ClaimsIdentity([
             new Claim(ClaimTypes.Name, userName)
-        });
+        ]);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

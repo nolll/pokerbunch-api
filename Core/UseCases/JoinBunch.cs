@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -31,16 +32,8 @@ public class JoinBunch(
         return Success(new Result(bunch.Slug, player.Id));
     }
     
-    private Player? GetMatchedPlayer(IEnumerable<Player> players, string postedCode)
-    {
-        foreach (var player in players)
-        {
-            var code = invitationCodeCreator.GetCode(player);
-            if (code == postedCode)
-                return player;
-        }
-        return null;
-    }
+    private Player? GetMatchedPlayer(IEnumerable<Player> players, string postedCode) => 
+        players.FirstOrDefault(player => invitationCodeCreator.GetCode(player) == postedCode);
 
     public class Request(string userName, string slug, string code)
     {

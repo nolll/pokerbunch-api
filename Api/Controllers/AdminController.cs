@@ -44,7 +44,7 @@ public class AdminController(
     [HttpGet]
     public ObjectResult Version()
     {
-        return Success(new VersionModel(appSettings.Version));
+        return Success(new VersionModel(AppSettings.Version));
     }
 
     [Route(ApiRoutes.Settings)]
@@ -53,6 +53,6 @@ public class AdminController(
     public async Task<ObjectResult> Settings()
     {
         var result = await requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(CurrentUserName));
-        return Model(result, () => appSettings);
+        return Model(result, () => AppSettings);
     }
 }

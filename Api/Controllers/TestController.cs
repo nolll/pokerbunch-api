@@ -9,50 +9,29 @@ public class TestController(AppSettings appSettings) : BaseController(appSetting
 {
     [Route("test/exception")]
     [HttpGet]
-    public ObjectResult Exception()
-    {
-        throw new Exception("exception");
-    }
+    public ObjectResult Exception() => throw new Exception("exception");
 
     [Route("test/unexpected")]
     [HttpGet]
-    public ObjectResult Unexpected()
-    {
-        return Error(ErrorType.Unknown, "unknown");
-    }
+    public ObjectResult Unexpected() => Error(ErrorType.Unknown, "unknown");
 
     [Route("test/notfound")]
     [HttpGet]
-    public ObjectResult NotFoundError()
-    {
-        return Error(ErrorType.NotFound, "not found");
-    }
+    public ObjectResult NotFoundError() => Error(ErrorType.NotFound, "not found");
 
     [Route("test/accessdenied")]
     [HttpGet]
-    public ObjectResult AccessDeniedError()
-    {
-        return Error(ErrorType.AccessDenied, "access denied");
-    }
+    public ObjectResult AccessDeniedError() => Error(ErrorType.AccessDenied, "access denied");
 
     [Route("test/auth")]
     [HttpGet]
-    public ObjectResult AuthError()
-    {
-        return Error(ErrorType.Auth, "auth error");
-    }
+    public ObjectResult AuthError() => Error(ErrorType.Auth, "auth error");
 
     [Route("test/validation")]
     [HttpGet]
-    public ObjectResult ValidationError()
-    {
-        return Error(ErrorType.Validation, "validation error");
-    }
+    public ObjectResult ValidationError() => Error(ErrorType.Validation, "validation error");
 
     [Route("test/conflict")]
     [HttpGet]
-    public ObjectResult ConflictException()
-    {
-        return Error(ErrorType.Conflict, "conflict");
-    }
+    public ObjectResult ConflictException() => Error(ErrorType.Conflict, "conflict");
 }

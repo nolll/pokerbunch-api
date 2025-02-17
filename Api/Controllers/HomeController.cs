@@ -9,8 +9,5 @@ public class HomeController(AppSettings appSettings) : BaseController(appSetting
 {
     [Route(ApiRoutes.Root)]
     [HttpGet]
-    public ActionResult Home()
-    {
-        return Redirect("/swagger/index.html");
-    }
+    public ActionResult Home() => Redirect("/swagger/index.html");
 }

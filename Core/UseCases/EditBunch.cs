@@ -48,18 +48,15 @@ public class EditBunch(
         }
     }
 
-    private static Bunch CreateBunch(Bunch bunch, Request request, TimeZoneInfo timezone)
-    {
-        return new Bunch(
-            bunch.Id,
-            bunch.Slug,
-            bunch.DisplayName,
-            request.Description,
-            request.HouseRules,
-            timezone,
-            request.DefaultBuyin,
-            new Currency(request.CurrencySymbol, request.CurrencyLayout));
-    }
+    private static Bunch CreateBunch(Bunch bunch, Request request, TimeZoneInfo timezone) => new(
+        bunch.Id,
+        bunch.Slug,
+        bunch.DisplayName,
+        request.Description,
+        request.HouseRules,
+        timezone,
+        request.DefaultBuyin,
+        new Currency(request.CurrencySymbol, request.CurrencyLayout));
 
     public class Request(
         string userName,

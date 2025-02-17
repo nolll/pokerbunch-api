@@ -15,13 +15,11 @@ public class ErrorController : Controller
     {
         var exception = GetException();
 
-        if(exception is not null)
-        {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return new ErrorModel(exception.Message);
-        }
-
-        return new ErrorModel(HttpContext.Response.StatusCode.ToString());
+        if (exception is null) 
+            return new ErrorModel(HttpContext.Response.StatusCode.ToString());
+        
+        HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        return new ErrorModel(exception.Message);
     }
 
     private Exception? GetException()

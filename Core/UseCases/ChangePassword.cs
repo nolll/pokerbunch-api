@@ -28,19 +28,16 @@ public class ChangePassword(IUserRepository userRepository, IRandomizer randomiz
 
         return Success(new Result());
     }
-    
-    private static User CreateUser(User user, string encryptedPassword, string salt)
-    {
-        return new User(
-            user.Id,
-            user.UserName,
-            user.DisplayName,
-            user.RealName,
-            user.Email,
-            user.GlobalRole,
-            encryptedPassword,
-            salt);
-    }
+
+    private static User CreateUser(User user, string encryptedPassword, string salt) => new(
+        user.Id,
+        user.UserName,
+        user.DisplayName,
+        user.RealName,
+        user.Email,
+        user.GlobalRole,
+        encryptedPassword,
+        salt);
 
     public class Request(string userName, string newPassword, string oldPassword)
     {

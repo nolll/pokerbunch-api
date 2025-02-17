@@ -34,15 +34,11 @@ public class PlayerCashgameList(
         return Success(new Result(items.ToList()));
     }
     
-    private Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations)
-    {
-        return locations.First(o => o.Id == cashgame.LocationId);
-    }
+    private static Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations) => 
+        locations.First(o => o.Id == cashgame.LocationId);
 
-    private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items)
-    {
-        return items.OrderByDescending(o => o.StartTime);
-    }
+    private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items) => 
+        items.OrderByDescending(o => o.StartTime);
 
     public class Request(string userName, string playerId)
     {

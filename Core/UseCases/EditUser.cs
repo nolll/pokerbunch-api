@@ -21,18 +21,15 @@ public class EditUser(IUserRepository userRepository) : UseCase<EditUser.Request
         return Success(new Result(userToSave.UserName));
     }
 
-    private static User GetUser(User user, Request request)
-    {
-        return new User(
-            user.Id,
-            user.UserName,
-            request.DisplayName,
-            request.RealName,
-            request.Email,
-            user.GlobalRole,
-            user.EncryptedPassword,
-            user.Salt);
-    }
+    private static User GetUser(User user, Request request) => new(
+        user.Id,
+        user.UserName,
+        request.DisplayName,
+        request.RealName,
+        request.Email,
+        user.GlobalRole,
+        user.EncryptedPassword,
+        user.Salt);
 
     public class Request(string userName, string displayName, string? realName, string email)
     {

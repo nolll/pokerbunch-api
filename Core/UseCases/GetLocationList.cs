@@ -28,10 +28,8 @@ public class GetLocationList(
         return Success(new Result(locationItems));
     }
 
-    private static Location CreateLocationItem(Entities.Location location, string slug)
-    {
-        return new Location(location.Id, location.Name, slug);
-    }
+    private static Location CreateLocationItem(Entities.Location location, string slug) => 
+        new(location.Id, location.Name, slug);
 
     public class Request(string userName, string slug)
     {

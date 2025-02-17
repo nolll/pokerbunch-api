@@ -31,34 +31,24 @@ public abstract class BaseController(AppSettings appSettings) : Controller
             }
                 
             var env = new Environment(Request.Host.Host);
-            if (AppSettings.Auth.Override.Enabled && env.IsDevModeAdmin)
-                return AppSettings.Auth.Override.AdminUserName;
-
-            if (AppSettings.Auth.Override.Enabled && env.IsDevModePlayer)
-                return AppSettings.Auth.Override.PlayerUserName;
-
-            throw new PokerBunchException("Auth failed: Not authenticated");
+            return AppSettings.Auth.Override.Enabled switch
+            {
+                true when env.IsDevModeAdmin => AppSettings.Auth.Override.AdminUserName,
+                true when env.IsDevModePlayer => AppSettings.Auth.Override.PlayerUserName,
+                _ => throw new PokerBunchException("Auth failed: Not authenticated")
+            };
         }
     }
 
-    protected ObjectResult Model<T>(UseCaseResult<T> result, Func<object?> create)
-    {
-        return result.Success
-            ? Success(create())
-            : Error(result.Error);
-    }
+    protected ObjectResult Model<T>(UseCaseResult<T> result, Func<object?> create) => result.Success
+        ? Success(create())
+        : Error(result.Error);
 
-    protected ObjectResult Success(object? model)
-    {
-        return Ok(model);
-    }
+    protected ObjectResult Success(object? model) => Ok(model);
 
-    protected ObjectResult Error(UseCaseError? error)
-    {
-        return error is not null
-            ? Error(error.Type, error.Message)
-            : Error(ErrorType.Unknown, "Unknown error");
-    }
+    protected ObjectResult Error(UseCaseError? error) => error is not null
+        ? Error(error.Type, error.Message)
+        : Error(ErrorType.Unknown, "Unknown error");
 
     protected ObjectResult Error(ErrorType errorType, string errorMessage)
     {
@@ -68,16 +58,13 @@ public abstract class BaseController(AppSettings appSettings) : Controller
         return StatusCode((int)statusCode, messageModel);
     }
 
-    private HttpStatusCode GetStatusCode(ErrorType errorType)
+    private HttpStatusCode GetStatusCode(ErrorType errorType) => errorType switch
     {
-        return errorType switch
-        {
-            ErrorType.Validation => HttpStatusCode.BadRequest,
-            ErrorType.NotFound => HttpStatusCode.NotFound,
-            ErrorType.Auth => HttpStatusCode.Unauthorized,
-            ErrorType.AccessDenied => HttpStatusCode.Forbidden,
-            ErrorType.Conflict => HttpStatusCode.Conflict,
-            _ => HttpStatusCode.InternalServerError
-        };
-    }
+        ErrorType.Validation => HttpStatusCode.BadRequest,
+        ErrorType.NotFound => HttpStatusCode.NotFound,
+        ErrorType.Auth => HttpStatusCode.Unauthorized,
+        ErrorType.AccessDenied => HttpStatusCode.Forbidden,
+        ErrorType.Conflict => HttpStatusCode.Conflict,
+        _ => HttpStatusCode.InternalServerError
+    };
 }

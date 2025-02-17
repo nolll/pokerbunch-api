@@ -24,6 +24,6 @@ public class ClearCache(ICache cache, IUserRepository userRepository) : UseCase<
 
     public class Result
     {
-        public string Message { get; } = "The cache was cleared";
+        public string Message => "The cache was cleared";
     }
 }

@@ -33,8 +33,8 @@ public class CashgameController(
     {
         var request = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
         var result = await cashgameDetails.Execute(request);
-        CashgameDetailsModel? CreateModel() => result.Data is not null ? new CashgameDetailsModel(result.Data) : null;
         return Model(result, CreateModel);
+        CashgameDetailsModel? CreateModel() => result.Data is not null ? new CashgameDetailsModel(result.Data) : null;
     }
 
     /// <summary>
@@ -46,8 +46,8 @@ public class CashgameController(
     public async Task<ObjectResult> List(string bunchId)
     {
         var result = await cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, null));
-        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
         return Model(result, CreateModel);
+        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public class CashgameController(
     public async Task<ObjectResult> List(string bunchId, int year)
     {
         var result = await cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, year));
-        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
         return Model(result, CreateModel);
+        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
     }
 
     /// <summary>
