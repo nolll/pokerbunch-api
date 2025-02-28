@@ -34,7 +34,7 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT");
 var settings = builder.Configuration.Get<AppSettings>() ?? new AppSettings();
 var isDev = builder.Environment.IsDevelopment();
-var isProd = isDev;
+var isProd = !isDev;
 
 if (!string.IsNullOrEmpty(port))
     builder.WebHost.UseUrls("http://*:" + port);
