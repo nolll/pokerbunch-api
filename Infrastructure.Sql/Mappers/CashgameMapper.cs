@@ -58,7 +58,7 @@ internal static class CashgameMapper
             checkpointDto.Checkpoint_Id.ToString(),
             checkpointDto.Cashgame_Id.ToString(),
             checkpointDto.Player_Id.ToString(),
-            TimeZoneInfo.ConvertTimeToUtc(checkpointDto.Timestamp),
+            DateTime.SpecifyKind(checkpointDto.Timestamp, DateTimeKind.Utc),
             (CheckpointType)checkpointDto.Type,
             checkpointDto.Stack,
             checkpointDto.Amount);

@@ -251,7 +251,7 @@ public class CashgameTests
 
     private async Task Update(string? token, string cashgameId, string actionId, int stack)
     {
-        var parameters = new UpdateActionPostModel(DateTimeOffset.Now, stack, null);
+        var parameters = new UpdateActionPostModel(DateTime.UtcNow, stack, null);
         var result = await TestClient.Action.Update(token, cashgameId, actionId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }

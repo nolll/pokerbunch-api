@@ -33,7 +33,7 @@ public class EditCheckpoint(
             existingCheckpoint.Id,
             existingCheckpoint.CashgameId,
             existingCheckpoint.PlayerId,
-            request.Timestamp.UtcDateTime,
+            request.Timestamp,
             existingCheckpoint.Type,
             request.Stack,
             request.Amount);
@@ -44,11 +44,11 @@ public class EditCheckpoint(
         return Success(new Result(cashgame.Id, existingCheckpoint.PlayerId));
     }
     
-    public class Request(string userName, string checkpointId, DateTimeOffset timestamp, int stack, int? amount)
+    public class Request(string userName, string checkpointId, DateTime timestamp, int stack, int? amount)
     {
         public string UserName { get; } = userName;
         public string CheckpointId { get; } = checkpointId;
-        public DateTimeOffset Timestamp { get; } = timestamp;
+        public DateTime Timestamp { get; } = timestamp;
 
         [Range(0, int.MaxValue, ErrorMessage = "Stack can't be negative")]
         public int Stack { get; } = stack;
