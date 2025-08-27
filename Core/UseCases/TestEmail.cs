@@ -1,29 +1,29 @@
+using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class TestEmail(IEmailSender emailSender, IUserRepository userRepository)
+public class TestEmail(IEmailSender emailSender)
     : UseCase<TestEmail.Request, TestEmail.Result>
 {
-    protected override async Task<UseCaseResult<Result>> Work(Request request)
+    protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await userRepository.GetByUserName(request.UserName);
-        if (!AccessControl.CanSendTestEmail(user))
-            return Error(new AccessDeniedError());
+        if (!AccessControl.CanSendTestEmail(request.CurrentUser))
+            return Task.FromResult(Error(new AccessDeniedError()));
 
         // todo: Move email to config
         const string email = "henriks@gmail.com";
         var message = new TestMessage();
         emailSender.Send(email, message);
 
-        return Success(new Result(email));
+        return Task.FromResult(Success(new Result(email)));
     }
     
-    public class Request(string userName)
+    public class Request(CurrentUser currentUser)
     {
-        public string UserName { get; } = userName;
+        public CurrentUser CurrentUser { get; } = currentUser;
     }
 
     public class Result(string email)

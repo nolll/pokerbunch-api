@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Api.Bootstrapping;
+using Api.Auth;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Api.Routes;
@@ -12,6 +13,7 @@ using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Api.Controllers;
 
@@ -136,12 +138,13 @@ public class UserController(
     public async Task<ObjectResult> Login([FromBody] LoginPostModel post)
     {
         var result = await login.Execute(new Login.Request(post.UserName, post.Password));
-        return result.Success
-            ? new ObjectResult(CreateToken(result.Data?.UserName ?? "")) 
+        
+        return result.Success && result.Data is not null
+            ? new ObjectResult(CreateToken(result.Data)) 
             : Error(result.Error);
     }
 
-    private string CreateToken(string userName)
+    private string CreateToken(Login.Result data)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(AppSettings.Auth.Secret));
@@ -149,7 +152,11 @@ public class UserController(
         var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
         
         var claims = new ClaimsIdentity([
-            new Claim(ClaimTypes.Name, userName)
+            new Claim(ClaimTypes.Name, data.UserName),
+            new Claim(CustomClaimTypes.UserId, data.UserId),
+            new Claim(CustomClaimTypes.UserDisplayName, data.DisplayName),
+            new Claim(CustomClaimTypes.IsAdmin, data.IsAdmin.ToString().ToLower()),
+            new Claim(CustomClaimTypes.Bunches, ToJson(data.BunchResults), JsonClaimValueTypes.JsonArray)
         ]);
 
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -162,4 +169,12 @@ public class UserController(
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
+
+    private static string ToJson(List<Login.ResultBunch> bunchResults)
+    {
+        var tokenBunches = bunchResults.Select(ToTokenBunch);
+        return JsonConvert.SerializeObject(tokenBunches);
+    }
+    
+    private static TokenBunch ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchName, b.PlayerId, b.PlayerName, b.Role);
 }

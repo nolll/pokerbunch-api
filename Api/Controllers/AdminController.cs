@@ -24,7 +24,7 @@ public class AdminController(
     [Authorize]
     public async Task<ObjectResult> ClearCache()
     {
-        var result = await clearCache.Execute(new ClearCache.Request(CurrentUserName));
+        var result = await clearCache.Execute(new ClearCache.Request(CurrentUser));
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 
@@ -36,7 +36,7 @@ public class AdminController(
     [Authorize]
     public async Task<ObjectResult> SendEmail()
     {
-        var result = await testEmail.Execute(new TestEmail.Request(CurrentUserName));
+        var result = await testEmail.Execute(new TestEmail.Request(CurrentUser));
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
 

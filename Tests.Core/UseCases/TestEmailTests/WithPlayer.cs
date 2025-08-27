@@ -1,11 +1,10 @@
-﻿using Core.Entities;
-using Core.Errors;
+﻿using Core.Errors;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithPlayer : Arrange
 {
-    protected override Role Role => Role.Manager;
+    protected override bool IsAdmin => false;
 
     [Test]
     public void ReturnsError()

@@ -1,11 +1,15 @@
-﻿using Api.Models.CommonModels;
+﻿using System.Linq;
+using Api.Models.CommonModels;
 using Api.Settings;
 using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Api.Auth;
 using Core;
+using Core.Entities;
 using Core.Errors;
+using Newtonsoft.Json;
 using Environment = Api.Services.Environment;
 
 namespace Api.Controllers;
@@ -38,6 +42,28 @@ public abstract class BaseController(AppSettings appSettings) : Controller
                 _ => throw new PokerBunchException("Auth failed: Not authenticated")
             };
         }
+    }
+
+    protected CurrentUser CurrentUser => new(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin);
+
+    private bool IsAdmin => GetBoolClaim(CustomClaimTypes.IsAdmin);
+    private string CurrentUserId => GetClaim(CustomClaimTypes.UserId) ?? "";
+    private string CurrentUserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
+    
+    private TokenBunch[] UserBunches => JsonConvert.DeserializeObject<TokenBunch[]>(GetClaim(CustomClaimTypes.Bunches) ?? "") ?? [];
+
+    protected CurrentBunch CurrentBunch(string id)
+    {
+        var b = UserBunches.First(o => o.Id == id);
+        return new CurrentBunch(b.Id, b.Name, b.PlayerId, b.PlayerName, b.Role);
+    }
+    
+    private string? GetClaim(string type) => User.Claims.FirstOrDefault(o => o.Type == type)?.Value;
+
+    private bool GetBoolClaim(string type)
+    {
+        var claim = GetClaim(type);
+        return claim is not null && bool.Parse(claim);
     }
 
     protected ObjectResult Model<T>(UseCaseResult<T> result, Func<object?> create) => result.Success

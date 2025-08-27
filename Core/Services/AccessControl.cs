@@ -4,8 +4,8 @@ namespace Core.Services;
 
 public static class AccessControl
 {
-    public static bool CanClearCache(User currentUser) => IsAdmin(currentUser);
-    public static bool CanSendTestEmail(User currentUser) => IsAdmin(currentUser);
+    public static bool CanClearCache(CurrentUser currentUser) => currentUser.IsAdmin;
+    public static bool CanSendTestEmail(CurrentUser currentUser) => currentUser.IsAdmin;
     public static bool CanSeeAppSettings(User currentUser) => IsAdmin(currentUser);
     public static bool CanListBunches(User currentUser) => IsAdmin(currentUser);
     public static bool CanListUsers(User currentUser) => IsAdmin(currentUser);

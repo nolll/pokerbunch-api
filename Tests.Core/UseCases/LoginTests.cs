@@ -37,5 +37,5 @@ public class LoginTests : TestBase
         return new Login.Request(TestData.UserA.UserName, TestData.UserPasswordA);
     }
 
-    private Login Sut => new(Deps.User);
+    private Login Sut => new(Deps.User, Deps.Bunch, Deps.Player);
 }

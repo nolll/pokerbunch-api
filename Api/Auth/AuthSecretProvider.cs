@@ -1,4 +1,4 @@
-﻿namespace Api.Bootstrapping;
+﻿namespace Api.Auth;
 
 public static class AuthSecretProvider
 {

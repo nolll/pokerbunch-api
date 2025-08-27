@@ -1,12 +1,15 @@
-using Core.Entities;
 using Core.Errors;
 
 namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithPlayer : Arrange
 {
-    protected override Role Role => Role.Player;
+    protected override bool IsAdmin => false;
 
+    protected override void Setup()
+    {
+    }
+    
     [Test]
     public void ReturnsError()
     {

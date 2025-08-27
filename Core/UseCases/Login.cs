@@ -1,4 +1,3 @@
-using System;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -6,29 +5,37 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Login : UseCase<Login.Request, Login.Result>
+public class Login(
+    IUserRepository userRepository,
+    IBunchRepository bunchRepository,
+    IPlayerRepository playerRepository
+    ) : UseCase<Login.Request, Login.Result>
 {
-    private readonly IUserRepository _userRepository;
-
-    public Login(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var user = await GetLoggedInUser(request.UserNameOrEmail, request.Password);
+        if (user is null)
+            return Error(new LoginError("There was something wrong with your username or password. Please try again."));
 
-        return user is null
-            ? Error(new LoginError("There was something wrong with your username or password. Please try again."))
-            : Success(new Result(user.UserName));
+        var bunchResults = new List<ResultBunch>();
+        var bunches = await bunchRepository.List(user.Id);
+        foreach (var bunch in bunches)
+        {
+            var player = await playerRepository.Get(bunch.Id, user.Id);
+            var role = player?.Role ?? Role.None;
+            var id = player?.Id ?? "";
+            var name = player?.DisplayName ?? "";
+            bunchResults.Add(new ResultBunch(bunch.Slug, bunch.DisplayName, id, name, role));
+        }
+
+        return Success(new Result(user.Id, user.UserName, user.DisplayName, user.IsAdmin, bunchResults));
     }
     
     private async Task<User?> GetLoggedInUser(string userNameOrEmail, string password)
     {
         try
         {
-            var user = await _userRepository.GetByUserNameOrEmail(userNameOrEmail);
+            var user = await userRepository.GetByUserNameOrEmail(userNameOrEmail);
             var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
             return isValid ? user : null;
         }
@@ -44,8 +51,21 @@ public class Login : UseCase<Login.Request, Login.Result>
         public string Password { get; } = password;
     }
 
-    public class Result(string userName)
+    public class Result(string userId, string userName, string displayName, bool isAdmin, List<ResultBunch> bunchResults)
     {
+        public string UserId { get; } = userId;
         public string UserName { get; } = userName;
+        public string DisplayName { get; } = displayName;
+        public bool IsAdmin { get; } = isAdmin;
+        public List<ResultBunch> BunchResults { get; } = bunchResults;
+    }
+
+    public class ResultBunch(string bunchId, string bunchName, string playerId, string playerName, Role role)
+    {
+        public string BunchId { get; } = bunchId;
+        public string BunchName { get; } = bunchName;
+        public string PlayerId { get; } = playerId;
+        public string PlayerName { get; } = playerName;
+        public Role Role { get; } = role;
     }
 }
