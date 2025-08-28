@@ -1,8 +1,11 @@
-﻿namespace Tests.Core.UseCases.TestEmailTests;
+﻿using Core.Services;
+using Tests.Core.TestClasses;
+
+namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithAdmin : Arrange
 {
-    protected override bool IsAdmin => true;
+    protected override IAccessControl AccessControl => AccessControlInTest.Allow;
 
     [Test]
     public void MessageIsSent()

@@ -61,9 +61,14 @@ public abstract class BaseController(AppSettings appSettings) : Controller
     private string CurrentUserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
     
     private TokenBunch[] UserBunches => JsonConvert.DeserializeObject<TokenBunch[]>(GetClaim(CustomClaimTypes.Bunches) ?? "") ?? [];
-
-    protected CurrentBunch CurrentBunch(string id)
+    
+    protected AccessControl AccessControl(string? bunchId = null) => new AccessControl(CurrentUser, CurrentBunch(bunchId));
+    
+    protected CurrentBunch? CurrentBunch(string? id)
     {
+        if (id is null)
+            return null;
+        
         var b = UserBunches.First(o => o.Id == id);
         return new CurrentBunch(b.Id, b.Name, b.PlayerId, b.PlayerName, b.Role);
     }

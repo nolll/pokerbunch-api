@@ -2,11 +2,12 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public static class AccessControl
+public class AccessControl(CurrentUser currentUser, CurrentBunch? currentBunch) : IAccessControl
 {
-    public static bool CanClearCache(CurrentUser currentUser) => currentUser.IsAdmin;
-    public static bool CanSendTestEmail(CurrentUser currentUser) => currentUser.IsAdmin;
-    public static bool CanSeeAppSettings(User currentUser) => IsAdmin(currentUser);
+    public bool CanClearCache => currentUser.IsAdmin;
+    public bool CanSendTestEmail => currentUser.IsAdmin;
+    public bool CanSeeAppSettings => currentUser.IsAdmin;
+    
     public static bool CanListBunches(User currentUser) => IsAdmin(currentUser);
     public static bool CanListUsers(User currentUser) => IsAdmin(currentUser);
     public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>

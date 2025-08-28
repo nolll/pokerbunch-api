@@ -1,6 +1,4 @@
-﻿using Core.Entities;
-using Core.Errors;
-using Core.Repositories;
+﻿using Core.Errors;
 using Core.Services;
 
 namespace Core.UseCases;
@@ -9,7 +7,7 @@ public class ClearCache(ICache cache) : UseCase<ClearCache.Request, ClearCache.R
 {
     protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        if (!AccessControl.CanClearCache(request.CurrentUser))
+        if (!request.AccessControl.CanClearCache)
             return Task.FromResult(Error(new AccessDeniedError()));
 
         cache.ClearAll();
@@ -17,9 +15,9 @@ public class ClearCache(ICache cache) : UseCase<ClearCache.Request, ClearCache.R
         return Task.FromResult(Success(new Result()));
     }
 
-    public class Request(CurrentUser currentUser)
+    public class Request(IAccessControl accessControl)
     {
-        public CurrentUser CurrentUser { get; } = currentUser;
+        public IAccessControl AccessControl { get; } = accessControl;
     }
 
     public class Result

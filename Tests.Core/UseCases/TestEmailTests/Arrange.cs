@@ -1,10 +1,7 @@
 ﻿using Core;
-using Core.Entities;
-using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using Moq;
-using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
@@ -12,7 +9,8 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 {
     protected UseCaseResult<TestEmail.Result>? Result;
 
-    protected abstract bool IsAdmin { get; }
+    protected abstract IAccessControl AccessControl { get; }
+    
     protected string? To;
     protected string? Subject;
     protected string? Body;
@@ -32,7 +30,6 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 
     protected override async Task ExecuteAsync()
     {
-        var currentUser = new CurrentUser("", "", "", IsAdmin);
-        Result = await Sut.Execute(new TestEmail.Request(currentUser));
+        Result = await Sut.Execute(new TestEmail.Request(AccessControl));
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Core.Errors;
+using Core.Services;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithPlayer : Arrange
 {
-    protected override bool IsAdmin => false;
+    protected override IAccessControl AccessControl => AccessControlInTest.Deny;
 
     [Test]
     public void ReturnsError()

@@ -1,10 +1,12 @@
 using Core.Errors;
+using Core.Services;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithPlayer : Arrange
 {
-    protected override bool IsAdmin => false;
+    protected override IAccessControl AccessControl => AccessControlInTest.Deny;
 
     protected override void Setup()
     {
