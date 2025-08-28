@@ -5,8 +5,6 @@ namespace Core.Services;
 
 public static class Globalization
 {
-    public static string FormatIsoDate(DateTime dateTime)
-    {
-        return dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-    }
+    public static string FormatIsoDate(DateTime dateTime) => 
+        dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 }

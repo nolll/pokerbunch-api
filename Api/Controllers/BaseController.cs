@@ -5,10 +5,12 @@ using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 using Api.Auth;
 using Core;
 using Core.Entities;
 using Core.Errors;
+using Core.Services;
 using Newtonsoft.Json;
 using Environment = Api.Services.Environment;
 
@@ -17,8 +19,10 @@ namespace Api.Controllers;
 [UsedImplicitly]
 public abstract class BaseController(AppSettings appSettings) : Controller
 {
+    private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-25");
+    
     protected AppSettings AppSettings { get; } = appSettings;
-
+    
     protected string CurrentUserName
     {
         get
@@ -30,6 +34,9 @@ public abstract class BaseController(AppSettings appSettings) : Controller
             {
                 if(User.Identity.Name is null)
                     throw new PokerBunchException("Auth failed: No identity");
+
+                if (IsTokenTooOld)
+                    throw new PokerBunchException("Token too old");
 
                 return User.Identity.Name;
             }
@@ -43,6 +50,9 @@ public abstract class BaseController(AppSettings appSettings) : Controller
             };
         }
     }
+
+    private bool IsTokenTooOld => 
+        DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(CustomClaimTypes.IssuedAt) ?? "0")) < TokenMinDate;
 
     protected CurrentUser CurrentUser => new(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin);
 
