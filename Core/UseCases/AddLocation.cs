@@ -6,11 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddLocation(
-    IBunchRepository bunchRepository,
-    IPlayerRepository playerRepository,
-    IUserRepository userRepository,
-    ILocationRepository locationRepository)
+public class AddLocation(ILocationRepository locationRepository)
     : UseCase<AddLocation.Request, AddLocation.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -20,22 +16,20 @@ public class AddLocation(
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
+        var bunchInfo = request.AccessControl.GetBunchBySlug(request.Slug);
 
-        if (!AccessControl.CanAddLocation(currentUser, currentPlayer))
+        if (!request.AccessControl.CanAddLocation(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
-        var location = new Location("", request.Name, bunch.Id);
+        var location = new Location("", request.Name, bunchInfo.Id);
         var id = await locationRepository.Add(location);
 
-        return Success(new Result(bunch.Slug, id, location.Name));
+        return Success(new Result(bunchInfo.Slug, id, location.Name));
     }
     
-    public class Request(string userName, string slug, string name)
+    public class Request(IAccessControl accessControl, string slug, string name)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Name can't be empty")]

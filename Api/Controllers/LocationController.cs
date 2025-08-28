@@ -47,7 +47,7 @@ public class LocationController(
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
-        var result = await addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
+        var result = await addLocation.Execute(new AddLocation.Request(AccessControl, bunchId, post.Name));
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 }

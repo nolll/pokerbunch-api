@@ -9,13 +9,14 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanSendTestEmail => IsAdmin();
     public bool CanSeeAppSettings => IsAdmin();
     public bool CanListBunches => IsAdmin();
+    public bool CanListUsers => IsAdmin();
     
     public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
     public bool CanDeleteCashgame(string bunchId) => IsManager(bunchId);
     public bool CanSeeCashgame(string bunchId) => IsPlayer(bunchId);
     public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
+    public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
     
-    public static bool CanListUsers(User currentUser) => IsAdmin(currentUser);
     public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>
         IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
     public static bool CanEditBunch(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
@@ -36,7 +37,6 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddCashgame(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddEvent(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanAddLocation(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
 
     private static bool IsRequestedPlayer(Player? currentPlayer, string requestedPlayerId) => currentPlayer?.Id == requestedPlayerId;
     private static bool IsPlayer(Player? currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Player);
@@ -52,6 +52,12 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public CurrentBunch GetBunch(string id)
     {
         var b = userBunches.First(o => o.Id == id);
+        return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
+    }
+    
+    public CurrentBunch GetBunchBySlug(string slug)
+    {
+        var b = userBunches.First(o => o.Slug == slug);
         return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
     }
 }
