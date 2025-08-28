@@ -31,7 +31,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> Get(string cashgameId)
     {
-        var request = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
+        var request = new CashgameDetails.Request(AccessControl, cashgameId, DateTime.UtcNow);
         var result = await cashgameDetails.Execute(request);
         return Model(result, CreateModel);
         CashgameDetailsModel? CreateModel() => result.Data is not null ? new CashgameDetailsModel(result.Data) : null;
@@ -100,7 +100,7 @@ public class CashgameController(
         if (!addResult.Success)
             return Error(addResult.Error);
 
-        var detailsRequest = new CashgameDetails.Request(CurrentUserName, addResult.Data?.CashgameId ?? "", DateTime.UtcNow);
+        var detailsRequest = new CashgameDetails.Request(AccessControl, addResult.Data?.CashgameId ?? "", DateTime.UtcNow);
         var detailsResult = await cashgameDetails.Execute(detailsRequest);
         return Model(detailsResult, () => detailsResult.Data is not null ? new CashgameDetailsModel(detailsResult.Data!) : null);
     }
@@ -113,12 +113,12 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> Update(string cashgameId, [FromBody] UpdateCashgamePostModel post)
     {
-        var updateRequest = new EditCashgame.Request(CurrentUserName, cashgameId, post.LocationId, post.EventId);
+        var updateRequest = new EditCashgame.Request(AccessControl, cashgameId, post.LocationId, post.EventId);
         var updateResult = await editCashgame.Execute(updateRequest);
         if(!updateResult.Success)
             return Error(updateResult.Error);
 
-        var detailsRequest = new CashgameDetails.Request(CurrentUserName, cashgameId, DateTime.UtcNow);
+        var detailsRequest = new CashgameDetails.Request(AccessControl, cashgameId, DateTime.UtcNow);
         var detailsResult = await cashgameDetails.Execute(detailsRequest);
         return Model(detailsResult, () => detailsResult.Data is not null ? new CashgameDetailsModel(detailsResult.Data!) : null);
     }
@@ -131,7 +131,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> Delete(string cashgameId)
     {
-        var request = new DeleteCashgame.Request(CurrentUserName, cashgameId);
+        var request = new DeleteCashgame.Request(AccessControl, cashgameId);
         var result = await deleteCashgame.Execute(request);
         return Model(result, () => new CashgameDeletedModel(cashgameId));
     }

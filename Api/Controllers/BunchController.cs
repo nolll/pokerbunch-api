@@ -5,6 +5,7 @@ using Api.Models.PlayerModels;
 using Api.Routes;
 using Api.Settings;
 using Core.UseCases;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,7 +57,7 @@ public class BunchController(
     [Authorize]
     public async Task<ObjectResult> List()
     {
-        var request = new GetBunchList.Request(CurrentUserName);
+        var request = new GetBunchList.Request(AccessControl);
         var result = await getBunchList.Execute(request);
         return Model(result, CreateModel);
         IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));

@@ -1,5 +1,7 @@
+using Core.Entities;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -8,7 +10,8 @@ public class LocationDetailsTests : TestBase
     [Test]
     public async Task LocationDetails_AllPropertiesAreSet()
     {
-        var request = new GetLocation.Request(TestData.UserA.UserName, TestData.LocationIdA);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
+        var request = new GetLocation.Request(new AccessControlInTest(canSeeLocation: true, currentBunch: currentBunch), TestData.LocationIdA);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.Id, Is.EqualTo(TestData.BunchA.Id));
@@ -16,9 +19,5 @@ public class LocationDetailsTests : TestBase
         Assert.That(result.Data?.Slug, Is.EqualTo(TestData.BunchA.Slug));
     }
 
-    private GetLocation Sut => new(
-        Deps.Location,
-        Deps.User,
-        Deps.Player,
-        Deps.Bunch);
+    private GetLocation Sut => new(Deps.Location);
 }

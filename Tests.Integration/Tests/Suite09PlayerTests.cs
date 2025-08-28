@@ -6,17 +6,18 @@ namespace Tests.Integration.Tests;
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.Player)]
-public class PlayerTests
+public class Suite09PlayerTests
 {
     private const string TempPlayerName = "Temp player";
     private const string TempPlayerId = "4";
 
     [Test]
     [Order(1)]
-    public async Task AddPlayer()
+    public async Task Test01AddPlayer()
     {
+        var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new PlayerAddPostModel(TempPlayerName);
-        var result = await TestClient.Player.Add(TestData.ManagerToken, TestData.BunchId, parameters);
+        var result = await TestClient.Player.Add(managerToken, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Name, Is.EqualTo(TempPlayerName));
@@ -30,9 +31,10 @@ public class PlayerTests
 
     [Test]
     [Order(2)]
-    public async Task GetPlayer()
+    public async Task Test02GetPlayer()
     {
-        var result = await TestClient.Player.Get(TestData.ManagerToken, TempPlayerId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Player.Get(managerToken, TempPlayerId);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Name, Is.EqualTo(TempPlayerName));
@@ -45,10 +47,11 @@ public class PlayerTests
     }
 
     [Test]
-    [Order(2)]
-    public async Task ListPlayers()
+    [Order(3)]
+    public async Task Test03ListPlayers()
     {
-        var result = await TestClient.Player.List(TestData.ManagerToken, TestData.BunchId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Player.List(managerToken, TestData.BunchId);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Count, Is.EqualTo(4));
@@ -84,12 +87,13 @@ public class PlayerTests
 
     [Test]
     [Order(4)]
-    public async Task DeletePlayer()
+    public async Task Test04DeletePlayer()
     {
-        var deleteResult = await TestClient.Player.Delete(TestData.ManagerToken, TempPlayerId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var deleteResult = await TestClient.Player.Delete(managerToken, TempPlayerId);
         Assert.That(deleteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        var getResult = await TestClient.Player.Get(TestData.ManagerToken, TempPlayerId);
+        var getResult = await TestClient.Player.Get(managerToken, TempPlayerId);
         Assert.That(getResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
 }

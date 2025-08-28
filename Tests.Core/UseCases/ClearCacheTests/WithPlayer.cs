@@ -6,7 +6,7 @@ namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithPlayer : Arrange
 {
-    protected override IAccessControl AccessControl => AccessControlInTest.Deny;
+    protected override bool CanClearCache => false;
 
     protected override void Setup()
     {

@@ -2,6 +2,7 @@ using System;
 using Core.Entities;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -12,7 +13,8 @@ public class CashgameDetailsTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, TestData.PlayerIdA, "", Role.Player);
+        var request = new CashgameDetails.Request(new AccessControlInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.PlayerId, Is.EqualTo(TestData.PlayerIdA));
@@ -26,7 +28,8 @@ public class CashgameDetailsTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
+        var request = new CashgameDetails.Request(new AccessControlInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
@@ -37,7 +40,8 @@ public class CashgameDetailsTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var request = new CashgameDetails.Request(TestData.UserNameA, TestData.CashgameIdC, DateTime.UtcNow);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
+        var request = new CashgameDetails.Request(new AccessControlInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.PlayerItems.Count, Is.EqualTo(2));
@@ -59,7 +63,6 @@ public class CashgameDetailsTests : TestBase
         Deps.Bunch,
         Deps.Cashgame,
         Deps.Player,
-        Deps.User,
         Deps.Location,
         Deps.Event);
 }

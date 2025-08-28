@@ -6,14 +6,15 @@ namespace Tests.Integration.Tests;
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.Cashgame)]
-public class CashgameTests
+public class Suite10CashgameTests
 {
     [Test]
     [Order(1)]
-    public async Task AddCashgame()
+    public async Task Test01AddCashgame()
     {
+        var token = await LoginHelper.GetUserToken();
         var parameters = new AddCashgamePostModel(TestData.BunchLocationId);
-        var result = await TestClient.Cashgame.Add(TestData.UserToken, TestData.BunchId, parameters);
+        var result = await TestClient.Cashgame.Add(token, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Id, Is.EqualTo(TestData.CashgameId));
@@ -22,38 +23,44 @@ public class CashgameTests
 
     [Test]
     [Order(2)]
-    public async Task Buyin()
+    public async Task Test02Buyin()
     {
-        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100);
-        await Buyin(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerId, 200);
-        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerId, 100);
-        await Buyin(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100, 50);
+        var managerToken = await LoginHelper.GetAdminToken();
+        var userToken = await LoginHelper.GetAdminToken();
+        await Buyin(managerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100);
+        await Buyin(userToken, TestData.CashgameId, TestData.UserPlayerId, 200);
+        await Buyin(managerToken, TestData.CashgameId, TestData.PlayerPlayerId, 100);
+        await Buyin(managerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100, 50);
     }
 
     [Test]
     [Order(3)]
-    public async Task Report()
+    public async Task Test03Report()
     {
-        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 75);
-        await Report(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerId, 265);
-        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerId, 175);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var userToken = await LoginHelper.GetUserToken();
+        await Report(managerToken, TestData.CashgameId, TestData.ManagerPlayerId, 75);
+        await Report(userToken, TestData.CashgameId, TestData.UserPlayerId, 265);
+        await Report(managerToken, TestData.CashgameId, TestData.PlayerPlayerId, 175);
     }
 
     [Test]
     [Order(4)]
-    public async Task AddUpdateAndDeleteAction()
+    public async Task Test04AddUpdateAndDeleteAction()
     {
         const string actionId = "8";
-        await Report(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 5000);
-        await Update(TestData.ManagerToken, TestData.CashgameId, actionId, 5001);
-        await Delete(TestData.ManagerToken, TestData.CashgameId, actionId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        await Report(managerToken, TestData.CashgameId, TestData.ManagerPlayerId, 5000);
+        await Update(managerToken, TestData.CashgameId, actionId, 5001);
+        await Delete(managerToken, TestData.CashgameId, actionId);
     }
 
     [Test]
     [Order(5)]
-    public async Task GetCurrentCashgameId()
+    public async Task Test05GetCurrentCashgameId()
     {
-        var result1 = await TestClient.Cashgame.Current(TestData.UserToken, TestData.BunchId);
+        var userToken = await LoginHelper.GetUserToken();
+        var result1 = await TestClient.Cashgame.Current(userToken, TestData.BunchId);
         Assert.That(result1.Model, Is.Not.Null);
         Assert.That(result1.Model?.Count(), Is.EqualTo(1));
         Assert.That(result1.Model?.First().Id, Is.EqualTo(TestData.CashgameId));
@@ -61,9 +68,10 @@ public class CashgameTests
 
     [Test]
     [Order(6)]
-    public async Task GetRunningCashgame()
+    public async Task Test06GetRunningCashgame()
     {
-        var result1 = await TestClient.Cashgame.Get(TestData.UserToken, TestData.CashgameId);
+        var userToken = await LoginHelper.GetUserToken();
+        var result1 = await TestClient.Cashgame.Get(userToken, TestData.CashgameId);
         Assert.That(result1.Model, Is.Not.Null);
         Assert.That(result1.Model?.Id, Is.EqualTo("1"));
         Assert.That(result1.Model?.IsRunning, Is.True);
@@ -93,18 +101,21 @@ public class CashgameTests
 
     [Test]
     [Order(7)]
-    public async Task Cashout()
+    public async Task Test07Cashout()
     {
-        await Cashout(TestData.UserToken, TestData.CashgameId, TestData.UserPlayerId, 255);
-        await Cashout(TestData.ManagerToken, TestData.CashgameId, TestData.ManagerPlayerId, 85);
-        await Cashout(TestData.ManagerToken, TestData.CashgameId, TestData.PlayerPlayerId, 310);
+        var userToken = await LoginHelper.GetUserToken();
+        var managerToken = await LoginHelper.GetManagerToken();
+        await Cashout(userToken, TestData.CashgameId, TestData.UserPlayerId, 255);
+        await Cashout(managerToken, TestData.CashgameId, TestData.ManagerPlayerId, 85);
+        await Cashout(managerToken, TestData.CashgameId, TestData.PlayerPlayerId, 310);
     }
 
     [Test]
     [Order(8)]
-    public async Task GetFinishedCashgame()
+    public async Task Test08GetFinishedCashgame()
     {
-        var result = await TestClient.Cashgame.Get(TestData.UserToken, TestData.CashgameId);
+        var userToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Cashgame.Get(userToken, TestData.CashgameId);
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Id, Is.EqualTo("1"));
         Assert.That(result.Model?.IsRunning, Is.False);
@@ -125,19 +136,21 @@ public class CashgameTests
 
     [Test]
     [Order(9)]
-    public async Task AddCashgameToEvent()
+    public async Task Test09AddCashgameToEvent()
     {
+        var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, TestData.EventId);
-        var result = await TestClient.Cashgame.Update(TestData.ManagerToken, TestData.CashgameId, parameters);
+        var result = await TestClient.Cashgame.Update(managerToken, TestData.CashgameId, parameters);
         Assert.That(result.Success, Is.True);
         Assert.That(result.Model?.Event?.Name, Is.EqualTo(TestData.EventName));
     }
 
     [Test]
     [Order(10)]
-    public async Task ListCashgamesByBunch()
+    public async Task Test10ListCashgamesByBunch()
     {
-        var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId);
+        var userToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Cashgame.ListByBunch(userToken, TestData.BunchId);
         Assert.That(result.Success, Is.True);
 
         var list = result.Model?.ToList();
@@ -146,9 +159,10 @@ public class CashgameTests
 
     [Test]
     [Order(11)]
-    public async Task ListCashgamesByBunchAndYear()
+    public async Task Test11ListCashgamesByBunchAndYear()
     {
-        var result = await TestClient.Cashgame.ListByBunch(TestData.UserToken, TestData.BunchId, DateTime.Now.Year);
+        var userToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Cashgame.ListByBunch(userToken, TestData.BunchId, DateTime.Now.Year);
         Assert.That(result.Success, Is.True);
 
         var list = result.Model?.ToList();
@@ -157,20 +171,10 @@ public class CashgameTests
 
     [Test]
     [Order(12)]
-    public async Task ListCashgamesByEvent()
+    public async Task Test12ListCashgamesByEvent()
     {
-        var result = await TestClient.Cashgame.ListByEvent(TestData.UserToken, TestData.EventId);
-        Assert.That(result.Success, Is.True);
-
-        var list = result.Model?.ToList();
-        Assert.That(list?.Count, Is.EqualTo(1));
-    }
-
-    [Test]
-    [Order(12)]
-    public async Task ListCashgamesByPlayer()
-    {
-        var result = await TestClient.Cashgame.ListByPlayer(TestData.UserToken, TestData.PlayerPlayerId);
+        var userToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Cashgame.ListByEvent(userToken, TestData.EventId);
         Assert.That(result.Success, Is.True);
 
         var list = result.Model?.ToList();
@@ -179,35 +183,51 @@ public class CashgameTests
 
     [Test]
     [Order(13)]
-    public async Task DeleteCashgameInEvent_Fails()
+    public async Task Test13ListCashgamesByPlayer()
     {
-        var deleteResult = await TestClient.Cashgame.Delete(TestData.ManagerToken, TestData.CashgameId);
-        Assert.That(deleteResult.Success, Is.False);
+        var userToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Cashgame.ListByPlayer(userToken, TestData.PlayerPlayerId);
+        Assert.That(result.Success, Is.True);
+
+        var list = result.Model?.ToList();
+        Assert.That(list?.Count, Is.EqualTo(1));
     }
 
     [Test]
     [Order(14)]
-    public async Task RemoveCashgameFromEvent()
+    public async Task Test14DeleteCashgameInEvent_Fails()
     {
+        var managerToken = await LoginHelper.GetManagerToken();
+        var deleteResult = await TestClient.Cashgame.Delete(managerToken, TestData.CashgameId);
+        Assert.That(deleteResult.Success, Is.False);
+    }
+
+    [Test]
+    [Order(15)]
+    public async Task Test15RemoveCashgameFromEvent()
+    {
+        var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, null);
-        var result = await TestClient.Cashgame.Update(TestData.ManagerToken, TestData.CashgameId, parameters);
+        var result = await TestClient.Cashgame.Update(managerToken, TestData.CashgameId, parameters);
         Assert.That(result.Success, Is.True);
         Assert.That(result.Model?.Event, Is.Null);
     }
 
     [Test]
-    [Order(15)]
-    public async Task DeleteCashgameWithResults_Fails()
+    [Order(16)]
+    public async Task Test16DeleteCashgameWithResults_Fails()
     {
-        var deleteResult = await TestClient.Cashgame.Delete(TestData.ManagerToken, TestData.CashgameId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var deleteResult = await TestClient.Cashgame.Delete(managerToken, TestData.CashgameId);
         Assert.That(deleteResult.Success, Is.False);
     }
 
     [Test]
-    [Order(16)]
-    public async Task ClearCashgameBeforeDeleting_Succeeds()
+    [Order(17)]
+    public async Task Test17ClearCashgameBeforeDeleting_Succeeds()
     {
-        var cashgameResult = await TestClient.Cashgame.Get(TestData.ManagerToken, TestData.CashgameId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var cashgameResult = await TestClient.Cashgame.Get(managerToken, TestData.CashgameId);
         var cashgame = cashgameResult.Model;
         if (cashgame == null)
             return;
@@ -216,14 +236,14 @@ public class CashgameTests
         {
             foreach (var action in player.Actions.Reverse())
             {
-                await TestClient.Action.Delete(TestData.ManagerToken, TestData.CashgameId, action.Id);
+                await TestClient.Action.Delete(managerToken, TestData.CashgameId, action.Id);
             }
         }
 
-        var deleteResult = await TestClient.Cashgame.Delete(TestData.ManagerToken, TestData.CashgameId);
+        var deleteResult = await TestClient.Cashgame.Delete(managerToken, TestData.CashgameId);
         Assert.That(deleteResult.Success, Is.True);
 
-        var getResult = await TestClient.Cashgame.ListByBunch(TestData.ManagerToken, TestData.BunchId);
+        var getResult = await TestClient.Cashgame.ListByBunch(managerToken, TestData.BunchId);
         var list = getResult.Model?.ToList();
         Assert.That(list?.Count, Is.EqualTo(0));
     }

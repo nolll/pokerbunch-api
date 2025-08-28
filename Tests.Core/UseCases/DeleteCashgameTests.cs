@@ -1,6 +1,7 @@
 using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -9,7 +10,7 @@ public class DeleteCashgameTests : TestBase
     [Test]
     public async Task DeleteCashgame_GameHasResults_ReturnsError()
     {
-        var request = new DeleteCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA);
+        var request = new DeleteCashgame.Request(new AccessControlInTest(canDeleteCashgame: true), TestData.CashgameIdA);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
@@ -20,7 +21,7 @@ public class DeleteCashgameTests : TestBase
     {
         Deps.Cashgame.SetupEmptyGame();
 
-        var request = new DeleteCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA);
+        var request = new DeleteCashgame.Request(new AccessControlInTest(canDeleteCashgame: true), TestData.CashgameIdA);
 
         await Sut.Execute(request);
 
@@ -32,7 +33,7 @@ public class DeleteCashgameTests : TestBase
     {
         Deps.Cashgame.SetupEmptyGame();
 
-        var request = new DeleteCashgame.Request(TestData.ManagerUser.UserName, TestData.CashgameIdA);
+        var request = new DeleteCashgame.Request(new AccessControlInTest(canDeleteCashgame: true), TestData.CashgameIdA);
 
         var result = await Sut.Execute(request);
 
@@ -41,7 +42,5 @@ public class DeleteCashgameTests : TestBase
 
     private DeleteCashgame Sut => new(
         Deps.Cashgame,
-        Deps.Bunch,
-        Deps.User,
-        Deps.Player);
+        Deps.Bunch);
 }

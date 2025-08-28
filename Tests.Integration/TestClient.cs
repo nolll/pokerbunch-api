@@ -7,6 +7,7 @@ using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
 using Api.Urls.ApiUrls;
+using Tests.Integration.Tests;
 
 namespace Tests.Integration;
 
@@ -221,12 +222,14 @@ public static class TestClient
 
         public static async Task<TestClientResult<FullUserModel>> GetAsAdmin(string userName)
         {
-            return await GetAsync<FullUserModel>(TestData.AdminToken, new ApiUserUrl(userName));
+            var token = await LoginHelper.GetAdminToken();
+            return await GetAsync<FullUserModel>(token, new ApiUserUrl(userName));
         }
 
         public static async Task<TestClientResult<UserModel>> GetAsUser(string userName)
         {
-            return await GetAsync<UserModel>(TestData.UserToken, new ApiUserUrl(userName));
+            var userToken = await LoginHelper.GetUserToken();
+            return await GetAsync<UserModel>(userToken, new ApiUserUrl(userName));
         }
 
         public static async Task<TestClientResult<List<UserModel>>> List(string? token)

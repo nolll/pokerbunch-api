@@ -9,6 +9,7 @@ using Api.Models.UserModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
+using Core.Entities;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -150,7 +151,7 @@ public class UserController(
         var key = Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(AppSettings.Auth.Secret));
         var symmetricKey = new SymmetricSecurityKey(key);
         var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
-        
+
         var claims = new ClaimsIdentity([
             new Claim(ClaimTypes.Name, data.UserName),
             new Claim(CustomClaimTypes.UserId, data.UserId),
@@ -172,9 +173,9 @@ public class UserController(
 
     private static string ToJson(List<Login.ResultBunch> bunchResults)
     {
-        var tokenBunches = bunchResults.Select(ToTokenBunch);
+        var tokenBunches = bunchResults.Select(ToTokenBunch).ToArray();
         return JsonConvert.SerializeObject(tokenBunches);
     }
     
-    private static TokenBunch ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchName, b.PlayerId, b.PlayerName, b.Role);
+    private static TokenBunch ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchSlug, b.BunchName, b.PlayerId, b.PlayerName, b.Role);
 }

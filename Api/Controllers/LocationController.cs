@@ -23,7 +23,7 @@ public class LocationController(
     [Authorize]
     public async Task<ObjectResult> Get(string locationId)
     {
-        var result = await getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
+        var result = await getLocation.Execute(new GetLocation.Request(AccessControl, locationId));
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 

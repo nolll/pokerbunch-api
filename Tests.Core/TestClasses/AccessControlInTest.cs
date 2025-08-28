@@ -1,12 +1,30 @@
+using Core.Entities;
 using Core.Services;
 
 namespace Tests.Core.TestClasses;
 
-public class AccessControlInTest(bool returnValue) : IAccessControl
+public class AccessControlInTest(
+    bool canClearCache = false, 
+    bool canSendTestEmail = false,
+    bool canSeeAppSettings = false,
+    bool canListBunches = false,
+    bool canEditCashgame = false,
+    bool canDeleteCashgame = false,
+    bool canSeeCashgame = false,
+    bool canSeeLocation = false,
+    CurrentBunch? currentBunch = null) : IAccessControl
 {
-    public static IAccessControl Allow => new AccessControlInTest(true);
-    public static IAccessControl Deny => new AccessControlInTest(false);
-    
-    public bool CanClearCache => returnValue;
-    public bool CanSendTestEmail => returnValue;
+    public bool CanClearCache => canClearCache;
+    public bool CanSendTestEmail => canSendTestEmail;
+    public bool CanSeeAppSettings => canSeeAppSettings;
+    public bool CanListBunches => canListBunches;
+    public bool CanEditCashgame(string bunchId) => canEditCashgame;
+    public bool CanDeleteCashgame(string bunchId) => canDeleteCashgame;
+    public bool CanSeeCashgame(string bunchId) => canSeeCashgame;
+    public bool CanSeeLocation(string bunchId) => canSeeLocation;
+
+    public CurrentBunch GetBunch(string id)
+    {
+        return currentBunch!;
+    }
 }

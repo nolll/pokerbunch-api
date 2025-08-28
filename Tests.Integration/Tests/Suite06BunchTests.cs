@@ -9,14 +9,15 @@ namespace Tests.Integration.Tests;
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.Bunch)]
-public class BunchTests
+public class Suite06BunchTests
 {
     [Test]
     [Order(1)]
-    public async Task CreateBunch()
+    public async Task Test01CreateBunch()
     {
+        var token = await LoginHelper.GetManagerToken();
         var parameters = new AddBunchPostModel(TestData.BunchDisplayName, TestData.BunchDescription, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout);
-        var result = await TestClient.Bunch.Add(TestData.ManagerToken, parameters);
+        var result = await TestClient.Bunch.Add(token, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Name, Is.EqualTo(TestData.BunchDisplayName));
@@ -36,39 +37,44 @@ public class BunchTests
 
     [Test]
     [Order(2)]
-    public async Task AddPlayerForUser()
+    public async Task Test02AddPlayerForUser()
     {
-        await AddPlayer(TestData.ManagerToken, TestData.UserPlayerName);
+        var managerToken = await LoginHelper.GetManagerToken();
+        await AddPlayer(managerToken, TestData.UserPlayerName);
     }
 
     [Test]
     [Order(3)]
-    public async Task InviteAndJoin()
+    public async Task Test03InviteAndJoin()
     {
+        var managerToken = await LoginHelper.GetManagerToken();
         var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
-        var inviteResult = await TestClient.Player.Invite(TestData.ManagerToken, TestData.UserPlayerId, inviteParameters);
+        var inviteResult = await TestClient.Player.Invite(managerToken, TestData.UserPlayerId, inviteParameters);
         var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? "";
         var verificationCode = GetVerificationCode(lastMessageBody);
         Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(verificationCode, Is.Not.Null);
 
+        var userToken = await LoginHelper.GetUserToken();
         var joinParameters = new JoinBunchPostModel(verificationCode);
-        var joinResult = await TestClient.Bunch.Join(TestData.UserToken, TestData.BunchId, joinParameters);
+        var joinResult = await TestClient.Bunch.Join(userToken, TestData.BunchId, joinParameters);
         Assert.That(joinResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [Test]
     [Order(4)]
-    public async Task AddPlayerWithoutUser()
+    public async Task Test04AddPlayerWithoutUser()
     {
-        await AddPlayer(TestData.ManagerToken, TestData.PlayerName);
+        var managerToken = await LoginHelper.GetManagerToken();
+        await AddPlayer(managerToken, TestData.PlayerName);
     }
 
     [Test]
     [Order(5)]
-    public async Task GetBunchAsAdmin()
+    public async Task Test05GetBunchAsAdmin()
     {
-        var result = await TestClient.Bunch.Get(TestData.AdminToken, TestData.BunchId);
+        var token = await LoginHelper.GetAdminToken();
+        var result = await TestClient.Bunch.Get(token, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model?.Role, Is.EqualTo("admin"));
@@ -77,9 +83,10 @@ public class BunchTests
 
     [Test]
     [Order(6)]
-    public async Task GetBunchAsManager()
+    public async Task Test06GetBunchAsManager()
     {
-        var result = await TestClient.Bunch.Get(TestData.ManagerToken, TestData.BunchId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model?.Role, Is.EqualTo("manager"));
@@ -89,9 +96,10 @@ public class BunchTests
 
     [Test]
     [Order(7)]
-    public async Task GetBunchAsUser()
+    public async Task Test07GetBunchAsUser()
     {
-        var result = await TestClient.Bunch.Get(TestData.UserToken, TestData.BunchId);
+        var userToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Bunch.Get(userToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
         Assert.That(result.Model?.Role, Is.EqualTo("player"));
@@ -101,19 +109,20 @@ public class BunchTests
 
     [Test]
     [Order(8)]
-    public async Task UpdateBunch()
+    public async Task Test08UpdateBunch()
     {
         var newDescription = $"UPDATED: {TestData.BunchDescription}";
         var houseRules = "UPDATED: house rules";
         var defaultBuyin = 10_000;
 
+        var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new UpdateBunchPostModel(newDescription, houseRules, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout, defaultBuyin);
-        var updateResult = await TestClient.Bunch.Update(TestData.ManagerToken, TestData.BunchId, parameters);
+        var updateResult = await TestClient.Bunch.Update(managerToken, TestData.BunchId, parameters);
         Assert.That(updateResult.Model?.Description, Is.EqualTo(newDescription));
         Assert.That(updateResult.Model?.HouseRules, Is.EqualTo(houseRules));
         Assert.That(updateResult.Model?.DefaultBuyin, Is.EqualTo(defaultBuyin));
 
-        var getResult = await TestClient.Bunch.Get(TestData.ManagerToken, TestData.BunchId);
+        var getResult = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
         Assert.That(getResult.Model?.Description, Is.EqualTo(newDescription));
         Assert.That(getResult.Model?.HouseRules, Is.EqualTo(houseRules));
         Assert.That(getResult.Model?.DefaultBuyin, Is.EqualTo(defaultBuyin));
@@ -121,9 +130,10 @@ public class BunchTests
 
     [Test]
     [Order(9)]
-    public async Task ListBunchesAsAdmin()
+    public async Task Test09ListBunchesAsAdmin()
     {
-        var result = await TestClient.Bunch.List(TestData.AdminToken);
+        var token = await LoginHelper.GetAdminToken();
+        var result = await TestClient.Bunch.List(token);
         Assert.That(result.Success, Is.True);
         var list = result.Model?.ToList();
         var first = list?.First();
@@ -133,18 +143,20 @@ public class BunchTests
 
     [Test]
     [Order(10)]
-    public async Task ListBunhesAsManager()
+    public async Task Test10ListBunchesAsManager()
     {
-        var result = await TestClient.Bunch.List(TestData.ManagerToken);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Bunch.List(managerToken);
         Assert.That(result.Success, Is.False);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
     }
 
     [Test]
     [Order(11)]
-    public async Task ListUserBunchesForUserWithOneBunch()
+    public async Task Test11ListUserBunchesForUserWithOneBunch()
     {
-        var result = await TestClient.Bunch.ListForUser(TestData.ManagerToken);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Bunch.ListForUser(managerToken);
         Assert.That(result.Success, Is.True);
         var list = result.Model?.ToList();
         var first = list?.First();
@@ -154,9 +166,10 @@ public class BunchTests
 
     [Test]
     [Order(12)]
-    public async Task ListUserBunchesForUserWithNoBunches()
+    public async Task Test12ListUserBunchesForUserWithNoBunches()
     {
-        var result = await TestClient.Bunch.ListForUser(TestData.AdminToken);
+        var token = await LoginHelper.GetAdminToken();
+        var result = await TestClient.Bunch.ListForUser(token);
         Assert.That(result.Success, Is.True);
         Assert.That(result.Model?.Count(), Is.EqualTo(0));
     }

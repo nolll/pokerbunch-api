@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Api.Models.CommonModels;
 using Api.Settings;
 using Core.UseCases;
@@ -60,19 +61,23 @@ public abstract class BaseController(AppSettings appSettings) : Controller
     private string CurrentUserId => GetClaim(CustomClaimTypes.UserId) ?? "";
     private string CurrentUserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
     
-    private TokenBunch[] UserBunches => JsonConvert.DeserializeObject<TokenBunch[]>(GetClaim(CustomClaimTypes.Bunches) ?? "") ?? [];
-    
-    protected AccessControl AccessControl(string? bunchId = null) => new AccessControl(CurrentUser, CurrentBunch(bunchId));
-    
-    protected CurrentBunch? CurrentBunch(string? id)
+    private TokenBunch[] UserBunches
     {
-        if (id is null)
-            return null;
-        
-        var b = UserBunches.First(o => o.Id == id);
-        return new CurrentBunch(b.Id, b.Name, b.PlayerId, b.PlayerName, b.Role);
+        get
+        {
+            var value = GetClaim(CustomClaimTypes.Bunches);
+            if (value is null or "")
+                return [];
+
+            if (value.StartsWith('{'))
+                return [JsonConvert.DeserializeObject<TokenBunch>(value)!];
+            
+            return JsonConvert.DeserializeObject<TokenBunch[]>(value) ?? [];
+        }
     }
-    
+
+    protected IAccessControl AccessControl => new AccessControl(CurrentUser, UserBunches);
+
     private string? GetClaim(string type) => User.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 
     private bool GetBoolClaim(string type)

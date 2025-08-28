@@ -1,24 +1,27 @@
+using System.Linq;
 using Core.Entities;
 
 namespace Core.Services;
 
-public class AccessControl(CurrentUser currentUser, CurrentBunch? currentBunch) : IAccessControl
+public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : IAccessControl
 {
-    public bool CanClearCache => currentUser.IsAdmin;
-    public bool CanSendTestEmail => currentUser.IsAdmin;
-    public bool CanSeeAppSettings => currentUser.IsAdmin;
+    public bool CanClearCache => IsAdmin();
+    public bool CanSendTestEmail => IsAdmin();
+    public bool CanSeeAppSettings => IsAdmin();
+    public bool CanListBunches => IsAdmin();
     
-    public static bool CanListBunches(User currentUser) => IsAdmin(currentUser);
+    public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
+    public bool CanDeleteCashgame(string bunchId) => IsManager(bunchId);
+    public bool CanSeeCashgame(string bunchId) => IsPlayer(bunchId);
+    public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
+    
     public static bool CanListUsers(User currentUser) => IsAdmin(currentUser);
     public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>
         IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
     public static bool CanEditBunch(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanEditCashgame(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanEditCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanSeePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanInvitePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanSeeCashgame(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanSeeLocation(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListLocations(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanSeeEventDetails(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
@@ -28,7 +31,6 @@ public class AccessControl(CurrentUser currentUser, CurrentBunch? currentBunch) 
     public static bool CanListEventCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddPlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanDeletePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanDeleteCashgame(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanDeleteCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanGetBunch(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
@@ -40,4 +42,16 @@ public class AccessControl(CurrentUser currentUser, CurrentBunch? currentBunch) 
     private static bool IsPlayer(Player? currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Player);
     private static bool IsManager(Player? currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Manager);
     private static bool IsAdmin(User currentUser) => currentUser.IsAdmin;
+
+    private bool IsAdmin() => currentUser.IsAdmin;
+    private bool IsManager(string bunchId) => IsInRole(bunchId, Role.Manager);
+    private bool IsPlayer(string bunchId) => IsInRole(bunchId, Role.Player);
+    private bool IsInRole(string bunchId, Role role) => RoleHandler.IsInRole(GetRole(bunchId), role);
+    private Role GetRole(string bunchId) => GetBunch(bunchId).Role;
+
+    public CurrentBunch GetBunch(string id)
+    {
+        var b = userBunches.First(o => o.Id == id);
+        return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
+    }
 }

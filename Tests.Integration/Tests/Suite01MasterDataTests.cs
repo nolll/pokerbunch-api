@@ -1,17 +1,16 @@
 using Infrastructure.Sql.Sql;
 using SqlKata;
-using SqlKata.Execution;
 
 namespace Tests.Integration.Tests;
 
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.MasterData)]
-public class MasterDataTests
+public class Suite01MasterDataTests
 {
     [Test]
     [Order(1)]
-    public async Task MasterDataExists()
+    public async Task Test01MasterDataExists()
     {
         var query = new Query(Schema.Role)
             .Select(Schema.Role.Id, Schema.Role.Name)

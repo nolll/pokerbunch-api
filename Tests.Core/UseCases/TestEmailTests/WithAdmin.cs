@@ -5,7 +5,7 @@ namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithAdmin : Arrange
 {
-    protected override IAccessControl AccessControl => AccessControlInTest.Allow;
+    protected override bool CanSendTestEmail => true;
 
     [Test]
     public void MessageIsSent()

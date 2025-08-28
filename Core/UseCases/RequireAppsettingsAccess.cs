@@ -14,9 +14,9 @@ public class RequireAppsettingsAccess()
             : Success(new Result()));
     }
     
-    public class Request(AccessControl accessControl)
+    public class Request(IAccessControl accessControl)
     {
-        public AccessControl AccessControl { get; } = accessControl;
+        public IAccessControl AccessControl { get; } = accessControl;
     }
 
     public class Result

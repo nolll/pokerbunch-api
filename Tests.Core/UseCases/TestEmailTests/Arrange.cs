@@ -2,6 +2,7 @@
 using Core.Services;
 using Core.UseCases;
 using Moq;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
@@ -9,7 +10,7 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 {
     protected UseCaseResult<TestEmail.Result>? Result;
 
-    protected abstract IAccessControl AccessControl { get; }
+    protected abstract bool CanSendTestEmail { get; }
     
     protected string? To;
     protected string? Subject;
@@ -30,6 +31,6 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 
     protected override async Task ExecuteAsync()
     {
-        Result = await Sut.Execute(new TestEmail.Request(AccessControl));
+        Result = await Sut.Execute(new TestEmail.Request(new AccessControlInTest(canSendTestEmail: CanSendTestEmail)));
     }
 }

@@ -13,4 +13,6 @@ public static class RoleHandler
     {
         return player != null && player.IsInRole(role);
     }
+    
+    public static bool IsInRole(Role testedRole, Role requiredRole) => testedRole >= requiredRole;
 }

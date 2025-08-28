@@ -12,7 +12,6 @@ public class CashgameDetails(
     IBunchRepository bunchRepository,
     ICashgameRepository cashgameRepository,
     IPlayerRepository playerRepository,
-    IUserRepository userRepository,
     ILocationRepository locationRepository,
     IEventRepository eventRepository)
     : UseCase<CashgameDetails.Request, CashgameDetails.Result>
@@ -21,16 +20,13 @@ public class CashgameDetails(
     {
         var cashgame = await cashgameRepository.Get(request.Id);
         var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
+        var bunchAccess = request.AccessControl.GetBunch(cashgame.BunchId);
 
-        if (!AccessControl.CanSeeCashgame(user, player))
+        if (!request.AccessControl.CanSeeCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         var playerIds = GetPlayerIds(cashgame);
         var players = await playerRepository.Get(playerIds);
-
-        var role = user.IsAdmin ? Role.Manager : player!.Role;
 
         var location = await locationRepository.Get(cashgame.LocationId);
         var @event = cashgame.EventId != null ? await eventRepository.Get(cashgame.EventId) : null;
@@ -45,14 +41,14 @@ public class CashgameDetails(
         var currencyLayout = bunch.Currency.Layout;
         var thousandSeparator = bunch.Currency.ThousandSeparator;
         var culture = bunch.Currency.Culture.Name;
-
+        
         var startTime = GetStartTime(playerItems, request.CurrentUtc);
         var updatedTime = GetUpdatedTime(playerItems, cashgame.Status, request.CurrentUtc);
-
+        
         var result = new Result(
             bunch.Slug,
             bunch.Timezone.Id,
-            player!.Id,
+            bunchAccess.PlayerId,
             cashgame.Id,
             startTime,
             updatedTime,
@@ -67,7 +63,7 @@ public class CashgameDetails(
             currencyLayout,
             thousandSeparator,
             culture,
-            role,
+            bunchAccess.Role,
             cashgame.Status == GameStatus.Running);
 
         return Success(result);
@@ -104,9 +100,9 @@ public class CashgameDetails(
         return results.OrderByDescending(o => o.Winnings);
     }
 
-    public class Request(string userName, string id, DateTime currentUtc)
+    public class Request(IAccessControl accessControl, string id, DateTime currentUtc)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Id { get; } = id;
         public DateTime CurrentUtc { get; } = currentUtc;
     }

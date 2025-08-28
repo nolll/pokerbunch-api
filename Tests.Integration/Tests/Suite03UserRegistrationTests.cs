@@ -9,11 +9,11 @@ namespace Tests.Integration.Tests;
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.UserRegistration)]
-public class UserRegistrationTests
+public class Suite03UserRegistrationTests
 {
     [Test]
     [Order(1)]
-    public async Task RegisterAdminReturns200()
+    public async Task Test01RegisterAdminReturns200()
     {
         var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
         var result = await TestClient.User.Add(parameters);
@@ -35,7 +35,7 @@ public class UserRegistrationTests
     
     [Test]
     [Order(2)]
-    public async Task RegisterManagerReturns200()
+    public async Task Test02RegisterManagerReturns200()
     {
         var parameters = new AddUserPostModel(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
         var result = await TestClient.User.Add(parameters);
@@ -44,7 +44,7 @@ public class UserRegistrationTests
 
     [Test]
     [Order(3)]
-    public async Task RegisterRegularUserReturns200()
+    public async Task Test03RegisterRegularUserReturns200()
     {
         var parameters = new AddUserPostModel(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
         var result = await TestClient.User.Add(parameters);

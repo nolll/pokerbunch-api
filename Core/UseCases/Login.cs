@@ -25,7 +25,7 @@ public class Login(
             var role = player?.Role ?? Role.None;
             var id = player?.Id ?? "";
             var name = player?.DisplayName ?? "";
-            bunchResults.Add(new ResultBunch(bunch.Slug, bunch.DisplayName, id, name, role));
+            bunchResults.Add(new ResultBunch(bunch.Id, bunch.Slug, bunch.DisplayName, id, name, role));
         }
 
         return Success(new Result(user.Id, user.UserName, user.DisplayName, user.IsAdmin, bunchResults));
@@ -60,9 +60,10 @@ public class Login(
         public List<ResultBunch> BunchResults { get; } = bunchResults;
     }
 
-    public class ResultBunch(string bunchId, string bunchName, string playerId, string playerName, Role role)
+    public class ResultBunch(string bunchId, string bunchSlug, string bunchName, string playerId, string playerName, Role role)
     {
         public string BunchId { get; } = bunchId;
+        public string BunchSlug { get; } = bunchSlug;
         public string BunchName { get; } = bunchName;
         public string PlayerId { get; } = playerId;
         public string PlayerName { get; } = playerName;

@@ -6,19 +6,15 @@ namespace Core.UseCases;
 
 public class DeleteCashgame(
     ICashgameRepository cashgameRepository,
-    IBunchRepository bunchRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository)
+    IBunchRepository bunchRepository)
     : UseCase<DeleteCashgame.Request, DeleteCashgame.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = await cashgameRepository.Get(request.Id);
         var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
-        if (!AccessControl.CanDeleteCashgame(currentUser, currentPlayer))
+        if (!request.AccessControl.CanDeleteCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         if (cashgame.EventId != null)
@@ -32,9 +28,9 @@ public class DeleteCashgame(
         return Success(new Result(bunch.Slug));
     }
     
-    public class Request(string userName, string id)
+    public class Request(IAccessControl accessControl, string id)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Id { get; } = id;
     }
 

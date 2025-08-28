@@ -6,22 +6,21 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunchList(IBunchRepository bunchRepository, IUserRepository userRepository)
+public class GetBunchList(IBunchRepository bunchRepository)
     : UseCase<GetBunchList.Request, GetBunchList.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await userRepository.GetByUserName(request.UserName);
-        if (!AccessControl.CanListBunches(user))
+        if (!request.AccessControl.CanListBunches)
             return Error(new AccessDeniedError());
 
         var bunches = await bunchRepository.List();
         return Success(new Result(bunches));
     }
     
-    public class Request(string userName)
+    public class Request(IAccessControl accessControl)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
     }
 
     public class Result(IEnumerable<Bunch> bunches) : BunchListResult(bunches);

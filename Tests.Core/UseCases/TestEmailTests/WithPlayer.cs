@@ -6,7 +6,7 @@ namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithPlayer : Arrange
 {
-    protected override IAccessControl AccessControl => AccessControlInTest.Deny;
+    protected override bool CanSendTestEmail => false;
 
     [Test]
     public void ReturnsError()

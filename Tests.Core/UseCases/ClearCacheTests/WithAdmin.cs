@@ -5,7 +5,7 @@ namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithAdmin : Arrange
 {
-    protected override IAccessControl AccessControl => AccessControlInTest.Allow;
+    protected override bool CanClearCache => true;
 
     protected override void Setup()
     {
