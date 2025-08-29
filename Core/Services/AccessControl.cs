@@ -22,7 +22,9 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanEditBunch(string bunchId) => IsManager(bunchId);
     public bool CanListBunches => IsAdmin();
     
+    public bool CanAddPlayer(string bunchId) => IsManager(bunchId);
     public bool CanSeePlayer(string bunchId) => IsPlayer(bunchId);
+    public bool CanListPlayers(string bunchId) => IsPlayer(bunchId);
     public bool CanDeletePlayer(string bunchId) => IsManager(bunchId);
 
     public bool CanListUsers => IsAdmin();
@@ -33,11 +35,9 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public static bool CanInvitePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanSeeEventDetails(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanListPlayers(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListPlayerCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListEvents(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListEventCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanAddPlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanDeleteCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddEvent(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);

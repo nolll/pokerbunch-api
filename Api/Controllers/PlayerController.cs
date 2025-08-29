@@ -39,7 +39,7 @@ public class PlayerController(
     [Authorize]
     public async Task<ObjectResult> GetList(string bunchId)
     {
-        var result = await getPlayerList.Execute(new GetPlayerList.Request(CurrentUserName, bunchId));
+        var result = await getPlayerList.Execute(new GetPlayerList.Request(AccessControl, bunchId));
         return Model(result, () => result.Data?.Players.Select(o => new PlayerListItemModel(o)));
     }
 
@@ -51,7 +51,7 @@ public class PlayerController(
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] PlayerAddPostModel post)
     {
-        var result = await addPlayer.Execute(new AddPlayer.Request(CurrentUserName, bunchId, post.Name));
+        var result = await addPlayer.Execute(new AddPlayer.Request(AccessControl, bunchId, post.Name));
         return result.Success 
             ? await Get(result.Data?.Id ?? "")
             : Error(result.Error);

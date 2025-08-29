@@ -8,28 +8,25 @@ namespace Core.UseCases;
 
 public class GetPlayerList(
     IBunchRepository bunchRepository,
-    IUserRepository userRepository,
     IPlayerRepository playerRepository)
     : UseCase<GetPlayerList.Request, GetPlayerList.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
-        if (!AccessControl.CanListPlayers(currentUser, currentPlayer))
+        if (!request.AccessControl.CanListPlayers(bunch.Id))
             return Error(new AccessDeniedError());
 
         var players = await playerRepository.List(bunch.Id);
-        var canAddPlayer = AccessControl.CanAddPlayer(currentUser, currentPlayer);
+        var canAddPlayer = request.AccessControl.CanAddPlayer(bunch.Id);
 
         return Success(new Result(bunch, players, canAddPlayer));
     }
 
-    public class Request(string userName, string slug)
+    public class Request(IAccessControl accessControl, string slug)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Slug { get; } = slug;
     }
 
