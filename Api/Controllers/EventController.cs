@@ -47,7 +47,7 @@ public class EventController(
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] EventAddPostModel post)
     {
-        var result = await addEvent.Execute(new AddEvent.Request(CurrentUserName, bunchId, post.Name));
+        var result = await addEvent.Execute(new AddEvent.Request(AccessControl, bunchId, post.Name));
         return result.Success 
             ? await Get(result.Data?.Id ?? "") 
             : Error(result.Error);

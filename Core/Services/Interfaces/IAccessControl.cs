@@ -25,4 +25,5 @@ public interface IAccessControl
     bool CanDeletePlayer(string bunchId);
     bool CanListPlayers(string bunchId);
     bool CanAddPlayer(string bunchId);
+    bool CanAddEvent(string bunchId);
 }
