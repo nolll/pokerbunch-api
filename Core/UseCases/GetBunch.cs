@@ -6,33 +6,28 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetBunch(
-    IBunchRepository bunchRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository)
+public class GetBunch(IBunchRepository bunchRepository)
     : UseCase<GetBunch.Request, GetBunch.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
         
-        return !AccessControl.CanGetBunch(user, player) ? 
+        return !request.AccessControl.CanGetBunch(bunch.Id) ? 
             Error(new AccessDeniedError()) : 
-            Success(new Result(bunch, player!));
+            Success(new Result(bunch));
     }
 
-    public class Request(string userName, string slug)
+    public class Request(IAccessControl accessControl, string slug)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Slug { get; } = slug;
     }
 
-    public class Result(Bunch b, Player p) : BunchResult(b, p);
+    public class Result(Bunch b) : BunchResult(b);
 }
 
-public class BunchResult(Bunch b, Player? p)
+public class BunchResult(Bunch b)
 {
     public string Slug { get; } = b.Slug;
     public string Name { get; } = b.DisplayName;
@@ -41,12 +36,4 @@ public class BunchResult(Bunch b, Player? p)
     public TimeZoneInfo Timezone { get; } = b.Timezone;
     public Currency Currency { get; } = b.Currency;
     public int DefaultBuyin { get; } = b.DefaultBuyin;
-    public BunchPlayerResult? Player { get; } = p != null ? new BunchPlayerResult(p.Id, p.DisplayName) : null;
-    public Role Role { get; } = p?.Role ?? Role.Admin;
-}
-
-public class BunchPlayerResult(string id, string name)
-{
-    public string Id { get; } = id;
-    public string Name { get; } = name;
 }

@@ -4,6 +4,7 @@ namespace Tests.Core.UseCases.GetBunchTests;
 
 public class WithPlayer : Arrange
 {
+    protected override bool CanGetBunch => true;
     protected override Role Role => Role.Player;
 
     [Test]
@@ -14,7 +15,4 @@ public class WithPlayer : Arrange
 
     [Test]
     public void HouseRulesIsSet() => Assert.That(Result?.Data?.HouseRules, Is.EqualTo(HouseRules));
-
-    [Test]
-    public void CanEditIsFalse() => Assert.That(Result?.Data?.Role, Is.EqualTo(Role.Player));
 }

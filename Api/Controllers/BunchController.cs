@@ -29,7 +29,7 @@ public class BunchController(
     [Authorize]
     public async Task<ObjectResult> Get(string bunchId)
     {
-        var request = new GetBunch.Request(CurrentUserName, bunchId);
+        var request = new GetBunch.Request(AccessControl, bunchId);
         var result = await getBunch.Execute(request);
         BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return Model(result, CreateModel);

@@ -27,7 +27,7 @@ public class PlayerController(
     [Authorize]
     public async Task<ObjectResult> Get(string playerId)
     {
-        var result = await getPlayer.Execute(new GetPlayer.Request(CurrentUserName, playerId));
+        var result = await getPlayer.Execute(new GetPlayer.Request(AccessControl, playerId));
         return Model(result, () => result.Data is not null ? new PlayerModel(result.Data) : null);
     }
 
@@ -65,7 +65,7 @@ public class PlayerController(
     [Authorize]
     public async Task<ObjectResult> Delete(string playerId)
     {
-        var request = new DeletePlayer.Request(CurrentUserName, playerId);
+        var request = new DeletePlayer.Request(AccessControl, playerId);
         var result = await deletePlayer.Execute(request);
         return Model(result, () => new PlayerDeletedModel(playerId));
     }

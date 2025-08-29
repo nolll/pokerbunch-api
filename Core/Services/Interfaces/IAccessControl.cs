@@ -20,4 +20,7 @@ public interface IAccessControl
     bool CanEditBunch(string bunchId);
     bool CanListLocations(string bunchId);
     bool CanAddCashgame(string bunchId);
+    bool CanGetBunch(string bunchId);
+    bool CanSeePlayer(string bunchId);
+    bool CanDeletePlayer(string bunchId);
 }

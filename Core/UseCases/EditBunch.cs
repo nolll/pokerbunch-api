@@ -29,7 +29,7 @@ public class EditBunch(
         var postedBunch = CreateBunch(bunch, request, timezone);
         await bunchRepository.Update(postedBunch);
 
-        return Success(new Result(postedBunch, null));
+        return Success(new Result(postedBunch));
     }
 
     private static TimeZoneInfo? GetTimezone(string id)
@@ -81,5 +81,5 @@ public class EditBunch(
         public int DefaultBuyin { get; } = defaultBuyin;
     }
 
-    public class Result(Bunch b, Player? p) : BunchResult(b, p);
+    public class Result(Bunch b) : BunchResult(b);
 }

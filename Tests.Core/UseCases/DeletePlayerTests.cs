@@ -1,5 +1,7 @@
-﻿using Core.UseCases;
+﻿using Core.Entities;
+using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -10,7 +12,8 @@ public class DeletePlayerTests : TestBase
     {
         const string playerIdThatHasNotPlayed = "3";
 
-        var request = new DeletePlayer.Request(TestData.ManagerUser.UserName, playerIdThatHasNotPlayed);
+        var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
+        var request = new DeletePlayer.Request(new AccessControlInTest(canDeletePlayer: true, currentBunch: currentBunch), playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.Slug, Is.EqualTo(TestData.SlugA));
@@ -28,7 +31,5 @@ public class DeletePlayerTests : TestBase
 
     private DeletePlayer Sut => new(
         Deps.Player,
-        Deps.Cashgame,
-        Deps.User,
-        Deps.Bunch);
+        Deps.Cashgame);
 }

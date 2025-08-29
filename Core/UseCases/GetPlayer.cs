@@ -23,12 +23,11 @@ public class GetPlayer(
         var user = player.UserId != null 
             ? await userRepository.GetById(player.UserId)
             : null;
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
-        if (!AccessControl.CanSeePlayer(currentUser, currentPlayer))
+        
+        if (!request.AccessControl.CanSeePlayer(player.BunchId))
             return Error(new AccessDeniedError());
 
-        var canDelete = AccessControl.CanDeletePlayer(currentUser, currentPlayer);
+        var canDelete = request.AccessControl.CanDeletePlayer(player.BunchId);
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
@@ -48,9 +47,9 @@ public class GetPlayer(
         }
     }
 
-    public class Request(string userName, string playerId)
+    public class Request(IAccessControl accessControl, string playerId)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string PlayerId { get; } = playerId;
     }
 

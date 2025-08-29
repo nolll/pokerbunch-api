@@ -18,15 +18,18 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
     public bool CanListLocations(string bunchId) => IsPlayer(bunchId);
 
+    public bool CanGetBunch(string bunchId) => IsPlayer(bunchId);
     public bool CanEditBunch(string bunchId) => IsManager(bunchId);
     public bool CanListBunches => IsAdmin();
+    
+    public bool CanSeePlayer(string bunchId) => IsPlayer(bunchId);
+    public bool CanDeletePlayer(string bunchId) => IsManager(bunchId);
 
     public bool CanListUsers => IsAdmin();
     
     public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>
         IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
     public static bool CanEditCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanSeePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanInvitePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanSeeEventDetails(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
@@ -35,9 +38,7 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public static bool CanListEvents(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListEventCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddPlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanDeletePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanDeleteCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanGetBunch(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddEvent(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
 

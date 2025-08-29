@@ -30,10 +30,9 @@ public class AddBunch(
         var id = await bunchRepository.Add(bunch);
         var user = await userRepository.GetByUserName(request.UserName);
         var player = Player.New(id, user.Id, user.UserName, Role.Manager);
-        var playerId = await playerRepository.Add(player);
-        var createdPlayer = await playerRepository.Get(playerId);
+        await playerRepository.Add(player);
 
-        return Success(new Result(bunch, createdPlayer));
+        return Success(new Result(bunch));
     }
     
     private static Bunch CreateBunch(Request request)
@@ -73,5 +72,5 @@ public class AddBunch(
         }
     }
 
-    public class Result(Bunch b, Player p) : BunchResult(b, p);
+    public class Result(Bunch b) : BunchResult(b);
 }

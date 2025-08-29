@@ -28,11 +28,8 @@ public class Suite06BunchTests
         Assert.That(result.Model?.CurrencyFormat, Is.EqualTo("${0}"));
         Assert.That(result.Model?.Description, Is.EqualTo(TestData.BunchDescription));
         Assert.That(result.Model?.HouseRules, Is.EqualTo(""));
-        Assert.That(result.Model?.Role, Is.EqualTo("manager"));
         Assert.That(result.Model?.Timezone, Is.EqualTo(TestData.TimeZone));
         Assert.That(result.Model?.ThousandSeparator, Is.EqualTo(" "));
-        Assert.That(result.Model?.Player?.Id, Is.EqualTo("1"));
-        Assert.That(result.Model?.Player?.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
     [Test]
@@ -75,10 +72,7 @@ public class Suite06BunchTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.Bunch.Get(token, TestData.BunchId);
-        Assert.That(result.Model, Is.Not.Null);
-        AssertCommonProperties(result.Model);
-        Assert.That(result.Model?.Role, Is.EqualTo("admin"));
-        Assert.That(result.Model?.Player, Is.Null);
+        Assert.That(result.Success, Is.False);
     }
 
     [Test]
@@ -89,9 +83,6 @@ public class Suite06BunchTests
         var result = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
-        Assert.That(result.Model?.Role, Is.EqualTo("manager"));
-        Assert.That(result.Model?.Player?.Id, Is.EqualTo(TestData.ManagerPlayerId));
-        Assert.That(result.Model?.Player?.Name, Is.EqualTo(TestData.ManagerDisplayName));
     }
 
     [Test]
@@ -102,9 +93,6 @@ public class Suite06BunchTests
         var result = await TestClient.Bunch.Get(userToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         AssertCommonProperties(result.Model);
-        Assert.That(result.Model?.Role, Is.EqualTo("player"));
-        Assert.That(result.Model?.Player?.Id, Is.EqualTo(TestData.UserPlayerId));
-        Assert.That(result.Model?.Player?.Name, Is.EqualTo(TestData.UserDisplayName));
     }
 
     [Test]
