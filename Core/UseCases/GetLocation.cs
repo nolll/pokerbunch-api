@@ -11,7 +11,7 @@ public class GetLocation(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var location = await locationRepository.Get(request.LocationId);
-        var bunchInfo = request.AccessControl.GetBunch(location.BunchId);
+        var bunchInfo = request.AccessControl.GetBunchById(location.BunchId);
 
         return !request.AccessControl.CanSeeLocation(location.BunchId) 
             ? Error(new AccessDeniedError())

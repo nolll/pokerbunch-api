@@ -4,7 +4,7 @@ namespace Core.Services;
 
 public interface IAccessControl
 {
-    CurrentBunch GetBunch(string id);
+    CurrentBunch GetBunchById(string id);
     CurrentBunch GetBunchBySlug(string id);
 
     bool CanClearCache { get; }
@@ -17,4 +17,7 @@ public interface IAccessControl
     bool CanSeeCashgame(string bunchId);
     bool CanSeeLocation(string bunchId);
     bool CanAddLocation(string bunchId);
+    bool CanEditBunch(string bunchId);
+    bool CanListLocations(string bunchId);
+    bool CanAddCashgame(string bunchId);
 }

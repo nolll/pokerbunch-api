@@ -8,22 +8,26 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanClearCache => IsAdmin();
     public bool CanSendTestEmail => IsAdmin();
     public bool CanSeeAppSettings => IsAdmin();
-    public bool CanListBunches => IsAdmin();
-    public bool CanListUsers => IsAdmin();
     
+    public bool CanAddCashgame(string bunchId) => IsPlayer(bunchId);
     public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
     public bool CanDeleteCashgame(string bunchId) => IsManager(bunchId);
     public bool CanSeeCashgame(string bunchId) => IsPlayer(bunchId);
+    
     public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
     public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
+    public bool CanListLocations(string bunchId) => IsPlayer(bunchId);
+
+    public bool CanEditBunch(string bunchId) => IsManager(bunchId);
+    public bool CanListBunches => IsAdmin();
+
+    public bool CanListUsers => IsAdmin();
     
     public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>
         IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
-    public static bool CanEditBunch(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanEditCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanSeePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanInvitePlayer(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanListLocations(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanSeeEventDetails(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListPlayers(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
@@ -35,7 +39,6 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public static bool CanDeleteCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanGetBunch(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanAddCashgame(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanAddEvent(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
 
     private static bool IsRequestedPlayer(Player? currentPlayer, string requestedPlayerId) => currentPlayer?.Id == requestedPlayerId;
@@ -47,9 +50,9 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     private bool IsManager(string bunchId) => IsInRole(bunchId, Role.Manager);
     private bool IsPlayer(string bunchId) => IsInRole(bunchId, Role.Player);
     private bool IsInRole(string bunchId, Role role) => RoleHandler.IsInRole(GetRole(bunchId), role);
-    private Role GetRole(string bunchId) => GetBunch(bunchId).Role;
+    private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
 
-    public CurrentBunch GetBunch(string id)
+    public CurrentBunch GetBunchById(string id)
     {
         var b = userBunches.First(o => o.Id == id);
         return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);

@@ -20,7 +20,7 @@ public class CashgameDetails(
     {
         var cashgame = await cashgameRepository.Get(request.Id);
         var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var bunchAccess = request.AccessControl.GetBunch(cashgame.BunchId);
+        var bunchAccess = request.AccessControl.GetBunchById(cashgame.BunchId);
 
         if (!request.AccessControl.CanSeeCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());

@@ -1,6 +1,8 @@
-﻿using Core.Errors;
+﻿using Core.Entities;
+using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -34,13 +36,12 @@ public class AddCashgameTests : TestBase
 
     private static AddCashgame.Request CreateRequest(string? locationId = null)
     {
-        return new AddCashgame.Request(TestData.UserNameA, TestData.SlugA, locationId);
+        var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
+        return new AddCashgame.Request(new AccessControlInTest(canAddCashgame: true, currentBunch: currentBunch), TestData.SlugA, locationId);
     }
 
     private AddCashgame Sut => new(
         Deps.Bunch,
         Deps.Cashgame,
-        Deps.User,
-        Deps.Player,
         Deps.Location);
 }

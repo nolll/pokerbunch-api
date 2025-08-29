@@ -14,6 +14,9 @@ public class AccessControlInTest(
     bool canSeeLocation = false,
     bool canListUsers = false,
     bool canAddLocation = false,
+    bool canEditBunch = false,
+    bool canListLocations = false,
+    bool canAddCashgame = false,
     CurrentBunch? currentBunch = null) : IAccessControl
 {
     public bool CanClearCache => canClearCache;
@@ -26,7 +29,10 @@ public class AccessControlInTest(
     public bool CanSeeCashgame(string bunchId) => canSeeCashgame;
     public bool CanSeeLocation(string bunchId) => canSeeLocation;
     public bool CanAddLocation(string bunchId) => canAddLocation;
+    public bool CanEditBunch(string bunchId) => canEditBunch;
+    public bool CanListLocations(string bunchId) => canListLocations;
+    public bool CanAddCashgame(string bunchId) => canAddCashgame;
 
-    public CurrentBunch GetBunch(string id) => currentBunch!;
+    public CurrentBunch GetBunchById(string id) => currentBunch!;
     public CurrentBunch GetBunchBySlug(string slug) => currentBunch!;
 }

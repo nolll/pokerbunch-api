@@ -95,7 +95,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] AddCashgamePostModel post)
     {
-        var addRequest = new AddCashgame.Request(CurrentUserName, bunchId, post.LocationId);
+        var addRequest = new AddCashgame.Request(AccessControl, bunchId, post.LocationId);
         var addResult = await addCashgame.Execute(addRequest);
         if (!addResult.Success)
             return Error(addResult.Error);

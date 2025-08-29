@@ -35,7 +35,7 @@ public class LocationController(
     [Authorize]
     public async Task<ObjectResult> GetList(string bunchId)
     {
-        var result = await getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
+        var result = await getLocationList.Execute(new GetLocationList.Request(AccessControl, bunchId));
         return Model(result, () => result.Data?.Locations.Select(o => new LocationModel(o)));
     }
 

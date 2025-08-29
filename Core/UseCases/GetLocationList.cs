@@ -5,25 +5,18 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocationList(
-    IBunchRepository bunchRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository,
-    ILocationRepository locationRepository)
+public class GetLocationList(ILocationRepository locationRepository)
     : UseCase<GetLocationList.Request, GetLocationList.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
-
-        if (!AccessControl.CanListLocations(user, player))
+        var bunchInfo = request.AccessControl.GetBunchBySlug(request.Slug);
+        if (!request.AccessControl.CanListLocations(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
-        var locations = await locationRepository.List(bunch.Id);
+        var locations = await locationRepository.List(bunchInfo.Id);
 
-        var locationItems = locations.Select(o => CreateLocationItem(o, bunch.Slug)).OrderBy(o => o.Name).ToList();
+        var locationItems = locations.Select(o => CreateLocationItem(o, bunchInfo.Slug)).OrderBy(o => o.Name).ToList();
 
         return Success(new Result(locationItems));
     }
@@ -31,9 +24,9 @@ public class GetLocationList(
     private static Location CreateLocationItem(Entities.Location location, string slug) => 
         new(location.Id, location.Name, slug);
 
-    public class Request(string userName, string slug)
+    public class Request(IAccessControl accessControl, string slug)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Slug { get; } = slug;
     }
 

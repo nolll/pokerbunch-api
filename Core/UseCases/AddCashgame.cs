@@ -9,8 +9,6 @@ namespace Core.UseCases;
 public class AddCashgame(
     IBunchRepository bunchRepository,
     ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository,
     ILocationRepository locationRepository)
     : UseCase<AddCashgame.Request, AddCashgame.Result>
 {
@@ -20,24 +18,23 @@ public class AddCashgame(
 
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
-
-        var user = await userRepository.GetByUserName(request.UserName);
+        
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
 
-        if (!AccessControl.CanAddCashgame(user, player))
+        var bunchInfo = request.AccessControl.GetBunchBySlug(request.Slug);
+        if (!request.AccessControl.CanAddCashgame(bunchInfo.Id))
             return Error(new AccessDeniedError()); 
 
         var location = await locationRepository.Get(request.LocationId!);
-        var cashgame = new Cashgame(bunch.Id, location.Id, null, GameStatus.Running);
+        var cashgame = new Cashgame(bunchInfo.Id, location.Id, null, GameStatus.Running);
         var cashgameId = await cashgameRepository.Add(bunch, cashgame);
 
         return Success(new Result(request.Slug, cashgameId));
     }
     
-    public class Request(string userName, string slug, string? locationId)
+    public class Request(IAccessControl accessControl, string slug, string? locationId)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Please select a location")]
