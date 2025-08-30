@@ -35,7 +35,7 @@ public class EventController(
     [Authorize]
     public async Task<ObjectResult> List(string bunchId)
     {
-        var result = await eventList.Execute(new EventList.Request(CurrentUserName, bunchId));
+        var result = await eventList.Execute(new EventList.Request(AccessControl, bunchId));
         return Model(result, () => result.Data?.Events.Select(o => new EventModel(o)));
     }
 

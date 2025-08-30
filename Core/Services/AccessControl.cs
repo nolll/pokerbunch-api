@@ -30,6 +30,7 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanDeletePlayer(string bunchId) => IsManager(bunchId);
 
     public bool CanAddEvent(string bunchId) => IsPlayer(bunchId);
+    public bool CanListEvents(string bunchId) => IsPlayer(bunchId);
     
     public bool CanListUsers => IsAdmin();
     
@@ -39,7 +40,6 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public static bool CanSeeEventDetails(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListPlayerCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanListEvents(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanListEventCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
     public static bool CanDeleteCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
     public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
