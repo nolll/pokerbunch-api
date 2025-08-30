@@ -63,7 +63,7 @@ public class ActionController(
     public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
         var utcTimestamp = DateTime.SpecifyKind(post.Timestamp, DateTimeKind.Utc);
-        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, utcTimestamp, post.Stack, post.Added));
+        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(AccessControl, actionId, utcTimestamp, post.Stack, post.Added));
         return Model(result, () => new OkModel());
     }
 
