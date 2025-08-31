@@ -30,4 +30,5 @@ public interface IAccessControl
     bool CanListEvents(string bunchId);
     bool CanInvitePlayer(string bunchId);
     bool CanSeeEventDetails(string bunchId);
+    bool CanListCashgames(string bunchId);
 }

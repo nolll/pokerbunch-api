@@ -45,7 +45,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> List(string bunchId)
     {
-        var result = await cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, null));
+        var result = await cashgameList.Execute(new CashgameList.Request(AccessControl, bunchId, null));
         return Model(result, CreateModel);
         IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
     }
@@ -58,7 +58,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> List(string bunchId, int year)
     {
-        var result = await cashgameList.Execute(new CashgameList.Request(CurrentUserName, bunchId, year));
+        var result = await cashgameList.Execute(new CashgameList.Request(AccessControl, bunchId, year));
         return Model(result, CreateModel);
         IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
     }

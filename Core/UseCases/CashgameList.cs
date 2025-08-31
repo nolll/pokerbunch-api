@@ -8,25 +8,21 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class CashgameList(
-    IBunchRepository bunchRepository,
     ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
     IPlayerRepository playerRepository,
     ILocationRepository locationRepository)
     : UseCase<CashgameList.Request, CashgameList.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
+        var bunchInfo = request.AccessControl.GetBunchBySlug(request.Slug);
 
-        if (!AccessControl.CanListCashgames(user, player))
+        if (!request.AccessControl.CanListCashgames(bunchInfo.Id))
             return Error(new AccessDeniedError());
         
-        var cashgames = (await cashgameRepository.GetFinished(bunch.Id, request.Year)).OrderByDescending(o => o.StartTime);
-        var locations = await locationRepository.List(bunch.Id);
-        var players = await playerRepository.List(bunch.Id);
+        var cashgames = (await cashgameRepository.GetFinished(bunchInfo.Id, request.Year)).OrderByDescending(o => o.StartTime);
+        var locations = await locationRepository.List(bunchInfo.Id);
+        var players = await playerRepository.List(bunchInfo.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(request.Slug, items.ToList()));
@@ -35,7 +31,7 @@ public class CashgameList(
     private static Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations) => 
         locations.First(o => o.Id == cashgame.LocationId);
 
-    public record Request(string UserName, string Slug, int? Year);
+    public record Request(IAccessControl AccessControl, string Slug, int? Year);
     public record Result(string Slug, IList<Item> Items);
 
     public class Item(Cashgame cashgame, Location location, IList<Player> players)
