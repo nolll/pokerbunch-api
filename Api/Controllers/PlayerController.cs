@@ -81,7 +81,7 @@ public class PlayerController(
         var registerUrl = urls.Site.AddUser;
         var joinBunchUrlFormat = urls.Site.JoinBunch("{0}");
         var joinBunchWithCodeUrlFormat = urls.Site.JoinBunch("{0}", "{1}");
-        var request = new InvitePlayer.Request(CurrentUserName, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
+        var request = new InvitePlayer.Request(AccessControl, playerId, post.Email, registerUrl, joinBunchUrlFormat, joinBunchWithCodeUrlFormat);
         var result = await invitePlayer.Execute(request);
         return Model(result, () => new PlayerInvitedModel(playerId));
     }
