@@ -75,7 +75,7 @@ public class ActionController(
     [Authorize]
     public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
-        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(AccessControl, actionId));
         return Model(result, () => new OkModel());
     }
 

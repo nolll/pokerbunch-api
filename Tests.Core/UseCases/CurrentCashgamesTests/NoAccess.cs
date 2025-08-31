@@ -2,7 +2,7 @@ using Core.Errors;
 
 namespace Tests.Core.UseCases.CurrentCashgamesTests;
 
-public class WithGuest : Arrange
+public class NoAccess : Arrange
 {
     [Test]
     public void ReturnsAccessDeniedError()

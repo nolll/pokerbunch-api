@@ -1,10 +1,8 @@
-﻿using Core.Entities;
+﻿namespace Tests.Core.UseCases.CurrentCashgamesTests;
 
-namespace Tests.Core.UseCases.CurrentCashgamesTests;
-
-public class WithGames : Arrange
+public class HasAccessWithGames : Arrange
 {
-    protected override Role Role => Role.Player;
+    protected override bool CanListCurrentGames => true;
     protected override int GameCount => 1;
 
     [Test]

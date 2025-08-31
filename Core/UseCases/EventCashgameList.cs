@@ -8,9 +8,7 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class EventCashgameList(
-    IBunchRepository bunchRepository,
     ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
     IPlayerRepository playerRepository,
     ILocationRepository locationRepository,
     IEventRepository eventRepository)
@@ -19,17 +17,14 @@ public class EventCashgameList(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var @event = await eventRepository.Get(request.EventId);
-        var bunch = await bunchRepository.Get(@event.BunchId);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
 
-        if (!AccessControl.CanListEventCashgames(user, player))
+        if (!request.AccessControl.CanListEventCashgames(@event.BunchId))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByEvent(request.EventId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = await locationRepository.List(bunch.Id);
-        var players = await playerRepository.List(bunch.Id);
+        var locations = await locationRepository.List(@event.BunchId);
+        var players = await playerRepository.List(@event.BunchId);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));
@@ -41,9 +36,9 @@ public class EventCashgameList(
     private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items) => 
         items.OrderByDescending(o => o.StartTime);
 
-    public class Request(string userName, string eventId)
+    public class Request(IAccessControl accessControl, string eventId)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string EventId { get; } = eventId;
     }
 

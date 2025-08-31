@@ -1,6 +1,12 @@
 namespace Core.Entities;
 
-public class CurrentBunch(string id, string slug, string name, string playerId, string playerName, Role role)
+public class CurrentBunch(
+    string id,
+    string slug,
+    string name = "",
+    string playerId = "",
+    string playerName = "",
+    Role role = Role.None)
 {
     public string Id { get; } = id;
     public string Slug { get; } = slug;

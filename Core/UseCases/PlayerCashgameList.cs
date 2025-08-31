@@ -8,9 +8,7 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class PlayerCashgameList(
-    IBunchRepository bunchRepository,
     ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
     IPlayerRepository playerRepository,
     ILocationRepository locationRepository)
     : UseCase<PlayerCashgameList.Request, PlayerCashgameList.Result>
@@ -18,17 +16,14 @@ public class PlayerCashgameList(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = await playerRepository.Get(request.PlayerId);
-        var bunch = await bunchRepository.Get(player.BunchId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
-        if (!AccessControl.CanListPlayerCashgames(currentUser, currentPlayer))
+        if (!request.AccessControl.CanListPlayerCashgames(player.BunchId))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(request.PlayerId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = await locationRepository.List(bunch.Id);
-        var players = await playerRepository.List(bunch.Id);
+        var locations = await locationRepository.List(player.BunchId);
+        var players = await playerRepository.List(player.BunchId);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));
@@ -40,9 +35,9 @@ public class PlayerCashgameList(
     private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items) => 
         items.OrderByDescending(o => o.StartTime);
 
-    public class Request(string userName, string playerId)
+    public class Request(IAccessControl accessControl, string playerId)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string PlayerId { get; } = playerId;
     }
 

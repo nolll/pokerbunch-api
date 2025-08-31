@@ -14,9 +14,13 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanDeleteCashgame(string bunchId) => IsManager(bunchId);
     public bool CanSeeCashgame(string bunchId) => IsPlayer(bunchId);
     public bool CanListCashgames(string bunchId) => IsPlayer(bunchId);
+    public bool CanListPlayerCashgames(string bunchId) => IsPlayer(bunchId);
+    public bool CanListEventCashgames(string bunchId) => IsPlayer(bunchId);
+    public bool CanListCurrentGames(string bunchId) => IsPlayer(bunchId);
     
     public bool CanEditCashgameAction(string bunchId) => IsManager(bunchId);
-    
+    public bool CanDeleteCheckpoint(string bunchId) => IsManager(bunchId);
+
     public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
     public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
     public bool CanListLocations(string bunchId) => IsPlayer(bunchId);
@@ -39,14 +43,8 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     
     public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>
         IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
-    
-    public static bool CanListPlayerCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanListEventCashgames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
-    public static bool CanDeleteCheckpoint(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsManager(currentPlayer);
-    public static bool CanListCurrentGames(User currentUser, Player? currentPlayer) => IsAdmin(currentUser) || IsPlayer(currentPlayer);
 
     private static bool IsRequestedPlayer(Player? currentPlayer, string requestedPlayerId) => currentPlayer?.Id == requestedPlayerId;
-    private static bool IsPlayer(Player? currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Player);
     private static bool IsManager(Player? currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Manager);
     private static bool IsAdmin(User currentUser) => currentUser.IsAdmin;
 

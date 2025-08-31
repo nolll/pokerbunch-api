@@ -28,6 +28,10 @@ public class AccessControlInTest(
     bool canInvitePlayer = false,
     bool canSeeEventDetails = false,
     bool canListCashgames = false,
+    bool canListPlayerCashgames = false,
+    bool canListEventCashgames = false,
+    bool canListCurrentGames = false,
+    bool canDeleteCheckpoint = false,
     CurrentBunch? currentBunch = null) : IAccessControl
 {
     public bool CanClearCache => canClearCache;
@@ -54,6 +58,10 @@ public class AccessControlInTest(
     public bool CanInvitePlayer(string bunchId) => canInvitePlayer;
     public bool CanSeeEventDetails(string bunchId) => canSeeEventDetails;
     public bool CanListCashgames(string bunchId) => canListCashgames;
+    public bool CanListPlayerCashgames(string bunchId) => canListPlayerCashgames;
+    public bool CanListEventCashgames(string bunchId) => canListEventCashgames;
+    public bool CanListCurrentGames(string bunchId) => canListCurrentGames;
+    public bool CanDeleteCheckpoint(string bunchId) => canDeleteCheckpoint;
 
     public CurrentBunch GetBunchById(string id) => currentBunch!;
     public CurrentBunch GetBunchBySlug(string slug) => currentBunch!;

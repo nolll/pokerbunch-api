@@ -71,7 +71,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> EventCashgameList(string eventId)
     {
-        var result = await eventCashgameList.Execute(new EventCashgameList.Request(CurrentUserName, eventId));
+        var result = await eventCashgameList.Execute(new EventCashgameList.Request(AccessControl, eventId));
         return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
     }
 
@@ -83,7 +83,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> PlayerCashgameList(string playerId)
     {
-        var result = await playerCashgameList.Execute(new PlayerCashgameList.Request(CurrentUserName, playerId));
+        var result = await playerCashgameList.Execute(new PlayerCashgameList.Request(AccessControl, playerId));
         return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
     }
 
@@ -144,7 +144,7 @@ public class CashgameController(
     [Authorize]
     public async Task<ObjectResult> Current(string bunchId)
     {
-        var result = await currentCashgames.Execute(new CurrentCashgames.Request(CurrentUserName, bunchId));
+        var result = await currentCashgames.Execute(new CurrentCashgames.Request(AccessControl, bunchId));
         return Model(result, () => result.Data?.Games.Select(o => new ApiCurrentGame(o, urls)));
     }
 }

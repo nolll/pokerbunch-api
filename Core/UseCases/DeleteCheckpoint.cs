@@ -5,34 +5,28 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCheckpoint(
-    IBunchRepository bunchRepository,
-    ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository)
+public class DeleteCheckpoint(ICashgameRepository cashgameRepository)
     : UseCase<DeleteCheckpoint.Request, DeleteCheckpoint.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = await cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(cashgame.BunchId, currentUser.Id);
+        var bunchInfo = request.AccessControl.GetBunchById(cashgame.BunchId);
 
-        if (!AccessControl.CanDeleteCheckpoint(currentUser, currentPlayer))
+        if (!request.AccessControl.CanDeleteCheckpoint(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         cashgame.DeleteCheckpoint(checkpoint);
         await cashgameRepository.Update(cashgame);
 
         var gameIsRunning = cashgame.Status == GameStatus.Running;
-        return Success(new Result(bunch.Slug, gameIsRunning, cashgame.Id));
+        return Success(new Result(bunchInfo.Slug, gameIsRunning, cashgame.Id));
     }
     
-    public class Request(string userName, string checkpointId)
+    public class Request(IAccessControl accessControl, string checkpointId)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string CheckpointId { get; } = checkpointId;
     }
 
