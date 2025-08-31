@@ -55,8 +55,6 @@ public abstract class BaseController(AppSettings appSettings) : Controller
     private bool IsTokenTooOld => 
         DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(CustomClaimTypes.IssuedAt) ?? "0")) < TokenMinDate;
 
-    protected CurrentUser CurrentUser => new(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin);
-
     private bool IsAdmin => GetBoolClaim(CustomClaimTypes.IsAdmin);
     private string CurrentUserId => GetClaim(CustomClaimTypes.UserId) ?? "";
     private string CurrentUserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
@@ -76,7 +74,7 @@ public abstract class BaseController(AppSettings appSettings) : Controller
         }
     }
 
-    protected IAccessControl AccessControl => new AccessControl(CurrentUser, UserBunches);
+    protected IAccessControl AccessControl => new AccessControl(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches);
 
     private string? GetClaim(string type) => User.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 

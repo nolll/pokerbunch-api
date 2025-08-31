@@ -3,8 +3,13 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : IAccessControl
+public class AccessControl(string id, string userName, string displayName, bool isAdmin, TokenBunch[] userBunches)
+    : IAccessControl
 {
+    public string Id { get; } = id;
+    public string UserName { get; } = userName;
+    public string DisplayName { get; } = displayName;
+    
     public bool CanClearCache => IsAdmin();
     public bool CanSendTestEmail => IsAdmin();
     public bool CanSeeAppSettings => IsAdmin();
@@ -43,7 +48,7 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     
     public bool CanListUsers => IsAdmin();
 
-    private bool IsAdmin() => currentUser.IsAdmin;
+    private bool IsAdmin() => isAdmin;
     private bool IsManager(string bunchId) => IsInRole(bunchId, Role.Manager);
     private bool IsPlayer(string bunchId) => IsInRole(bunchId, Role.Player);
     private bool IsRequestedPlayer(string bunchId, string requestedPlayerId) => GetPlayerId(bunchId) == requestedPlayerId;
