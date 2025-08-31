@@ -23,7 +23,7 @@ public class EventController(
     [Authorize]
     public async Task<ObjectResult> Get(string eventId)
     {
-        var result = await eventDetails.Execute(new EventDetails.Request(CurrentUserName, eventId));
+        var result = await eventDetails.Execute(new EventDetails.Request(AccessControl, eventId));
         return Model(result, () => result.Data is not null ? new EventModel(result.Data) : null);
     }
 
