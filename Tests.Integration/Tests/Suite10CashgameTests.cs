@@ -25,8 +25,8 @@ public class Suite10CashgameTests
     [Order(2)]
     public async Task Test02Buyin()
     {
-        var managerToken = await LoginHelper.GetAdminToken();
-        var userToken = await LoginHelper.GetAdminToken();
+        var managerToken = await LoginHelper.GetManagerToken();
+        var userToken = await LoginHelper.GetUserToken();
         await Buyin(managerToken, TestData.CashgameId, TestData.ManagerPlayerId, 100);
         await Buyin(userToken, TestData.CashgameId, TestData.UserPlayerId, 200);
         await Buyin(managerToken, TestData.CashgameId, TestData.PlayerPlayerId, 100);

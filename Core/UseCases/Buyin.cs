@@ -7,10 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Buyin(
-    ICashgameRepository cashgameRepository,
-    IPlayerRepository playerRepository,
-    IUserRepository userRepository)
+public class Buyin(ICashgameRepository cashgameRepository)
     : UseCase<Buyin.Request, Buyin.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -21,9 +18,7 @@ public class Buyin(
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.CashgameId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+        if (!request.AccessControl.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
             return Error(new AccessDeniedError());
 
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
@@ -35,14 +30,14 @@ public class Buyin(
     }
     
     public class Request(
-        string userName,
+        IAccessControl accessControl,
         string cashgameId,
         string playerId,
         int buyinAmount,
         int stackAmount,
         DateTime currentTime)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string CashgameId { get; } = cashgameId;
         public string PlayerId { get; } = playerId;
 

@@ -20,6 +20,8 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     
     public bool CanEditCashgameAction(string bunchId) => IsManager(bunchId);
     public bool CanDeleteCheckpoint(string bunchId) => IsManager(bunchId);
+    public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) =>
+        IsManager(bunchId) || IsRequestedPlayer(bunchId, requestedPlayerId);
 
     public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
     public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
@@ -40,19 +42,14 @@ public class AccessControl(CurrentUser currentUser, TokenBunch[] userBunches) : 
     public bool CanSeeEventDetails(string bunchId) => IsPlayer(bunchId);
     
     public bool CanListUsers => IsAdmin();
-    
-    public static bool CanEditCashgameActionsFor(string requestedPlayerId, User currentUser, Player? currentPlayer) =>
-        IsAdmin(currentUser) || IsManager(currentPlayer) || IsRequestedPlayer(currentPlayer, requestedPlayerId);
-
-    private static bool IsRequestedPlayer(Player? currentPlayer, string requestedPlayerId) => currentPlayer?.Id == requestedPlayerId;
-    private static bool IsManager(Player? currentPlayer) => RoleHandler.IsInRole(currentPlayer, Role.Manager);
-    private static bool IsAdmin(User currentUser) => currentUser.IsAdmin;
 
     private bool IsAdmin() => currentUser.IsAdmin;
     private bool IsManager(string bunchId) => IsInRole(bunchId, Role.Manager);
     private bool IsPlayer(string bunchId) => IsInRole(bunchId, Role.Player);
+    private bool IsRequestedPlayer(string bunchId, string requestedPlayerId) => GetPlayerId(bunchId) == requestedPlayerId;
     private bool IsInRole(string bunchId, Role role) => RoleHandler.IsInRole(GetRole(bunchId), role);
     private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
+    private string GetPlayerId(string bunchId) => GetBunchById(bunchId).PlayerId;
 
     public CurrentBunch GetBunchById(string id)
     {

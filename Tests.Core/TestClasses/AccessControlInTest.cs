@@ -32,6 +32,7 @@ public class AccessControlInTest(
     bool canListEventCashgames = false,
     bool canListCurrentGames = false,
     bool canDeleteCheckpoint = false,
+    bool canEditCashgameActionsFor = false,
     CurrentBunch? currentBunch = null) : IAccessControl
 {
     public bool CanClearCache => canClearCache;
@@ -62,6 +63,7 @@ public class AccessControlInTest(
     public bool CanListEventCashgames(string bunchId) => canListEventCashgames;
     public bool CanListCurrentGames(string bunchId) => canListCurrentGames;
     public bool CanDeleteCheckpoint(string bunchId) => canDeleteCheckpoint;
+    public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) => canEditCashgameActionsFor;
 
     public CurrentBunch GetBunchById(string id) => currentBunch!;
     public CurrentBunch GetBunchBySlug(string slug) => currentBunch!;

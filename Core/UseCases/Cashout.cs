@@ -8,10 +8,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Cashout(
-    ICashgameRepository cashgameRepository,
-    IPlayerRepository playerRepository,
-    IUserRepository userRepository)
+public class Cashout(ICashgameRepository cashgameRepository)
     : UseCase<Cashout.Request, Cashout.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -21,9 +18,7 @@ public class Cashout(
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.CashgameId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+        if (!request.AccessControl.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
             return Error(new AccessDeniedError());
 
         var result = cashgame.GetResult(request.PlayerId);
@@ -50,9 +45,14 @@ public class Cashout(
         return Success(new Result(cashgame.Id));
     }
     
-    public class Request(string userName, string cashgameId, string playerId, int stack, DateTime currentTime)
+    public class Request(
+        IAccessControl accessControl,
+        string cashgameId,
+        string playerId,
+        int stack,
+        DateTime currentTime)
     {
-        public string UserName { get; } = userName;
+        public IAccessControl AccessControl { get; } = accessControl;
         public string CashgameId { get; } = cashgameId;
         public string PlayerId { get; } = playerId;
 

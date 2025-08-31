@@ -38,19 +38,19 @@ public class ActionController(
 
     private async Task<ObjectResult> Buyin(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+        var result = await buyin.Execute(new Buyin.Request(AccessControl, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
     private async Task<ObjectResult> Report(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await report.Execute(new Report.Request(AccessControl, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
     private async Task<ObjectResult> Cashout(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await cashout.Execute(new Cashout.Request(AccessControl, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 

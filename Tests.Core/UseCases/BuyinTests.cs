@@ -2,6 +2,7 @@
 using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -16,7 +17,7 @@ class BuyinTests : TestBase
     [Test]
     public async Task Buyin_InvalidBuyin_ReturnsError()
     {
-        var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
+        var request = new Buyin.Request(new AccessControlInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
@@ -25,7 +26,7 @@ class BuyinTests : TestBase
     [Test]
     public async Task Buyin_InvalidStackSize_ReturnsError()
     {
-        var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
+        var request = new Buyin.Request(new AccessControlInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
@@ -41,7 +42,7 @@ class BuyinTests : TestBase
 
         Deps.Cashgame.SetupRunningGame();
 
-        var request = new Buyin.Request(TestData.UserNameA, TestData.CashgameIdA, PlayerId, buyin, stack, timestamp);
+        var request = new Buyin.Request(new AccessControlInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, buyin, stack, timestamp);
         await Sut.Execute(request);
 
         var result = Deps.Cashgame.Updated?.AddedCheckpoints.First();
@@ -51,8 +52,5 @@ class BuyinTests : TestBase
         Assert.That(result?.Stack, Is.EqualTo(savedStack));
     }
 
-    private Buyin Sut => new(
-        Deps.Cashgame,
-        Deps.Player,
-        Deps.User);
+    private Buyin Sut => new(Deps.Cashgame);
 }
