@@ -11,16 +11,16 @@ public class GetLocation(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var location = await locationRepository.Get(request.LocationId);
-        var bunchInfo = request.AccessControl.GetBunchById(location.BunchId);
+        var bunchInfo = request.Principal.GetBunchById(location.BunchId);
 
-        return !request.AccessControl.CanSeeLocation(location.BunchId) 
+        return !request.Principal.CanSeeLocation(location.BunchId) 
             ? Error(new AccessDeniedError())
             : Success(new Result(location.Id, location.Name, bunchInfo.Slug));
     }
 
-    public class Request(IAccessControl accessControl, string locationId)
+    public class Request(IPrincipal principal, string locationId)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string LocationId { get; } = locationId;
     }
 

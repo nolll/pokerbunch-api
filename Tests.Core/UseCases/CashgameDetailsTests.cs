@@ -14,7 +14,7 @@ public class CashgameDetailsTests : TestBase
         Deps.Cashgame.SetupRunningGame();
 
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, TestData.PlayerIdA, "", Role.Player);
-        var request = new CashgameDetails.Request(new AccessControlInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var request = new CashgameDetails.Request(new PrincipalInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.PlayerId, Is.EqualTo(TestData.PlayerIdA));
@@ -29,7 +29,7 @@ public class CashgameDetailsTests : TestBase
         Deps.Cashgame.SetupRunningGame();
 
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
-        var request = new CashgameDetails.Request(new AccessControlInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var request = new CashgameDetails.Request(new PrincipalInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
@@ -41,7 +41,7 @@ public class CashgameDetailsTests : TestBase
         Deps.Cashgame.SetupRunningGame();
 
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
-        var request = new CashgameDetails.Request(new AccessControlInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var request = new CashgameDetails.Request(new PrincipalInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.PlayerItems.Count, Is.EqualTo(2));

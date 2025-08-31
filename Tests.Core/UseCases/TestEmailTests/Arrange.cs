@@ -31,6 +31,6 @@ public abstract class Arrange : UseCaseTest<TestEmail>
 
     protected override async Task ExecuteAsync()
     {
-        Result = await Sut.Execute(new TestEmail.Request(new AccessControlInTest(canSendTestEmail: CanSendTestEmail)));
+        Result = await Sut.Execute(new TestEmail.Request(new PrincipalInTest(canSendTestEmail: CanSendTestEmail)));
     }
 }

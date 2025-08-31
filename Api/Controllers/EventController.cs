@@ -23,7 +23,7 @@ public class EventController(
     [Authorize]
     public async Task<ObjectResult> Get(string eventId)
     {
-        var result = await eventDetails.Execute(new EventDetails.Request(AccessControl, eventId));
+        var result = await eventDetails.Execute(new EventDetails.Request(Principal, eventId));
         return Model(result, () => result.Data is not null ? new EventModel(result.Data) : null);
     }
 
@@ -35,7 +35,7 @@ public class EventController(
     [Authorize]
     public async Task<ObjectResult> List(string bunchId)
     {
-        var result = await eventList.Execute(new EventList.Request(AccessControl, bunchId));
+        var result = await eventList.Execute(new EventList.Request(Principal, bunchId));
         return Model(result, () => result.Data?.Events.Select(o => new EventModel(o)));
     }
 
@@ -47,7 +47,7 @@ public class EventController(
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] EventAddPostModel post)
     {
-        var result = await addEvent.Execute(new AddEvent.Request(AccessControl, bunchId, post.Name));
+        var result = await addEvent.Execute(new AddEvent.Request(Principal, bunchId, post.Name));
         return result.Success 
             ? await Get(result.Data?.Id ?? "") 
             : Error(result.Error);

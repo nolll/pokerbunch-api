@@ -9,7 +9,7 @@ public class UserList(IUserRepository userRepository) : UseCase<UserList.Request
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        if (!request.AccessControl.CanListUsers)
+        if (!request.Principal.CanListUsers)
             return Error(new AccessDeniedError());
 
         var users = await userRepository.List();
@@ -18,9 +18,9 @@ public class UserList(IUserRepository userRepository) : UseCase<UserList.Request
         return Success(new Result(userItems));
     }
 
-    public class Request(IAccessControl accessControl)
+    public class Request(IPrincipal principal)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
     }
 
     public class Result(IList<UserListItem> userItems)

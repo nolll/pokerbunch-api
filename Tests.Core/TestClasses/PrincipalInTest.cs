@@ -3,7 +3,7 @@ using Core.Services;
 
 namespace Tests.Core.TestClasses;
 
-public class AccessControlInTest(
+public class PrincipalInTest(
     bool canClearCache = false,
     bool canSendTestEmail = false,
     bool canSeeAppSettings = false,
@@ -33,7 +33,7 @@ public class AccessControlInTest(
     bool canListCurrentGames = false,
     bool canDeleteCheckpoint = false,
     bool canEditCashgameActionsFor = false,
-    CurrentBunch? currentBunch = null) : IAccessControl
+    CurrentBunch? currentBunch = null) : IPrincipal
 {
     public bool CanClearCache => canClearCache;
     public bool CanSendTestEmail => canSendTestEmail;

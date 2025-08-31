@@ -21,8 +21,8 @@ public class AddCashgame(
         
         var bunch = await bunchRepository.GetBySlug(request.Slug);
 
-        var bunchInfo = request.AccessControl.GetBunchBySlug(request.Slug);
-        if (!request.AccessControl.CanAddCashgame(bunchInfo.Id))
+        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
+        if (!request.Principal.CanAddCashgame(bunchInfo.Id))
             return Error(new AccessDeniedError()); 
 
         var location = await locationRepository.Get(request.LocationId!);
@@ -32,9 +32,9 @@ public class AddCashgame(
         return Success(new Result(request.Slug, cashgameId));
     }
     
-    public class Request(IAccessControl accessControl, string slug, string? locationId)
+    public class Request(IPrincipal principal, string slug, string? locationId)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Please select a location")]

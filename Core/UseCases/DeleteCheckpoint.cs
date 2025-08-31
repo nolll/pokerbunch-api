@@ -12,9 +12,9 @@ public class DeleteCheckpoint(ICashgameRepository cashgameRepository)
     {
         var cashgame = await cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunchInfo = request.AccessControl.GetBunchById(cashgame.BunchId);
+        var bunchInfo = request.Principal.GetBunchById(cashgame.BunchId);
 
-        if (!request.AccessControl.CanDeleteCheckpoint(cashgame.BunchId))
+        if (!request.Principal.CanDeleteCheckpoint(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         cashgame.DeleteCheckpoint(checkpoint);
@@ -24,9 +24,9 @@ public class DeleteCheckpoint(ICashgameRepository cashgameRepository)
         return Success(new Result(bunchInfo.Slug, gameIsRunning, cashgame.Id));
     }
     
-    public class Request(IAccessControl accessControl, string checkpointId)
+    public class Request(IPrincipal principal, string checkpointId)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string CheckpointId { get; } = checkpointId;
     }
 

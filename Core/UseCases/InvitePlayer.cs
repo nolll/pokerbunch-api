@@ -19,9 +19,9 @@ public class InvitePlayer(
             return Error(new ValidationError(validator));
 
         var player = await playerRepository.Get(request.PlayerId);
-        var bunchInfo = request.AccessControl.GetBunchById(player.BunchId);
+        var bunchInfo = request.Principal.GetBunchById(player.BunchId);
 
-        if (!request.AccessControl.CanInvitePlayer(player.BunchId))
+        if (!request.Principal.CanInvitePlayer(player.BunchId))
             return Error(new AccessDeniedError());
 
         var invitationCode = invitationCodeCreator.GetCode(player);
@@ -34,14 +34,14 @@ public class InvitePlayer(
     }
 
     public class Request(
-        IAccessControl accessControl,
+        IPrincipal principal,
         string playerId,
         string email,
         string registerUrl,
         string joinUrlFormat,
         string joinWithCodeUrlFormat)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string PlayerId { get; } = playerId;
 
         [Required(ErrorMessage = "Email can't be empty")]

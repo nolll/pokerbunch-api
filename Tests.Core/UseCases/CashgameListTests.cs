@@ -44,7 +44,7 @@ class CashgameListTests : TestBase
     private CashgameList.Request CreateRequest(int? year = null)
     {
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        return new CashgameList.Request(new AccessControlInTest(canListCashgames: true, currentBunch: currentBunch), TestData.SlugA, year);
+        return new CashgameList.Request(new PrincipalInTest(canListCashgames: true, currentBunch: currentBunch), TestData.SlugA, year);
     }
 
     private CashgameList Sut => new(

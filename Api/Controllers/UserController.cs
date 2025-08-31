@@ -59,7 +59,7 @@ public class UserController(
     [Authorize]
     public async Task<ObjectResult> List()
     {
-        var result = await userList.Execute(new UserList.Request(AccessControl));
+        var result = await userList.Execute(new UserList.Request(Principal));
         return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, urls)));
     }
 

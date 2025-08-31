@@ -3,8 +3,8 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public class AccessControl(string id, string userName, string displayName, bool isAdmin, TokenBunch[] userBunches)
-    : IAccessControl
+public class Principal(string id, string userName, string displayName, bool isAdmin, TokenBunch[] userBunches)
+    : IPrincipal
 {
     public string Id { get; } = id;
     public string UserName { get; } = userName;
@@ -56,15 +56,10 @@ public class AccessControl(string id, string userName, string displayName, bool 
     private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
     private string GetPlayerId(string bunchId) => GetBunchById(bunchId).PlayerId;
 
-    public CurrentBunch GetBunchById(string id)
-    {
-        var b = userBunches.First(o => o.Id == id);
-        return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
-    }
-    
-    public CurrentBunch GetBunchBySlug(string slug)
-    {
-        var b = userBunches.First(o => o.Slug == slug);
-        return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
-    }
+    public CurrentBunch GetBunchById(string id) => CreateCurrentBunch(userBunches.FirstOrDefault(o => o.Id == id));
+    public CurrentBunch GetBunchBySlug(string slug) => CreateCurrentBunch(userBunches.FirstOrDefault(o => o.Slug == slug));
+
+    private static CurrentBunch CreateCurrentBunch(TokenBunch? b) => b is null
+        ? new CurrentBunch("", "")
+        : new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
 }

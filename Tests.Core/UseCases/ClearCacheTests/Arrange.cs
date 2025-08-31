@@ -12,6 +12,6 @@ public abstract class Arrange : UseCaseTest<ClearCache>
 
     protected override async Task ExecuteAsync()
     {
-        Result = await Sut.Execute(new ClearCache.Request(new AccessControlInTest(canClearCache: CanClearCache)));
+        Result = await Sut.Execute(new ClearCache.Request(new PrincipalInTest(canClearCache: CanClearCache)));
     }
 }

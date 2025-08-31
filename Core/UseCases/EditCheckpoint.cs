@@ -19,7 +19,7 @@ public class EditCheckpoint(ICashgameRepository cashgameRepository)
         var cashgame = await cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
 
-        if (!request.AccessControl.CanEditCashgameAction(cashgame.BunchId))
+        if (!request.Principal.CanEditCashgameAction(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         var postedCheckpoint = Checkpoint.Create(
@@ -38,13 +38,13 @@ public class EditCheckpoint(ICashgameRepository cashgameRepository)
     }
     
     public class Request(
-        IAccessControl accessControl,
+        IPrincipal principal,
         string checkpointId,
         DateTime timestamp,
         int stack,
         int? amount)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string CheckpointId { get; } = checkpointId;
         public DateTime Timestamp { get; } = timestamp;
 

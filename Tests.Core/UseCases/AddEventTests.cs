@@ -14,7 +14,7 @@ public class AddEventTests : TestBase
         const string addedEventName = "added event";
 
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        var request = new AddEvent.Request(new AccessControlInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
+        var request = new AddEvent.Request(new PrincipalInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
         Assert.That(Deps.Event.Added?.Name, Is.EqualTo(addedEventName));
@@ -25,7 +25,7 @@ public class AddEventTests : TestBase
     {
         const string addedEventName = "";
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        var request = new AddEvent.Request(new AccessControlInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
+        var request = new AddEvent.Request(new PrincipalInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));

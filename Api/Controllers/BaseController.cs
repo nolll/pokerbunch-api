@@ -74,7 +74,7 @@ public abstract class BaseController(AppSettings appSettings) : Controller
         }
     }
 
-    protected IAccessControl AccessControl => new AccessControl(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches);
+    protected IPrincipal Principal => new Principal(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches);
 
     private string? GetClaim(string type) => User.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 

@@ -12,7 +12,7 @@ public class DeleteCheckpointTests : TestBase
     {
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
         var request = new DeleteCheckpoint.Request(
-            new AccessControlInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
+            new PrincipalInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
             TestData.ReportCheckpointId);
         var result = await Sut.Execute(request);
 
@@ -30,7 +30,7 @@ public class DeleteCheckpointTests : TestBase
 
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
         var request =
-            new DeleteCheckpoint.Request(new AccessControlInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
+            new DeleteCheckpoint.Request(new PrincipalInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
                 "12");
         var result = await Sut.Execute(request);
 

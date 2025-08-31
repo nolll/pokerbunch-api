@@ -14,9 +14,9 @@ public class EventDetails(
     {
         var e = await eventRepository.Get(request.EventId);
         var location = e.LocationId != null ? await locationRepository.Get(e.LocationId) : null;
-        var bunchInfo = request.AccessControl.GetBunchById(e.BunchId);
+        var bunchInfo = request.Principal.GetBunchById(e.BunchId);
 
-        if (!request.AccessControl.CanSeeEventDetails(e.BunchId))
+        if (!request.Principal.CanSeeEventDetails(e.BunchId))
             return Error(new AccessDeniedError());
 
         var locationId = location?.Id;
@@ -25,9 +25,9 @@ public class EventDetails(
         return Success(new Result(e.Id, e.Name, bunchInfo.Slug, locationId, locationName, e.StartDate));
     }
 
-    public class Request(IAccessControl accessControl, string eventId)
+    public class Request(IPrincipal principal, string eventId)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string EventId { get; } = eventId;
     }
 

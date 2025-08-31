@@ -10,7 +10,7 @@ public class TestEmail(IEmailSender emailSender)
 {
     protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        if (!request.AccessControl.CanSendTestEmail)
+        if (!request.Principal.CanSendTestEmail)
             return Task.FromResult(Error(new AccessDeniedError()));
 
         // todo: Move email to config
@@ -21,9 +21,9 @@ public class TestEmail(IEmailSender emailSender)
         return Task.FromResult(Success(new Result(email)));
     }
     
-    public class Request(IAccessControl accessControl)
+    public class Request(IPrincipal principal)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
     }
 
     public class Result(string email)

@@ -2,7 +2,7 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public interface IAccessControl
+public interface IPrincipal
 {
     CurrentBunch GetBunchById(string id);
     CurrentBunch GetBunchBySlug(string id);

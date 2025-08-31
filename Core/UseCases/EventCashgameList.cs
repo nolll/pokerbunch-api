@@ -18,7 +18,7 @@ public class EventCashgameList(
     {
         var @event = await eventRepository.Get(request.EventId);
 
-        if (!request.AccessControl.CanListEventCashgames(@event.BunchId))
+        if (!request.Principal.CanListEventCashgames(@event.BunchId))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByEvent(request.EventId);
@@ -36,9 +36,9 @@ public class EventCashgameList(
     private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items) => 
         items.OrderByDescending(o => o.StartTime);
 
-    public class Request(IAccessControl accessControl, string eventId)
+    public class Request(IPrincipal principal, string eventId)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string EventId { get; } = eventId;
     }
 

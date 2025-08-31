@@ -11,7 +11,7 @@ class EventDetailsTests : TestBase
     public async Task EventDetails_NameIsSet()
     {
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        var input = new EventDetails.Request(new AccessControlInTest(canSeeEventDetails: true, currentBunch: currentBunch), "1");
+        var input = new EventDetails.Request(new PrincipalInTest(canSeeEventDetails: true, currentBunch: currentBunch), "1");
         var result = await Sut.Execute(input);
 
         Assert.That(result.Data?.Name, Is.EqualTo(TestData.EventNameA));

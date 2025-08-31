@@ -14,7 +14,7 @@ public class EditCheckpointTests : TestBase
     [Test]
     public async Task EditCheckpoint_InvalidStack_ReturnsError()
     {
-        var request = new EditCheckpoint.Request(new AccessControlInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
+        var request = new EditCheckpoint.Request(new PrincipalInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
@@ -23,7 +23,7 @@ public class EditCheckpointTests : TestBase
     [Test]
     public async Task EditCheckpoint_InvalidAmount_ReturnsError()
     {
-        var request = new EditCheckpoint.Request(new AccessControlInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
+        var request = new EditCheckpoint.Request(new PrincipalInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
@@ -32,7 +32,7 @@ public class EditCheckpointTests : TestBase
     [Test]
     public async Task EditCheckpoint_ValidInput_ReturnUrlIsSet()
     {
-        var request = new EditCheckpoint.Request(new AccessControlInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
+        var request = new EditCheckpoint.Request(new PrincipalInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
 
         var result = await Sut.Execute(request);
 
@@ -43,7 +43,7 @@ public class EditCheckpointTests : TestBase
     [Test]
     public async Task EditCheckpoint_ValidInput_CheckpointIsSaved()
     {
-        var request = new EditCheckpoint.Request(new AccessControlInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
+        var request = new EditCheckpoint.Request(new PrincipalInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
 
         await Sut.Execute(request);
 

@@ -20,7 +20,7 @@ public class EditCashgame(
 
         var cashgame = await cashgameRepository.Get(request.Id);
 
-        if (!request.AccessControl.CanEditCashgame(cashgame.BunchId))
+        if (!request.Principal.CanEditCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         var location = await locationRepository.Get(request.LocationId!);
@@ -41,9 +41,9 @@ public class EditCashgame(
         return Success(new Result());
     }
 
-    public class Request(IAccessControl accessControl, string id, string? locationId, string? eventId)
+    public class Request(IPrincipal principal, string id, string? locationId, string? eventId)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string Id { get; } = id;
 
         [Required(ErrorMessage = "Please select a location")]

@@ -10,8 +10,8 @@ public class GetLocationList(ILocationRepository locationRepository)
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.AccessControl.GetBunchBySlug(request.Slug);
-        if (!request.AccessControl.CanListLocations(bunchInfo.Id))
+        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
+        if (!request.Principal.CanListLocations(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
         var locations = await locationRepository.List(bunchInfo.Id);
@@ -24,9 +24,9 @@ public class GetLocationList(ILocationRepository locationRepository)
     private static Location CreateLocationItem(Entities.Location location, string slug) => 
         new(location.Id, location.Name, slug);
 
-    public class Request(IAccessControl accessControl, string slug)
+    public class Request(IPrincipal principal, string slug)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
     }
 

@@ -18,7 +18,7 @@ public class Buyin(ICashgameRepository cashgameRepository)
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.CashgameId);
-        if (!request.AccessControl.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
+        if (!request.Principal.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
             return Error(new AccessDeniedError());
 
         var stackAfterBuyin = request.StackAmount + request.BuyinAmount;
@@ -30,14 +30,14 @@ public class Buyin(ICashgameRepository cashgameRepository)
     }
     
     public class Request(
-        IAccessControl accessControl,
+        IPrincipal principal,
         string cashgameId,
         string playerId,
         int buyinAmount,
         int stackAmount,
         DateTime currentTime)
     {
-        public IAccessControl AccessControl { get; } = accessControl;
+        public IPrincipal Principal { get; } = principal;
         public string CashgameId { get; } = cashgameId;
         public string PlayerId { get; } = playerId;
 
