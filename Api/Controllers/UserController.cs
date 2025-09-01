@@ -154,6 +154,7 @@ public class UserController(
 
         var claims = new ClaimsIdentity([
             new Claim(ClaimTypes.Name, data.UserName),
+            new Claim(CustomClaimTypes.Version, "2"),
             new Claim(CustomClaimTypes.UserId, data.UserId),
             new Claim(CustomClaimTypes.UserDisplayName, data.DisplayName),
             new Claim(CustomClaimTypes.IsAdmin, data.IsAdmin.ToString().ToLower()),
