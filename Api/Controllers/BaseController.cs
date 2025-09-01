@@ -75,8 +75,10 @@ public abstract class BaseController(AppSettings appSettings) : Controller
 
     protected IPrincipal Principal => new Principal(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches.Select(ToCurrentBunch).ToArray());
 
-    private static CurrentBunch ToCurrentBunch(TokenBunchModel b) => 
-        new(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
+    private static CurrentBunch ToCurrentBunch(TokenBunchModel b)
+    {
+        return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
+    }
 
     private string? GetClaim(string type) => User.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 

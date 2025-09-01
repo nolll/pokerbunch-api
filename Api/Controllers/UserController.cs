@@ -177,5 +177,5 @@ public class UserController(
         return JsonSerializer.Serialize(tokenBunches);
     }
     
-    private static TokenBunchModel ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchSlug, b.BunchName, b.PlayerId, b.PlayerName, b.Role);
+    private static TokenBunchModel ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchSlug, b.BunchName, b.PlayerId, b.PlayerName, b.Role.ToString().ToLower());
 }

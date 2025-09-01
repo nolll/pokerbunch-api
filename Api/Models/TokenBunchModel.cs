@@ -3,7 +3,7 @@ using Core.Entities;
 
 namespace Api.Models;
 
-public class TokenBunchModel(string id, string slug, string name, string playerId, string playerName, Role role)
+public class TokenBunchModel(string id, string slug, string name, string playerId, string playerName, string role)
 {
     [JsonPropertyName("id")]
     public string Id { get; } = id;
@@ -16,5 +16,5 @@ public class TokenBunchModel(string id, string slug, string name, string playerI
     [JsonPropertyName("playerName")]
     public string PlayerName { get; } = playerName;
     [JsonPropertyName("role")]
-    public Role Role { get; } = role;
+    public string Role { get; } = role;
 }
