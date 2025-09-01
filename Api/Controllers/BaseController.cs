@@ -19,7 +19,7 @@ namespace Api.Controllers;
 [UsedImplicitly]
 public abstract class BaseController(AppSettings appSettings) : Controller
 {
-    private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-25");
+    private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
     
     protected AppSettings AppSettings { get; } = appSettings;
     
