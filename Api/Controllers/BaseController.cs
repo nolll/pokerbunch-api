@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Api.Models.CommonModels;
 using Api.Settings;
 using Core.UseCases;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Security.Claims;
+using System.Text.Json;
 using Api.Auth;
+using Api.Models;
 using Core;
 using Core.Entities;
 using Core.Errors;
 using Core.Services;
-using Newtonsoft.Json;
 using Environment = Api.Services.Environment;
 
 namespace Api.Controllers;
@@ -59,7 +58,7 @@ public abstract class BaseController(AppSettings appSettings) : Controller
     private string CurrentUserId => GetClaim(CustomClaimTypes.UserId) ?? "";
     private string CurrentUserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
     
-    private TokenBunch[] UserBunches
+    private TokenBunchModel[] UserBunches
     {
         get
         {
@@ -68,13 +67,16 @@ public abstract class BaseController(AppSettings appSettings) : Controller
                 return [];
 
             if (value.StartsWith('{'))
-                return [JsonConvert.DeserializeObject<TokenBunch>(value)!];
+                return [JsonSerializer.Deserialize<TokenBunchModel>(value)!];
             
-            return JsonConvert.DeserializeObject<TokenBunch[]>(value) ?? [];
+            return JsonSerializer.Deserialize<TokenBunchModel[]>(value) ?? [];
         }
     }
 
-    protected IPrincipal Principal => new Principal(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches);
+    protected IPrincipal Principal => new Principal(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches.Select(ToCurrentBunch).ToArray());
+
+    private static CurrentBunch ToCurrentBunch(TokenBunchModel b) => 
+        new(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
 
     private string? GetClaim(string type) => User.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 

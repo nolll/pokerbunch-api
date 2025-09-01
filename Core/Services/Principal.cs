@@ -3,7 +3,7 @@ using Core.Entities;
 
 namespace Core.Services;
 
-public class Principal(string id, string userName, string displayName, bool isAdmin, TokenBunch[] userBunches)
+public class Principal(string id, string userName, string displayName, bool isAdmin, CurrentBunch[] userBunches)
     : IPrincipal
 {
     public string Id { get; } = id;
@@ -56,10 +56,8 @@ public class Principal(string id, string userName, string displayName, bool isAd
     private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
     private string GetPlayerId(string bunchId) => GetBunchById(bunchId).PlayerId;
 
-    public CurrentBunch GetBunchById(string id) => CreateCurrentBunch(userBunches.FirstOrDefault(o => o.Id == id));
-    public CurrentBunch GetBunchBySlug(string slug) => CreateCurrentBunch(userBunches.FirstOrDefault(o => o.Slug == slug));
+    public CurrentBunch GetBunchById(string id) => userBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
+    public CurrentBunch GetBunchBySlug(string slug) => userBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
 
-    private static CurrentBunch CreateCurrentBunch(TokenBunch? b) => b is null
-        ? new CurrentBunch("", "")
-        : new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, b.Role);
+    private static CurrentBunch CreateEmptyBunch() => new("", "");
 }

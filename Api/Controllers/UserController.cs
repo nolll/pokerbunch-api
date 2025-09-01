@@ -3,18 +3,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Api.Auth;
+using Api.Models;
 using Api.Models.CommonModels;
 using Api.Models.UserModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
-using Core.Entities;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 
 namespace Api.Controllers;
 
@@ -140,7 +140,7 @@ public class UserController(
     {
         var result = await login.Execute(new Login.Request(post.UserName, post.Password));
         
-        return result.Success && result.Data is not null
+        return result is { Success: true, Data: not null }
             ? new ObjectResult(CreateToken(result.Data)) 
             : Error(result.Error);
     }
@@ -174,8 +174,8 @@ public class UserController(
     private static string ToJson(List<Login.ResultBunch> bunchResults)
     {
         var tokenBunches = bunchResults.Select(ToTokenBunch).ToArray();
-        return JsonConvert.SerializeObject(tokenBunches);
+        return JsonSerializer.Serialize(tokenBunches);
     }
     
-    private static TokenBunch ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchSlug, b.BunchName, b.PlayerId, b.PlayerName, b.Role);
+    private static TokenBunchModel ToTokenBunch(Login.ResultBunch b) => new(b.BunchId, b.BunchSlug, b.BunchName, b.PlayerId, b.PlayerName, b.Role);
 }
