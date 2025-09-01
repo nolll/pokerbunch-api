@@ -39,8 +39,4 @@ public static class TestData
     public const string EventId = "1";
 
     public const string CashgameId = "1";
-
-    public static string? AdminToken { get; set; }
-    public static string? ManagerToken { get; set; }
-    public static string? UserToken { get; set; }
 }

@@ -1,11 +1,12 @@
-﻿using Core.Entities;
-using Core.Errors;
+﻿using Core.Errors;
+using Core.Services;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithPlayer : Arrange
 {
-    protected override Role Role => Role.Manager;
+    protected override bool CanSendTestEmail => false;
 
     [Test]
     public void ReturnsError()

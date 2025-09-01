@@ -8,9 +8,7 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class EditBunch(
-    IBunchRepository bunchRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository)
+    IBunchRepository bunchRepository)
     : UseCase<EditBunch.Request, EditBunch.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -24,16 +22,14 @@ public class EditBunch(
             return Error(new ValidationError($"Invalid timezone: {request.TimeZone}"));
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
-
-        if (!AccessControl.CanEditBunch(currentUser, currentPlayer))
+        
+        if (!request.Principal.CanEditBunch(bunch.Id))
             return Error(new AccessDeniedError());
 
         var postedBunch = CreateBunch(bunch, request, timezone);
         await bunchRepository.Update(postedBunch);
 
-        return Success(new Result(postedBunch, currentPlayer!));
+        return Success(new Result(postedBunch));
     }
 
     private static TimeZoneInfo? GetTimezone(string id)
@@ -59,7 +55,7 @@ public class EditBunch(
         new Currency(request.CurrencySymbol, request.CurrencyLayout));
 
     public class Request(
-        string userName,
+        IPrincipal principal,
         string slug,
         string description,
         string currencySymbol,
@@ -68,7 +64,7 @@ public class EditBunch(
         string houseRules,
         int defaultBuyin)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
         public string Description { get; } = description;
 
@@ -85,5 +81,5 @@ public class EditBunch(
         public int DefaultBuyin { get; } = defaultBuyin;
     }
 
-    public class Result(Bunch b, Player p) : BunchResult(b, p);
+    public class Result(Bunch b) : BunchResult(b);
 }

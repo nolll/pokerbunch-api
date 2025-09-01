@@ -6,14 +6,15 @@ namespace Tests.Integration.Tests;
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.Location)]
-public class LocationTests
+public class Suite07LocationTests
 {
     [Test]
     [Order(1)]
-    public async Task AddLocation()
+    public async Task Test01AddLocation()
     {
+        var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new LocationAddPostModel(TestData.BunchLocationName);
-        var result = await TestClient.Location.Add(TestData.ManagerToken, TestData.BunchId, parameters);
+        var result = await TestClient.Location.Add(managerToken, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Id, Is.EqualTo(TestData.BunchLocationId));
@@ -21,9 +22,10 @@ public class LocationTests
 
     [Test]
     [Order(2)]
-    public async Task ListLocations()
+    public async Task Test02ListLocations()
     {
-        var result = await TestClient.Location.List(TestData.ManagerToken, TestData.BunchId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Location.List(managerToken, TestData.BunchId);
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Count, Is.EqualTo(1));
         var location = result.Model?[0];
@@ -34,9 +36,10 @@ public class LocationTests
 
     [Test]
     [Order(3)]
-    public async Task GetLocation()
+    public async Task Test03GetLocation()
     {
-        var result = await TestClient.Location.Get(TestData.ManagerToken, TestData.BunchLocationId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Location.Get(managerToken, TestData.BunchLocationId);
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Id, Is.EqualTo(TestData.BunchLocationId));
         Assert.That(result.Model?.Name, Is.EqualTo(TestData.BunchLocationName));

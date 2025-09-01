@@ -10,8 +10,7 @@ namespace Core.UseCases;
 
 public class AddPlayer(
     IBunchRepository bunchRepository,
-    IPlayerRepository playerRepository,
-    IUserRepository userRepository)
+    IPlayerRepository playerRepository)
     : UseCase<AddPlayer.Request, AddPlayer.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -22,9 +21,8 @@ public class AddPlayer(
             return Error(new ValidationError(validator));
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
-        if (!AccessControl.CanAddPlayer(currentUser, currentPlayer))
+
+        if (!request.Principal.CanAddPlayer(bunch.Id))
             return Error(new AccessDeniedError());
 
         var existingPlayers = await playerRepository.List(bunch.Id);
@@ -38,9 +36,9 @@ public class AddPlayer(
         return Success(new Result(id));
     }
     
-    public class Request(string userName, string slug, string name)
+    public class Request(IPrincipal principal, string slug, string name)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Name can't be empty")]

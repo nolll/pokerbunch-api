@@ -1,10 +1,11 @@
-﻿using Core.Entities;
+﻿using Core.Services;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithAdmin : Arrange
 {
-    protected override Role Role => Role.Admin;
+    protected override bool CanSendTestEmail => true;
 
     [Test]
     public void MessageIsSent()

@@ -8,8 +8,6 @@ namespace Core.UseCases;
 
 public class EditCashgame(
     ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository,
     ILocationRepository locationRepository,
     IEventRepository eventRepository)
     : UseCase<EditCashgame.Request, EditCashgame.Result>
@@ -21,10 +19,8 @@ public class EditCashgame(
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.Id);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(cashgame.BunchId, currentUser.Id);
 
-        if (!AccessControl.CanEditCashgame(currentUser, currentPlayer))
+        if (!request.Principal.CanEditCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         var location = await locationRepository.Get(request.LocationId!);
@@ -45,9 +41,9 @@ public class EditCashgame(
         return Success(new Result());
     }
 
-    public class Request(string userName, string id, string? locationId, string? eventId)
+    public class Request(IPrincipal principal, string id, string? locationId, string? eventId)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string Id { get; } = id;
 
         [Required(ErrorMessage = "Please select a location")]

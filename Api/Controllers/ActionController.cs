@@ -38,19 +38,19 @@ public class ActionController(
 
     private async Task<ObjectResult> Buyin(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await buyin.Execute(new Buyin.Request(CurrentUserName, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
+        var result = await buyin.Execute(new Buyin.Request(Principal, cashgameId, post.PlayerId, post.Added, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
     private async Task<ObjectResult> Report(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await report.Execute(new Report.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await report.Execute(new Report.Request(Principal, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
     private async Task<ObjectResult> Cashout(string cashgameId, AddCashgameActionPostModel post)
     {
-        var result = await cashout.Execute(new Cashout.Request(CurrentUserName, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
+        var result = await cashout.Execute(new Cashout.Request(Principal, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
 
@@ -63,7 +63,7 @@ public class ActionController(
     public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
         var utcTimestamp = DateTime.SpecifyKind(post.Timestamp, DateTimeKind.Utc);
-        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(CurrentUserName, actionId, utcTimestamp, post.Stack, post.Added));
+        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(Principal, actionId, utcTimestamp, post.Stack, post.Added));
         return Model(result, () => new OkModel());
     }
 
@@ -75,7 +75,7 @@ public class ActionController(
     [Authorize]
     public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
-        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(CurrentUserName, actionId));
+        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(Principal, actionId));
         return Model(result, () => new OkModel());
     }
 

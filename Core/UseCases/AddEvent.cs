@@ -6,11 +6,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddEvent(
-    IBunchRepository bunchRepository,
-    IPlayerRepository playerRepository,
-    IUserRepository userRepository,
-    IEventRepository eventRepository)
+public class AddEvent(IEventRepository eventRepository)
     : UseCase<AddEvent.Request, AddEvent.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -19,23 +15,21 @@ public class AddEvent(
 
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
+        
+        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
 
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
-
-        if (!AccessControl.CanAddEvent(currentUser, currentPlayer))
+        if (!request.Principal.CanAddEvent(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
-        var e = new Event("", bunch.Id, request.Name);
+        var e = new Event("", bunchInfo.Id, request.Name);
         var id = await eventRepository.Add(e);
 
         return Success(new Result(id));
     }
     
-    public class Request(string userName, string slug, string name)
+    public class Request(IPrincipal principal, string slug, string name)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Name can't be empty")]

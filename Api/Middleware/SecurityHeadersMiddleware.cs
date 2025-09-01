@@ -6,21 +6,14 @@ using Microsoft.AspNetCore.Http;
 namespace Api.Middleware;
 
 [UsedImplicitly]
-public class SecurityHeadersMiddleware
+public class SecurityHeadersMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public SecurityHeadersMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     [UsedImplicitly]
     public async Task InvokeAsync(HttpContext httpContext)
     {
         SetDefaultSecurityHeaders(httpContext);
         SetCspSecurityHeaders(httpContext);
-        await _next(httpContext);
+        await next(httpContext);
     }
 
     private static void SetDefaultSecurityHeaders(HttpContext httpContext)
@@ -31,25 +24,16 @@ public class SecurityHeadersMiddleware
         httpContext.AddHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
     }
 
-    private static void SetCspSecurityHeaders(HttpContext httpContext)
-    {
-        var csp = GetCsp();
-        httpContext.AddHeader("Content-Security-Policy", csp);
-    }
+    private static void SetCspSecurityHeaders(HttpContext httpContext) => 
+        httpContext.AddHeader("Content-Security-Policy", GetCsp());
 
-    private static string GetCsp()
-    {
-        return string.Join("; ", GetDefaultCspValues());
-    }
+    private static string GetCsp() => string.Join("; ", GetDefaultCspValues());
 
-    private static IEnumerable<string> GetDefaultCspValues()
-    {
-        return new List<string>
-        {
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",
-            "img-src 'self' data:",
-            "style-src 'self' 'unsafe-inline'"
-        };
-    }
+    private static string[] GetDefaultCspValues() =>
+    [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline'",
+        "img-src 'self' data:",
+        "style-src 'self' 'unsafe-inline'"
+    ];
 }

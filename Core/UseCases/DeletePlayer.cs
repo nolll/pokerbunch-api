@@ -7,19 +7,15 @@ namespace Core.UseCases;
 
 public class DeletePlayer(
     IPlayerRepository playerRepository,
-    ICashgameRepository cashgameRepository,
-    IUserRepository userRepository,
-    IBunchRepository bunchRepository)
+    ICashgameRepository cashgameRepository)
     : UseCase<DeletePlayer.Request, DeletePlayer.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = await playerRepository.Get(request.PlayerId);
-        var bunch = await bunchRepository.Get(player.BunchId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
-        if (!AccessControl.CanDeletePlayer(currentUser, currentPlayer))
+        var bunchInfo = request.Principal.GetBunchById(player.BunchId);
+        if (!request.Principal.CanDeletePlayer(player.BunchId))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);
@@ -30,12 +26,12 @@ public class DeletePlayer(
 
         await playerRepository.Delete(request.PlayerId);
 
-        return Success(new Result(bunch.Slug, request.PlayerId));
+        return Success(new Result(bunchInfo.Slug, request.PlayerId));
     }
     
-    public class Request(string userName, string playerId)
+    public class Request(IPrincipal principal, string playerId)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string PlayerId { get; } = playerId;
     }
 

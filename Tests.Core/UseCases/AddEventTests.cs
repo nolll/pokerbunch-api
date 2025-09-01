@@ -1,6 +1,8 @@
+using Core.Entities;
 using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -11,7 +13,8 @@ public class AddEventTests : TestBase
     {
         const string addedEventName = "added event";
 
-        var request = new AddEvent.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
+        var request = new AddEvent.Request(new PrincipalInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
         Assert.That(Deps.Event.Added?.Name, Is.EqualTo(addedEventName));
@@ -21,16 +24,12 @@ public class AddEventTests : TestBase
     public async Task AddEvent_InvalidName_ReturnsValidationError()
     {
         const string addedEventName = "";
-
-        var request = new AddEvent.Request(TestData.UserA.UserName, TestData.BunchA.Slug, addedEventName);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
+        var request = new AddEvent.Request(new PrincipalInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
     }
 
-    private AddEvent Sut => new(
-        Deps.Bunch,
-        Deps.Player,
-        Deps.User,
-        Deps.Event);
+    private AddEvent Sut => new(Deps.Event);
 }

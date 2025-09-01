@@ -1,5 +1,7 @@
-﻿using Core.UseCases;
+﻿using Core.Entities;
+using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -41,13 +43,12 @@ class CashgameListTests : TestBase
     
     private CashgameList.Request CreateRequest(int? year = null)
     {
-        return new CashgameList.Request(TestData.UserNameA, TestData.SlugA, year);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
+        return new CashgameList.Request(new PrincipalInTest(canListCashgames: true, currentBunch: currentBunch), TestData.SlugA, year);
     }
 
     private CashgameList Sut => new(
-        Deps.Bunch,
         Deps.Cashgame,
-        Deps.User,
         Deps.Player,
         Deps.Location);
 }

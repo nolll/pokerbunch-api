@@ -7,10 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class Report(
-    ICashgameRepository cashgameRepository,
-    IPlayerRepository playerRepository,
-    IUserRepository userRepository)
+public class Report(ICashgameRepository cashgameRepository)
     : UseCase<Report.Request, Report.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -20,9 +17,7 @@ public class Report(
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.CashgameId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(cashgame.BunchId, currentUser.Id);
-        if (!AccessControl.CanEditCashgameActionsFor(request.PlayerId, currentUser, currentPlayer))
+        if (!request.Principal.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
             return Error(new AccessDeniedError());
 
         var checkpoint = Checkpoint.Create(
@@ -38,9 +33,14 @@ public class Report(
         return Success(new Result());
     }
     
-    public class Request(string userName, string cashgameId, string playerId, int stack, DateTime currentTime)
+    public class Request(
+        IPrincipal principal,
+        string cashgameId,
+        string playerId,
+        int stack,
+        DateTime currentTime)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string CashgameId { get; } = cashgameId;
         public string PlayerId { get; } = playerId;
 

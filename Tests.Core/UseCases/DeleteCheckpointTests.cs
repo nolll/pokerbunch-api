@@ -1,5 +1,7 @@
+using Core.Entities;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -8,7 +10,10 @@ public class DeleteCheckpointTests : TestBase
     [Test]
     public async Task DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues()
     {
-        var request = new DeleteCheckpoint.Request(TestData.ManagerUser.UserName, TestData.ReportCheckpointId);
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
+        var request = new DeleteCheckpoint.Request(
+            new PrincipalInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
+            TestData.ReportCheckpointId);
         var result = await Sut.Execute(request);
 
         var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
@@ -23,7 +28,10 @@ public class DeleteCheckpointTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var request = new DeleteCheckpoint.Request(TestData.ManagerUser.UserName, "12");
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
+        var request =
+            new DeleteCheckpoint.Request(new PrincipalInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
+                "12");
         var result = await Sut.Execute(request);
 
         var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
@@ -33,9 +41,5 @@ public class DeleteCheckpointTests : TestBase
         Assert.That(result.Data?.GameIsRunning, Is.True);
     }
 
-    private DeleteCheckpoint Sut => new(
-        Deps.Bunch,
-        Deps.Cashgame,
-        Deps.User,
-        Deps.Player);
+    private DeleteCheckpoint Sut => new(Deps.Cashgame);
 }

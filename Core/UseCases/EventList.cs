@@ -7,27 +7,22 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class EventList(
-    IBunchRepository bunchRepository,
     IEventRepository eventRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository,
     ILocationRepository locationRepository)
     : UseCase<EventList.Request, EventList.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
+        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
 
-        if (!AccessControl.CanListEvents(user, player))
+        if (!request.Principal.CanListEvents(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
-        var events = await eventRepository.List(bunch.Id);
+        var events = await eventRepository.List(bunchInfo.Id);
         var locationIds = events.Select(o => o.LocationId).Where(o => o != null).Distinct().ToList();
         var locations = await locationRepository.List(locationIds!);
 
-        var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunch.Slug)).ToList();
+        var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunchInfo.Slug)).ToList();
 
         return Success(new Result(eventItems));
     }
@@ -43,9 +38,9 @@ public class EventList(
             : new Event(e.Id, slug, e.Name);
     }
 
-    public class Request(string userName, string slug)
+    public class Request(IPrincipal principal, string slug)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
     }
 

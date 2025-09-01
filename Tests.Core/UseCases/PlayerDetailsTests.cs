@@ -1,5 +1,7 @@
-﻿using Core.UseCases;
+﻿using Core.Services;
+using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -8,7 +10,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_DisplayNameIsSet()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdA));
 
         Assert.That(result.Data?.DisplayName, Is.EqualTo(TestData.PlayerNameA));
     }
@@ -16,7 +18,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_DeleteUrlIsSet()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdA));
 
         Assert.That(result.Data?.PlayerId, Is.EqualTo("1"));
     }
@@ -24,7 +26,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithoutUser_AvatarUrlIsEmpty()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdD));
 
         Assert.That(result.Data?.AvatarUrl, Is.EqualTo(""));
     }
@@ -32,7 +34,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithUser_AvatarUrlIsSet()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdA));
 
         const string expected = "https://gravatar.com/avatar/0796c9df772de3f82c0c89377330471b?s=100&d=blank";
         Assert.That(result.Data?.AvatarUrl, Is.EqualTo(expected));
@@ -41,7 +43,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithoutUser_UserUrlIsNull()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdD));
 
         Assert.That(result.Data?.UserName, Is.Null);
     }
@@ -49,7 +51,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithUser_UserUrlIsSet()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdA));
 
         Assert.That(result.Data?.UserName, Is.EqualTo("user-name-a"));
     }
@@ -57,7 +59,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithoutUser_IsUserIsFalse()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdD));
 
         Assert.That(result.Data?.IsUser, Is.False);
     }
@@ -65,7 +67,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithUser_IsUserIsTrue()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true), TestData.PlayerIdA));
 
         Assert.That(result.Data?.IsUser, Is.True);
     }
@@ -73,7 +75,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithNormalUser_CanDeleteIsFalse()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true, canDeletePlayer: false), TestData.PlayerIdA));
 
         Assert.That(result.Data?.CanDelete, Is.False);
     }
@@ -81,7 +83,7 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithManagerAndPlayerHasNotPlayedGames_CanDeleteIsTrue()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameC, TestData.PlayerIdD));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true, canDeletePlayer: true), TestData.PlayerIdD));
 
         Assert.That(result.Data?.CanDelete, Is.True);
     }
@@ -89,14 +91,14 @@ class PlayerDetailsTests : TestBase
     [Test]
     public async Task PlayerDetails_WithManagerAndPlayerHasPlayedGames_CanDeleteIsFalse()
     {
-        var result = await Sut.Execute(CreateRequest(TestData.UserNameA, TestData.PlayerIdA));
+        var result = await Sut.Execute(CreateRequest(new PrincipalInTest(canSeePlayer: true, canDeletePlayer: true), TestData.PlayerIdA));
 
         Assert.That(result.Data?.CanDelete, Is.False);
     }
 
-    private static GetPlayer.Request CreateRequest(string userName, string playerId)
+    private static GetPlayer.Request CreateRequest(IPrincipal principal, string playerId)
     {
-        return new GetPlayer.Request(userName, playerId);
+        return new GetPlayer.Request(principal, playerId);
     }
 
     private GetPlayer Sut => new(

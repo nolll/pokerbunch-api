@@ -1,25 +1,23 @@
 ﻿using Core.Errors;
-using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
 
-public class ClearCache(ICache cache, IUserRepository userRepository) : UseCase<ClearCache.Request, ClearCache.Result>
+public class ClearCache(ICache cache) : UseCase<ClearCache.Request, ClearCache.Result>
 {
-    protected override async Task<UseCaseResult<Result>> Work(Request request)
+    protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        var user = await userRepository.GetByUserName(request.UserName);
-        if (!AccessControl.CanClearCache(user))
-            return Error(new AccessDeniedError());
+        if (!request.Principal.CanClearCache)
+            return Task.FromResult(Error(new AccessDeniedError()));
 
         cache.ClearAll();
 
-        return Success(new Result());
+        return Task.FromResult(Success(new Result()));
     }
 
-    public class Request(string userName)
+    public class Request(IPrincipal principal)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
     }
 
     public class Result

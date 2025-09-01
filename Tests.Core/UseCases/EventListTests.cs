@@ -1,6 +1,8 @@
 ﻿using Core.Entities;
+using Core.Services;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -42,14 +44,12 @@ class EventListTests : TestBase
     }
 
     private EventList Sut => new(
-        Deps.Bunch,
         Deps.Event,
-        Deps.User,
-        Deps.Player,
         Deps.Location);
 
     private EventList.Request CreateInput()
     {
-        return new EventList.Request(TestData.UserNameA, TestData.SlugA);
+        var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
+        return new EventList.Request(new PrincipalInTest(canListEvents: true, currentBunch: currentBunch), TestData.SlugA);
     }
 }

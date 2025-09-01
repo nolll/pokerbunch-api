@@ -4,33 +4,27 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class CurrentCashgames(
-    IUserRepository userRepository,
-    IBunchRepository bunchRepository,
-    ICashgameRepository cashgameRepository,
-    IPlayerRepository playerRepository)
+public class CurrentCashgames(ICashgameRepository cashgameRepository)
     : UseCase<CurrentCashgames.Request, CurrentCashgames.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(bunch.Id, user.Id);
-        if (!AccessControl.CanListCurrentGames(user, player))
+        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
+        if (!request.Principal.CanListCurrentGames(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
-        var cashgame = await cashgameRepository.GetRunning(bunch.Id);
+        var cashgame = await cashgameRepository.GetRunning(bunchInfo.Id);
 
         var gameList = new List<Game>();
         if (cashgame != null)
-            gameList.Add(new Game(bunch.Slug, cashgame.Id));
+            gameList.Add(new Game(bunchInfo.Slug, cashgame.Id));
 
         return Success(new Result(gameList));
     }
     
-    public class Request(string userName, string slug)
+    public class Request(IPrincipal principal, string slug)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string Slug { get; } = slug;
     }
 

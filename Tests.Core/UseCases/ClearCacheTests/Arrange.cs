@@ -1,5 +1,4 @@
-using Core.Entities;
-using Core.Repositories;
+using Core.Services;
 using Core.UseCases;
 using Tests.Core.TestClasses;
 
@@ -8,19 +7,11 @@ namespace Tests.Core.UseCases.ClearCacheTests;
 public abstract class Arrange : UseCaseTest<ClearCache>
 {
     protected UseCaseResult<ClearCache.Result>? Result;
-
-    protected string UserName = "user-name-1";
-    protected abstract Role Role { get; }
-
-    protected override void Setup()
-    {
-        var user = new UserInTest(globalRole: Role);
-
-        Mock<IUserRepository>().Setup(o => o.GetByUserName(UserName)).Returns(Task.FromResult<User>(user));
-    }
+    
+    protected abstract bool CanClearCache { get; }
 
     protected override async Task ExecuteAsync()
     {
-        Result = await Sut.Execute(new ClearCache.Request(UserName));
+        Result = await Sut.Execute(new ClearCache.Request(new PrincipalInTest(canClearCache: CanClearCache)));
     }
 }

@@ -23,7 +23,7 @@ public class LocationController(
     [Authorize]
     public async Task<ObjectResult> Get(string locationId)
     {
-        var result = await getLocation.Execute(new GetLocation.Request(CurrentUserName, locationId));
+        var result = await getLocation.Execute(new GetLocation.Request(Principal, locationId));
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 
@@ -35,7 +35,7 @@ public class LocationController(
     [Authorize]
     public async Task<ObjectResult> GetList(string bunchId)
     {
-        var result = await getLocationList.Execute(new GetLocationList.Request(CurrentUserName, bunchId));
+        var result = await getLocationList.Execute(new GetLocationList.Request(Principal, bunchId));
         return Model(result, () => result.Data?.Locations.Select(o => new LocationModel(o)));
     }
 
@@ -47,7 +47,7 @@ public class LocationController(
     [Authorize]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
-        var result = await addLocation.Execute(new AddLocation.Request(CurrentUserName, bunchId, post.Name));
+        var result = await addLocation.Execute(new AddLocation.Request(Principal, bunchId, post.Name));
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 }

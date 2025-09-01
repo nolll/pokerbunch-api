@@ -7,11 +7,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class EditCheckpoint(
-    IBunchRepository bunchRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository,
-    ICashgameRepository cashgameRepository)
+public class EditCheckpoint(ICashgameRepository cashgameRepository)
     : UseCase<EditCheckpoint.Request, EditCheckpoint.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -22,11 +18,8 @@ public class EditCheckpoint(
 
         var cashgame = await cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var currentUser = await userRepository.GetByUserName(request.UserName);
-        var currentPlayer = await playerRepository.Get(bunch.Id, currentUser.Id);
 
-        if (!AccessControl.CanEditCheckpoint(currentUser, currentPlayer))
+        if (!request.Principal.CanEditCashgameAction(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         var postedCheckpoint = Checkpoint.Create(
@@ -44,9 +37,14 @@ public class EditCheckpoint(
         return Success(new Result(cashgame.Id, existingCheckpoint.PlayerId));
     }
     
-    public class Request(string userName, string checkpointId, DateTime timestamp, int stack, int? amount)
+    public class Request(
+        IPrincipal principal,
+        string checkpointId,
+        DateTime timestamp,
+        int stack,
+        int? amount)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string CheckpointId { get; } = checkpointId;
         public DateTime Timestamp { get; } = timestamp;
 

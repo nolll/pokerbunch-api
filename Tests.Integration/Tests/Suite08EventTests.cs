@@ -6,14 +6,15 @@ namespace Tests.Integration.Tests;
 [TestFixture]
 [NonParallelizable]
 [Order(TestOrder.Event)]
-public class EventTests
+public class Suite08EventTests
 {
     [Test]
     [Order(1)]
-    public async Task AddEvent()
+    public async Task Test01AddEvent()
     {
+        var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new EventAddPostModel(TestData.EventName);
-        var result = await TestClient.Event.Add(TestData.ManagerToken, TestData.BunchId, parameters);
+        var result = await TestClient.Event.Add(managerToken, TestData.BunchId, parameters);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Id, Is.EqualTo(TestData.EventId));
@@ -21,9 +22,10 @@ public class EventTests
 
     [Test]
     [Order(2)]
-    public async Task ListEvents()
+    public async Task Test02ListEvents()
     {
-        var result = await TestClient.Event.List(TestData.ManagerToken, TestData.BunchId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Event.List(managerToken, TestData.BunchId);
 
         Assert.That(result.Model, Is.Not.Null);
         Assert.That(result.Model?.Count, Is.EqualTo(1));
@@ -35,9 +37,10 @@ public class EventTests
 
     [Test]
     [Order(3)]
-    public async Task GetEvent()
+    public async Task Test03GetEvent()
     {
-        var result = await TestClient.Event.Get(TestData.ManagerToken, TestData.EventId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await TestClient.Event.Get(managerToken, TestData.EventId);
 
         Assert.That(result.Success, Is.True);
         Assert.That(result.Model, Is.Not.Null);

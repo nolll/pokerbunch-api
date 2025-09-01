@@ -1,12 +1,17 @@
-using Core.Entities;
 using Core.Errors;
+using Core.Services;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithPlayer : Arrange
 {
-    protected override Role Role => Role.Player;
+    protected override bool CanClearCache => false;
 
+    protected override void Setup()
+    {
+    }
+    
     [Test]
     public void ReturnsError()
     {

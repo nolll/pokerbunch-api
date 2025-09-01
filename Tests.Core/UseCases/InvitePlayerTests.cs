@@ -1,6 +1,8 @@
-﻿using Core.Errors;
+﻿using Core.Entities;
+using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -46,13 +48,12 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
 
     private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)
     {
-        return new InvitePlayer.Request(TestData.UserNameC, TestData.PlayerIdA, email, TestData.TestUrl, "https://pokerbunch.com/fakejoin/{0}", "https://pokerbunch.com/fakejoin/{0}/{1}");
+        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
+        return new InvitePlayer.Request(new PrincipalInTest(canInvitePlayer: true, currentBunch: currentBunch), TestData.PlayerIdA, email, TestData.TestUrl, "https://pokerbunch.com/fakejoin/{0}", "https://pokerbunch.com/fakejoin/{0}/{1}");
     }
 
     private InvitePlayer Sut => new(
-        Deps.Bunch,
         Deps.Player,
         Deps.EmailSender,
-        Deps.User,
         Deps.InvitationCodeCreator);
 }

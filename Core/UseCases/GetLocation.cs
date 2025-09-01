@@ -5,27 +5,22 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class GetLocation(
-    ILocationRepository locationRepository,
-    IUserRepository userRepository,
-    IPlayerRepository playerRepository,
-    IBunchRepository bunchRepository)
+    ILocationRepository locationRepository)
     : UseCase<GetLocation.Request, GetLocation.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var location = await locationRepository.Get(request.LocationId);
-        var bunch = await bunchRepository.Get(location.BunchId);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = await playerRepository.Get(location.BunchId, user.Id);
+        var bunchInfo = request.Principal.GetBunchById(location.BunchId);
 
-        return !AccessControl.CanSeeLocation(user, player) 
+        return !request.Principal.CanSeeLocation(location.BunchId) 
             ? Error(new AccessDeniedError())
-            : Success(new Result(location.Id, location.Name, bunch.Slug));
+            : Success(new Result(location.Id, location.Name, bunchInfo.Slug));
     }
 
-    public class Request(string userName, string locationId)
+    public class Request(IPrincipal principal, string locationId)
     {
-        public string UserName { get; } = userName;
+        public IPrincipal Principal { get; } = principal;
         public string LocationId { get; } = locationId;
     }
 
