@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Api.Urls.SiteUrls;
 
 public class RouteReplace
@@ -12,7 +14,6 @@ public class RouteReplace
     }
 
     public static RouteReplace ActionId(string actionId) => new(nameof(actionId), actionId);
-    public static RouteReplace AppId(string appId) => new(nameof(appId), appId);
     public static RouteReplace BunchId(string bunchId) => new(nameof(bunchId), bunchId);
     public static RouteReplace CashgameId(string cashgameId) => new(nameof(cashgameId), cashgameId);
     public static RouteReplace Code(string code) => new(nameof(code), code);
@@ -25,18 +26,8 @@ public class RouteReplace
 
 public static class RouteParams
 {
-    public static string Replace(string format, params RouteReplace[] routeReplaces)
-    {
-        var result = format;
-        foreach (var rp in routeReplaces)
-        {
-            result = Replace(result, $"{{{rp.Pattern}}}", rp.Value);
-        }
-        return result;
-    }
+    public static string Replace(string format, params RouteReplace[] routeReplaces) => 
+        routeReplaces.Aggregate(format, (current, rp) => Replace(current, $"{{{rp.Pattern}}}", rp.Value));
 
-    private static string Replace(string format, string key, string value)
-    {
-        return format.Replace(key, value);
-    }
+    private static string Replace(string format, string key, string value) => format.Replace(key, value);
 }

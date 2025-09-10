@@ -40,14 +40,8 @@ public abstract class BaseController(AppSettings appSettings) : Controller
 
                 return User.Identity.Name;
             }
-                
-            var env = new Environment(Request.Host.Host);
-            return AppSettings.Auth.Override.Enabled switch
-            {
-                true when env.IsDevModeAdmin => AppSettings.Auth.Override.AdminUserName,
-                true when env.IsDevModePlayer => AppSettings.Auth.Override.PlayerUserName,
-                _ => throw new PokerBunchException("Auth failed: Not authenticated")
-            };
+
+            throw new PokerBunchException("Auth failed: Not authenticated");
         }
     }
 

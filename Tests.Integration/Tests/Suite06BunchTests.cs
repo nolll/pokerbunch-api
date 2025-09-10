@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Core;
+using FluentAssertions;
 
 namespace Tests.Integration.Tests;
 
@@ -49,13 +50,17 @@ public class Suite06BunchTests
         var inviteResult = await TestClient.Player.Invite(managerToken, TestData.UserPlayerId, inviteParameters);
         var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? "";
         var verificationCode = GetVerificationCode(lastMessageBody);
-        Assert.That(inviteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(verificationCode, Is.Not.Null);
+        var invitationUrl1 = GetInvitationUrl1(lastMessageBody);
+        var invitationUrl2 = GetInvitationUrl2(lastMessageBody);
+        inviteResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        verificationCode.Should().NotBeNull();
+        invitationUrl1.Should().Be($"https://localhost:9001/bunches/bunch-1/join/{verificationCode}");
+        invitationUrl2.Should().Be("https://localhost:9001/bunches/bunch-1/join");
 
         var userToken = await LoginHelper.GetUserToken();
         var joinParameters = new JoinBunchPostModel(verificationCode);
         var joinResult = await TestClient.Bunch.Join(userToken, TestData.BunchId, joinParameters);
-        Assert.That(joinResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        joinResult.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Test]
@@ -162,9 +167,21 @@ public class Suite06BunchTests
         Assert.That(result.Model?.Count(), Is.EqualTo(0));
     }
 
-    private string GetVerificationCode(string messageBody)
+    private static string GetVerificationCode(string messageBody)
     {
         var regex = new Regex("verification code: (.+)");
+        return regex.Match(messageBody).Groups[1].Value.Trim();
+    }
+    
+    private static string GetInvitationUrl1(string messageBody)
+    {
+        var regex = new Regex("invitation: (.+)\\.");
+        return regex.Match(messageBody).Groups[1].Value.Trim();
+    }
+    
+    private static string GetInvitationUrl2(string messageBody)
+    {
+        var regex = new Regex("instead, (.+),");
         return regex.Match(messageBody).Groups[1].Value.Trim();
     }
 
