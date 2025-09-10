@@ -50,12 +50,12 @@ public class Suite06BunchTests
         var inviteResult = await TestClient.Player.Invite(managerToken, TestData.UserPlayerId, inviteParameters);
         var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? "";
         var verificationCode = GetVerificationCode(lastMessageBody);
-        var invitationUrl1 = GetInvitationUrl1(lastMessageBody);
-        var invitationUrl2 = GetInvitationUrl2(lastMessageBody);
+        var invitationUrl1 = GetRelativeInvitationUrl1(lastMessageBody);
+        var invitationUrl2 = GetRelativeInvitationUrl2(lastMessageBody);
         inviteResult.StatusCode.Should().Be(HttpStatusCode.OK);
         verificationCode.Should().NotBeNull();
-        invitationUrl1.Should().Be($"https://localhost:9001/bunches/bunch-1/join/{verificationCode}");
-        invitationUrl2.Should().Be("https://localhost:9001/bunches/bunch-1/join");
+        invitationUrl1.Should().Be($"/bunches/bunch-1/join/{verificationCode}");
+        invitationUrl2.Should().Be("/bunches/bunch-1/join");
 
         var userToken = await LoginHelper.GetUserToken();
         var joinParameters = new JoinBunchPostModel(verificationCode);
@@ -167,23 +167,19 @@ public class Suite06BunchTests
         Assert.That(result.Model?.Count(), Is.EqualTo(0));
     }
 
-    private static string GetVerificationCode(string messageBody)
-    {
-        var regex = new Regex("verification code: (.+)");
-        return regex.Match(messageBody).Groups[1].Value.Trim();
-    }
-    
-    private static string GetInvitationUrl1(string messageBody)
-    {
-        var regex = new Regex("invitation: (.+)\\.");
-        return regex.Match(messageBody).Groups[1].Value.Trim();
-    }
-    
-    private static string GetInvitationUrl2(string messageBody)
-    {
-        var regex = new Regex("instead, (.+),");
-        return regex.Match(messageBody).Groups[1].Value.Trim();
-    }
+    private static string GetVerificationCode(string messageBody) => 
+        GetMatch(messageBody, new("verification code: (.+)"));
+
+    private static string GetRelativeInvitationUrl1(string messageBody) => 
+        GetRelativeInvitationUrl(messageBody, new("invitation: (.+)\\."));
+
+    private static string GetRelativeInvitationUrl2(string messageBody) => 
+        GetRelativeInvitationUrl(messageBody, new("instead, (.+),"));
+
+    private static string GetRelativeInvitationUrl(string messageBody, Regex regex) => 
+        new Uri(regex.Match(messageBody).Groups[1].Value.Trim()).AbsolutePath;
+
+    private static string GetMatch(string messageBody, Regex regex) => regex.Match(messageBody).Groups[1].Value.Trim();
 
     private async Task AddPlayer(string? token, string playerName)
     {
