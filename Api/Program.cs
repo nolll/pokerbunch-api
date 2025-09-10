@@ -27,6 +27,8 @@ using Api.Extensions.Swagger;
 using Microsoft.OpenApi.Models;
 using System.IO;
 using System.Reflection;
+using Api;
+using Api.Controllers;
 using Api.Middleware;
 using Api.Routes;
 
@@ -224,10 +226,11 @@ else
 }
 
 app.MapOpenApi();
-//app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/openapi/v1.json", "Version 1"); });
 
 app.UseAuthentication();
+app.UseAuthorization();
+app.MapAdminEndpoints();
 app.UseMvc();
 
 app.Run();
