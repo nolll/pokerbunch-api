@@ -5,6 +5,7 @@ using Api.Settings;
 using Core.Errors;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -18,12 +19,11 @@ public class ActionController(
     DeleteCheckpoint deleteCheckpoint)
     : BaseController(appSettings)
 {
-    /// <summary>
-    /// Add an action to a cashgame
-    /// </summary>
     [Route(ApiRoutes.Action.Add)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Add cashgame action")]
+    [EndpointDescription("Add an action to a cashgame")]
     public async Task<ObjectResult> Add(string cashgameId, [FromBody] AddCashgameActionPostModel post)
     {
         return post.Type switch
@@ -53,26 +53,23 @@ public class ActionController(
         var result = await cashout.Execute(new Cashout.Request(Principal, cashgameId, post.PlayerId, post.Stack, DateTime.UtcNow));
         return Model(result, () => new OkModel());
     }
-
-    /// <summary>
-    /// Update an action
-    /// </summary>
+    
     [Route(ApiRoutes.Action.Update)]
     [HttpPut]
     [Authorize]
+    [EndpointSummary("Update cashgame action")]
     public async Task<ObjectResult> UpdateAction(string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
     {
         var utcTimestamp = DateTime.SpecifyKind(post.Timestamp, DateTimeKind.Utc);
         var result = await editCheckpoint.Execute(new EditCheckpoint.Request(Principal, actionId, utcTimestamp, post.Stack, post.Added));
         return Model(result, () => new OkModel());
     }
-
-    /// <summary>
-    /// Delete an action
-    /// </summary>
+    
     [Route(ApiRoutes.Action.Delete)]
     [HttpDelete]
     [Authorize]
+    [EndpointSummary("Delete cashgame action")]
+    [EndpointDescription("Remove an action from a cashgame")]
     public async Task<ObjectResult> DeleteAction(string cashgameId, string actionId)
     {
         var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(Principal, actionId));

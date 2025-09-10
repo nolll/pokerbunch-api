@@ -7,6 +7,7 @@ using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -21,12 +22,10 @@ public class BunchController(
     JoinBunch joinBunch)
     : BaseController(appSettings)
 {
-    /// <summary>
-    /// Get a bunch
-    /// </summary>
     [Route(ApiRoutes.Bunch.Get)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("Get bunch")]
     public async Task<ObjectResult> Get(string bunchId)
     {
         var request = new GetBunch.Request(Principal, bunchId);
@@ -34,13 +33,11 @@ public class BunchController(
         BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return Model(result, CreateModel);
     }
-
-    /// <summary>
-    /// Update a bunch
-    /// </summary>
+    
     [Route(ApiRoutes.Bunch.Update)]
     [HttpPut]
     [Authorize]
+    [EndpointSummary("Update bunch")]
     public async Task<ObjectResult> Update(string bunchId, [FromBody] UpdateBunchPostModel post)
     {
         var request = new EditBunch.Request(Principal, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
@@ -48,10 +45,8 @@ public class BunchController(
         BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return Model(result, CreateModel);
     }
-
-    /// <summary>
-    /// List bunches
-    /// </summary>
+    
+    [EndpointSummary("List bunches")]
     [Route(ApiRoutes.Bunch.List)]
     [HttpGet]
     [Authorize]
@@ -62,26 +57,22 @@ public class BunchController(
         return Model(result, CreateModel);
         IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
     }
-
-    /// <summary>
-    /// List your bunches
-    /// </summary>
+    
     [Route(ApiRoutes.Bunch.ListForCurrentUser)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("List your bunches")]
     public async Task<ObjectResult> Bunches()
     {
         var result = await getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
         return Model(result, CreateModel);
         IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
     }
-
-    /// <summary>
-    /// Add a bunch
-    /// </summary>
+    
     [Route(ApiRoutes.Bunch.Add)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Add bunch")]
     public async Task<ObjectResult> Add([FromBody] AddBunchPostModel post)
     {
         var request = new AddBunch.Request(CurrentUserName, post.Name, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone);
@@ -89,13 +80,11 @@ public class BunchController(
         return Model(result, CreateModel);
         BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
     }
-
-    /// <summary>
-    /// Join a bunch
-    /// </summary>
+    
     [Route(ApiRoutes.Bunch.Join)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Join bunch")]
     public async Task<ObjectResult> Join(string bunchId, [FromBody] JoinBunchPostModel post)
     {
         var request = new JoinBunch.Request(CurrentUserName, bunchId, post.Code);

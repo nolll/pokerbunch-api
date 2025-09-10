@@ -4,6 +4,7 @@ using Api.Routes;
 using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -16,24 +17,20 @@ public class AdminController(
     RequireAppsettingsAccess requireAppsettingsAccess)
     : BaseController(appSettings)
 {
-    /// <summary>
-    /// Clear cache
-    /// </summary>
     [Route(ApiRoutes.Admin.ClearCache)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Clear application cache")]
     public async Task<ObjectResult> ClearCache()
     {
         var result = await clearCache.Execute(new ClearCache.Request(Principal));
         return Model(result, () => new MessageModel(result.Data?.Message));
     }
-
-    /// <summary>
-    /// Send test email
-    /// </summary>
+    
     [Route(ApiRoutes.Admin.SendEmail)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Send test email to administrators")]
     public async Task<ObjectResult> SendEmail()
     {
         var result = await testEmail.Execute(new TestEmail.Request(Principal));
@@ -42,6 +39,7 @@ public class AdminController(
 
     [Route(ApiRoutes.Version)]
     [HttpGet]
+    [EndpointSummary("Application version")]
     public ObjectResult Version() => Success(new VersionModel(AppSettings.Version));
 
     [Route(ApiRoutes.Settings)]

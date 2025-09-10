@@ -16,7 +16,7 @@ using Environment = Api.Services.Environment;
 
 namespace Api.Controllers;
 
-[UsedImplicitly]
+[ApiController]
 public abstract class BaseController(AppSettings appSettings) : Controller
 {
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");

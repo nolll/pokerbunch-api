@@ -172,30 +172,31 @@ builder.Services.AddAuthentication(x =>
         };
     });
 
-builder.Services.AddSwaggerGen(c =>
-{
-    var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-    var xmlFile = $"{assemblyName}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Poker Bunch Api", 
-        Description = "For access to protected endpoints, you will need a token from the [Login endpoints](#operations-User-post_login).",
-        Version = "v1"
-    });
-    c.IncludeXmlComments(xmlPath);
-    c.OperationFilter<AuthorizeCheckOperationFilter>();
-    c.CustomSchemaIds(SwaggerSchema.GetSwaggerTypeName);
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-});
+builder.Services.AddOpenApi();
+// builder.Services.AddSwaggerGen(c =>
+// {
+//     var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+//     var xmlFile = $"{assemblyName}.xml";
+//     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+//     c.SwaggerDoc("v1", new OpenApiInfo
+//     {
+//         Title = "Poker Bunch Api", 
+//         Description = "For access to protected endpoints, you will need a token from the [Login endpoints](#operations-User-post_login).",
+//         Version = "v1"
+//     });
+//     c.IncludeXmlComments(xmlPath);
+//     c.OperationFilter<AuthorizeCheckOperationFilter>();
+//     c.CustomSchemaIds(SwaggerSchema.GetSwaggerTypeName);
+//     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//     {
+//         In = ParameterLocation.Header,
+//         Description = "Token",
+//         Name = "Authorization",
+//         Type = SecuritySchemeType.Http,
+//         BearerFormat = "JWT",
+//         Scheme = "Bearer"
+//     });
+// });
 
 var app = builder.Build();
 
@@ -222,8 +223,9 @@ else
     app.UseMiddleware<ExceptionLoggingMiddleware>();
 }
 
-app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Version 1"); });
+app.MapOpenApi();
+//app.UseSwagger();
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/openapi/v1.json", "Version 1"); });
 
 app.UseAuthentication();
 app.UseMvc();

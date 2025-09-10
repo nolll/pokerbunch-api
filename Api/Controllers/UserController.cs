@@ -13,6 +13,7 @@ using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -30,12 +31,10 @@ public class UserController(
     ResetPassword resetPassword)
     : BaseController(appSettings)
 {
-    /// <summary>
-    /// Get a user
-    /// </summary>
     [Route(ApiRoutes.User.Get)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("Get user")]
     public async Task<ObjectResult> GetUser(string userName)
     {
         var result = await userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
@@ -50,25 +49,21 @@ public class UserController(
             : new UserModel(result.Data!)
         );
     }
-
-    /// <summary>
-    /// List users
-    /// </summary>
+    
     [Route(ApiRoutes.User.List)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("List users")]
     public async Task<ObjectResult> List()
     {
         var result = await userList.Execute(new UserList.Request(Principal));
         return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, urls)));
     }
-
-    /// <summary>
-    /// Update a user
-    /// </summary>
+    
     [Route(ApiRoutes.User.Update)]
     [HttpPut]
     [Authorize]
+    [EndpointSummary("Update user")]
     public async Task<ObjectResult> Update(string userName, [FromBody] UpdateUserPostModel post)
     {
         var updateRequest = new EditUser.Request(userName, post.DisplayName, post.RealName, post.Email);
@@ -79,63 +74,52 @@ public class UserController(
         var result = await userDetails.Execute(new UserDetails.Request(updateResult.Data!.UserName));
         return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
-
-    /// <summary>
-    /// Change password
-    /// </summary>
+    
     [Route(ApiRoutes.Profile.ChangePassword)]
     [HttpPut]
     [Authorize]
+    [EndpointSummary("Change password")]
     public async Task<ObjectResult> ChangePassword([FromBody] ChangePasswordPostModel post)
     {
         var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
         var result = await changePassword.Execute(request);
         return Model(result, () => new OkModel());
     }
-
-    /// <summary>
-    /// Reset password
-    /// </summary>
+    
     [Route(ApiRoutes.Profile.ResetPassword)]
     [HttpPost]
+    [EndpointSummary("Reset password")]
     public async Task<ObjectResult> ResetPassword([FromBody] ResetPasswordPostModel post)
     {
         var request = new ResetPassword.Request(post.Email, urls.Site.Login);
         var result = await resetPassword.Execute(request);
         return Model(result, () => new OkModel());
     }
-
-    /// <summary>
-    /// Add a user.
-    /// </summary>
+    
     [Route(ApiRoutes.User.Add)]
     [HttpPost]
+    [EndpointSummary("Add user")]
     public async Task<ObjectResult> Add([FromBody] AddUserPostModel post)
     {
         var result = await addUser.Execute(new AddUser.Request(post.UserName, post.DisplayName, post.Email, post.Password, urls.Site.Login));
         return Model(result, () => new OkModel());
     }
-
-    /// <summary>
-    /// Get the current user
-    /// </summary>
-    /// <returns>Returns the current user</returns>
+    
     [Route(ApiRoutes.Profile.Get)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("Get authenticated user")]
     public async Task<ObjectResult> Profile()
     {
         var result = await userDetails.Execute(new UserDetails.Request(CurrentUserName));
         return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
     
-    /// <summary>
-    /// Get an auth token
-    /// </summary>
-    /// <returns>A token that can be used for authentication</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route(ApiRoutes.Auth.Login)]
+    [EndpointSummary("Get an auth token")]
+    [EndpointDescription("Get a token that can bu used for authentication")]
     public async Task<ObjectResult> Login([FromBody] LoginPostModel post)
     {
         var result = await login.Execute(new Login.Request(post.UserName, post.Password));

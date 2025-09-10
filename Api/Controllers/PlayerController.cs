@@ -5,6 +5,7 @@ using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -19,36 +20,30 @@ public class PlayerController(
     InvitePlayer invitePlayer)
     : BaseController(appSettings)
 {
-    /// <summary>
-    /// Get a player
-    /// </summary>
     [Route(ApiRoutes.Player.Get)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("Get player")]
     public async Task<ObjectResult> Get(string playerId)
     {
         var result = await getPlayer.Execute(new GetPlayer.Request(Principal, playerId));
         return Model(result, () => result.Data is not null ? new PlayerModel(result.Data) : null);
     }
-
-    /// <summary>
-    /// List all players in a bunch
-    /// </summary>
+    
     [Route(ApiRoutes.Player.ListByBunch)]
     [HttpGet]
     [Authorize]
+    [EndpointSummary("List bunch players")]
     public async Task<ObjectResult> GetList(string bunchId)
     {
         var result = await getPlayerList.Execute(new GetPlayerList.Request(Principal, bunchId));
         return Model(result, () => result.Data?.Players.Select(o => new PlayerListItemModel(o)));
     }
-
-    /// <summary>
-    /// Add a player to a bunch
-    /// </summary>
+    
     [Route(ApiRoutes.Player.Add)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Add player to bunch")]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] PlayerAddPostModel post)
     {
         var result = await addPlayer.Execute(new AddPlayer.Request(Principal, bunchId, post.Name));
@@ -56,26 +51,22 @@ public class PlayerController(
             ? await Get(result.Data?.Id ?? "")
             : Error(result.Error);
     }
-
-    /// <summary>
-    /// Delete a player
-    /// </summary>
+    
     [Route(ApiRoutes.Player.Delete)]
     [HttpDelete]
     [Authorize]
+    [EndpointSummary("Delete player from bunch")]
     public async Task<ObjectResult> Delete(string playerId)
     {
         var request = new DeletePlayer.Request(Principal, playerId);
         var result = await deletePlayer.Execute(request);
         return Model(result, () => new PlayerDeletedModel(playerId));
     }
-
-    /// <summary>
-    /// Invite a player to a bunch
-    /// </summary>
+    
     [Route(ApiRoutes.Player.Invite)]
     [HttpPost]
     [Authorize]
+    [EndpointSummary("Invite player to bunch")]
     public async Task<ObjectResult> Invite(string playerId, [FromBody] PlayerInvitePostModel post)
     {
         var registerUrl = urls.Site.AddUser;
