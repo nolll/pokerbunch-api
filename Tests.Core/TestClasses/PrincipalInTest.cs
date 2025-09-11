@@ -4,6 +4,9 @@ using Core.Services;
 namespace Tests.Core.TestClasses;
 
 public class PrincipalInTest(
+    string? id = null,
+    string? userName = null,
+    string? displayName = null,
     bool canClearCache = false,
     bool canSendTestEmail = false,
     bool canSeeAppSettings = false,
@@ -35,6 +38,9 @@ public class PrincipalInTest(
     bool canEditCashgameActionsFor = false,
     CurrentBunch? currentBunch = null) : IPrincipal
 {
+    public string Id => id ?? "";
+    public string UserName => userName ?? "";
+    public string DisplayName => displayName ?? "";
     public bool CanClearCache => canClearCache;
     public bool CanSendTestEmail => canSendTestEmail;
     public bool CanSeeAppSettings => canSeeAppSettings;

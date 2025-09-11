@@ -5,26 +5,17 @@ using Microsoft.Extensions.Logging;
 namespace Api.Middleware;
 
 [UsedImplicitly]
-public class ExceptionLoggingMiddleware
+public class ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger)
 {
-    private readonly ILogger<ExceptionLoggingMiddleware> _logger;
-    private readonly RequestDelegate _next;
-
-    public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger)
-    {
-        _logger = logger;
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext httpContext)
     {
         try
         {
-            await _next(httpContext);
+            await next(httpContext);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            logger.LogError(ex, ex.Message);
             throw;
         }
     }

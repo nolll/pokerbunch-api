@@ -12,25 +12,23 @@ public class AuthWrapper(ClaimsPrincipal user)
 {
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
 
-    private string CurrentUserName
+    private string UserName
     {
         get
         {
             if (user.Identity is null)
                 throw new PokerBunchException("Auth failed: No identity");
 
-            if (user.Identity.IsAuthenticated)
-            {
-                if(user.Identity.Name is null)
-                    throw new PokerBunchException("Auth failed: No identity");
+            if (!user.Identity.IsAuthenticated)
+                throw new PokerBunchException("Auth failed: Not authenticated");
+            
+            if(user.Identity.Name is null)
+                throw new PokerBunchException("Auth failed: No identity");
 
-                if (IsTokenTooOld)
-                    throw new PokerBunchException("Token too old");
+            if (IsTokenTooOld)
+                throw new PokerBunchException("Token too old");
 
-                return user.Identity.Name;
-            }
-
-            throw new PokerBunchException("Auth failed: Not authenticated");
+            return user.Identity.Name;
         }
     }
 
@@ -38,8 +36,8 @@ public class AuthWrapper(ClaimsPrincipal user)
         DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(CustomClaimTypes.IssuedAt) ?? "0")) < TokenMinDate;
 
     private bool IsAdmin => GetBoolClaim(CustomClaimTypes.IsAdmin);
-    private string CurrentUserId => GetClaim(CustomClaimTypes.UserId) ?? "";
-    private string CurrentUserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
+    private string UserId => GetClaim(CustomClaimTypes.UserId) ?? "";
+    private string UserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
     
     private TokenBunchModel[] UserBunches
     {
@@ -56,7 +54,7 @@ public class AuthWrapper(ClaimsPrincipal user)
         }
     }
 
-    public IPrincipal Principal => new Principal(CurrentUserId, CurrentUserName, CurrentUserDisplayName, IsAdmin, UserBunches.Select(ToCurrentBunch).ToArray());
+    public IPrincipal Principal => new Principal(UserId, UserName, UserDisplayName, IsAdmin, UserBunches.Select(ToCurrentBunch).ToArray());
 
     private static CurrentBunch ToCurrentBunch(TokenBunchModel b)
     {

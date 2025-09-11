@@ -23,5 +23,9 @@ public static class Endpoints
         app.MapGet(ApiRoutes.Settings, SettingsHandler.Handle)
             .RequireAuthorization()
             .ExcludeFromDescription();
+
+        app.MapGet(ApiRoutes.User.Get, GetUserHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("GetUser");
     }
 }

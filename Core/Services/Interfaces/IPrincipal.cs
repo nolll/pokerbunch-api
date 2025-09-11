@@ -12,6 +12,9 @@ public interface IPrincipal
     bool CanSeeAppSettings { get; }
     bool CanListBunches { get; }
     bool CanListUsers { get; }
+    string Id { get; }
+    string UserName { get; }
+    string DisplayName { get; }
     bool CanEditCashgame(string bunchId);
     bool CanDeleteCashgame(string bunchId);
     bool CanSeeCashgame(string bunchId);

@@ -15,7 +15,6 @@ public static class ClearCacheHandler
     public static async Task<IResult> Handle(ClearCache clearCache, ClaimsPrincipal user)
     {
         var result = await clearCache.Execute(new ClearCache.Request(new AuthWrapper(user).Principal));
-        var model = ResultHandler.Model(result, () => new MessageModel(result.Data?.Message));
-        return model;
+        return ResultHandler.Model(result, () => new MessageModel(result.Data?.Message));
     }
 }
