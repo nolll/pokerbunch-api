@@ -14,7 +14,7 @@ public static class GetBunchHandler
     {
         var request = new GetBunch.Request(auth.Principal, bunchId);
         var result = await getBunch.Execute(request);
-        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return ResultHandler.Model(result, CreateModel);
+        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
     }
 }

@@ -63,5 +63,13 @@ public static class Endpoints
         app.MapGet(ApiRoutes.Bunch.ListForCurrentUser, GetBunchListForCurrentUserHandler.Handle)
             .RequireAuthorization()
             .WithSummary("List your bunches");
+
+        app.MapPost(ApiRoutes.Bunch.Add, AddBunchHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Add bunch");
+
+        app.MapPost(ApiRoutes.Bunch.Join, JoinBunchHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Join bunch");
     }
 }
