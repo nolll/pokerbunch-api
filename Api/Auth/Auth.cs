@@ -5,10 +5,11 @@ using Api.Models;
 using Core;
 using Core.Entities;
 using Core.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace Api.Auth;
 
-public class AuthWrapper(ClaimsPrincipal user)
+public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
 {
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
 
@@ -16,21 +17,23 @@ public class AuthWrapper(ClaimsPrincipal user)
     {
         get
         {
-            if (user.Identity is null)
+            if (HttpContextUser?.Identity is null)
                 throw new PokerBunchException("Auth failed: No identity");
 
-            if (!user.Identity.IsAuthenticated)
+            if (!HttpContextUser.Identity.IsAuthenticated)
                 throw new PokerBunchException("Auth failed: Not authenticated");
             
-            if(user.Identity.Name is null)
+            if(HttpContextUser.Identity.Name is null)
                 throw new PokerBunchException("Auth failed: No identity");
 
             if (IsTokenTooOld)
                 throw new PokerBunchException("Token too old");
 
-            return user.Identity.Name;
+            return HttpContextUser.Identity.Name;
         }
     }
+
+    private ClaimsPrincipal? HttpContextUser => httpContextAccessor.HttpContext?.User;
 
     private bool IsTokenTooOld => 
         DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(CustomClaimTypes.IssuedAt) ?? "0")) < TokenMinDate;
@@ -61,7 +64,7 @@ public class AuthWrapper(ClaimsPrincipal user)
         return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
     }
 
-    private string? GetClaim(string type) => user.Claims.FirstOrDefault(o => o.Type == type)?.Value;
+    private string? GetClaim(string type) => HttpContextUser?.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 
     private bool GetBoolClaim(string type)
     {

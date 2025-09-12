@@ -27,5 +27,19 @@ public static class Endpoints
         app.MapGet(ApiRoutes.User.Get, GetUserHandler.Handle)
             .RequireAuthorization()
             .WithSummary("GetUser");
+
+        app.MapPost(ApiRoutes.Action.Add, AddActionHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Add cashgame action")
+            .WithDescription("Add a player action to a cashgame");
+
+        app.MapPut(ApiRoutes.Action.Update, UpdateActionHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Update player action");
+
+        app.MapDelete(ApiRoutes.Action.Delete, DeleteActionHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Delete cashgame action")
+            .WithDescription("Remove a player action from a cashgame");
     }
 }

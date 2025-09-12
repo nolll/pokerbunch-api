@@ -9,9 +9,9 @@ namespace Api.Handlers;
 
 public static class SendEmailHandler
 {
-    public static async Task<IResult> Handle(TestEmail testEmail, ClaimsPrincipal user)
+    public static async Task<IResult> Handle(TestEmail testEmail, IAuth auth)
     {
-        var result = await testEmail.Execute(new TestEmail.Request(new AuthWrapper(user).Principal));
+        var result = await testEmail.Execute(new TestEmail.Request(auth.Principal));
         return ResultHandler.Model(result, () => new MessageModel(result.Data?.Message));
     }
 }

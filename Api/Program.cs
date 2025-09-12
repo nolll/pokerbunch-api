@@ -1,5 +1,4 @@
-﻿using Api.Extensions;
-using Api.Settings;
+﻿using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core;
 using Core.Cache;
@@ -23,12 +22,8 @@ using System.Text;
 using Api.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Api.Extensions.Swagger;
-using Microsoft.OpenApi.Models;
-using System.IO;
-using System.Reflection;
+using System.Security.Claims;
 using Api;
-using Api.Controllers;
 using Api.Middleware;
 using Api.Routes;
 
@@ -61,6 +56,8 @@ builder.Services.AddLogging(logging =>
 });
 
 builder.Services.AddSingleton(settings);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IAuth, Auth>();
 builder.Services.AddSingleton<ISettings>(new Settings(settings.InvitationSecret));
 builder.Services.AddSingleton(new UrlProvider(settings.Urls.Api, settings.Urls.Site));
 

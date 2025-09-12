@@ -9,9 +9,9 @@ namespace Api.Handlers;
 
 public static class SettingsHandler
 {
-    public static async Task<IResult> Handle(RequireAppsettingsAccess requireAppsettingsAccess, ClaimsPrincipal user, AppSettings appSettings)
+    public static async Task<IResult> Handle(RequireAppsettingsAccess requireAppsettingsAccess, IAuth auth, AppSettings appSettings)
     {
-        var result = await requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(new AuthWrapper(user).Principal));
+        var result = await requireAppsettingsAccess.Execute(new RequireAppsettingsAccess.Request(auth.Principal));
         return ResultHandler.Model(result, () => appSettings);
     }
 }

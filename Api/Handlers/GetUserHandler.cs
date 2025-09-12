@@ -9,9 +9,9 @@ namespace Api.Handlers;
 
 public static class GetUserHandler
 {
-    public static async Task<IResult> Handle(UserDetails userDetails, ClaimsPrincipal user, string userName)
+    public static async Task<IResult> Handle(UserDetails userDetails, IAuth auth, string userName)
     {
-        var currentUserName = new AuthWrapper(user).Principal.UserName;
+        var currentUserName = auth.Principal.UserName;
         var result = await userDetails.Execute(new UserDetails.Request(currentUserName, userName));
 
         if (result.Data is null)
