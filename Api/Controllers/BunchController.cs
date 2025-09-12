@@ -20,17 +20,6 @@ public class BunchController(
     JoinBunch joinBunch)
     : BaseController(appSettings)
 {
-    [Route(ApiRoutes.Bunch.ListForCurrentUser)]
-    [HttpGet]
-    [Authorize]
-    [EndpointSummary("List your bunches")]
-    public async Task<ObjectResult> Bunches()
-    {
-        var result = await getBunchListForUser.Execute(new GetBunchListForUser.Request(CurrentUserName));
-        return Model(result, CreateModel);
-        IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
-    }
-    
     [Route(ApiRoutes.Bunch.Add)]
     [HttpPost]
     [Authorize]

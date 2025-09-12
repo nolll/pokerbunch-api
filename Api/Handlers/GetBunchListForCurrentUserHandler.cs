@@ -8,14 +8,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace Api.Handlers;
 
-public static class ListBunchHandler
+public static class GetBunchListForCurrentUserHandler
 {
     public static async Task<IResult> Handle(
-        GetBunchList getBunchList,
+        GetBunchListForUser getBunchListForUser,
         IAuth auth)
     {
-        var request = new GetBunchList.Request(auth.Principal);
-        var result = await getBunchList.Execute(request);
+        var result = await getBunchListForUser.Execute(new GetBunchListForUser.Request(auth.Principal.UserName));
         return ResultHandler.Model(result, CreateModel);
         IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
     }
