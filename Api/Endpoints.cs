@@ -71,5 +71,25 @@ public static class Endpoints
         app.MapPost(ApiRoutes.Bunch.Join, JoinBunchHandler.Handle)
             .RequireAuthorization()
             .WithSummary("Join bunch");
+
+        app.MapGet(ApiRoutes.Cashgame.Get, GetCashgameHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Get cashgame");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByBunch, GetCashgameListByBunchHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List cashgames");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByBunchAndYear, GetCashgameListByBunchAndYearHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List cashgames by year");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByEvent, GetCashgameListByEventHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List cashgames by event");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByPlayer, GetCashgameListByPlayerHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List cashgames by player");
     }
 }

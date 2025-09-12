@@ -15,69 +15,12 @@ public class CashgameController(
     AppSettings appSettings,
     UrlProvider urls,
     CashgameDetails cashgameDetails,
-    CashgameList cashgameList,
-    EventCashgameList eventCashgameList,
-    PlayerCashgameList playerCashgameList,
     AddCashgame addCashgame,
     EditCashgame editCashgame,
     DeleteCashgame deleteCashgame,
     CurrentCashgames currentCashgames)
     : BaseController(appSettings)
 {
-    [Route(ApiRoutes.Cashgame.Get)]
-    [HttpGet]
-    [Authorize]
-    [EndpointSummary("Get cashgame")]
-    public async Task<ObjectResult> Get(string cashgameId)
-    {
-        var request = new CashgameDetails.Request(Principal, cashgameId, DateTime.UtcNow);
-        var result = await cashgameDetails.Execute(request);
-        return Model(result, CreateModel);
-        CashgameDetailsModel? CreateModel() => result.Data is not null ? new CashgameDetailsModel(result.Data) : null;
-    }
-    
-    [Route(ApiRoutes.Cashgame.ListByBunch)]
-    [HttpGet]
-    [Authorize]
-    [EndpointSummary("List cashgames")]
-    public async Task<ObjectResult> List(string bunchId)
-    {
-        var result = await cashgameList.Execute(new CashgameList.Request(Principal, bunchId, null));
-        return Model(result, CreateModel);
-        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
-    }
-    
-    [Route(ApiRoutes.Cashgame.ListByBunchAndYear)]
-    [HttpGet]
-    [Authorize]
-    [EndpointSummary("List cashgames by year")]
-    public async Task<ObjectResult> List(string bunchId, int year)
-    {
-        var result = await cashgameList.Execute(new CashgameList.Request(Principal, bunchId, year));
-        return Model(result, CreateModel);
-        IEnumerable<CashgameListItemModel>? CreateModel() => result.Data?.Items.Select(o => new CashgameListItemModel(o));
-    }
-    
-    [Route(ApiRoutes.Cashgame.ListByEvent)]
-    [HttpGet]
-    [Authorize]
-    [EndpointSummary("List cashgames by event")]
-    public async Task<ObjectResult> EventCashgameList(string eventId)
-    {
-        var result = await eventCashgameList.Execute(new EventCashgameList.Request(Principal, eventId));
-        return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
-    }
-    
-    [Route(ApiRoutes.Cashgame.ListByPlayer)]
-    [HttpGet]
-    [Authorize]
-    [EndpointSummary("List cashgames by player")]
-    public async Task<ObjectResult> PlayerCashgameList(string playerId)
-    {
-        var result = await playerCashgameList.Execute(new PlayerCashgameList.Request(Principal, playerId));
-        return Model(result, () => result.Data?.Items.Select(o => new CashgameListItemModel(o)));
-    }
-    
     [Route(ApiRoutes.Cashgame.Add)]
     [HttpPost]
     [Authorize]
