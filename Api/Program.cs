@@ -227,7 +227,7 @@ app.UseSwaggerUI(c => { c.SwaggerEndpoint("/openapi/v1.json", "Version 1"); });
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapAdminEndpoints();
+app.MapEndpoints();
 app.UseMvc();
 
 app.Run();

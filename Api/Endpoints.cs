@@ -7,7 +7,7 @@ namespace Api;
 
 public static class Endpoints
 {
-    public static void MapAdminEndpoints(this WebApplication app)
+    public static void MapEndpoints(this WebApplication app)
     {
         app.MapPost(ApiRoutes.Admin.ClearCache, ClearCacheHandler.Handle)
             .RequireAuthorization()
