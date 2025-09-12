@@ -10,7 +10,12 @@ namespace Api.Handlers;
 
 public static class UpdateActionHandler
 {
-    public static async Task<IResult> Handle(EditCheckpoint editCheckpoint, IAuth auth, string cashgameId, string actionId, [FromBody] UpdateActionPostModel post)
+    public static async Task<IResult> Handle(
+        EditCheckpoint editCheckpoint,
+        IAuth auth,
+        string cashgameId,
+        string actionId,
+        [FromBody] UpdateActionPostModel post)
     {
         var utcTimestamp = DateTime.SpecifyKind(post.Timestamp, DateTimeKind.Utc);
         var result = await editCheckpoint.Execute(new EditCheckpoint.Request(auth.Principal, actionId, utcTimestamp, post.Stack, post.Added));

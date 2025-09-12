@@ -41,5 +41,23 @@ public static class Endpoints
             .RequireAuthorization()
             .WithSummary("Delete cashgame action")
             .WithDescription("Remove a player action from a cashgame");
+
+        app.Map(ApiRoutes.Error, ErrorHandler.Handle)
+            .ExcludeFromDescription();
+
+        app.MapGet(ApiRoutes.Root, RootHandler.Handle)
+            .ExcludeFromDescription();
+
+        app.MapGet(ApiRoutes.Bunch.Get, GetBunchHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Get bunch");
+
+        app.MapPut(ApiRoutes.Bunch.Update, UpdateBunchHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Update bunch");
+
+        app.MapGet(ApiRoutes.Bunch.List, ListBunchHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List bunches");
     }
 }

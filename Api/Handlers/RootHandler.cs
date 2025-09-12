@@ -1,13 +1,11 @@
-using Api.Extensions;
-using Api.Models.HomeModels;
 using Api.Settings;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 
 namespace Api.Handlers;
 
-public static class VersionHandler
+public static class RootHandler
 {
     public static IResult Handle(TestEmail testEmail, AppSettings appSettings) => 
-        ResultHandler.Success(new VersionModel(appSettings.Version));
+        Results.Redirect("/swagger/index.html");
 }
