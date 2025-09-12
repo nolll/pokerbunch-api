@@ -13,7 +13,42 @@ public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
 {
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
 
-    private string UserName
+    public CurrentBunch GetBunchById(string id) => Principal.GetBunchById(id);
+    public CurrentBunch GetBunchBySlug(string id) => Principal.GetBunchBySlug(id);
+
+    public bool CanClearCache => Principal.CanClearCache;
+    public bool CanSendTestEmail => Principal.CanSendTestEmail;
+    public bool CanSeeAppSettings => Principal.CanSeeAppSettings;
+    public bool CanListBunches => Principal.CanListBunches;
+    public bool CanListUsers => Principal.CanClearCache;
+    public string Id => Principal.Id;
+    public string DisplayName => Principal.DisplayName;
+    public bool CanEditCashgame(string bunchId) => Principal.CanEditCashgame(bunchId);
+    public bool CanDeleteCashgame(string bunchId) => Principal.CanDeleteCashgame(bunchId);
+    public bool CanSeeCashgame(string bunchId) => Principal.CanSeeCashgame(bunchId);
+    public bool CanSeeLocation(string bunchId) => Principal.CanSeeLocation(bunchId);
+    public bool CanAddLocation(string bunchId) => Principal.CanAddLocation(bunchId);
+    public bool CanEditBunch(string bunchId) => Principal.CanEditBunch(bunchId);
+    public bool CanListLocations(string bunchId) => Principal.CanListLocations(bunchId);
+    public bool CanAddCashgame(string bunchId) => Principal.CanAddCashgame(bunchId);
+    public bool CanGetBunch(string bunchId) => Principal.CanGetBunch(bunchId);
+    public bool CanSeePlayer(string bunchId) => Principal.CanSeePlayer(bunchId);
+    public bool CanDeletePlayer(string bunchId) => Principal.CanDeletePlayer(bunchId);
+    public bool CanListPlayers(string bunchId) => Principal.CanListPlayers(bunchId);
+    public bool CanAddPlayer(string bunchId) => Principal.CanAddPlayer(bunchId);
+    public bool CanAddEvent(string bunchId) => Principal.CanAddEvent(bunchId);
+    public bool CanEditCashgameAction(string bunchId) => Principal.CanEditCashgameAction(bunchId);
+    public bool CanListEvents(string bunchId) => Principal.CanListEvents(bunchId);
+    public bool CanInvitePlayer(string bunchId) => Principal.CanInvitePlayer(bunchId);
+    public bool CanSeeEventDetails(string bunchId) => Principal.CanSeeEventDetails(bunchId);
+    public bool CanListCashgames(string bunchId) => Principal.CanListCashgames(bunchId);
+    public bool CanListPlayerCashgames(string bunchId) => Principal.CanListPlayerCashgames(bunchId);
+    public bool CanListEventCashgames(string bunchId) => Principal.CanListEventCashgames(bunchId);
+    public bool CanListCurrentGames(string bunchId) => Principal.CanListCurrentGames(bunchId);
+    public bool CanDeleteCheckpoint(string bunchId) => Principal.CanDeleteCheckpoint(bunchId);
+    public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) => Principal.CanEditCashgameActionsFor(bunchId, requestedPlayerId);
+
+    public string UserName
     {
         get
         {
