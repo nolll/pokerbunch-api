@@ -9,18 +9,41 @@ using Microsoft.AspNetCore.Http;
 
 namespace Api.Auth;
 
-public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
+public class Auth : IAuth
 {
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
     
-    public CurrentBunch GetBunchById(string id) => UserBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
-    public CurrentBunch GetBunchBySlug(string slug) => UserBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
+    private readonly bool _isAdmin;
+    private readonly CurrentBunch[] _userBunches = [];
 
-    public bool CanClearCache => IsAdmin;
-    public bool CanSendTestEmail => IsAdmin;
-    public bool CanSeeAppSettings => IsAdmin;
-    public bool CanListBunches => IsAdmin;
-    public bool CanListUsers => IsAdmin;
+    public string Id { get; } = "";
+    public string UserName { get; } = "";
+    public string DisplayName { get; } = "";
+
+    public Auth(IHttpContextAccessor httpContextAccessor)
+    {
+        var principal = httpContextAccessor.HttpContext?.User;
+        if (!IsValid(principal))
+            return;
+        
+        if (IsTokenTooOld(principal!))
+            throw new PokerBunchException("Token too old");
+        
+        _isAdmin = GetBoolClaim(principal, CustomClaimTypes.IsAdmin);
+        Id = GetClaim(principal, CustomClaimTypes.UserId) ?? "";
+        DisplayName = GetClaim(principal, CustomClaimTypes.UserDisplayName) ?? "";
+        UserName = principal!.Identity?.Name ?? "";
+        _userBunches = GetUserTokenBunches(principal!).Select(ToCurrentBunch).ToArray();
+    }
+    
+    public CurrentBunch GetBunchById(string id) => _userBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
+    public CurrentBunch GetBunchBySlug(string slug) => _userBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
+
+    public bool CanClearCache => _isAdmin;
+    public bool CanSendTestEmail => _isAdmin;
+    public bool CanSeeAppSettings => _isAdmin;
+    public bool CanListBunches => _isAdmin;
+    public bool CanListUsers => _isAdmin;
     
     public bool CanAddCashgame(string bunchId) => IsPlayer(bunchId);
     public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
@@ -59,61 +82,42 @@ public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
     private bool IsInRole(string bunchId, Role role) => RoleHandler.IsInRole(GetRole(bunchId), role);
     private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
     private string GetPlayerId(string bunchId) => GetBunchById(bunchId).PlayerId;
-    
-    public string UserName
+
+    private static bool IsValid(ClaimsPrincipal? principal)
     {
-        get
-        {
-            if (HttpContextUser?.Identity is null)
-                throw new PokerBunchException("Auth failed: No identity");
+        if (principal?.Identity is null)
+            return false;
 
-            if (!HttpContextUser.Identity.IsAuthenticated)
-                throw new PokerBunchException("Auth failed: Not authenticated");
+        if (!principal.Identity.IsAuthenticated)
+            return false;
             
-            if(HttpContextUser.Identity.Name is null)
-                throw new PokerBunchException("Auth failed: No identity");
-
-            if (IsTokenTooOld)
-                throw new PokerBunchException("Token too old");
-
-            return HttpContextUser.Identity.Name;
-        }
+        return principal.Identity.Name is not null;
     }
-
-    private ClaimsPrincipal? HttpContextUser => httpContextAccessor.HttpContext?.User;
-
-    private bool IsTokenTooOld => 
-        DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(CustomClaimTypes.IssuedAt) ?? "0")) < TokenMinDate;
-
-    private bool IsAdmin => GetBoolClaim(CustomClaimTypes.IsAdmin);
-    public string Id => GetClaim(CustomClaimTypes.UserId) ?? "";
-    public string DisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
     
-    private TokenBunchModel[] UserTokenBunches
+    private static bool IsTokenTooOld(ClaimsPrincipal principal) => GetIssuedAt(principal) < TokenMinDate;
+
+    private static DateTime GetIssuedAt(ClaimsPrincipal principal) => 
+        DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(principal, CustomClaimTypes.IssuedAt) ?? "0"));
+
+    private static TokenBunchModel[] GetUserTokenBunches(ClaimsPrincipal principal)
     {
-        get
-        {
-            var value = GetClaim(CustomClaimTypes.Bunches);
-            if (value is null or "")
-                return [];
+        var value = GetClaim(principal, CustomClaimTypes.Bunches);
+        if (value is null or "")
+            return [];
 
-            if (value.StartsWith('{'))
-                return [JsonSerializer.Deserialize<TokenBunchModel>(value)!];
-            
-            return JsonSerializer.Deserialize<TokenBunchModel[]>(value) ?? [];
-        }
+        return value.StartsWith('{')
+            ? [JsonSerializer.Deserialize<TokenBunchModel>(value)!]
+            : JsonSerializer.Deserialize<TokenBunchModel[]>(value) ?? [];
     }
-
-    private CurrentBunch[] UserBunches => UserTokenBunches.Select(ToCurrentBunch).ToArray();
 
     private static CurrentBunch ToCurrentBunch(TokenBunchModel b) => 
         new(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
+    
+    private static string? GetClaim(ClaimsPrincipal? principal, string type) => principal?.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 
-    private string? GetClaim(string type) => HttpContextUser?.Claims.FirstOrDefault(o => o.Type == type)?.Value;
-
-    private bool GetBoolClaim(string type)
+    private static bool GetBoolClaim(ClaimsPrincipal? principal, string type)
     {
-        var claim = GetClaim(type);
+        var claim = GetClaim(principal, type);
         return claim is not null && bool.Parse(claim);
     }
     
