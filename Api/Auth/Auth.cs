@@ -12,42 +12,54 @@ namespace Api.Auth;
 public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
 {
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
+    
+    public CurrentBunch GetBunchById(string id) => UserBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
+    public CurrentBunch GetBunchBySlug(string slug) => UserBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
 
-    public CurrentBunch GetBunchById(string id) => Principal.GetBunchById(id);
-    public CurrentBunch GetBunchBySlug(string id) => Principal.GetBunchBySlug(id);
+    public bool CanClearCache => IsAdmin;
+    public bool CanSendTestEmail => IsAdmin;
+    public bool CanSeeAppSettings => IsAdmin;
+    public bool CanListBunches => IsAdmin;
+    public bool CanListUsers => IsAdmin;
+    
+    public bool CanAddCashgame(string bunchId) => IsPlayer(bunchId);
+    public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
+    public bool CanDeleteCashgame(string bunchId) => IsManager(bunchId);
+    public bool CanSeeCashgame(string bunchId) => IsPlayer(bunchId);
+    public bool CanListCashgames(string bunchId) => IsPlayer(bunchId);
+    public bool CanListPlayerCashgames(string bunchId) => IsPlayer(bunchId);
+    public bool CanListEventCashgames(string bunchId) => IsPlayer(bunchId);
+    public bool CanListCurrentGames(string bunchId) => IsPlayer(bunchId);
+    
+    public bool CanEditCashgameAction(string bunchId) => IsManager(bunchId);
+    public bool CanDeleteCheckpoint(string bunchId) => IsManager(bunchId);
+    public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) =>
+        IsManager(bunchId) || IsRequestedPlayer(bunchId, requestedPlayerId);
 
-    public bool CanClearCache => Principal.CanClearCache;
-    public bool CanSendTestEmail => Principal.CanSendTestEmail;
-    public bool CanSeeAppSettings => Principal.CanSeeAppSettings;
-    public bool CanListBunches => Principal.CanListBunches;
-    public bool CanListUsers => Principal.CanClearCache;
-    public string Id => Principal.Id;
-    public string DisplayName => Principal.DisplayName;
-    public bool CanEditCashgame(string bunchId) => Principal.CanEditCashgame(bunchId);
-    public bool CanDeleteCashgame(string bunchId) => Principal.CanDeleteCashgame(bunchId);
-    public bool CanSeeCashgame(string bunchId) => Principal.CanSeeCashgame(bunchId);
-    public bool CanSeeLocation(string bunchId) => Principal.CanSeeLocation(bunchId);
-    public bool CanAddLocation(string bunchId) => Principal.CanAddLocation(bunchId);
-    public bool CanEditBunch(string bunchId) => Principal.CanEditBunch(bunchId);
-    public bool CanListLocations(string bunchId) => Principal.CanListLocations(bunchId);
-    public bool CanAddCashgame(string bunchId) => Principal.CanAddCashgame(bunchId);
-    public bool CanGetBunch(string bunchId) => Principal.CanGetBunch(bunchId);
-    public bool CanSeePlayer(string bunchId) => Principal.CanSeePlayer(bunchId);
-    public bool CanDeletePlayer(string bunchId) => Principal.CanDeletePlayer(bunchId);
-    public bool CanListPlayers(string bunchId) => Principal.CanListPlayers(bunchId);
-    public bool CanAddPlayer(string bunchId) => Principal.CanAddPlayer(bunchId);
-    public bool CanAddEvent(string bunchId) => Principal.CanAddEvent(bunchId);
-    public bool CanEditCashgameAction(string bunchId) => Principal.CanEditCashgameAction(bunchId);
-    public bool CanListEvents(string bunchId) => Principal.CanListEvents(bunchId);
-    public bool CanInvitePlayer(string bunchId) => Principal.CanInvitePlayer(bunchId);
-    public bool CanSeeEventDetails(string bunchId) => Principal.CanSeeEventDetails(bunchId);
-    public bool CanListCashgames(string bunchId) => Principal.CanListCashgames(bunchId);
-    public bool CanListPlayerCashgames(string bunchId) => Principal.CanListPlayerCashgames(bunchId);
-    public bool CanListEventCashgames(string bunchId) => Principal.CanListEventCashgames(bunchId);
-    public bool CanListCurrentGames(string bunchId) => Principal.CanListCurrentGames(bunchId);
-    public bool CanDeleteCheckpoint(string bunchId) => Principal.CanDeleteCheckpoint(bunchId);
-    public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) => Principal.CanEditCashgameActionsFor(bunchId, requestedPlayerId);
+    public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
+    public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
+    public bool CanListLocations(string bunchId) => IsPlayer(bunchId);
 
+    public bool CanGetBunch(string bunchId) => IsPlayer(bunchId);
+    public bool CanEditBunch(string bunchId) => IsManager(bunchId);
+    
+    public bool CanAddPlayer(string bunchId) => IsManager(bunchId);
+    public bool CanSeePlayer(string bunchId) => IsPlayer(bunchId);
+    public bool CanListPlayers(string bunchId) => IsPlayer(bunchId);
+    public bool CanDeletePlayer(string bunchId) => IsManager(bunchId);
+    public bool CanInvitePlayer(string bunchId) => IsManager(bunchId);
+
+    public bool CanAddEvent(string bunchId) => IsPlayer(bunchId);
+    public bool CanListEvents(string bunchId) => IsPlayer(bunchId);
+    public bool CanSeeEventDetails(string bunchId) => IsPlayer(bunchId);
+
+    private bool IsManager(string bunchId) => IsInRole(bunchId, Role.Manager);
+    private bool IsPlayer(string bunchId) => IsInRole(bunchId, Role.Player);
+    private bool IsRequestedPlayer(string bunchId, string requestedPlayerId) => GetPlayerId(bunchId) == requestedPlayerId;
+    private bool IsInRole(string bunchId, Role role) => RoleHandler.IsInRole(GetRole(bunchId), role);
+    private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
+    private string GetPlayerId(string bunchId) => GetBunchById(bunchId).PlayerId;
+    
     public string UserName
     {
         get
@@ -74,10 +86,10 @@ public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
         DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(CustomClaimTypes.IssuedAt) ?? "0")) < TokenMinDate;
 
     private bool IsAdmin => GetBoolClaim(CustomClaimTypes.IsAdmin);
-    private string UserId => GetClaim(CustomClaimTypes.UserId) ?? "";
-    private string UserDisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
+    public string Id => GetClaim(CustomClaimTypes.UserId) ?? "";
+    public string DisplayName => GetClaim(CustomClaimTypes.UserDisplayName) ?? "";
     
-    private TokenBunchModel[] UserBunches
+    private TokenBunchModel[] UserTokenBunches
     {
         get
         {
@@ -92,12 +104,10 @@ public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
         }
     }
 
-    public IPrincipal Principal => new Principal(UserId, UserName, UserDisplayName, IsAdmin, UserBunches.Select(ToCurrentBunch).ToArray());
+    private CurrentBunch[] UserBunches => UserTokenBunches.Select(ToCurrentBunch).ToArray();
 
-    private static CurrentBunch ToCurrentBunch(TokenBunchModel b)
-    {
-        return new CurrentBunch(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
-    }
+    private static CurrentBunch ToCurrentBunch(TokenBunchModel b) => 
+        new(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
 
     private string? GetClaim(string type) => HttpContextUser?.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 
@@ -106,4 +116,6 @@ public class Auth(IHttpContextAccessor httpContextAccessor) : IAuth
         var claim = GetClaim(type);
         return claim is not null && bool.Parse(claim);
     }
+    
+    private static CurrentBunch CreateEmptyBunch() => new("", "");
 }

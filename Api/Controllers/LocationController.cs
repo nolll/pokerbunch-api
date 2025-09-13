@@ -2,6 +2,7 @@ using System.Linq;
 using Api.Models.LocationModels;
 using Api.Routes;
 using Api.Settings;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,8 @@ public class LocationController(
     AppSettings appSettings,
     GetLocation getLocation,
     GetLocationList getLocationList,
-    AddLocation addLocation)
+    AddLocation addLocation,
+    IAuth auth)
     : BaseController(appSettings)
 {
     [Route(ApiRoutes.Location.Get)]
@@ -22,7 +24,7 @@ public class LocationController(
     [EndpointSummary("Get location")]
     public async Task<ObjectResult> Get(string locationId)
     {
-        var result = await getLocation.Execute(new GetLocation.Request(Principal, locationId));
+        var result = await getLocation.Execute(new GetLocation.Request(auth, locationId));
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
     
@@ -32,7 +34,7 @@ public class LocationController(
     [EndpointSummary("List locations")]
     public async Task<ObjectResult> GetList(string bunchId)
     {
-        var result = await getLocationList.Execute(new GetLocationList.Request(Principal, bunchId));
+        var result = await getLocationList.Execute(new GetLocationList.Request(auth, bunchId));
         return Model(result, () => result.Data?.Locations.Select(o => new LocationModel(o)));
     }
     
@@ -42,7 +44,7 @@ public class LocationController(
     [EndpointSummary("Add location")]
     public async Task<ObjectResult> Add(string bunchId, [FromBody] LocationAddPostModel post)
     {
-        var result = await addLocation.Execute(new AddLocation.Request(Principal, bunchId, post.Name));
+        var result = await addLocation.Execute(new AddLocation.Request(auth, bunchId, post.Name));
         return Model(result, () => result.Data is not null ? new LocationModel(result.Data) : null);
     }
 }

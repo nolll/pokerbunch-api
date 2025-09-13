@@ -20,9 +20,9 @@ public class CashgameDetails(
     {
         var cashgame = await cashgameRepository.Get(request.Id);
         var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var bunchAccess = request.Principal.GetBunchById(cashgame.BunchId);
+        var bunchAccess = request.Auth.GetBunchById(cashgame.BunchId);
 
-        if (!request.Principal.CanSeeCashgame(cashgame.BunchId))
+        if (!request.Auth.CanSeeCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         var playerIds = GetPlayerIds(cashgame);
@@ -100,9 +100,9 @@ public class CashgameDetails(
         return results.OrderByDescending(o => o.Winnings);
     }
 
-    public class Request(IPrincipal principal, string id, DateTime currentUtc)
+    public class Request(IAuth auth, string id, DateTime currentUtc)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Id { get; } = id;
         public DateTime CurrentUtc { get; } = currentUtc;
     }

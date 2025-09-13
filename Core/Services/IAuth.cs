@@ -1,12 +1,9 @@
 using Core.Entities;
-using Core.Services;
 
-namespace Api.Auth;
+namespace Core.Services;
 
 public interface IAuth
 {
-    IPrincipal Principal { get; }
-    
     CurrentBunch GetBunchById(string id);
     CurrentBunch GetBunchBySlug(string id);
 

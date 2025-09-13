@@ -23,7 +23,7 @@ public class EditBunch(
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
         
-        if (!request.Principal.CanEditBunch(bunch.Id))
+        if (!request.Auth.CanEditBunch(bunch.Id))
             return Error(new AccessDeniedError());
 
         var postedBunch = CreateBunch(bunch, request, timezone);
@@ -55,7 +55,7 @@ public class EditBunch(
         new Currency(request.CurrencySymbol, request.CurrencyLayout));
 
     public class Request(
-        IPrincipal principal,
+        IAuth auth,
         string slug,
         string description,
         string currencySymbol,
@@ -64,7 +64,7 @@ public class EditBunch(
         string houseRules,
         int defaultBuyin)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
         public string Description { get; } = description;
 

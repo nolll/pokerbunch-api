@@ -10,7 +10,7 @@ public class DeleteCashgameTests : TestBase
     [Test]
     public async Task DeleteCashgame_GameHasResults_ReturnsError()
     {
-        var request = new DeleteCashgame.Request(new PrincipalInTest(canDeleteCashgame: true), TestData.CashgameIdA);
+        var request = new DeleteCashgame.Request(new AuthInTest(canDeleteCashgame: true), TestData.CashgameIdA);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
@@ -21,7 +21,7 @@ public class DeleteCashgameTests : TestBase
     {
         Deps.Cashgame.SetupEmptyGame();
 
-        var request = new DeleteCashgame.Request(new PrincipalInTest(canDeleteCashgame: true), TestData.CashgameIdA);
+        var request = new DeleteCashgame.Request(new AuthInTest(canDeleteCashgame: true), TestData.CashgameIdA);
 
         await Sut.Execute(request);
 
@@ -33,7 +33,7 @@ public class DeleteCashgameTests : TestBase
     {
         Deps.Cashgame.SetupEmptyGame();
 
-        var request = new DeleteCashgame.Request(new PrincipalInTest(canDeleteCashgame: true), TestData.CashgameIdA);
+        var request = new DeleteCashgame.Request(new AuthInTest(canDeleteCashgame: true), TestData.CashgameIdA);
 
         var result = await Sut.Execute(request);
 

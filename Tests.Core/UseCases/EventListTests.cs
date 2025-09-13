@@ -50,6 +50,6 @@ class EventListTests : TestBase
     private EventList.Request CreateInput()
     {
         var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
-        return new EventList.Request(new PrincipalInTest(canListEvents: true, currentBunch: currentBunch), TestData.SlugA);
+        return new EventList.Request(new AuthInTest(canListEvents: true, currentBunch: currentBunch), TestData.SlugA);
     }
 }

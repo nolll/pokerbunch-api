@@ -14,8 +14,8 @@ public class DeletePlayer(
     {
         var player = await playerRepository.Get(request.PlayerId);
 
-        var bunchInfo = request.Principal.GetBunchById(player.BunchId);
-        if (!request.Principal.CanDeletePlayer(player.BunchId))
+        var bunchInfo = request.Auth.GetBunchById(player.BunchId);
+        if (!request.Auth.CanDeletePlayer(player.BunchId))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);
@@ -29,9 +29,9 @@ public class DeletePlayer(
         return Success(new Result(bunchInfo.Slug, request.PlayerId));
     }
     
-    public class Request(IPrincipal principal, string playerId)
+    public class Request(IAuth auth, string playerId)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string PlayerId { get; } = playerId;
     }
 

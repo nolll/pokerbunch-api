@@ -15,9 +15,9 @@ public class CashgameList(
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
 
-        if (!request.Principal.CanListCashgames(bunchInfo.Id))
+        if (!request.Auth.CanListCashgames(bunchInfo.Id))
             return Error(new AccessDeniedError());
         
         var cashgames = (await cashgameRepository.GetFinished(bunchInfo.Id, request.Year)).OrderByDescending(o => o.StartTime);
@@ -31,7 +31,7 @@ public class CashgameList(
     private static Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations) => 
         locations.First(o => o.Id == cashgame.LocationId);
 
-    public record Request(IPrincipal Principal, string Slug, int? Year);
+    public record Request(IAuth Auth, string Slug, int? Year);
     public record Result(string Slug, IList<Item> Items);
 
     public class Item(Cashgame cashgame, Location location, IList<Player> players)

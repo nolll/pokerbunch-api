@@ -3,7 +3,7 @@ using Core.Services;
 
 namespace Tests.Core.TestClasses;
 
-public class PrincipalInTest(
+public class AuthInTest(
     string? id = null,
     string? userName = null,
     string? displayName = null,
@@ -36,7 +36,7 @@ public class PrincipalInTest(
     bool canListCurrentGames = false,
     bool canDeleteCheckpoint = false,
     bool canEditCashgameActionsFor = false,
-    CurrentBunch? currentBunch = null) : IPrincipal
+    CurrentBunch? currentBunch = null) : IAuth
 {
     public string Id => id ?? "";
     public string UserName => userName ?? "";
@@ -71,6 +71,6 @@ public class PrincipalInTest(
     public bool CanDeleteCheckpoint(string bunchId) => canDeleteCheckpoint;
     public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) => canEditCashgameActionsFor;
 
-    public CurrentBunch GetBunchById(string id) => currentBunch!;
+    public CurrentBunch GetBunchById(string bunchId) => currentBunch!;
     public CurrentBunch GetBunchBySlug(string slug) => currentBunch!;
 }

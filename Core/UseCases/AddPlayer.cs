@@ -22,7 +22,7 @@ public class AddPlayer(
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
 
-        if (!request.Principal.CanAddPlayer(bunch.Id))
+        if (!request.Auth.CanAddPlayer(bunch.Id))
             return Error(new AccessDeniedError());
 
         var existingPlayers = await playerRepository.List(bunch.Id);
@@ -36,9 +36,9 @@ public class AddPlayer(
         return Success(new Result(id));
     }
     
-    public class Request(IPrincipal principal, string slug, string name)
+    public class Request(IAuth auth, string slug, string name)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Name can't be empty")]

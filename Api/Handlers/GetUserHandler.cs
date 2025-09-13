@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.UserModels;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 
@@ -11,7 +12,7 @@ public static class GetUserHandler
 {
     public static async Task<IResult> Handle(UserDetails userDetails, IAuth auth, string userName)
     {
-        var currentUserName = auth.Principal.UserName;
+        var currentUserName = auth.UserName;
         var result = await userDetails.Execute(new UserDetails.Request(currentUserName, userName));
 
         if (result.Data is null)

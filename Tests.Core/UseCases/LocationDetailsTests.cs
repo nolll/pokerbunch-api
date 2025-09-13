@@ -11,7 +11,7 @@ public class LocationDetailsTests : TestBase
     public async Task LocationDetails_AllPropertiesAreSet()
     {
         var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
-        var request = new GetLocation.Request(new PrincipalInTest(canSeeLocation: true, currentBunch: currentBunch), TestData.LocationIdA);
+        var request = new GetLocation.Request(new AuthInTest(canSeeLocation: true, currentBunch: currentBunch), TestData.LocationIdA);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.Id, Is.EqualTo(TestData.BunchA.Id));

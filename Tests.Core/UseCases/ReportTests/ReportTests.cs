@@ -28,7 +28,7 @@ public class Arrange : UseCaseTest<Report>
 
     protected override async Task ExecuteAsync()
     {
-        var request = new Report.Request(new PrincipalInTest(canEditCashgameActionsFor: true), CashgameId, PlayerId, Stack, CurrentTime);
+        var request = new Report.Request(new AuthInTest(canEditCashgameActionsFor: true), CashgameId, PlayerId, Stack, CurrentTime);
         Result = await Sut.Execute(request);
     }
 }

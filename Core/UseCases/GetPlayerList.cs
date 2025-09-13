@@ -15,18 +15,18 @@ public class GetPlayerList(
     {
         var bunch = await bunchRepository.GetBySlug(request.Slug);
 
-        if (!request.Principal.CanListPlayers(bunch.Id))
+        if (!request.Auth.CanListPlayers(bunch.Id))
             return Error(new AccessDeniedError());
 
         var players = await playerRepository.List(bunch.Id);
-        var canAddPlayer = request.Principal.CanAddPlayer(bunch.Id);
+        var canAddPlayer = request.Auth.CanAddPlayer(bunch.Id);
 
         return Success(new Result(bunch, players, canAddPlayer));
     }
 
-    public class Request(IPrincipal principal, string slug)
+    public class Request(IAuth auth, string slug)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
     }
 

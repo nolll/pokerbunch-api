@@ -2,6 +2,7 @@ using Api.Auth;
 using Api.Extensions;
 using Api.Models.CashgameModels;
 using Api.Models.CommonModels;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public static class UpdateActionHandler
         [FromBody] UpdateActionPostModel post)
     {
         var utcTimestamp = DateTime.SpecifyKind(post.Timestamp, DateTimeKind.Utc);
-        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(auth.Principal, actionId, utcTimestamp, post.Stack, post.Added));
+        var result = await editCheckpoint.Execute(new EditCheckpoint.Request(auth, actionId, utcTimestamp, post.Stack, post.Added));
         return ResultHandler.Model(result, () => new OkModel());
     }
 }

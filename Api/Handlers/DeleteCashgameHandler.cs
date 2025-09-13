@@ -1,6 +1,7 @@
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.CashgameModels;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 
@@ -10,7 +11,7 @@ public static class DeleteCashgameHandler
 {
     public static async Task<IResult> Handle(DeleteCashgame deleteCashgame, IAuth auth, string cashgameId)
     {
-        var request = new DeleteCashgame.Request(auth.Principal, cashgameId);
+        var request = new DeleteCashgame.Request(auth, cashgameId);
         var result = await deleteCashgame.Execute(request);
         return ResultHandler.Model(result, () => new CashgameDeletedModel(cashgameId));
     }

@@ -18,7 +18,7 @@ public class Cashout(ICashgameRepository cashgameRepository)
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.CashgameId);
-        if (!request.Principal.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
+        if (!request.Auth.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
             return Error(new AccessDeniedError());
 
         var result = cashgame.GetResult(request.PlayerId);
@@ -46,13 +46,13 @@ public class Cashout(ICashgameRepository cashgameRepository)
     }
     
     public class Request(
-        IPrincipal principal,
+        IAuth auth,
         string cashgameId,
         string playerId,
         int stack,
         DateTime currentTime)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string CashgameId { get; } = cashgameId;
         public string PlayerId { get; } = playerId;
 

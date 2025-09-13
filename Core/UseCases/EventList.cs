@@ -13,9 +13,9 @@ public class EventList(
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
 
-        if (!request.Principal.CanListEvents(bunchInfo.Id))
+        if (!request.Auth.CanListEvents(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
         var events = await eventRepository.List(bunchInfo.Id);
@@ -38,9 +38,9 @@ public class EventList(
             : new Event(e.Id, slug, e.Name);
     }
 
-    public class Request(IPrincipal principal, string slug)
+    public class Request(IAuth auth, string slug)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
     }
 

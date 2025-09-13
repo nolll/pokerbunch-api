@@ -3,6 +3,7 @@ using System.Linq;
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.BunchModels;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 
@@ -14,7 +15,7 @@ public static class GetBunchListForCurrentUserHandler
         GetBunchListForUser getBunchListForUser,
         IAuth auth)
     {
-        var result = await getBunchListForUser.Execute(new GetBunchListForUser.Request(auth.Principal.UserName));
+        var result = await getBunchListForUser.Execute(new GetBunchListForUser.Request(auth.UserName));
         return ResultHandler.Model(result, CreateModel);
         IEnumerable<BunchModel>? CreateModel() => result.Data?.Bunches.Select(o => new BunchModel(o));
     }

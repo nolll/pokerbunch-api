@@ -7,7 +7,7 @@ public class ClearCache(ICache cache) : UseCase<ClearCache.Request, ClearCache.R
 {
     protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        if (!request.Principal.CanClearCache)
+        if (!request.Auth.CanClearCache)
             return Task.FromResult(Error(new AccessDeniedError()));
 
         cache.ClearAll();
@@ -15,10 +15,7 @@ public class ClearCache(ICache cache) : UseCase<ClearCache.Request, ClearCache.R
         return Task.FromResult(Success(new Result()));
     }
 
-    public class Request(IPrincipal principal)
-    {
-        public IPrincipal Principal { get; } = principal;
-    }
+    public record Request(IAuth Auth);
 
     public class Result
     {

@@ -1,6 +1,7 @@
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.BunchModels;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ public static class UpdateBunchHandler
         string bunchId,
         [FromBody] UpdateBunchPostModel post)
     {
-        var request = new EditBunch.Request(auth.Principal, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
+        var request = new EditBunch.Request(auth, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
         var result = await editBunch.Execute(request);
         BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return ResultHandler.Model(result, CreateModel);

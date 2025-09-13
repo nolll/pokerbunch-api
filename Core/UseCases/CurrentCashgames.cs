@@ -9,8 +9,8 @@ public class CurrentCashgames(ICashgameRepository cashgameRepository)
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
-        if (!request.Principal.CanListCurrentGames(bunchInfo.Id))
+        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
+        if (!request.Auth.CanListCurrentGames(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
         var cashgame = await cashgameRepository.GetRunning(bunchInfo.Id);
@@ -22,9 +22,9 @@ public class CurrentCashgames(ICashgameRepository cashgameRepository)
         return Success(new Result(gameList));
     }
     
-    public class Request(IPrincipal principal, string slug)
+    public class Request(IAuth auth, string slug)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
     }
 

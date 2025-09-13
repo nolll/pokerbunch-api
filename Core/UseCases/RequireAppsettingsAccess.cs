@@ -9,14 +9,14 @@ public class RequireAppsettingsAccess()
 {
     protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        return Task.FromResult(!request.Principal.CanSeeAppSettings 
+        return Task.FromResult(!request.Auth.CanSeeAppSettings 
             ? Error(new AccessDeniedError()) 
             : Success(new Result()));
     }
     
-    public class Request(IPrincipal principal)
+    public class Request(IAuth auth)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
     }
 
     public class Result

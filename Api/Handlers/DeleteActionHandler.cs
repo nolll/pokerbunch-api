@@ -1,6 +1,7 @@
 using Api.Auth;
 using Api.Extensions;
 using Api.Models.CommonModels;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;
 
@@ -14,7 +15,7 @@ public static class DeleteActionHandler
         string cashgameId, 
         string actionId)
     {
-        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(auth.Principal, actionId));
+        var result = await deleteCheckpoint.Execute(new DeleteCheckpoint.Request(auth, actionId));
         return ResultHandler.Model(result, () => new OkModel());
     }
 }

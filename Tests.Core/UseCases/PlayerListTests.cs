@@ -9,7 +9,7 @@ class PlayerListTests : TestBase
     [Test]
     public async Task Execute_WithSlug_SlugAndPlayersAreSet()
     {
-        var request = new GetPlayerList.Request(new PrincipalInTest(canListPlayers: true), TestData.SlugA);
+        var request = new GetPlayerList.Request(new AuthInTest(canListPlayers: true), TestData.SlugA);
 
         var result = await Sut.Execute(request);
 
@@ -23,7 +23,7 @@ class PlayerListTests : TestBase
     [Test]
     public async Task Execute_PlayersAreSortedAlphabetically()
     {
-        var request = new GetPlayerList.Request(new PrincipalInTest(canListPlayers: true), TestData.SlugA);
+        var request = new GetPlayerList.Request(new AuthInTest(canListPlayers: true), TestData.SlugA);
 
         var result = await Sut.Execute(request);
 
@@ -34,7 +34,7 @@ class PlayerListTests : TestBase
     [Test]
     public async Task Execute_PlayerIsManager_CanAddPlayerIsTrue()
     {
-        var request = new GetPlayerList.Request(new PrincipalInTest(canListPlayers: true, canAddPlayer: true), TestData.SlugA);
+        var request = new GetPlayerList.Request(new AuthInTest(canListPlayers: true, canAddPlayer: true), TestData.SlugA);
 
         var result = await Sut.Execute(request);
 

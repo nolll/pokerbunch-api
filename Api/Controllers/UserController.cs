@@ -11,6 +11,7 @@ using Api.Models.UserModels;
 using Api.Routes;
 using Api.Settings;
 using Api.Urls.ApiUrls;
+using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,8 @@ public class UserController(
     AddUser addUser,
     Login login,
     ChangePassword changePassword,
-    ResetPassword resetPassword)
+    ResetPassword resetPassword,
+    IAuth auth)
     : BaseController(appSettings)
 {
     [Route(ApiRoutes.User.Get)]
@@ -37,7 +39,7 @@ public class UserController(
     [EndpointSummary("Get user")]
     public async Task<ObjectResult> GetUser(string userName)
     {
-        var result = await userDetails.Execute(new UserDetails.Request(CurrentUserName, userName));
+        var result = await userDetails.Execute(new UserDetails.Request(auth.UserName, userName));
 
         if (result.Data is null)
             return Success(null);
@@ -56,7 +58,7 @@ public class UserController(
     [EndpointSummary("List users")]
     public async Task<ObjectResult> List()
     {
-        var result = await userList.Execute(new UserList.Request(Principal));
+        var result = await userList.Execute(new UserList.Request(auth));
         return Model(result, () => result.Data?.Users.Select(o => new UserItemModel(o, urls)));
     }
     
@@ -81,7 +83,7 @@ public class UserController(
     [EndpointSummary("Change password")]
     public async Task<ObjectResult> ChangePassword([FromBody] ChangePasswordPostModel post)
     {
-        var request = new ChangePassword.Request(CurrentUserName, post.NewPassword, post.OldPassword);
+        var request = new ChangePassword.Request(auth.UserName, post.NewPassword, post.OldPassword);
         var result = await changePassword.Execute(request);
         return Model(result, () => new OkModel());
     }
@@ -111,7 +113,7 @@ public class UserController(
     [EndpointSummary("Get authenticated user")]
     public async Task<ObjectResult> Profile()
     {
-        var result = await userDetails.Execute(new UserDetails.Request(CurrentUserName));
+        var result = await userDetails.Execute(new UserDetails.Request(auth.UserName));
         return Model(result, () => result.Data is not null ? new FullUserModel(result.Data) : null);
     }
     
