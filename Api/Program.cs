@@ -22,7 +22,6 @@ using System.Text;
 using Api.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using Api;
 using Api.Middleware;
 using Api.Routes;

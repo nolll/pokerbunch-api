@@ -91,5 +91,21 @@ public static class Endpoints
         app.MapGet(ApiRoutes.Cashgame.ListByPlayer, GetCashgameListByPlayerHandler.Handle)
             .RequireAuthorization()
             .WithSummary("List cashgames by player");
+
+        app.MapPost(ApiRoutes.Cashgame.Add, AddCashgameHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Add cashgame");
+
+        app.MapPut(ApiRoutes.Cashgame.Update, UpdateCashgameHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Update cashgame");
+
+        app.MapDelete(ApiRoutes.Cashgame.Delete, DeleteCashgameHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Delete cashgame");
+
+        app.MapGet(ApiRoutes.Cashgame.ListCurrentByBunch, GetCurrentCashgamesHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List running cashgames");
     }
 }
