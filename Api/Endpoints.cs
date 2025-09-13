@@ -120,7 +120,6 @@ public static class Endpoints
             .RequireAuthorization()
             .WithSummary("Add event");
         
-        
         app.MapGet(ApiRoutes.Location.Get, GetLocationHandler.Handle)
             .RequireAuthorization()
             .WithSummary("Get location");
@@ -132,5 +131,25 @@ public static class Endpoints
         app.MapPost(ApiRoutes.Location.Add, AddLocationHandler.Handle)
             .RequireAuthorization()
             .WithSummary("Add location");
+
+        app.MapGet(ApiRoutes.Player.Get, GetPlayerHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Get player");
+
+        app.MapGet(ApiRoutes.Player.ListByBunch, GetPlayerListHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List bunch players");
+
+        app.MapPost(ApiRoutes.Player.Add, AddPlayerHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Add player to bunch");
+
+        app.MapDelete(ApiRoutes.Player.Delete, DeletePlayerHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Delete player");
+
+        app.MapPost(ApiRoutes.Player.Invite, InvitePlayerHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Invite player to bunch");
     }
 }
