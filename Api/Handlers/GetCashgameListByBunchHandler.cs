@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Api.Auth;
 using Api.Extensions;
 using Api.Models.CashgameModels;
 using Core.Services;

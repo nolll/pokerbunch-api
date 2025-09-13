@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Api.Auth;
 using Api.Extensions;
 using Api.Settings;
 using Core.Services;

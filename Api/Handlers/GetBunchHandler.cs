@@ -1,10 +1,7 @@
-using Api.Auth;
 using Api.Extensions;
 using Api.Models.BunchModels;
-using Api.Routes;
 using Core.Services;
 using Core.UseCases;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
 namespace Api.Handlers;

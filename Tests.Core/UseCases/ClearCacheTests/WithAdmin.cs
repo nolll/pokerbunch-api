@@ -1,6 +1,3 @@
-using Core.Services;
-using Tests.Core.TestClasses;
-
 namespace Tests.Core.UseCases.ClearCacheTests;
 
 public class WithAdmin : Arrange

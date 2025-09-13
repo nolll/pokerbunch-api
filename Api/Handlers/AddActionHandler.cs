@@ -1,4 +1,3 @@
-using Api.Auth;
 using Api.Extensions;
 using Api.Models;
 using Api.Models.CashgameModels;

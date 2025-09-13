@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Api.Auth;
 using Api.Extensions;
 using Api.Models.BunchModels;
 using Core.Services;

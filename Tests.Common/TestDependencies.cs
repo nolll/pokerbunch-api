@@ -1,5 +1,4 @@
-﻿using Core.Services;
-using Tests.Common.FakeRepositories;
+﻿using Tests.Common.FakeRepositories;
 using Tests.Common.FakeServices;
 
 namespace Tests.Common;

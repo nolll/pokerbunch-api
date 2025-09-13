@@ -1,7 +1,4 @@
-﻿using Core.Services;
-using Tests.Core.TestClasses;
-
-namespace Tests.Core.UseCases.TestEmailTests;
+﻿namespace Tests.Core.UseCases.TestEmailTests;
 
 public class WithAdmin : Arrange
 {

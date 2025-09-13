@@ -7,7 +7,6 @@ using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
 using Api.Urls.ApiUrls;
-using Tests.Integration.Tests;
 
 namespace Tests.Integration;
 
