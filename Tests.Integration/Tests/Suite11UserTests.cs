@@ -85,9 +85,8 @@ public class Suite11UserTests
     [Order(7)]
     public async Task Test07ResetPassword()
     {
-        var userToken = await LoginHelper.GetUserToken();
         var parameters = new ResetPasswordPostModel(TestData.UserEmail);
-        var result = await TestClient.User.PasswordReset(userToken, parameters);
+        var result = await TestClient.User.PasswordReset(parameters);
         Assert.That(result.Success, Is.True);
         Assert.That(TestSetup.EmailSender?.To, Is.EqualTo(TestData.UserEmail));
     }

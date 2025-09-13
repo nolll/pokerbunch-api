@@ -32,10 +32,10 @@ public static class TestClient
 
     public static class Auth
     {
-        public static async Task<TestClientResult<string>> Login(LoginPostModel parameters)
+        public static async Task<TestClientResult<LoginModel>> Login(LoginPostModel parameters)
         {
             var response = await GetClient().PostAsJsonAsync(new ApiLoginUrl().Relative, parameters);
-            return await HandleStringResponse(response);
+            return await HandleJsonResponse<LoginModel>(response);
         }
     }
 
@@ -241,9 +241,9 @@ public static class TestClient
             return await PutAsync(token, new ApiUserChangePasswordUrl(), parameters);
         }
 
-        public static async Task<TestClientResult> PasswordReset(string? token, ResetPasswordPostModel parameters)
+        public static async Task<TestClientResult> PasswordReset(ResetPasswordPostModel parameters)
         {
-            return await PostAsync(token, new ApiUserResetPasswordUrl(), parameters);
+            return await PostAsync(new ApiUserResetPasswordUrl(), parameters);
         }
 
         public static async Task<TestClientResult<FullUserModel>> Profile(string? token)
