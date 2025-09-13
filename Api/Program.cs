@@ -1,5 +1,4 @@
-﻿using Api.Extensions;
-using Api.Settings;
+﻿using Api.Settings;
 using Api.Urls.ApiUrls;
 using Core;
 using Core.Cache;
@@ -23,12 +22,11 @@ using System.Text;
 using Api.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Api.Extensions.Swagger;
-using Microsoft.OpenApi.Models;
-using System.IO;
-using System.Reflection;
+using Api;
+using Api.Endpoints;
+using Api.Endpoints.Mapping;
+using Api.Endpoints.Routes;
 using Api.Middleware;
-using Api.Routes;
 
 var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT");
@@ -59,6 +57,8 @@ builder.Services.AddLogging(logging =>
 });
 
 builder.Services.AddSingleton(settings);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IAuth, Auth>();
 builder.Services.AddSingleton<ISettings>(new Settings(settings.InvitationSecret));
 builder.Services.AddSingleton(new UrlProvider(settings.Urls.Api, settings.Urls.Site));
 
@@ -224,10 +224,11 @@ else
 }
 
 app.MapOpenApi();
-//app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/openapi/v1.json", "Version 1"); });
 
 app.UseAuthentication();
+app.UseAuthorization();
+app.Map();
 app.UseMvc();
 
 app.Run();

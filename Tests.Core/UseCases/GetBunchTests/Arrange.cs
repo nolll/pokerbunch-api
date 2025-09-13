@@ -32,6 +32,6 @@ public abstract class Arrange : UseCaseTest<GetBunch>
     {
         var currentBunch = new CurrentBunch(BunchId, Slug, DisplayName, PlayerId, PlayerName, Role);
         Result = await Sut.Execute(
-            new GetBunch.Request(new PrincipalInTest(canGetBunch: CanGetBunch, currentBunch: currentBunch), Slug));
+            new GetBunch.Request(new AuthInTest(canGetBunch: CanGetBunch, currentBunch: currentBunch), Slug));
     }
 }

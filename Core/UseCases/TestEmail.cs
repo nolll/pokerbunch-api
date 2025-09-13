@@ -1,6 +1,4 @@
-using Core.Entities;
 using Core.Errors;
-using Core.Repositories;
 using Core.Services;
 
 namespace Core.UseCases;
@@ -10,7 +8,7 @@ public class TestEmail(IEmailSender emailSender)
 {
     protected override Task<UseCaseResult<Result>> Work(Request request)
     {
-        if (!request.Principal.CanSendTestEmail)
+        if (!request.Auth.CanSendTestEmail)
             return Task.FromResult(Error(new AccessDeniedError()));
 
         // todo: Move email to config
@@ -21,9 +19,9 @@ public class TestEmail(IEmailSender emailSender)
         return Task.FromResult(Success(new Result(email)));
     }
     
-    public class Request(IPrincipal principal)
+    public class Request(IAuth auth)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
     }
 
     public class Result(string email)

@@ -1,5 +1,4 @@
 ﻿using Core.Entities;
-using Core.Services;
 using Core.UseCases;
 using Tests.Common;
 using Tests.Core.TestClasses;
@@ -50,6 +49,6 @@ class EventListTests : TestBase
     private EventList.Request CreateInput()
     {
         var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
-        return new EventList.Request(new PrincipalInTest(canListEvents: true, currentBunch: currentBunch), TestData.SlugA);
+        return new EventList.Request(new AuthInTest(canListEvents: true, currentBunch: currentBunch), TestData.SlugA);
     }
 }

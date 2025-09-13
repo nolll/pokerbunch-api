@@ -1,4 +1,3 @@
-using Core.Services;
 using Core.UseCases;
 using Tests.Core.TestClasses;
 
@@ -12,6 +11,6 @@ public abstract class Arrange : UseCaseTest<ClearCache>
 
     protected override async Task ExecuteAsync()
     {
-        Result = await Sut.Execute(new ClearCache.Request(new PrincipalInTest(canClearCache: CanClearCache)));
+        Result = await Sut.Execute(new ClearCache.Request(new AuthInTest(canClearCache: CanClearCache)));
     }
 }

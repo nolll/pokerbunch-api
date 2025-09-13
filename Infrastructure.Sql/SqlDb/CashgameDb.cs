@@ -6,7 +6,6 @@ using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Sql;
 using SqlKata;
-using SqlKata.Execution;
 
 namespace Infrastructure.Sql.SqlDb;
 

@@ -9,7 +9,7 @@ public class UserListTests : TestBase
     [Test]
     public async Task UserList_ReturnsListOfUserItems()
     {
-        var result = await Sut.Execute(new UserList.Request(new PrincipalInTest(canListUsers: true)));
+        var result = await Sut.Execute(new UserList.Request(new AuthInTest(canListUsers: true)));
 
         Assert.That(result.Data?.Users.Count, Is.EqualTo(4));
         Assert.That(result.Data?.Users.First().DisplayName, Is.EqualTo(TestData.UserDisplayNameA));

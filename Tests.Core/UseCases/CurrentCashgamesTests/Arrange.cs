@@ -27,7 +27,7 @@ public abstract class Arrange : UseCaseTest<CurrentCashgames>
     {
         var currentBunch = new CurrentBunch(BunchId, Slug);
         Result = await Sut.Execute(new CurrentCashgames.Request(
-            new PrincipalInTest(canListCurrentGames: CanListCurrentGames, currentBunch: currentBunch),
+            new AuthInTest(canListCurrentGames: CanListCurrentGames, currentBunch: currentBunch),
             Slug));
     }
 }

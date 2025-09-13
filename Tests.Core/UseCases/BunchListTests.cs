@@ -9,7 +9,7 @@ public class BunchListTests : TestBase
     [Test]
     public async Task BunchList_ReturnsListOfBunchItems()
     {
-        var result = await Sut.Execute(new GetBunchList.Request(new PrincipalInTest(canListBunches: true)));
+        var result = await Sut.Execute(new GetBunchList.Request(new AuthInTest(canListBunches: true)));
 
         Assert.That(result.Data?.Bunches.Count, Is.EqualTo(2));
         Assert.That(result.Data?.Bunches[0].Slug, Is.EqualTo("bunch-a"));

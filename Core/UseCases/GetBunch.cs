@@ -13,14 +13,14 @@ public class GetBunch(IBunchRepository bunchRepository)
     {
         var bunch = await bunchRepository.GetBySlug(request.Slug);
         
-        return !request.Principal.CanGetBunch(bunch.Id) ? 
+        return !request.Auth.CanGetBunch(bunch.Id) ? 
             Error(new AccessDeniedError()) : 
             Success(new Result(bunch));
     }
 
-    public class Request(IPrincipal principal, string slug)
+    public class Request(IAuth auth, string slug)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
     }
 

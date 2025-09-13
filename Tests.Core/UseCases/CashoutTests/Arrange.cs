@@ -39,7 +39,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
 
     protected override async Task ExecuteAsync()
     {
-        Result = await Sut.Execute(new Cashout.Request(new PrincipalInTest(canEditCashgameActionsFor: true), CashgameId, PlayerId, CashoutStack, CashoutTime));
+        Result = await Sut.Execute(new Cashout.Request(new AuthInTest(canEditCashgameActionsFor: true), CashgameId, PlayerId, CashoutStack, CashoutTime));
     }
 
     private Cashgame CreateCashgame()

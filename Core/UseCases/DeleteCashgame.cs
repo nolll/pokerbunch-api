@@ -14,7 +14,7 @@ public class DeleteCashgame(
         var cashgame = await cashgameRepository.Get(request.Id);
         var bunch = await bunchRepository.Get(cashgame.BunchId);
 
-        if (!request.Principal.CanDeleteCashgame(cashgame.BunchId))
+        if (!request.Auth.CanDeleteCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
 
         if (cashgame.EventId != null)
@@ -28,9 +28,9 @@ public class DeleteCashgame(
         return Success(new Result(bunch.Slug));
     }
     
-    public class Request(IPrincipal principal, string id)
+    public class Request(IAuth auth, string id)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Id { get; } = id;
     }
 

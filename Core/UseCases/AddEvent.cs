@@ -16,9 +16,9 @@ public class AddEvent(IEventRepository eventRepository)
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
         
-        var bunchInfo = request.Principal.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
 
-        if (!request.Principal.CanAddEvent(bunchInfo.Id))
+        if (!request.Auth.CanAddEvent(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
         var e = new Event("", bunchInfo.Id, request.Name);
@@ -27,9 +27,9 @@ public class AddEvent(IEventRepository eventRepository)
         return Success(new Result(id));
     }
     
-    public class Request(IPrincipal principal, string slug, string name)
+    public class Request(IAuth auth, string slug, string name)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Name can't be empty")]

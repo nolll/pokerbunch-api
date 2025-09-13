@@ -1,4 +1,4 @@
-using Api.Routes;
+using Api.Endpoints.Routes;
 
 namespace Api.Urls.SiteUrls;
 

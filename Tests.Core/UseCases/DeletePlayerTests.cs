@@ -13,7 +13,7 @@ public class DeletePlayerTests : TestBase
         const string playerIdThatHasNotPlayed = "3";
 
         var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
-        var request = new DeletePlayer.Request(new PrincipalInTest(canDeletePlayer: true, currentBunch: currentBunch), playerIdThatHasNotPlayed);
+        var request = new DeletePlayer.Request(new AuthInTest(canDeletePlayer: true, currentBunch: currentBunch), playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);
 
         Assert.That(result.Data?.Slug, Is.EqualTo(TestData.SlugA));

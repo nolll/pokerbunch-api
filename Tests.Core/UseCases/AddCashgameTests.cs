@@ -37,7 +37,7 @@ public class AddCashgameTests : TestBase
     private static AddCashgame.Request CreateRequest(string? locationId = null)
     {
         var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
-        return new AddCashgame.Request(new PrincipalInTest(canAddCashgame: true, currentBunch: currentBunch), TestData.SlugA, locationId);
+        return new AddCashgame.Request(new AuthInTest(canAddCashgame: true, currentBunch: currentBunch), TestData.SlugA, locationId);
     }
 
     private AddCashgame Sut => new(

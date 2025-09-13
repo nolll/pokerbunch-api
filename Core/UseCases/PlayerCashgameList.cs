@@ -17,7 +17,7 @@ public class PlayerCashgameList(
     {
         var player = await playerRepository.Get(request.PlayerId);
 
-        if (!request.Principal.CanListPlayerCashgames(player.BunchId))
+        if (!request.Auth.CanListPlayerCashgames(player.BunchId))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(request.PlayerId);
@@ -35,9 +35,9 @@ public class PlayerCashgameList(
     private static IEnumerable<Cashgame> SortItems(IEnumerable<Cashgame> items) => 
         items.OrderByDescending(o => o.StartTime);
 
-    public class Request(IPrincipal principal, string playerId)
+    public class Request(IAuth auth, string playerId)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
         public string PlayerId { get; } = playerId;
     }
 

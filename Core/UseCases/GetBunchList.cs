@@ -11,16 +11,16 @@ public class GetBunchList(IBunchRepository bunchRepository)
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        if (!request.Principal.CanListBunches)
+        if (!request.Auth.CanListBunches)
             return Error(new AccessDeniedError());
 
         var bunches = await bunchRepository.List();
         return Success(new Result(bunches));
     }
     
-    public class Request(IPrincipal principal)
+    public class Request(IAuth auth)
     {
-        public IPrincipal Principal { get; } = principal;
+        public IAuth Auth { get; } = auth;
     }
 
     public class Result(IEnumerable<Bunch> bunches) : BunchListResult(bunches);
