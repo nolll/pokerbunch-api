@@ -107,5 +107,17 @@ public static class Endpoints
         app.MapGet(ApiRoutes.Cashgame.ListCurrentByBunch, GetCurrentCashgamesHandler.Handle)
             .RequireAuthorization()
             .WithSummary("List running cashgames");
+
+        app.MapGet(ApiRoutes.Event.Get, GetEventHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Get event");
+
+        app.MapGet(ApiRoutes.Event.ListByBunch, GetEventListHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List events");
+
+        app.MapPost(ApiRoutes.Event.Add, AddEventHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Add event");
     }
 }
