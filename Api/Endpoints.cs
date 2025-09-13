@@ -119,5 +119,18 @@ public static class Endpoints
         app.MapPost(ApiRoutes.Event.Add, AddEventHandler.Handle)
             .RequireAuthorization()
             .WithSummary("Add event");
+        
+        
+        app.MapGet(ApiRoutes.Location.Get, GetLocationHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Get location");
+
+        app.MapGet(ApiRoutes.Location.ListByBunch, GetLocationListHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("List locations");
+
+        app.MapPost(ApiRoutes.Location.Add, AddLocationHandler.Handle)
+            .RequireAuthorization()
+            .WithSummary("Add location");
     }
 }
