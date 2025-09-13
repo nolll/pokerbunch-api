@@ -23,8 +23,10 @@ using Api.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Api;
+using Api.Endpoints;
+using Api.Endpoints.Mapping;
+using Api.Endpoints.Routes;
 using Api.Middleware;
-using Api.Routes;
 
 var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT");
@@ -226,7 +228,7 @@ app.UseSwaggerUI(c => { c.SwaggerEndpoint("/openapi/v1.json", "Version 1"); });
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapEndpoints();
+app.Map();
 app.UseMvc();
 
 app.Run();
