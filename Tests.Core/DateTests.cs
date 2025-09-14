@@ -11,16 +11,13 @@ class DateTests
     [Test]
     public void Construct_PropertiesAreSet()
     {
-        Assert.That(Sut.Year, Is.EqualTo(Year));
-        Assert.That(Sut.Month, Is.EqualTo(Month));
-        Assert.That(Sut.Day, Is.EqualTo(Day));
+        Sut.Year.Should().Be(Year);
+        Sut.Month.Should().Be(Month);
+        Sut.Day.Should().Be(Day);
     }
 
     [Test]
-    public void IsoString_IsCorrectFormat()
-    {
-        Assert.That(Sut.IsoString, Is.EqualTo("2000-02-03"));
-    }
+    public void IsoString_IsCorrectFormat() => Sut.IsoString.Should().Be("2000-02-03");
 
     private static Date Sut => new(Year, Month, Day);
 }

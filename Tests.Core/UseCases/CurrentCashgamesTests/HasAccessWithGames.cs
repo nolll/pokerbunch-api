@@ -9,9 +9,9 @@ public class HasAccessWithGames : Arrange
     public void ReturnsListOfGames()
     {
         var games = Result?.Data?.Games;
-        Assert.That(games?.Count, Is.EqualTo(1));
+        games?.Count.Should().Be(1);
         var game = games?.First();
-        Assert.That(game?.Slug, Is.EqualTo(Slug));
-        Assert.That(game?.Id, Is.EqualTo(CashgameId));
+        game?.Slug.Should().Be(Slug);
+        game?.Id.Should().Be(CashgameId);
     }
 }

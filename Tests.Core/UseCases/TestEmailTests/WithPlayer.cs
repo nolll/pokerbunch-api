@@ -7,8 +7,5 @@ public class WithPlayer : Arrange
     protected override bool CanSendTestEmail => false;
 
     [Test]
-    public void ReturnsError()
-    {
-        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.AccessDenied));
-    }
+    public void ReturnsError() => Result?.Error?.Type.Should().Be(ErrorType.AccessDenied);
 }

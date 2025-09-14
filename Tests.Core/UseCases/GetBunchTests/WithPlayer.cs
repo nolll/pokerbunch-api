@@ -8,11 +8,11 @@ public class WithPlayer : Arrange
     protected override Role Role => Role.Player;
 
     [Test]
-    public void BunchNameIsSet() => Assert.That(Result?.Data?.Name, Is.EqualTo(DisplayName));
+    public void BunchNameIsSet() => Result?.Data?.Name.Should().Be(DisplayName);
 
     [Test]
-    public void DescriptionIsSet() => Assert.That(Result?.Data?.Description, Is.EqualTo(Description));
+    public void DescriptionIsSet() => Result?.Data?.Description.Should().Be(Description);
 
     [Test]
-    public void HouseRulesIsSet() => Assert.That(Result?.Data?.HouseRules, Is.EqualTo(HouseRules));
+    public void HouseRulesIsSet() => Result?.Data?.HouseRules.Should().Be(HouseRules);
 }

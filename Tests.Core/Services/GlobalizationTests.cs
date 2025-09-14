@@ -6,12 +6,6 @@ namespace Tests.Core.Services;
 public class GlobalizationTests
 {
     [Test]
-    public void FormatIsoDate()
-    {
-        var dateTime = DateTime.Parse("2010-02-01 12:28:35");
-        const string expected = "2010-02-01";
-
-        var result = Globalization.FormatIsoDate(dateTime);
-        Assert.That(result, Is.EqualTo(expected));
-    }
+    public void FormatIsoDate() => 
+        Globalization.FormatIsoDate(DateTime.Parse("2010-02-01 12:28:35")).Should().Be("2010-02-01");
 }

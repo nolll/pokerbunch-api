@@ -7,7 +7,7 @@ public class NoAccess : Arrange
     [Test]
     public void ReturnsAccessDeniedError()
     {
-        Assert.That(Result?.Success, Is.False);
-        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.AccessDenied));
+        Result?.Success.Should().BeFalse();
+        Result?.Error?.Type.Should().Be(ErrorType.AccessDenied);
     }
 }
