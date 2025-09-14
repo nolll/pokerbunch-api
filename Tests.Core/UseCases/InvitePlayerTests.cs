@@ -14,7 +14,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest();
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data?.PlayerId, Is.EqualTo("1"));
+        result.Data?.PlayerId.Should().Be("1");
     }
 
     [TestCase("")]
@@ -24,7 +24,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest(email);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -41,9 +41,9 @@ If you don't have an account, you can register at https://pokerbunch.com/test";
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.EmailSender.To, Is.EqualTo(TestData.UserEmailA));
-        Assert.That(Deps.EmailSender.Message?.Subject, Is.EqualTo(subject));
-        Assert.That(Deps.EmailSender.Message?.Body, Is.EqualTo(body));
+        Deps.EmailSender.To.Should().Be(TestData.UserEmailA);
+        Deps.EmailSender.Message?.Subject.Should().Be(subject);
+        Deps.EmailSender.Message?.Body.Should().Be(body);
     }
 
     private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)

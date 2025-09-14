@@ -15,9 +15,9 @@ public class Suite07LocationTests
         var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new LocationAddPostModel(TestData.BunchLocationName);
         var result = await TestClient.Location.Add(managerToken, TestData.BunchId, parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Id, Is.EqualTo(TestData.BunchLocationId));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Id.Should().Be(TestData.BunchLocationId);
     }
 
     [Test]
@@ -26,12 +26,12 @@ public class Suite07LocationTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Location.List(managerToken, TestData.BunchId);
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Count, Is.EqualTo(1));
+        result.Model.Should().NotBeNull();
+        result.Model?.Count.Should().Be(1);
         var location = result.Model?[0];
-        Assert.That(location?.Id, Is.EqualTo(TestData.BunchLocationId));
-        Assert.That(location?.Name, Is.EqualTo(TestData.BunchLocationName));
-        Assert.That(location?.Bunch, Is.EqualTo(TestData.BunchId));
+        location?.Id.Should().Be(TestData.BunchLocationId);
+        location?.Name.Should().Be(TestData.BunchLocationName);
+        location?.Bunch.Should().Be(TestData.BunchId);
     }
 
     [Test]
@@ -40,9 +40,9 @@ public class Suite07LocationTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Location.Get(managerToken, TestData.BunchLocationId);
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Id, Is.EqualTo(TestData.BunchLocationId));
-        Assert.That(result.Model?.Name, Is.EqualTo(TestData.BunchLocationName));
-        Assert.That(result.Model?.Bunch, Is.EqualTo(TestData.BunchId));
+        result.Model.Should().NotBeNull();
+        result.Model?.Id.Should().Be(TestData.BunchLocationId);
+        result.Model?.Name.Should().Be(TestData.BunchLocationName);
+        result.Model?.Bunch.Should().Be(TestData.BunchId);
     }
 }

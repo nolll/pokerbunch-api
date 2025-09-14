@@ -13,10 +13,10 @@ public class Suite11UserTests
     public async Task Test01GetUserAsAdmin()
     {
         var result = await TestClient.User.GetAsAdmin(TestData.AdminUserName);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.Model?.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.UserName.Should().Be(TestData.AdminUserName);
+        result.Model?.DisplayName.Should().Be(TestData.AdminDisplayName);
     }
 
     [Test]
@@ -24,10 +24,10 @@ public class Suite11UserTests
     public async Task Test02GetUserAsUser()
     {
         var result = await TestClient.User.GetAsUser(TestData.AdminUserName);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.Model?.DisplayName, Is.EqualTo(TestData.AdminDisplayName));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.UserName.Should().Be(TestData.AdminUserName);
+        result.Model?.DisplayName.Should().Be(TestData.AdminDisplayName);
     }
 
     [Test]
@@ -36,15 +36,15 @@ public class Suite11UserTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.User.List(token);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Count, Is.EqualTo(3));
-        Assert.That(result.Model?[0].UserName, Is.EqualTo(TestData.AdminUserName));
-        Assert.That(result.Model?[0].DisplayName, Is.EqualTo(TestData.AdminDisplayName));
-        Assert.That(result.Model?[1].UserName, Is.EqualTo(TestData.ManagerUserName));
-        Assert.That(result.Model?[1].DisplayName, Is.EqualTo(TestData.ManagerDisplayName));
-        Assert.That(result.Model?[2].UserName, Is.EqualTo(TestData.UserUserName));
-        Assert.That(result.Model?[2].DisplayName, Is.EqualTo(TestData.UserDisplayName));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Count.Should().Be(3);
+        result.Model?[0].UserName.Should().Be(TestData.AdminUserName);
+        result.Model?[0].DisplayName.Should().Be(TestData.AdminDisplayName);
+        result.Model?[1].UserName.Should().Be(TestData.ManagerUserName);
+        result.Model?[1].DisplayName.Should().Be(TestData.ManagerDisplayName);
+        result.Model?[2].UserName.Should().Be(TestData.UserUserName);
+        result.Model?[2].DisplayName.Should().Be(TestData.UserDisplayName);
     }
 
     [Test]
@@ -55,8 +55,8 @@ public class Suite11UserTests
         var result = await TestClient.User.List(userToken);
         
         // todo: Find out why forbid returns 404
-        //Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Test]
@@ -65,10 +65,10 @@ public class Suite11UserTests
     {
         var userToken = await LoginHelper.GetUserToken();
         var result = await TestClient.User.Profile(userToken);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.UserName, Is.EqualTo(TestData.UserUserName));
-        Assert.That(result.Model?.DisplayName, Is.EqualTo(TestData.UserDisplayName));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.UserName.Should().Be(TestData.UserUserName);
+        result.Model?.DisplayName.Should().Be(TestData.UserDisplayName);
     }
 
     [Test]
@@ -78,7 +78,7 @@ public class Suite11UserTests
         var userToken = await LoginHelper.GetUserToken();
         var parameters = new ChangePasswordPostModel("new_password", TestData.UserPassword);
         var result = await TestClient.User.PasswordChange(userToken, parameters);
-        Assert.That(result.Success, Is.True);
+        result.Success.Should().BeTrue();
     }
 
     [Test]
@@ -87,8 +87,8 @@ public class Suite11UserTests
     {
         var parameters = new ResetPasswordPostModel(TestData.UserEmail);
         var result = await TestClient.User.PasswordReset(parameters);
-        Assert.That(result.Success, Is.True);
-        Assert.That(TestSetup.EmailSender?.To, Is.EqualTo(TestData.UserEmail));
+        result.Success.Should().BeTrue();
+        TestSetup.EmailSender?.To.Should().Be(TestData.UserEmail);
     }
 
     [Test]
@@ -100,9 +100,9 @@ public class Suite11UserTests
         var token = await LoginHelper.GetAdminToken();
         var parameters = new UpdateUserPostModel(displayName, TestData.UserEmail, realName);
         var result = await TestClient.User.Update(token, TestData.UserUserName, parameters);
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Model?.DisplayName, Is.EqualTo(displayName));
-        Assert.That(result.Model?.RealName, Is.EqualTo(realName));
+        result.Success.Should().BeTrue();
+        result.Model?.DisplayName.Should().Be(displayName);
+        result.Model?.RealName.Should().Be(realName);
 
         var changeBackParameters = new UpdateUserPostModel(TestData.UserDisplayName, TestData.UserEmail, null);
         var changeBackResult = await TestClient.User.Update(token, TestData.UserUserName, changeBackParameters);

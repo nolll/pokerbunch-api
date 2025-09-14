@@ -20,7 +20,7 @@ class BuyinTests : TestBase
         var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -29,7 +29,7 @@ class BuyinTests : TestBase
         var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -47,9 +47,9 @@ class BuyinTests : TestBase
 
         var result = Deps.Cashgame.Updated?.AddedCheckpoints.First();
 
-        Assert.That(result?.Timestamp, Is.EqualTo(timestamp));
-        Assert.That(result?.Amount, Is.EqualTo(buyin));
-        Assert.That(result?.Stack, Is.EqualTo(savedStack));
+        result?.Timestamp.Should().Be(timestamp);
+        result?.Amount.Should().Be(buyin);
+        result?.Stack.Should().Be(savedStack);
     }
 
     private Buyin Sut => new(Deps.Cashgame);

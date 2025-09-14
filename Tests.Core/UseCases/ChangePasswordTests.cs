@@ -26,7 +26,7 @@ public class ChangePasswordTests : MockBase
         var request = new ChangePassword.Request(TestData.UserNameA, "", "b");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class ChangePasswordTests : MockBase
         var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Auth));
+        result.Error?.Type.Should().Be(ErrorType.Auth);
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class ChangePasswordTests : MockBase
         var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
         await Sut.Execute(request);
             
-        Assert.That(savedUser?.EncryptedPassword, Is.EqualTo("cebb55b2a2b59b692bf5c81c9359b59c3244fe86"));
+        savedUser?.EncryptedPassword.Should().Be("cebb55b2a2b59b692bf5c81c9359b59c3244fe86");
     }
         
     private ChangePassword Sut => new(

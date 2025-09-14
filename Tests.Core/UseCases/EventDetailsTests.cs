@@ -14,7 +14,7 @@ class EventDetailsTests : TestBase
         var input = new EventDetails.Request(new AuthInTest(canSeeEventDetails: true, currentBunch: currentBunch), "1");
         var result = await Sut.Execute(input);
 
-        Assert.That(result.Data?.Name, Is.EqualTo(TestData.EventNameA));
+        result.Data?.Name.Should().Be(TestData.EventNameA);
     }
 
     private EventDetails Sut => new(

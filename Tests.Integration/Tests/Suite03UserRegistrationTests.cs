@@ -17,7 +17,7 @@ public class Suite03UserRegistrationTests
     {
         var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
         var result = await TestClient.User.Add(parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         await SetAdminRole();
     }
@@ -39,7 +39,7 @@ public class Suite03UserRegistrationTests
     {
         var parameters = new AddUserPostModel(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
         var result = await TestClient.User.Add(parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Test]
@@ -48,6 +48,6 @@ public class Suite03UserRegistrationTests
     {
         var parameters = new AddUserPostModel(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
         var result = await TestClient.User.Add(parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
     }

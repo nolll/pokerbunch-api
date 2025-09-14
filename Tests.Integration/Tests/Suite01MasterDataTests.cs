@@ -18,12 +18,12 @@ public class Suite01MasterDataTests
 
         var roles = (await TestSetup.Db.GetAsync<RoleInTest>(query)).ToList();
 
-        Assert.That(roles.Count, Is.EqualTo(3));
-        Assert.That(roles[0].Role_Id, Is.EqualTo(1));
-        Assert.That(roles[0].Role_Name, Is.EqualTo("Player"));
-        Assert.That(roles[1].Role_Id, Is.EqualTo(2));
-        Assert.That(roles[1].Role_Name, Is.EqualTo("Manager"));
-        Assert.That(roles[2].Role_Id, Is.EqualTo(3));
-        Assert.That(roles[2].Role_Name, Is.EqualTo("Admin"));
+        roles.Count.Should().Be(3);
+        roles[0].Role_Id.Should().Be(1);
+        roles[0].Role_Name.Should().Be("Player");
+        roles[1].Role_Id.Should().Be(2);
+        roles[1].Role_Name.Should().Be("Manager");
+        roles[2].Role_Id.Should().Be(3);
+        roles[2].Role_Name.Should().Be("Admin");
     }
 }

@@ -12,7 +12,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data?.Slug, Is.EqualTo(TestData.SlugA));
+        result.Data?.Slug.Should().Be(TestData.SlugA);
     }
 
     [Test]
@@ -22,7 +22,7 @@ class CashgameListTests : TestBase
 
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data?.Items.Count, Is.EqualTo(0));
+        result.Data?.Items.Count.Should().Be(0);
     }
 
     [Test]
@@ -30,7 +30,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data?.Items[0].LocationName, Is.EqualTo(TestData.LocationNameB));
+        result.Data?.Items[0].LocationName.Should().Be(TestData.LocationNameB);
     }
 
     [Test]
@@ -38,7 +38,7 @@ class CashgameListTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        Assert.That(result.Data?.Items[0].CashgameId, Is.EqualTo("2"));
+        result.Data?.Items[0].CashgameId.Should().Be("2");
     }
     
     private CashgameList.Request CreateRequest(int? year = null)

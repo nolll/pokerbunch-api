@@ -12,8 +12,8 @@ public class Suite04LoginTests
     public async Task Test01LoginAdminReturns200()
     {
         var result = await LoginHelper.LoginAdmin();
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model?.AccessToken, Is.Not.Empty);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model?.AccessToken.Should().NotBeEmpty();
     }
 
     [Test]
@@ -21,8 +21,8 @@ public class Suite04LoginTests
     public async Task Test02LoginManagerReturns200()
     {
         var result = await LoginHelper.LoginManager();
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model?.AccessToken, Is.Not.Empty);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model?.AccessToken.Should().NotBeEmpty();
     }
 
     [Test]
@@ -30,7 +30,7 @@ public class Suite04LoginTests
     public async Task Test03LoginRegularUserReturns200()
     {
         var result = await LoginHelper.LoginUser();
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model?.AccessToken, Is.Not.Empty);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model?.AccessToken.Should().NotBeEmpty();
     }
 }

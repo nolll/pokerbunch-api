@@ -9,7 +9,7 @@ public class InvalidStack : Arrange
     [Test]
     public void ReturnsError()
     {
-        Assert.That(Result?.Success, Is.False);
-        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        Result?.Success.Should().BeFalse();
+        Result?.Error?.Type.Should().Be(ErrorType.Validation);
     }
 }

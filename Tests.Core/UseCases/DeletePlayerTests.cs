@@ -16,9 +16,9 @@ public class DeletePlayerTests : TestBase
         var request = new DeletePlayer.Request(new AuthInTest(canDeletePlayer: true, currentBunch: currentBunch), playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data?.Slug, Is.EqualTo(TestData.SlugA));
-        Assert.That(result.Data?.PlayerId, Is.EqualTo(playerIdThatHasNotPlayed));
-        Assert.That(Deps.Player.Deleted, Is.EqualTo(playerIdThatHasNotPlayed));
+        result.Data?.Slug.Should().Be(TestData.SlugA);
+        result.Data?.PlayerId.Should().Be(playerIdThatHasNotPlayed);
+        Deps.Player.Deleted.Should().Be(playerIdThatHasNotPlayed);
     }
 
     // todo: This should throw an exception. Fix test during test rewrite
