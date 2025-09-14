@@ -6,176 +6,266 @@ namespace Api.Endpoints.Mapping;
 
 public static class EndpointsMapper
 {
+    private static class Tags
+    {
+        public const string Auth = "Auth";
+        public const string Users = "Users";
+        public const string Bunches = "Bunches";
+        public const string Cashgames = "Cashgames";
+        public const string CashgameActions = "Cashgame actions";
+        public const string Players = "Players";
+        public const string Locations = "Locations";
+        public const string Events = "Events";
+    }
+    
     public static void Map(this WebApplication app)
     {
-        app.MapPost(ApiRoutes.Admin.ClearCache, ClearCacheHandler.Handle)
+        MapAuthEndpoints(app);
+        MapUserEndpoints(app);
+        MapBunchEndpoints(app);
+        MapCashgameEndpoints(app);
+        MapCashgameActionEndpoints(app);
+        MapPlayerEndpoints(app);
+        MapLocationEndpoints(app);
+        MapEventEndpoints(app);
+        MapGeneralEndpoints(app);
+        MapAdminEndpoints(app);
+    }
+
+    private static void MapAuthEndpoints(WebApplication app)
+    {
+        app.MapPost(ApiRoutes.Auth.Login, LoginHandler.Handle)
+            .WithTags(Tags.Auth)
+            .AllowAnonymous()
+            .WithSummary("Get an auth token")
+            .WithDescription("Get a token that can bu used for authentication");
+    }
+
+    private static void MapUserEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.User.Get, GetUserHandler.Handle)
+            .WithTags(Tags.Users)
             .RequireAuthorization()
-            .ExcludeFromDescription();
+            .WithSummary("GetUser");
         
-        app.MapPost(ApiRoutes.Admin.SendEmail, SendEmailHandler.Handle)
+        app.MapGet(ApiRoutes.User.List, GetUserListHandler.Handle)
+            .WithTags(Tags.Users)
             .RequireAuthorization()
-            .ExcludeFromDescription();
+            .WithSummary("List users");
         
+        app.MapPut(ApiRoutes.User.Update, UpdateUserHandler.Handle)
+            .WithTags(Tags.Users)
+            .RequireAuthorization()
+            .WithSummary("Update user");
+        
+        app.MapPost(ApiRoutes.User.Add, AddUserHandler.Handle)
+            .WithTags(Tags.Users)
+            .WithSummary("Add user");
+
+        app.MapGet(ApiRoutes.Profile.Get, GetCurrentUserHandler.Handle)
+            .WithTags(Tags.Users)
+            .RequireAuthorization()
+            .WithSummary("Get authenticated user");
+        
+        app.MapPut(ApiRoutes.Profile.ChangePassword, ChangePasswordHandler.Handle)
+            .WithTags(Tags.Users)
+            .RequireAuthorization()
+            .WithSummary("Change password");
+
+        app.MapPost(ApiRoutes.Profile.ResetPassword, ResetPasswordHandler.Handle)
+            .WithTags(Tags.Users)
+            .WithSummary("Reset password");
+    }
+
+    private static void MapBunchEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.Bunch.Get, GetBunchHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("Get bunch");
+
+        app.MapPut(ApiRoutes.Bunch.Update, UpdateBunchHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("Update bunch");
+
+        app.MapGet(ApiRoutes.Bunch.List, GetBunchListHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("List bunches");
+
+        app.MapGet(ApiRoutes.Bunch.ListForCurrentUser, GetBunchListForCurrentUserHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("List your bunches");
+
+        app.MapPost(ApiRoutes.Bunch.Add, AddBunchHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("Add bunch");
+
+        app.MapPost(ApiRoutes.Bunch.Join, JoinBunchHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("Join bunch");
+    }
+
+    private static void MapCashgameEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.Cashgame.Get, GetCashgameHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("Get cashgame");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByBunch, GetCashgameListByBunchHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("List cashgames");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByBunchAndYear, GetCashgameListByBunchAndYearHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("List cashgames by year");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByEvent, GetCashgameListByEventHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("List cashgames by event");
+
+        app.MapGet(ApiRoutes.Cashgame.ListByPlayer, GetCashgameListByPlayerHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("List cashgames by player");
+
+        app.MapPost(ApiRoutes.Cashgame.Add, AddCashgameHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("Add cashgame");
+
+        app.MapPut(ApiRoutes.Cashgame.Update, UpdateCashgameHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("Update cashgame");
+
+        app.MapDelete(ApiRoutes.Cashgame.Delete, DeleteCashgameHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("Delete cashgame");
+
+        app.MapGet(ApiRoutes.Cashgame.ListCurrentByBunch, GetCurrentCashgamesHandler.Handle)
+            .WithTags(Tags.Cashgames)
+            .RequireAuthorization()
+            .WithSummary("List running cashgames");
+    }
+
+    private static void MapCashgameActionEndpoints(WebApplication app)
+    {
+        app.MapPost(ApiRoutes.Action.Add, AddActionHandler.Handle)
+            .WithTags(Tags.CashgameActions)
+            .RequireAuthorization()
+            .WithSummary("Add cashgame action")
+            .WithDescription("Type can be 'buyin', 'report' or 'cashout'. The Added field is only used for buyin actions");
+
+        app.MapPut(ApiRoutes.Action.Update, UpdateActionHandler.Handle)
+            .WithTags(Tags.CashgameActions)
+            .RequireAuthorization()
+            .WithSummary("Update player action")
+            .WithDescription("The Added field is only used for buyin actions");
+
+        app.MapDelete(ApiRoutes.Action.Delete, DeleteActionHandler.Handle)
+            .WithTags(Tags.CashgameActions)
+            .RequireAuthorization()
+            .WithSummary("Delete cashgame action");
+    }
+
+    private static void MapPlayerEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.Player.Get, GetPlayerHandler.Handle)
+            .WithTags(Tags.Players)
+            .RequireAuthorization()
+            .WithSummary("Get player");
+
+        app.MapGet(ApiRoutes.Player.ListByBunch, GetPlayerListHandler.Handle)
+            .WithTags(Tags.Players)
+            .RequireAuthorization()
+            .WithSummary("List bunch players");
+
+        app.MapPost(ApiRoutes.Player.Add, AddPlayerHandler.Handle)
+            .WithTags(Tags.Players)
+            .RequireAuthorization()
+            .WithSummary("Add player to bunch");
+
+        app.MapDelete(ApiRoutes.Player.Delete, DeletePlayerHandler.Handle)
+            .WithTags(Tags.Players)
+            .RequireAuthorization()
+            .WithSummary("Delete player");
+
+        app.MapPost(ApiRoutes.Player.Invite, InvitePlayerHandler.Handle)
+            .WithTags(Tags.Players)
+            .RequireAuthorization()
+            .WithSummary("Invite player to bunch");
+    }
+
+    private static void MapLocationEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.Location.Get, GetLocationHandler.Handle)
+            .WithTags(Tags.Locations)
+            .RequireAuthorization()
+            .WithSummary("Get location");
+
+        app.MapGet(ApiRoutes.Location.ListByBunch, GetLocationListHandler.Handle)
+            .WithTags(Tags.Locations)
+            .RequireAuthorization()
+            .WithSummary("List locations");
+
+        app.MapPost(ApiRoutes.Location.Add, AddLocationHandler.Handle)
+            .WithTags(Tags.Locations)
+            .RequireAuthorization()
+            .WithSummary("Add location");
+    }
+
+    private static void MapEventEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.Event.Get, GetEventHandler.Handle)
+            .WithTags(Tags.Events)
+            .RequireAuthorization()
+            .WithSummary("Get event");
+
+        app.MapGet(ApiRoutes.Event.ListByBunch, GetEventListHandler.Handle)
+            .WithTags(Tags.Events)
+            .RequireAuthorization()
+            .WithSummary("List events");
+
+        app.MapPost(ApiRoutes.Event.Add, AddEventHandler.Handle)
+            .WithTags(Tags.Events)
+            .RequireAuthorization()
+            .WithSummary("Add event");
+    }
+
+    private static void MapGeneralEndpoints(WebApplication app)
+    {
         app.MapGet(ApiRoutes.Version, VersionHandler.Handle)
             .ExcludeFromDescription();
         
-        app.MapGet(ApiRoutes.Settings, SettingsHandler.Handle)
-            .RequireAuthorization()
-            .ExcludeFromDescription();
-
-        app.MapGet(ApiRoutes.User.Get, GetUserHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("GetUser");
-
-        app.MapPost(ApiRoutes.Action.Add, AddActionHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Add cashgame action")
-            .WithDescription("Add a player action to a cashgame");
-
-        app.MapPut(ApiRoutes.Action.Update, UpdateActionHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Update player action");
-
-        app.MapDelete(ApiRoutes.Action.Delete, DeleteActionHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Delete cashgame action")
-            .WithDescription("Remove a player action from a cashgame");
-
         app.Map(ApiRoutes.Error, ErrorHandler.Handle)
             .ExcludeFromDescription();
 
         app.MapGet(ApiRoutes.Root, RootHandler.Handle)
             .ExcludeFromDescription();
+    }
 
-        app.MapGet(ApiRoutes.Bunch.Get, GetBunchHandler.Handle)
+    private static void MapAdminEndpoints(WebApplication app)
+    {
+        app.MapPost(ApiRoutes.Admin.ClearCache, ClearCacheHandler.Handle)
             .RequireAuthorization()
-            .WithSummary("Get bunch");
+            .ExcludeFromDescription();
 
-        app.MapPut(ApiRoutes.Bunch.Update, UpdateBunchHandler.Handle)
+        app.MapPost(ApiRoutes.Admin.SendEmail, SendEmailHandler.Handle)
             .RequireAuthorization()
-            .WithSummary("Update bunch");
-
-        app.MapGet(ApiRoutes.Bunch.List, GetBunchListHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List bunches");
-
-        app.MapGet(ApiRoutes.Bunch.ListForCurrentUser, GetBunchListForCurrentUserHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List your bunches");
-
-        app.MapPost(ApiRoutes.Bunch.Add, AddBunchHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Add bunch");
-
-        app.MapPost(ApiRoutes.Bunch.Join, JoinBunchHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Join bunch");
-
-        app.MapGet(ApiRoutes.Cashgame.Get, GetCashgameHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Get cashgame");
-
-        app.MapGet(ApiRoutes.Cashgame.ListByBunch, GetCashgameListByBunchHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List cashgames");
-
-        app.MapGet(ApiRoutes.Cashgame.ListByBunchAndYear, GetCashgameListByBunchAndYearHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List cashgames by year");
-
-        app.MapGet(ApiRoutes.Cashgame.ListByEvent, GetCashgameListByEventHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List cashgames by event");
-
-        app.MapGet(ApiRoutes.Cashgame.ListByPlayer, GetCashgameListByPlayerHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List cashgames by player");
-
-        app.MapPost(ApiRoutes.Cashgame.Add, AddCashgameHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Add cashgame");
-
-        app.MapPut(ApiRoutes.Cashgame.Update, UpdateCashgameHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Update cashgame");
-
-        app.MapDelete(ApiRoutes.Cashgame.Delete, DeleteCashgameHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Delete cashgame");
-
-        app.MapGet(ApiRoutes.Cashgame.ListCurrentByBunch, GetCurrentCashgamesHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List running cashgames");
-
-        app.MapGet(ApiRoutes.Event.Get, GetEventHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Get event");
-
-        app.MapGet(ApiRoutes.Event.ListByBunch, GetEventListHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List events");
-
-        app.MapPost(ApiRoutes.Event.Add, AddEventHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Add event");
+            .ExcludeFromDescription();
         
-        app.MapGet(ApiRoutes.Location.Get, GetLocationHandler.Handle)
+        app.MapGet(ApiRoutes.Settings, SettingsHandler.Handle)
             .RequireAuthorization()
-            .WithSummary("Get location");
-
-        app.MapGet(ApiRoutes.Location.ListByBunch, GetLocationListHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List locations");
-
-        app.MapPost(ApiRoutes.Location.Add, AddLocationHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Add location");
-
-        app.MapGet(ApiRoutes.Player.Get, GetPlayerHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Get player");
-
-        app.MapGet(ApiRoutes.Player.ListByBunch, GetPlayerListHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List bunch players");
-
-        app.MapPost(ApiRoutes.Player.Add, AddPlayerHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Add player to bunch");
-
-        app.MapDelete(ApiRoutes.Player.Delete, DeletePlayerHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Delete player");
-
-        app.MapPost(ApiRoutes.Player.Invite, InvitePlayerHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Invite player to bunch");
-
-        app.MapGet(ApiRoutes.User.List, GetUserListHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("List users");
-
-        app.MapPut(ApiRoutes.User.Update, UpdateUserHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Update user");
-
-        app.MapPut(ApiRoutes.Profile.ChangePassword, ChangePasswordHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Change password");
-
-        app.MapPost(ApiRoutes.Profile.ResetPassword, ResetPasswordHandler.Handle)
-            .WithSummary("Reset password");
-
-        app.MapPost(ApiRoutes.User.Add, AddUserHandler.Handle)
-            .WithSummary("Add user");
-
-        app.MapGet(ApiRoutes.Profile.Get, GetCurrentUserHandler.Handle)
-            .RequireAuthorization()
-            .WithSummary("Get authenticated user");
-
-        app.MapPost(ApiRoutes.Auth.Login, LoginHandler.Handle)
-            .AllowAnonymous()
-            .WithSummary("Get an auth token")
-            .WithDescription("Get a token that can bu used for authentication");
+            .ExcludeFromDescription();
     }
 }
