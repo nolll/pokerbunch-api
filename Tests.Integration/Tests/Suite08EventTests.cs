@@ -15,9 +15,9 @@ public class Suite08EventTests
         var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new EventAddPostModel(TestData.EventName);
         var result = await TestClient.Event.Add(managerToken, TestData.BunchId, parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Id, Is.EqualTo(TestData.EventId));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Id.Should().Be(TestData.EventId);
     }
 
     [Test]
@@ -27,12 +27,12 @@ public class Suite08EventTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Event.List(managerToken, TestData.BunchId);
 
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Count, Is.EqualTo(1));
+        result.Model.Should().NotBeNull();
+        result.Model?.Count.Should().Be(1);
         var @event = result.Model?[0];
-        Assert.That(@event?.Id, Is.EqualTo(TestData.EventId));
-        Assert.That(@event?.Name, Is.EqualTo(TestData.EventName));
-        Assert.That(@event?.BunchId, Is.EqualTo(TestData.BunchId));
+        @event?.Id.Should().Be(TestData.EventId);
+        @event?.Name.Should().Be(TestData.EventName);
+        @event?.BunchId.Should().Be(TestData.BunchId);
     }
 
     [Test]
@@ -42,10 +42,10 @@ public class Suite08EventTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Event.Get(managerToken, TestData.EventId);
 
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Id, Is.EqualTo(TestData.EventId));
-        Assert.That(result.Model?.Name, Is.EqualTo(TestData.EventName));
-        Assert.That(result.Model?.BunchId, Is.EqualTo(TestData.BunchId));
+        result.Success.Should().BeTrue();
+        result.Model.Should().NotBeNull();
+        result.Model?.Id.Should().Be(TestData.EventId);
+        result.Model?.Name.Should().Be(TestData.EventName);
+        result.Model?.BunchId.Should().Be(TestData.BunchId);
     }
 }

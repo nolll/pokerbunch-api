@@ -17,7 +17,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -36,8 +36,8 @@ public class EditCheckpointTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data?.CashgameId, Is.EqualTo("1"));
-        Assert.That(result.Data?.PlayerId, Is.EqualTo("1"));
+        result.Data?.CashgameId.Should().Be("1");
+        result.Data?.PlayerId.Should().Be("1");
     }
         
     [Test]
@@ -48,10 +48,10 @@ public class EditCheckpointTests : TestBase
         await Sut.Execute(request);
 
         var updatedCheckpoint = Deps.Cashgame.Updated?.UpdatedCheckpoints.First();
-        Assert.That(updatedCheckpoint?.Type, Is.EqualTo(CheckpointType.Buyin));
-        Assert.That(updatedCheckpoint?.Id, Is.EqualTo(TestData.BuyinCheckpointId));
-        Assert.That(updatedCheckpoint?.Stack, Is.EqualTo(ChangedStack));
-        Assert.That(updatedCheckpoint?.Amount, Is.EqualTo(ChangedAmount));
+        updatedCheckpoint?.Type.Should().Be(CheckpointType.Buyin);
+        updatedCheckpoint?.Id.Should().Be(TestData.BuyinCheckpointId);
+        updatedCheckpoint?.Stack.Should().Be(ChangedStack);
+        updatedCheckpoint?.Amount.Should().Be(ChangedAmount);
     }
 
     private EditCheckpoint Sut => new(Deps.Cashgame);

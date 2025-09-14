@@ -13,7 +13,7 @@ public class EditCashgameTests : TestBase
         var request = new EditCashgame.Request(new AuthInTest(canEditCashgame: true), TestData.CashgameIdA, null, null);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -22,7 +22,7 @@ public class EditCashgameTests : TestBase
         var request = new EditCashgame.Request(new AuthInTest(canEditCashgame: true), TestData.CashgameIdA, TestData.ChangedLocationId, null);
 
         var result = await Sut.Execute(request);
-        Assert.That(result.Success, Is.True);
+        result.Success.Should().BeTrue();
     }
 
     [Test]
@@ -32,8 +32,8 @@ public class EditCashgameTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.Cashgame.Updated?.Id, Is.EqualTo(TestData.BunchA.Id));
-        Assert.That(Deps.Cashgame.Updated?.LocationId, Is.EqualTo(TestData.ChangedLocationId));
+        Deps.Cashgame.Updated?.Id.Should().Be(TestData.BunchA.Id);
+        Deps.Cashgame.Updated?.LocationId.Should().Be(TestData.ChangedLocationId);
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class EditCashgameTests : TestBase
         var request = new EditCashgame.Request(new AuthInTest(canEditCashgame: true), TestData.CashgameIdA, TestData.ChangedLocationId, "1");
         await Sut.Execute(request);
 
-        Assert.That(Deps.Event.AddedCashgameId, Is.EqualTo("1"));
+        Deps.Event.AddedCashgameId.Should().Be("1");
     }
 
     private EditCashgame Sut => new(

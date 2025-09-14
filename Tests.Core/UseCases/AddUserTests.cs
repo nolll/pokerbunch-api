@@ -20,7 +20,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request("", ValidDisplayName, ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -29,7 +29,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, "", ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -38,7 +38,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, "", ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -47,7 +47,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, "", "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -56,7 +56,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(_existingUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
+        result.Error?.Type.Should().Be(ErrorType.Conflict);
     }
 
     [Test]
@@ -65,7 +65,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, _existingEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Conflict));
+        result.Error?.Type.Should().Be(ErrorType.Conflict);
     }
 
     [Test]
@@ -79,14 +79,14 @@ class AddUserTests : TestBase
 
         var user = Deps.User.Added;
 
-        Assert.That(user?.Id, Is.EqualTo(""));
-        Assert.That(user?.UserName, Is.EqualTo(ValidUserName));
-        Assert.That(user?.DisplayName, Is.EqualTo(ValidDisplayName));
-        Assert.That(user?.RealName, Is.EqualTo(""));
-        Assert.That(user?.Email, Is.EqualTo(ValidEmail));
-        Assert.That(user?.GlobalRole, Is.EqualTo(Role.Player));
-        Assert.That(user?.EncryptedPassword, Is.EqualTo(expectedEncryptedPassword));
-        Assert.That(user?.Salt, Is.EqualTo(expectedSalt));
+        user?.Id.Should().Be("");
+        user?.UserName.Should().Be(ValidUserName);
+        user?.DisplayName.Should().Be(ValidDisplayName);
+        user?.RealName.Should().Be("");
+        user?.Email.Should().Be(ValidEmail);
+        user?.GlobalRole.Should().Be(Role.Player);
+        user?.EncryptedPassword.Should().Be(expectedEncryptedPassword);
+        user?.Salt.Should().Be(expectedSalt);
     }
 
     [Test]
@@ -100,9 +100,9 @@ Please sign in here: /loginUrl";
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/loginUrl");
         await Sut.Execute(request);
 
-        Assert.That(Deps.EmailSender.To, Is.EqualTo(ValidEmail));
-        Assert.That(Deps.EmailSender.Message?.Subject, Is.EqualTo(subject));
-        Assert.That(Deps.EmailSender.Message?.Body, Is.EqualTo(body));
+        Deps.EmailSender.To.Should().Be(ValidEmail);
+        Deps.EmailSender.Message?.Subject.Should().Be(subject);
+        Deps.EmailSender.Message?.Body.Should().Be(body);
     }
 
     private AddUser Sut => new(

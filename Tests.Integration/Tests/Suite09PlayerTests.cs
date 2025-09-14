@@ -18,15 +18,15 @@ public class Suite09PlayerTests
         var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new PlayerAddPostModel(TempPlayerName);
         var result = await TestClient.Player.Add(managerToken, TestData.BunchId, parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Name, Is.EqualTo(TempPlayerName));
-        Assert.That(result.Model?.Id, Is.Not.Empty);
-        Assert.That(result.Model?.Slug, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Model?.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(result.Model?.AvatarUrl, Is.EqualTo(""));
-        Assert.That(result.Model?.UserId, Is.Null);
-        Assert.That(result.Model?.UserName, Is.Null);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Name.Should().Be(TempPlayerName);
+        result.Model?.Id.Should().NotBeEmpty();
+        result.Model?.Slug.Should().Be(TestData.BunchId);
+        result.Model?.Color.Should().Be("#9e9e9e");
+        result.Model?.AvatarUrl.Should().Be("");
+        result.Model?.UserId.Should().BeNull();
+        result.Model?.UserName.Should().BeNull();
     }
 
     [Test]
@@ -35,15 +35,15 @@ public class Suite09PlayerTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Player.Get(managerToken, TempPlayerId);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Name, Is.EqualTo(TempPlayerName));
-        Assert.That(result.Model?.Id, Is.Not.Empty);
-        Assert.That(result.Model?.Slug, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Model?.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(result.Model?.AvatarUrl, Is.EqualTo(""));
-        Assert.That(result.Model?.UserId, Is.Null);
-        Assert.That(result.Model?.UserName, Is.Null);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Name.Should().Be(TempPlayerName);
+        result.Model?.Id.Should().NotBeEmpty();
+        result.Model?.Slug.Should().Be(TestData.BunchId);
+        result.Model?.Color.Should().Be("#9e9e9e");
+        result.Model?.AvatarUrl.Should().Be("");
+        result.Model?.UserId.Should().BeNull();
+        result.Model?.UserName.Should().BeNull();
     }
 
     [Test]
@@ -52,37 +52,37 @@ public class Suite09PlayerTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Player.List(managerToken, TestData.BunchId);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Count, Is.EqualTo(4));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Count.Should().Be(4);
 
         var player1 = result.Model?[0];
-        Assert.That(player1?.Name, Is.EqualTo(TestData.ManagerDisplayName));
-        Assert.That(player1?.Id, Is.EqualTo(TestData.ManagerPlayerId));
-        Assert.That(player1?.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(player1?.UserId, Is.EqualTo(TestData.ManagerUserId));
-        Assert.That(player1?.UserName, Is.EqualTo("manager"));
+        player1?.Name.Should().Be(TestData.ManagerDisplayName);
+        player1?.Id.Should().Be(TestData.ManagerPlayerId);
+        player1?.Color.Should().Be("#9e9e9e");
+        player1?.UserId.Should().Be(TestData.ManagerUserId);
+        player1?.UserName.Should().Be("manager");
 
         var player2 = result.Model?[1];
-        Assert.That(player2?.Name, Is.EqualTo(TestData.PlayerName));
-        Assert.That(player2?.Id, Is.EqualTo(TestData.PlayerPlayerId));
-        Assert.That(player2?.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(player2?.UserId, Is.Null);
-        Assert.That(player2?.UserName, Is.Null);
+        player2?.Name.Should().Be(TestData.PlayerName);
+        player2?.Id.Should().Be(TestData.PlayerPlayerId);
+        player2?.Color.Should().Be("#9e9e9e");
+        player2?.UserId.Should().BeNull();
+        player2?.UserName.Should().BeNull();
 
         var player3 = result.Model?[2];
-        Assert.That(player3?.Name, Is.EqualTo(TempPlayerName));
-        Assert.That(player3?.Id, Is.EqualTo(TempPlayerId));
-        Assert.That(player3?.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(player3?.UserId, Is.Null);
-        Assert.That(player3?.UserName, Is.Null);
+        player3?.Name.Should().Be(TempPlayerName);
+        player3?.Id.Should().Be(TempPlayerId);
+        player3?.Color.Should().Be("#9e9e9e");
+        player3?.UserId.Should().BeNull();
+        player3?.UserName.Should().BeNull();
 
         var player4 = result.Model?[3];
-        Assert.That(player4?.Name, Is.EqualTo(TestData.UserDisplayName));
-        Assert.That(player4?.Id, Is.EqualTo(TestData.UserPlayerId));
-        Assert.That(player4?.Color, Is.EqualTo("#9e9e9e"));
-        Assert.That(player4?.UserId, Is.EqualTo(TestData.UserUserId));
-        Assert.That(player4?.UserName, Is.EqualTo(TestData.UserUserName));
+        player4?.Name.Should().Be(TestData.UserDisplayName);
+        player4?.Id.Should().Be(TestData.UserPlayerId);
+        player4?.Color.Should().Be("#9e9e9e");
+        player4?.UserId.Should().Be(TestData.UserUserId);
+        player4?.UserName.Should().Be(TestData.UserUserName);
     }
 
     [Test]
@@ -91,9 +91,9 @@ public class Suite09PlayerTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var deleteResult = await TestClient.Player.Delete(managerToken, TempPlayerId);
-        Assert.That(deleteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        deleteResult.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var getResult = await TestClient.Player.Get(managerToken, TempPlayerId);
-        Assert.That(getResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

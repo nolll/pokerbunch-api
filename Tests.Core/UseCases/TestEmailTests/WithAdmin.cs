@@ -8,14 +8,11 @@ public class WithAdmin : Arrange
     public void MessageIsSent()
     {
         // todo: Move email to config
-        Assert.That(To, Is.EqualTo("henriks@gmail.com"));
-        Assert.That(Subject, Is.EqualTo("Test Email"));
-        Assert.That(Body, Is.EqualTo("This is a test email from pokerbunch.com"));
+        To.Should().Be("henriks@gmail.com");
+        Subject.Should().Be("Test Email");
+        Body.Should().Be("This is a test email from pokerbunch.com");
     }
 
     [Test]
-    public void EmailIsSet()
-    {
-        Assert.That(Result?.Data?.Email, Is.EqualTo(Email));
-    }
+    public void EmailIsSet() => Result?.Data?.Email.Should().Be(Email);
 }

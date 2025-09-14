@@ -11,9 +11,9 @@ public class UserListTests : TestBase
     {
         var result = await Sut.Execute(new UserList.Request(new AuthInTest(canListUsers: true)));
 
-        Assert.That(result.Data?.Users.Count, Is.EqualTo(4));
-        Assert.That(result.Data?.Users.First().DisplayName, Is.EqualTo(TestData.UserDisplayNameA));
-        Assert.That(result.Data?.Users.First().UserName, Is.EqualTo("user-name-a"));
+        result.Data?.Users.Count.Should().Be(4);
+        result.Data?.Users.First().DisplayName.Should().Be(TestData.UserDisplayNameA);
+        result.Data?.Users.First().UserName.Should().Be("user-name-a");
     }
 
     private UserList Sut => new(Deps.User);

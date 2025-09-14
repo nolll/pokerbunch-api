@@ -18,18 +18,18 @@ public class Suite06BunchTests
         var token = await LoginHelper.GetManagerToken();
         var parameters = new AddBunchPostModel(TestData.BunchDisplayName, TestData.BunchDescription, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout);
         var result = await TestClient.Bunch.Add(token, parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result.Model, Is.Not.Null);
-        Assert.That(result.Model?.Name, Is.EqualTo(TestData.BunchDisplayName));
-        Assert.That(result.Model?.Id, Is.EqualTo(TestData.BunchId));
-        Assert.That(result.Model?.DefaultBuyin, Is.EqualTo(0));
-        Assert.That(result.Model?.CurrencySymbol, Is.EqualTo(TestData.CurrencySymbol));
-        Assert.That(result.Model?.CurrencyLayout, Is.EqualTo(TestData.CurrencyLayout));
-        Assert.That(result.Model?.CurrencyFormat, Is.EqualTo("${0}"));
-        Assert.That(result.Model?.Description, Is.EqualTo(TestData.BunchDescription));
-        Assert.That(result.Model?.HouseRules, Is.EqualTo(""));
-        Assert.That(result.Model?.Timezone, Is.EqualTo(TestData.TimeZone));
-        Assert.That(result.Model?.ThousandSeparator, Is.EqualTo(" "));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Model.Should().NotBeNull();
+        result.Model?.Name.Should().Be(TestData.BunchDisplayName);
+        result.Model?.Id.Should().Be(TestData.BunchId);
+        result.Model?.DefaultBuyin.Should().Be(0);
+        result.Model?.CurrencySymbol.Should().Be(TestData.CurrencySymbol);
+        result.Model?.CurrencyLayout.Should().Be(TestData.CurrencyLayout);
+        result.Model?.CurrencyFormat.Should().Be("${0}");
+        result.Model?.Description.Should().Be(TestData.BunchDescription);
+        result.Model?.HouseRules.Should().Be("");
+        result.Model?.Timezone.Should().Be(TestData.TimeZone);
+        result.Model?.ThousandSeparator.Should().Be(" ");
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class Suite06BunchTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.Bunch.Get(token, TestData.BunchId);
-        Assert.That(result.Success, Is.False);
+        result.Success.Should().BeFalse();
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class Suite06BunchTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
-        Assert.That(result.Model, Is.Not.Null);
+        result.Model.Should().NotBeNull();
         AssertCommonProperties(result.Model);
     }
 
@@ -95,7 +95,7 @@ public class Suite06BunchTests
     {
         var userToken = await LoginHelper.GetUserToken();
         var result = await TestClient.Bunch.Get(userToken, TestData.BunchId);
-        Assert.That(result.Model, Is.Not.Null);
+        result.Model.Should().NotBeNull();
         AssertCommonProperties(result.Model);
     }
 
@@ -110,14 +110,14 @@ public class Suite06BunchTests
         var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new UpdateBunchPostModel(newDescription, houseRules, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout, defaultBuyin);
         var updateResult = await TestClient.Bunch.Update(managerToken, TestData.BunchId, parameters);
-        Assert.That(updateResult.Model?.Description, Is.EqualTo(newDescription));
-        Assert.That(updateResult.Model?.HouseRules, Is.EqualTo(houseRules));
-        Assert.That(updateResult.Model?.DefaultBuyin, Is.EqualTo(defaultBuyin));
+        updateResult.Model?.Description.Should().Be(newDescription);
+        updateResult.Model?.HouseRules.Should().Be(houseRules);
+        updateResult.Model?.DefaultBuyin.Should().Be(defaultBuyin);
 
         var getResult = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
-        Assert.That(getResult.Model?.Description, Is.EqualTo(newDescription));
-        Assert.That(getResult.Model?.HouseRules, Is.EqualTo(houseRules));
-        Assert.That(getResult.Model?.DefaultBuyin, Is.EqualTo(defaultBuyin));
+        getResult.Model?.Description.Should().Be(newDescription);
+        getResult.Model?.HouseRules.Should().Be(houseRules);
+        getResult.Model?.DefaultBuyin.Should().Be(defaultBuyin);
     }
 
     [Test]
@@ -126,11 +126,11 @@ public class Suite06BunchTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.Bunch.List(token);
-        Assert.That(result.Success, Is.True);
+        result.Success.Should().BeTrue();
         var list = result.Model?.ToList();
         var first = list?.First();
-        Assert.That(list?.Count, Is.EqualTo(1));
-        Assert.That(first?.Name, Is.EqualTo(TestData.BunchDisplayName));
+        list?.Count.Should().Be(1);
+        first?.Name.Should().Be(TestData.BunchDisplayName);
     }
 
     [Test]
@@ -139,11 +139,11 @@ public class Suite06BunchTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Bunch.List(managerToken);
-        Assert.That(result.Success, Is.False);
+        result.Success.Should().BeFalse();
         
         // todo: Find out why forbid returns 404
-        //Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Test]
@@ -152,11 +152,11 @@ public class Suite06BunchTests
     {
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Bunch.ListForUser(managerToken);
-        Assert.That(result.Success, Is.True);
+        result.Success.Should().BeTrue();
         var list = result.Model?.ToList();
         var first = list?.First();
-        Assert.That(list?.Count, Is.EqualTo(1));
-        Assert.That(first?.Name, Is.EqualTo(TestData.BunchDisplayName));
+        list?.Count.Should().Be(1);
+        first?.Name.Should().Be(TestData.BunchDisplayName);
     }
 
     [Test]
@@ -165,8 +165,8 @@ public class Suite06BunchTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.Bunch.ListForUser(token);
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Model?.Count(), Is.EqualTo(0));
+        result.Success.Should().BeTrue();
+        result.Model?.Count().Should().Be(0);
     }
 
     private static string GetVerificationCode(string messageBody) => 
@@ -187,20 +187,20 @@ public class Suite06BunchTests
     {
         var parameters = new PlayerAddPostModel(playerName);
         var result = await TestClient.Player.Add(token, TestData.BunchId, parameters);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private void AssertCommonProperties(BunchModel? bunch)
     {
-        Assert.That(bunch?.Name, Is.EqualTo(TestData.BunchDisplayName));
-        Assert.That(bunch?.Id, Is.EqualTo(TestData.BunchId));
-        Assert.That(bunch?.DefaultBuyin, Is.EqualTo(0));
-        Assert.That(bunch?.CurrencySymbol, Is.EqualTo(TestData.CurrencySymbol));
-        Assert.That(bunch?.CurrencyLayout, Is.EqualTo(TestData.CurrencyLayout));
-        Assert.That(bunch?.CurrencyFormat, Is.EqualTo("${0}"));
-        Assert.That(bunch?.Description, Is.EqualTo(TestData.BunchDescription));
-        Assert.That(bunch?.HouseRules, Is.EqualTo(""));
-        Assert.That(bunch?.Timezone, Is.EqualTo(TestData.TimeZone));
-        Assert.That(bunch?.ThousandSeparator, Is.EqualTo(" "));
+        bunch?.Name.Should().Be(TestData.BunchDisplayName);
+        bunch?.Id.Should().Be(TestData.BunchId);
+        bunch?.DefaultBuyin.Should().Be(0);
+        bunch?.CurrencySymbol.Should().Be(TestData.CurrencySymbol);
+        bunch?.CurrencyLayout.Should().Be(TestData.CurrencyLayout);
+        bunch?.CurrencyFormat.Should().Be("${0}");
+        bunch?.Description.Should().Be(TestData.BunchDescription);
+        bunch?.HouseRules.Should().Be("");
+        bunch?.Timezone.Should().Be(TestData.TimeZone);
+        bunch?.ThousandSeparator.Should().Be(" ");
     }
 }

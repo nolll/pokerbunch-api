@@ -20,7 +20,7 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(new AuthInTest(canEditBunch: true), TestData.SlugA, Description, "", ValidCurrencyLayout, ValidTimeZone, HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(new AuthInTest(canEditBunch: true), TestData.SlugA, Description, ValidCurrencySymbol, "", ValidTimeZone, HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(new AuthInTest(canEditBunch: true), TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "", HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class EditBunchTests : TestBase
         var request = new EditBunch.Request(new AuthInTest(canEditBunch: true), TestData.SlugA, Description, ValidCurrencySymbol, ValidCurrencyLayout, "invalid", HouseRules, DefaultBuyin);
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Error?.Type, Is.EqualTo(ErrorType.Validation));
+        result.Error?.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -57,12 +57,12 @@ public class EditBunchTests : TestBase
 
         await Sut.Execute(request);
 
-        Assert.That(Deps.Bunch.Saved?.Description, Is.EqualTo(Description));
-        Assert.That(Deps.Bunch.Saved?.Currency.Symbol, Is.EqualTo(ValidCurrencySymbol));
-        Assert.That(Deps.Bunch.Saved?.Currency.Layout, Is.EqualTo(ValidCurrencyLayout));
-        Assert.That(Deps.Bunch.Saved?.Timezone.Id, Is.EqualTo(ValidTimeZone));
-        Assert.That(Deps.Bunch.Saved?.HouseRules, Is.EqualTo(HouseRules));
-        Assert.That(Deps.Bunch.Saved?.DefaultBuyin, Is.EqualTo(DefaultBuyin));
+        Deps.Bunch.Saved?.Description.Should().Be(Description);
+        Deps.Bunch.Saved?.Currency.Symbol.Should().Be(ValidCurrencySymbol);
+        Deps.Bunch.Saved?.Currency.Layout.Should().Be(ValidCurrencyLayout);
+        Deps.Bunch.Saved?.Timezone.Id.Should().Be(ValidTimeZone);
+        Deps.Bunch.Saved?.HouseRules.Should().Be(HouseRules);
+        Deps.Bunch.Saved?.DefaultBuyin.Should().Be(DefaultBuyin);
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class EditBunchTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        Assert.That(result.Data?.Slug, Is.EqualTo("bunch-a"));
+        result.Data?.Slug.Should().Be("bunch-a");
     }
 
     private EditBunch Sut => new(Deps.Bunch);

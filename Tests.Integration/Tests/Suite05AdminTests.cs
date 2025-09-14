@@ -13,7 +13,7 @@ public class Suite05AdminTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.General.ClearCache(token);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Test]
@@ -24,8 +24,8 @@ public class Suite05AdminTests
         var result = await TestClient.General.ClearCache(managerToken);
         
         // todo: Find out why forbid returns 404
-        //Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class Suite05AdminTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.General.TestEmail(token);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Test]
@@ -45,8 +45,8 @@ public class Suite05AdminTests
         var result = await TestClient.General.TestEmail(managerToken);
         
         // todo: Find out why forbid returns 404
-        //Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
     [Test]
@@ -55,7 +55,7 @@ public class Suite05AdminTests
     {
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.General.Settings(token);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class Suite05AdminTests
         var result = await TestClient.General.Settings(managerToken);
         
         // todo: Find out why forbid returns 404
-        //Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

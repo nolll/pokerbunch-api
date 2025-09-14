@@ -7,8 +7,5 @@ public class WithInvalidStack : Arrange
     protected override int Stack => -1;
 
     [Test]
-    public void ReturnsValidationError()
-    {
-        Assert.That(Result?.Error?.Type, Is.EqualTo(ErrorType.Validation));
-    }
+    public void ReturnsValidationError() => Result?.Error?.Type.Should().Be(ErrorType.Validation);
 }
