@@ -11,19 +11,18 @@ namespace Tests.Core.UseCases;
 
 public class UserListTests : TestBase
 {
+    private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
+    private UserList Sut => new(_userRepository);
+
     [Fact]
     public async Task UserList_ReturnsListOfUserItems()
     {
-        var fixture = new Fixture();
-        var user1 = fixture.Create<User>();
-        var user2 = fixture.Create<User>();
+        var user1 = Fixture.Create<User>();
+        var user2 = Fixture.Create<User>();
         
-        var userRepository = Substitute.For<IUserRepository>();
-        userRepository.List().Returns([user1, user2]);
-
-        var sut = new UserList(userRepository);
+        _userRepository.List().Returns([user1, user2]);
         
-        var result = await sut.Execute(new UserList.Request(new AuthInTest(canListUsers: true)));
+        var result = await Sut.Execute(new UserList.Request(new AuthInTest(canListUsers: true)));
 
         result.Data?.Users.Count.Should().Be(2);
         result.Data?.Users.First().DisplayName.Should().Be(user1.DisplayName);

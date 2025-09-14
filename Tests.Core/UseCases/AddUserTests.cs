@@ -20,7 +20,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request("", ValidDisplayName, ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -29,7 +29,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, "", ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -38,7 +38,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, "", ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -47,7 +47,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, "", "/");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -56,7 +56,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(_existingUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Conflict);
+        result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
     [Test]
@@ -65,7 +65,7 @@ class AddUserTests : TestBase
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, _existingEmail, ValidPassword, "/");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Conflict);
+        result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
     [Test]
@@ -79,14 +79,14 @@ class AddUserTests : TestBase
 
         var user = Deps.User.Added;
 
-        user?.Id.Should().Be("");
-        user?.UserName.Should().Be(ValidUserName);
-        user?.DisplayName.Should().Be(ValidDisplayName);
-        user?.RealName.Should().Be("");
-        user?.Email.Should().Be(ValidEmail);
-        user?.GlobalRole.Should().Be(Role.Player);
-        user?.EncryptedPassword.Should().Be(expectedEncryptedPassword);
-        user?.Salt.Should().Be(expectedSalt);
+        user!.Id.Should().Be("");
+        user.UserName.Should().Be(ValidUserName);
+        user.DisplayName.Should().Be(ValidDisplayName);
+        user.RealName.Should().Be("");
+        user.Email.Should().Be(ValidEmail);
+        user.GlobalRole.Should().Be(Role.Player);
+        user.EncryptedPassword.Should().Be(expectedEncryptedPassword);
+        user.Salt.Should().Be(expectedSalt);
     }
 
     [Test]
@@ -101,8 +101,8 @@ Please sign in here: /loginUrl";
         await Sut.Execute(request);
 
         Deps.EmailSender.To.Should().Be(ValidEmail);
-        Deps.EmailSender.Message?.Subject.Should().Be(subject);
-        Deps.EmailSender.Message?.Body.Should().Be(body);
+        Deps.EmailSender.Message!.Subject.Should().Be(subject);
+        Deps.EmailSender.Message!.Body.Should().Be(body);
     }
 
     private AddUser Sut => new(

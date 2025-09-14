@@ -17,7 +17,7 @@ class AddPlayerTests : TestBase
         var request = new AddPlayer.Request(new AuthInTest(canAddPlayer: true), TestData.SlugA, UniqueName);
         var result = await Sut.Execute(request);
 
-        result.Data?.Id.Should().Be("1");
+        result.Data!.Id.Should().Be("1");
     }
 
     [Test]
@@ -25,7 +25,7 @@ class AddPlayerTests : TestBase
     {
         var request = new AddPlayer.Request(new AuthInTest(canAddPlayer: true), TestData.SlugA, EmptyName);
         var result = await Sut.Execute(request);
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -43,7 +43,7 @@ class AddPlayerTests : TestBase
         var request = new AddPlayer.Request(new AuthInTest(canAddPlayer: true), TestData.SlugA, ExistingName);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Conflict);
+        result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
     private AddPlayer Sut => new(

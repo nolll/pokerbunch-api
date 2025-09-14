@@ -1,10 +1,12 @@
-﻿using NUnit.Framework;
+﻿using AutoFixture;
+using NUnit.Framework;
 
 namespace Tests.Common;
 
 public class TestBase
 {
     protected TestDependencies Deps { get; private set; }
+    protected readonly Fixture Fixture = new();
 
     public TestBase()
     {
