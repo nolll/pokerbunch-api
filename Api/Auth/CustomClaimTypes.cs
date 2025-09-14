@@ -8,4 +8,5 @@ public static class CustomClaimTypes
     public const string UserDisplayName = "userdisplayname";
     public const string IsAdmin = "isadmin";
     public const string Bunches = "bunches";
+    public const string Seed = "seed";
 }

@@ -1,4 +1,5 @@
 using System.Net;
+using Api.Models.UserModels;
 
 namespace Tests.Integration.Tests;
 
@@ -32,5 +33,15 @@ public class Suite04LoginTests
         var result = await LoginHelper.LoginUser();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model?.AccessToken.Should().NotBeEmpty();
+    }
+    
+    [Test]
+    [Order(4)]
+    public async Task Test03RefreshUserReturns200()
+    {
+        var loginResult = await LoginHelper.LoginUser();
+        var refreshResult = await TestClient.Auth.Refresh(new RefreshPostModel(loginResult.Model!.RefreshToken));
+        refreshResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        refreshResult.Model?.AccessToken.Should().NotBe(loginResult.Model.AccessToken);
     }
 }

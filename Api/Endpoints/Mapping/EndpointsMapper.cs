@@ -38,6 +38,11 @@ public static class EndpointsMapper
             .WithTags(Tags.Auth)
             .WithSummary("Get an auth token")
             .WithDescription("Get a token that can bu used for authentication");
+        
+        app.MapPost(ApiRoutes.Auth.Refresh, RefreshHandler.Handle)
+            .WithTags(Tags.Auth)
+            .WithSummary("Refresh auth token")
+            .WithDescription("Get a new access token with a valid refresh token");
     }
 
     private static void MapUserEndpoints(WebApplication app)

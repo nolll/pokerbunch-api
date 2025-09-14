@@ -17,7 +17,7 @@ public class Login(
         if (user is null)
             return Error(new LoginError("There was something wrong with your username or password. Please try again."));
 
-        var bunchResults = new List<ResultBunch>();
+        var bunchResults = new List<LoginResultBunch>();
         var bunches = await bunchRepository.List(user.Id);
         foreach (var bunch in bunches)
         {
@@ -25,7 +25,7 @@ public class Login(
             var role = player?.Role ?? Role.None;
             var id = player?.Id ?? "";
             var name = player?.DisplayName ?? "";
-            bunchResults.Add(new ResultBunch(bunch.Id, bunch.Slug, bunch.DisplayName, id, name, role));
+            bunchResults.Add(new LoginResultBunch(bunch.Id, bunch.Slug, bunch.DisplayName, id, name, role));
         }
 
         return Success(new Result(user.Id, user.UserName, user.DisplayName, user.IsAdmin, bunchResults));
@@ -51,22 +51,11 @@ public class Login(
         public string Password { get; } = password;
     }
 
-    public class Result(string userId, string userName, string displayName, bool isAdmin, List<ResultBunch> bunchResults)
-    {
-        public string UserId { get; } = userId;
-        public string UserName { get; } = userName;
-        public string DisplayName { get; } = displayName;
-        public bool IsAdmin { get; } = isAdmin;
-        public List<ResultBunch> BunchResults { get; } = bunchResults;
-    }
-
-    public class ResultBunch(string bunchId, string bunchSlug, string bunchName, string playerId, string playerName, Role role)
-    {
-        public string BunchId { get; } = bunchId;
-        public string BunchSlug { get; } = bunchSlug;
-        public string BunchName { get; } = bunchName;
-        public string PlayerId { get; } = playerId;
-        public string PlayerName { get; } = playerName;
-        public Role Role { get; } = role;
-    }
+    public class Result(
+        string userId,
+        string userName,
+        string displayName,
+        bool isAdmin,
+        List<LoginResultBunch> bunchResults)
+        : CommonLoginResult(userId, userName, displayName, isAdmin, bunchResults);
 }

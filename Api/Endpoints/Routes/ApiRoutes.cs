@@ -77,7 +77,7 @@ public static class ApiRoutes
     public static class Auth
     {
         public const string Login = "/login";
-        public const string LoginForm = "/login/form";
+        public const string Refresh = "/refresh";
     }
 
     public static class User

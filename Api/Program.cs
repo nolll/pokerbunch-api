@@ -82,6 +82,7 @@ builder.Services.AddSingleton<RequireAppsettingsAccess>();
 
 // Auth
 builder.Services.AddSingleton<Login>();
+builder.Services.AddSingleton<Refresh>();
 
 // User
 builder.Services.AddSingleton<UserDetails>();

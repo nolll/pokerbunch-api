@@ -37,6 +37,12 @@ public static class TestClient
             var response = await GetClient().PostAsJsonAsync(new ApiLoginUrl().Relative, parameters);
             return await HandleJsonResponse<LoginModel>(response);
         }
+        
+        public static async Task<TestClientResult<LoginModel>> Refresh(RefreshPostModel parameters)
+        {
+            var response = await GetClient().PostAsJsonAsync(new ApiRefreshUrl().Relative, parameters);
+            return await HandleJsonResponse<LoginModel>(response);
+        }
     }
 
     public static class Bunch
