@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Extensions.Swagger;
 
+/*
 public class AuthorizeCheckOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -60,3 +60,4 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
             : methodRequiresAuth;
     }
 }
+*/
