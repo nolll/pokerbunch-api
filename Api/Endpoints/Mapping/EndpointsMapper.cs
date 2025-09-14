@@ -36,7 +36,6 @@ public static class EndpointsMapper
     {
         app.MapPost(ApiRoutes.Auth.Login, LoginHandler.Handle)
             .WithTags(Tags.Auth)
-            .AllowAnonymous()
             .WithSummary("Get an auth token")
             .WithDescription("Get a token that can bu used for authentication");
     }
