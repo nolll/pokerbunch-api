@@ -1,3 +1,4 @@
+using Core;
 using Core.Errors;
 using Core.Services;
 using Core.UseCases;
@@ -11,28 +12,28 @@ namespace Tests.Core.UseCases;
 public class TestEmailTests : TestBase
 {
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
-
-    // todo: Move email to config
-    private const string Email = "henriks@gmail.com";
     
     [Fact]
-    public async Task HasAccess_EmailIsSet()
+    public async Task HasAccess_EmailIsSent()
     {
-        var result = await ExecuteAsync(true);
+        var to = CreateEmailAddress();
+        var result = await ExecuteAsync(true, to);
         result.Success.Should().BeTrue();
-        result.Data!.Email.Should().Be(Email);
+        result.Data!.Email.Should().Be(to);
+        
+        _emailSender.Received().Send(Arg.Is(to), Arg.Any<IMessage>());
     }
 
     [Fact]
     public async Task NoAccess_ReturnsError()
     {
-        var result = await ExecuteAsync(false);
+        var result = await ExecuteAsync(false, CreateEmailAddress());
         result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
-    private async Task<UseCaseResult<TestEmail.Result>> ExecuteAsync(bool canSendTestEmail) => 
-        await Sut.Execute(new TestEmail.Request(new AuthInTest(canSendTestEmail: canSendTestEmail)));
+    private async Task<UseCaseResult<TestEmail.Result>> ExecuteAsync(bool canSendTestEmail, string to) => 
+        await Sut.Execute(new TestEmail.Request(new AuthInTest(canSendTestEmail: canSendTestEmail), to));
 
     private TestEmail Sut => new(_emailSender);
 }

@@ -10,18 +10,17 @@ public class TestEmail(IEmailSender emailSender)
     {
         if (!request.Auth.CanSendTestEmail)
             return Task.FromResult(Error(new AccessDeniedError()));
-
-        // todo: Move email to config
-        const string email = "henriks@gmail.com";
+        
         var message = new TestMessage();
-        emailSender.Send(email, message);
+        emailSender.Send(request.To, message);
 
-        return Task.FromResult(Success(new Result(email)));
+        return Task.FromResult(Success(new Result(request.To)));
     }
     
-    public class Request(IAuth auth)
+    public class Request(IAuth auth, string to)
     {
         public IAuth Auth { get; } = auth;
+        public string To { get; } = to;
     }
 
     public class Result(string email)

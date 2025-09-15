@@ -2,5 +2,5 @@
 
 public class EmailSettings
 {
-    public EmailSmtpSettings Smtp { get; set; } = new();
+    public string TestRecipient { get; set; } = "";
 }

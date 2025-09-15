@@ -23,6 +23,7 @@ using Api.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Api;
+using Api.Bootstrapping;
 using Api.Endpoints;
 using Api.Endpoints.Mapping;
 using Api.Endpoints.Routes;
@@ -36,8 +37,6 @@ var isProd = !isDev;
 
 if (!string.IsNullOrEmpty(port))
     builder.WebHost.UseUrls("http://*:" + port);
-
-var connectionString = GetConnectionString(builder.Configuration);
 
 builder.Services.AddResponseCompression(options =>
 {
@@ -56,81 +55,7 @@ builder.Services.AddLogging(logging =>
     logging.SetMinimumLevel(settings.Logging.LogLevel.Default);
 });
 
-builder.Services.AddSingleton(settings);
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<IAuth, Auth>();
-builder.Services.AddSingleton<ISettings>(new Settings(settings.InvitationSecret));
-builder.Services.AddSingleton(new UrlProvider(settings.Urls.Api, settings.Urls.Site));
-
-builder.Services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
-builder.Services.AddSingleton<ICache, Cache>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
-builder.Services.AddSingleton<IBunchRepository, BunchRepository>();
-builder.Services.AddSingleton<ICashgameRepository, CashgameRepository>();
-builder.Services.AddSingleton<IEventRepository, EventRepository>();
-builder.Services.AddSingleton<ILocationRepository, LocationRepository>();
-builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
-builder.Services.AddSingleton(GetEmailSender(builder.Configuration));
-builder.Services.AddSingleton<IDb>(new PostgresDb(connectionString));
-builder.Services.AddSingleton<IRandomizer, Randomizer>();
-builder.Services.AddSingleton<IInvitationCodeCreator, InvitationCodeCreator>();
-
-// Admin
-builder.Services.AddSingleton<ClearCache>();
-builder.Services.AddSingleton<TestEmail>();
-builder.Services.AddSingleton<RequireAppsettingsAccess>();
-
-// Auth
-builder.Services.AddSingleton<Login>();
-builder.Services.AddSingleton<Refresh>();
-
-// User
-builder.Services.AddSingleton<UserDetails>();
-builder.Services.AddSingleton<UserList>();
-builder.Services.AddSingleton<EditUser>();
-builder.Services.AddSingleton<AddUser>();
-builder.Services.AddSingleton<ChangePassword>();
-builder.Services.AddSingleton<ResetPassword>();
-
-// Bunch
-builder.Services.AddSingleton<GetBunchList>();
-builder.Services.AddSingleton<GetBunchListForUser>();
-builder.Services.AddSingleton<GetBunch>();
-builder.Services.AddSingleton<AddBunch>();
-builder.Services.AddSingleton<EditBunch>();
-
-// Events
-builder.Services.AddSingleton<EventDetails>();
-builder.Services.AddSingleton<EventList>();
-builder.Services.AddSingleton<AddEvent>();
-
-// Locations
-builder.Services.AddSingleton<GetLocationList>();
-builder.Services.AddSingleton<GetLocation>();
-builder.Services.AddSingleton<AddLocation>();
-
-// Cashgame
-builder.Services.AddSingleton<CashgameList>();
-builder.Services.AddSingleton<EventCashgameList>();
-builder.Services.AddSingleton<PlayerCashgameList>();
-builder.Services.AddSingleton<CurrentCashgames>();
-builder.Services.AddSingleton<CashgameDetails>();
-builder.Services.AddSingleton<Buyin>();
-builder.Services.AddSingleton<Report>();
-builder.Services.AddSingleton<Cashout>();
-builder.Services.AddSingleton<AddCashgame>();
-builder.Services.AddSingleton<EditCashgame>();
-builder.Services.AddSingleton<DeleteCashgame>();
-builder.Services.AddSingleton<EditCheckpoint>();
-builder.Services.AddSingleton<DeleteCheckpoint>();
-
-// Player
-builder.Services.AddSingleton<GetPlayer>();
-builder.Services.AddSingleton<GetPlayerList>();
-builder.Services.AddSingleton<AddPlayer>();
-builder.Services.AddSingleton<DeletePlayer>();
-builder.Services.AddSingleton<InvitePlayer>();
-builder.Services.AddSingleton<JoinBunch>();
+builder.Services.AddServices(settings, builder.Configuration);
 
 builder.Services.AddMvc(options =>
 {
@@ -240,37 +165,6 @@ static bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, Secu
         return expires > DateTime.UtcNow;
 
     return false;
-}
-
-static string GetConnectionString(IConfiguration configuration)
-{
-    var databaseUrl = configuration.GetValue<string>("DATABASE_URL");
-    if (string.IsNullOrEmpty(databaseUrl))
-        return "";
-
-    var databaseUri = new Uri(databaseUrl);
-    var userInfo = databaseUri.UserInfo.Split(':');
-
-    var connectionStringBuilder = new NpgsqlConnectionStringBuilder
-    {
-        Host = databaseUri.Host,
-        Port = databaseUri.Port,
-        Username = userInfo[0],
-        Password = userInfo[1],
-        Database = databaseUri.LocalPath.TrimStart('/')
-    };
-
-    return connectionStringBuilder.ToString();
-}
-
-static IEmailSender GetEmailSender(IConfiguration configuration)
-{
-    var host = configuration.GetValue<string>("SMTP_SERVER") ?? "localhost";
-    var strPort = configuration.GetValue<string>("SMTP_PORT");
-    var port = strPort != null ? int.Parse(strPort) : 25;
-    var login = configuration.GetValue<string>("SMTP_LOGIN");
-    var password = configuration.GetValue<string>("SMTP_PASSWORD");
-    return new SmtpEmailSender(host, port, login, password);
 }
 
 public partial class Program { } // Needed for integration tests
