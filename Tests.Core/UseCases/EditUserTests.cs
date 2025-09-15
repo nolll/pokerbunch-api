@@ -18,7 +18,7 @@ public class EditUserTests : TestBase
         var request = CreateRequest(displayName: "");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -27,7 +27,7 @@ public class EditUserTests : TestBase
         var request = CreateRequest(email: "");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -36,38 +36,25 @@ public class EditUserTests : TestBase
         var request = CreateRequest(email: "a");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
-    }
-
-    [Test]
-    public async Task EditUser_ValidInput_UserNameIsSet()
-    {
-        var userName = Fixture.Create<string>();
-        var request = CreateRequest(userName: userName);
-        var result = await Sut.Execute(request);
-
-        result.Data?.UserName.Should().Be(userName);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
     public async Task EditUser_ValidInput_UserIsSaved()
     {
-        var userName = Fixture.Create<string>();
-        var displayName = Fixture.Create<string>();
-        const string email = "test@example.com";
-        var user = new User("", userName, displayName, null, email);
+        var user = CreateUser();
         
         var changedDisplayName = Fixture.Create<string>();
-        const string changedEmail = "changed@example.com";
+        var changedEmail = CreateEmailAddress();
 
-        _userRepository.GetByUserName(userName).Returns(user);
+        _userRepository.GetByUserName(user.UserName).Returns(user);
         
-        var request = CreateRequest(userName, changedDisplayName, email: changedEmail);
+        var request = CreateRequest(user.UserName, changedDisplayName, email: changedEmail);
 
         await Sut.Execute(request);
 
         await _userRepository.Received()
-            .Update(Arg.Is<User>(o => o.UserName == userName && o.DisplayName == changedDisplayName && o.Email == changedEmail));
+            .Update(Arg.Is<User>(o => o.UserName == user.UserName && o.DisplayName == changedDisplayName && o.Email == changedEmail));
     }
 
     private EditUser.Request CreateRequest(
@@ -80,7 +67,7 @@ public class EditUserTests : TestBase
             userName ?? Fixture.Create<string>(),
             displayName ?? Fixture.Create<string>(),
             realName ?? Fixture.Create<string>(),
-            email ?? "test@example.com");
+            email ?? CreateEmailAddress());
     }
 
     private EditUser Sut => new(_userRepository);

@@ -7,6 +7,6 @@ public class WithAdmin : Arrange
     [Test]
     public void NoException()
     {
-        Result?.Success.Should().BeTrue();
+        Result!.Success.Should().BeTrue();
     }
 }

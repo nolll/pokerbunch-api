@@ -13,7 +13,7 @@ public class DeleteCashgameTests : TestBase
         var request = new DeleteCashgame.Request(new AuthInTest(canDeleteCashgame: true), TestData.CashgameIdA);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Conflict);
+        result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class DeleteCashgameTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        result.Data?.Slug.Should().Be(TestData.SlugA);
+        result.Data!.Slug.Should().Be(TestData.SlugA);
     }
 
     private DeleteCashgame Sut => new(

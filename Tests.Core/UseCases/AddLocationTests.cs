@@ -17,7 +17,7 @@ public class AddLocationTests : TestBase
         var request = new AddLocation.Request(new AuthInTest(canAddLocation: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
-        Deps.Location.Added?.Name.Should().Be(addedEventName);
+        Deps.Location.Added!.Name.Should().Be(addedEventName);
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class AddLocationTests : TestBase
         var request = new AddLocation.Request(new AuthInTest(canAddLocation: true), TestData.BunchA.Slug, addedEventName);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     private AddLocation Sut => new(Deps.Location);

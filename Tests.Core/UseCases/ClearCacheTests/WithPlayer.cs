@@ -13,7 +13,7 @@ public class WithPlayer : Arrange
     [Test]
     public void ReturnsError()
     {
-        Result?.Success.Should().BeFalse();
-        Result?.Error?.Type.Should().Be(ErrorType.AccessDenied);
+        Result!.Success.Should().BeFalse();
+        Result!.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 }

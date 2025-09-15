@@ -17,7 +17,7 @@ public class Suite07LocationTests
         var result = await TestClient.Location.Add(managerToken, TestData.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.Id.Should().Be(TestData.BunchLocationId);
+        result.Model.Id.Should().Be(TestData.BunchLocationId);
     }
 
     [Test]
@@ -27,11 +27,11 @@ public class Suite07LocationTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Location.List(managerToken, TestData.BunchId);
         result.Model.Should().NotBeNull();
-        result.Model?.Count.Should().Be(1);
+        result.Model.Count.Should().Be(1);
         var location = result.Model?[0];
-        location?.Id.Should().Be(TestData.BunchLocationId);
-        location?.Name.Should().Be(TestData.BunchLocationName);
-        location?.Bunch.Should().Be(TestData.BunchId);
+        location!.Id.Should().Be(TestData.BunchLocationId);
+        location.Name.Should().Be(TestData.BunchLocationName);
+        location.Bunch.Should().Be(TestData.BunchId);
     }
 
     [Test]
@@ -41,8 +41,8 @@ public class Suite07LocationTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Location.Get(managerToken, TestData.BunchLocationId);
         result.Model.Should().NotBeNull();
-        result.Model?.Id.Should().Be(TestData.BunchLocationId);
-        result.Model?.Name.Should().Be(TestData.BunchLocationName);
-        result.Model?.Bunch.Should().Be(TestData.BunchId);
+        result.Model.Id.Should().Be(TestData.BunchLocationId);
+        result.Model.Name.Should().Be(TestData.BunchLocationName);
+        result.Model.Bunch.Should().Be(TestData.BunchId);
     }
 }

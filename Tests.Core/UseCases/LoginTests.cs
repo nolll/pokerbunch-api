@@ -12,7 +12,7 @@ public class LoginTests : TestBase
         var request = new Login.Request("username-that-does-not-exist", "");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.AccessDenied);
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
     [Test]
@@ -21,7 +21,7 @@ public class LoginTests : TestBase
         var request = new Login.Request(TestData.UserA.UserName, "wrong password");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.AccessDenied);
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class LoginTests : TestBase
     {
         var result = await Sut.Execute(CreateRequest());
 
-        result.Data?.UserName.Should().Be(TestData.UserA.UserName);
+        result.Data!.UserName.Should().Be(TestData.UserA.UserName);
     }
       
     private static Login.Request CreateRequest()

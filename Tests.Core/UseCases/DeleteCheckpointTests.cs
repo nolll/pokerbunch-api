@@ -17,10 +17,10 @@ public class DeleteCheckpointTests : TestBase
         var result = await Sut.Execute(request);
 
         var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
-        deletedCheckpointIds?.Contains(TestData.ReportCheckpointId).Should().BeTrue();
-        result.Data?.Slug.Should().Be("bunch-a");
-        result.Data?.CashgameId.Should().Be("1");
-        result.Data?.GameIsRunning.Should().BeFalse();
+        deletedCheckpointIds!.Contains(TestData.ReportCheckpointId).Should().BeTrue();
+        result.Data!.Slug.Should().Be("bunch-a");
+        result.Data!.CashgameId.Should().Be("1");
+        result.Data!.GameIsRunning.Should().BeFalse();
     }
 
     [Test]
@@ -35,10 +35,10 @@ public class DeleteCheckpointTests : TestBase
         var result = await Sut.Execute(request);
 
         var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
-        deletedCheckpointIds?.Contains("12").Should().BeTrue();
-        result.Data?.Slug.Should().Be("bunch-a");
-        result.Data?.CashgameId.Should().Be("3");
-        result.Data?.GameIsRunning.Should().BeTrue();
+        deletedCheckpointIds!.Contains("12").Should().BeTrue();
+        result.Data!.Slug.Should().Be("bunch-a");
+        result.Data!.CashgameId.Should().Be("3");
+        result.Data!.GameIsRunning.Should().BeTrue();
     }
 
     private DeleteCheckpoint Sut => new(Deps.Cashgame);

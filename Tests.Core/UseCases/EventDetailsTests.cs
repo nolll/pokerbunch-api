@@ -5,7 +5,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class EventDetailsTests : TestBase
+public class EventDetailsTests : TestBase
 {
     [Test]
     public async Task EventDetails_NameIsSet()
@@ -14,7 +14,7 @@ class EventDetailsTests : TestBase
         var input = new EventDetails.Request(new AuthInTest(canSeeEventDetails: true, currentBunch: currentBunch), "1");
         var result = await Sut.Execute(input);
 
-        result.Data?.Name.Should().Be(TestData.EventNameA);
+        result.Data!.Name.Should().Be(TestData.EventNameA);
     }
 
     private EventDetails Sut => new(

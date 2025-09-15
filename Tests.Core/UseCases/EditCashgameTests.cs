@@ -13,7 +13,7 @@ public class EditCashgameTests : TestBase
         var request = new EditCashgame.Request(new AuthInTest(canEditCashgame: true), TestData.CashgameIdA, null, null);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -32,8 +32,8 @@ public class EditCashgameTests : TestBase
 
         await Sut.Execute(request);
 
-        Deps.Cashgame.Updated?.Id.Should().Be(TestData.BunchA.Id);
-        Deps.Cashgame.Updated?.LocationId.Should().Be(TestData.ChangedLocationId);
+        Deps.Cashgame.Updated!.Id.Should().Be(TestData.BunchA.Id);
+        Deps.Cashgame.Updated!.LocationId.Should().Be(TestData.ChangedLocationId);
     }
 
     [Test]

@@ -19,17 +19,12 @@ public abstract class UseCaseTest<T> where T : class
         _mocker = new Mocker();
         Sut = _mocker.New<T>();
         Setup();
-        Execute();
         ExecuteAsync();
     }
 
     protected Mock<TM> Mock<TM>() where TM : class => _mocker.MockOf<TM>();
 
     protected virtual void Setup()
-    {
-    }
-
-    protected virtual void Execute()
     {
     }
 

@@ -14,7 +14,7 @@ public class AddCashgameTests : TestBase
         var request = CreateRequest(TestData.LocationIdA);
         var result = await Sut.Execute(request);
 
-        result.Data?.Slug.Should().Be(TestData.SlugA);
+        result.Data!.Slug.Should().Be(TestData.SlugA);
     }
 
     [Test]
@@ -31,7 +31,7 @@ public class AddCashgameTests : TestBase
     {
         var request = CreateRequest();
         var result = await Sut.Execute(request);
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     private static AddCashgame.Request CreateRequest(string? locationId = null)

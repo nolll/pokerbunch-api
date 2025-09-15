@@ -16,14 +16,14 @@ class ResetPasswordTests : TestBase
         var request = CreateRequest(InvalidEmail);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
     public async Task ResetPassword_UserNotFound_ReturnsError()
     {
         var result = await Sut.Execute(CreateRequest(NonExistingEmail));
-        result.Error?.Type.Should().Be(ErrorType.NotFound);
+        result.Error!.Type.Should().Be(ErrorType.NotFound);
     }
 
     [Test]
@@ -37,8 +37,8 @@ Please sign in here: loginUrl";
         await Sut.Execute(CreateRequest());
 
         Deps.EmailSender.To.Should().Be(ValidEmail);
-        Deps.EmailSender.Message?.Subject.Should().Be(subject);
-        Deps.EmailSender.Message?.Body.Should().Be(body);
+        Deps.EmailSender.Message!.Subject.Should().Be(subject);
+        Deps.EmailSender.Message!.Body.Should().Be(body);
     }
 
     [Test]
@@ -47,8 +47,8 @@ Please sign in here: loginUrl";
         await Sut.Execute(CreateRequest());
 
         var savedUser = Deps.User.Saved;
-        savedUser?.EncryptedPassword.Should().Be("0478095c8ece0bbc11f94663ac2c4f10b29666de");
-        savedUser?.Salt.Should().Be("aaaaaaaaaa");
+        savedUser!.EncryptedPassword.Should().Be("0478095c8ece0bbc11f94663ac2c4f10b29666de");
+        savedUser.Salt.Should().Be("aaaaaaaaaa");
     }
 
     private ResetPassword.Request CreateRequest(string email = ValidEmail)

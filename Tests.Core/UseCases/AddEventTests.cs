@@ -17,7 +17,7 @@ public class AddEventTests : TestBase
         var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
-        Deps.Event.Added?.Name.Should().Be(addedEventName);
+        Deps.Event.Added!.Name.Should().Be(addedEventName);
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class AddEventTests : TestBase
         var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     private AddEvent Sut => new(Deps.Event);

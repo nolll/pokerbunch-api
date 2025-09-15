@@ -9,7 +9,7 @@ public class PlayerHasCheckedOutBefore : Arrange
     [Test]
     public void UpdatesCheckpoint()
     {
-        UpdatedCashgame?.Checkpoints.Count.Should().Be(CheckpointCountBeforeCashout);
-        UpdatedCashgame?.UpdatedCheckpoints.First(o => o.Type == CheckpointType.Cashout).Stack.Should().Be(CashoutStack);
+        UpdatedCashgame!.Checkpoints.Count.Should().Be(CheckpointCountBeforeCashout);
+        UpdatedCashgame!.UpdatedCheckpoints.First(o => o.Type == CheckpointType.Cashout).Stack.Should().Be(CashoutStack);
     }
 }

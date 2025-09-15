@@ -15,7 +15,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, code);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -25,7 +25,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, code);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
         var result = await Sut.Execute(request);
-        result.Data?.Slug.Should().Be("bunch-a");
+        result.Data!.Slug.Should().Be("bunch-a");
     }
 
     [Test]
@@ -43,9 +43,9 @@ public class JoinBunchTests : TestBase
         var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
 
         await Sut.Execute(request);
-        Deps.Player.Joined?.PlayerId.Should().Be(TestData.PlayerA.Id);
-        Deps.Player.Joined?.BunchId.Should().Be(TestData.BunchA.Id);
-        Deps.Player.Joined?.UserId.Should().Be(TestData.UserA.Id);
+        Deps.Player.Joined!.PlayerId.Should().Be(TestData.PlayerA.Id);
+        Deps.Player.Joined!.BunchId.Should().Be(TestData.BunchA.Id);
+        Deps.Player.Joined!.UserId.Should().Be(TestData.UserA.Id);
     }
 
     private JoinBunch Sut => new(

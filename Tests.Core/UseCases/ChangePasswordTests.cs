@@ -4,61 +4,53 @@ using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using Moq;
+using NSubstitute;
 using Tests.Common;
+using Xunit;
 
 namespace Tests.Core.UseCases;
 
-public class ChangePasswordTests : MockBase
+public class ChangePasswordTests : TestBase
 {
-    private Mock<IUserRepository> _userRepositoryMock = new();
-    private Mock<IRandomizer> _randomizerMock = new();
+    private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
+    private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
 
-    [SetUp]
-    public void SetUp()
-    {
-        _userRepositoryMock = new Mock<IUserRepository>();
-        _randomizerMock = new Mock<IRandomizer>();
-    }
-
-    [Test]
+    [Fact]
     public async Task ChangePassword_EmptyPassword_ReturnsError()
     {
-        var request = new ChangePassword.Request(TestData.UserNameA, "", "b");
+        var user = CreateUser(salt: "123456", encryptedPassword: "abcdef");
+        var request = new ChangePassword.Request(user.UserName, "", "b");
+        _userRepository.GetByUserName(user.UserName).Returns(Task.FromResult(user));
+        
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task ChangePassword_CurrentPasswordIsWrong_ReturnsError()
     {
-        var user = new User("1", TestData.UserNameA, salt: "123456", encryptedPassword: "abcdef");
-        _userRepositoryMock.Setup(o => o.GetByUserName(TestData.UserNameA)).Returns(Task.FromResult(user));
+        var user = CreateUser(salt: "123456", encryptedPassword: "abcdef");
+        _userRepository.GetByUserName(user.UserName).Returns(Task.FromResult(user));
 
-        var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
+        var request = new ChangePassword.Request(user.UserName, "new-password", "current-password");
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Auth);
+        result.Error!.Type.Should().Be(ErrorType.Auth);
     }
 
-    [Test]
+    [Fact]
     public async Task ChangePassword_EqualPasswords_SavesUserWithNewPassword()
     {
-        var user = new User("1", TestData.UserNameA, salt: "123456", encryptedPassword: "9217510d5221554de3230b5634a3f81e3cf19d94");
-        _userRepositoryMock.Setup(o => o.GetByUserName(TestData.UserNameA)).Returns(Task.FromResult(user));
-
-        User? savedUser = null;
-        _userRepositoryMock.Setup(o => o.Update(It.IsAny<User>())).Callback((User u) => savedUser = u);
-
-        _randomizerMock.Setup(o => o.GetAllowedChars()).Returns("a");
+        var user = CreateUser(salt: "123456", encryptedPassword: "9217510d5221554de3230b5634a3f81e3cf19d94");
+        _userRepository.GetByUserName(user.UserName).Returns(Task.FromResult(user));
+        _randomizer.GetAllowedChars().Returns("a");
             
-        var request = new ChangePassword.Request(TestData.UserNameA, "new-password", "current-password");
+        var request = new ChangePassword.Request(user.UserName, "new-password", "current-password");
         await Sut.Execute(request);
-            
-        savedUser?.EncryptedPassword.Should().Be("cebb55b2a2b59b692bf5c81c9359b59c3244fe86");
+        
+        await _userRepository.Received().Update(Arg.Is<User>(o => o.EncryptedPassword == "cebb55b2a2b59b692bf5c81c9359b59c3244fe86"));
     }
         
-    private ChangePassword Sut => new(
-        _userRepositoryMock.Object,
-        _randomizerMock.Object);
+    private ChangePassword Sut => new(_userRepository, _randomizer);
 }

@@ -13,11 +13,11 @@ class PlayerListTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        result.Data?.Slug.Should().Be("bunch-a");
-        result.Data?.Players.Count.Should().Be(4);
-        result.Data?.Players[0].Id.Should().Be("1");
-        result.Data?.Players[0].Name.Should().Be(TestData.PlayerNameA);
-        result.Data?.CanAddPlayer.Should().BeFalse();
+        result.Data!.Slug.Should().Be("bunch-a");
+        result.Data!.Players.Count.Should().Be(4);
+        result.Data!.Players[0].Id.Should().Be("1");
+        result.Data!.Players[0].Name.Should().Be(TestData.PlayerNameA);
+        result.Data!.CanAddPlayer.Should().BeFalse();
     }
 
     [Test]
@@ -27,8 +27,8 @@ class PlayerListTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        result.Data?.Players[0].Name.Should().Be(TestData.PlayerNameA);
-        result.Data?.Players[1].Name.Should().Be(TestData.PlayerNameB);
+        result.Data!.Players[0].Name.Should().Be(TestData.PlayerNameA);
+        result.Data!.Players[1].Name.Should().Be(TestData.PlayerNameB);
     }
 
     [Test]
@@ -38,7 +38,7 @@ class PlayerListTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        result.Data?.CanAddPlayer.Should().BeTrue();
+        result.Data!.CanAddPlayer.Should().BeTrue();
     }
 
     private GetPlayerList Sut => new(

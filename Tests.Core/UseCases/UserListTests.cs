@@ -24,8 +24,8 @@ public class UserListTests : TestBase
         
         var result = await Sut.Execute(new UserList.Request(new AuthInTest(canListUsers: true)));
 
-        result.Data?.Users.Count.Should().Be(2);
-        result.Data?.Users.First().DisplayName.Should().Be(user1.DisplayName);
-        result.Data?.Users.First().UserName.Should().Be(user1.UserName);
+        result.Data!.Users.Count.Should().Be(2);
+        result.Data!.Users.First().DisplayName.Should().Be(user1.DisplayName);
+        result.Data!.Users.First().UserName.Should().Be(user1.UserName);
     }
 }

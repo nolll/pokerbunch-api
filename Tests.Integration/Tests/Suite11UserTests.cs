@@ -15,8 +15,8 @@ public class Suite11UserTests
         var result = await TestClient.User.GetAsAdmin(TestData.AdminUserName);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.UserName.Should().Be(TestData.AdminUserName);
-        result.Model?.DisplayName.Should().Be(TestData.AdminDisplayName);
+        result.Model.UserName.Should().Be(TestData.AdminUserName);
+        result.Model.DisplayName.Should().Be(TestData.AdminDisplayName);
     }
 
     [Test]
@@ -26,8 +26,8 @@ public class Suite11UserTests
         var result = await TestClient.User.GetAsUser(TestData.AdminUserName);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.UserName.Should().Be(TestData.AdminUserName);
-        result.Model?.DisplayName.Should().Be(TestData.AdminDisplayName);
+        result.Model.UserName.Should().Be(TestData.AdminUserName);
+        result.Model.DisplayName.Should().Be(TestData.AdminDisplayName);
     }
 
     [Test]
@@ -38,13 +38,13 @@ public class Suite11UserTests
         var result = await TestClient.User.List(token);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.Count.Should().Be(3);
-        result.Model?[0].UserName.Should().Be(TestData.AdminUserName);
-        result.Model?[0].DisplayName.Should().Be(TestData.AdminDisplayName);
-        result.Model?[1].UserName.Should().Be(TestData.ManagerUserName);
-        result.Model?[1].DisplayName.Should().Be(TestData.ManagerDisplayName);
-        result.Model?[2].UserName.Should().Be(TestData.UserUserName);
-        result.Model?[2].DisplayName.Should().Be(TestData.UserDisplayName);
+        result.Model.Count.Should().Be(3);
+        result.Model[0].UserName.Should().Be(TestData.AdminUserName);
+        result.Model[0].DisplayName.Should().Be(TestData.AdminDisplayName);
+        result.Model[1].UserName.Should().Be(TestData.ManagerUserName);
+        result.Model[1].DisplayName.Should().Be(TestData.ManagerDisplayName);
+        result.Model[2].UserName.Should().Be(TestData.UserUserName);
+        result.Model[2].DisplayName.Should().Be(TestData.UserDisplayName);
     }
 
     [Test]
@@ -67,8 +67,8 @@ public class Suite11UserTests
         var result = await TestClient.User.Profile(userToken);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.UserName.Should().Be(TestData.UserUserName);
-        result.Model?.DisplayName.Should().Be(TestData.UserDisplayName);
+        result.Model.UserName.Should().Be(TestData.UserUserName);
+        result.Model.DisplayName.Should().Be(TestData.UserDisplayName);
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class Suite11UserTests
         var parameters = new ResetPasswordPostModel(TestData.UserEmail);
         var result = await TestClient.User.PasswordReset(parameters);
         result.Success.Should().BeTrue();
-        TestSetup.EmailSender?.To.Should().Be(TestData.UserEmail);
+        TestSetup.EmailSender!.To.Should().Be(TestData.UserEmail);
     }
 
     [Test]
@@ -101,8 +101,8 @@ public class Suite11UserTests
         var parameters = new UpdateUserPostModel(displayName, TestData.UserEmail, realName);
         var result = await TestClient.User.Update(token, TestData.UserUserName, parameters);
         result.Success.Should().BeTrue();
-        result.Model?.DisplayName.Should().Be(displayName);
-        result.Model?.RealName.Should().Be(realName);
+        result.Model!.DisplayName.Should().Be(displayName);
+        result.Model!.RealName.Should().Be(realName);
 
         var changeBackParameters = new UpdateUserPostModel(TestData.UserDisplayName, TestData.UserEmail, null);
         var changeBackResult = await TestClient.User.Update(token, TestData.UserUserName, changeBackParameters);

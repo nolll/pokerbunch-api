@@ -25,35 +25,35 @@ class AddBunchTests : TestBase
     public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(""));
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
     public async Task AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(currencySymbol: ""));
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
     public async Task AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(currencyLayout: ""));
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
     public async Task AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
         var result = await Sut.Execute(CreateRequest(timeZone: ""));
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
     public async Task AddBunch_WithExistingSlug_ReturnsConflictError()
     {
         var result = await Sut.Execute(CreateRequest(_existingDisplayName));
-        result.Error?.Type.Should().Be(ErrorType.Conflict);
+        result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
     [Test]
@@ -61,15 +61,15 @@ class AddBunchTests : TestBase
     {
         await Sut.Execute(CreateRequest());
 
-        Deps.Bunch.Added?.Id.Should().Be("");
-        Deps.Bunch.Added?.Slug.Should().Be("a-display-name");
-        Deps.Bunch.Added?.DisplayName.Should().Be(DisplayName);
-        Deps.Bunch.Added?.Description.Should().Be(Description);
-        Deps.Bunch.Added?.HouseRules.Should().Be("");
-        Deps.Bunch.Added?.Timezone.Id.Should().Be(TestData.TimeZoneLocal.Id);
-        Deps.Bunch.Added?.DefaultBuyin.Should().Be(0);
-        Deps.Bunch.Added?.Currency.Symbol.Should().Be(CurrencySymbol);
-        Deps.Bunch.Added?.Currency.Layout.Should().Be(CurrencyLayout);
+        Deps.Bunch.Added!.Id.Should().Be("");
+        Deps.Bunch.Added!.Slug.Should().Be("a-display-name");
+        Deps.Bunch.Added!.DisplayName.Should().Be(DisplayName);
+        Deps.Bunch.Added!.Description.Should().Be(Description);
+        Deps.Bunch.Added!.HouseRules.Should().Be("");
+        Deps.Bunch.Added!.Timezone.Id.Should().Be(TestData.TimeZoneLocal.Id);
+        Deps.Bunch.Added!.DefaultBuyin.Should().Be(0);
+        Deps.Bunch.Added!.Currency.Symbol.Should().Be(CurrencySymbol);
+        Deps.Bunch.Added!.Currency.Layout.Should().Be(CurrencyLayout);
     }
 
     [Test]
@@ -77,9 +77,9 @@ class AddBunchTests : TestBase
     {
         await Sut.Execute(CreateRequest());
 
-        Deps.Player.Added?.BunchId.Should().Be("1");
-        Deps.Player.Added?.UserId.Should().Be("3");
-        Deps.Player.Added?.Role.Should().Be(Role.Manager);
+        Deps.Player.Added!.BunchId.Should().Be("1");
+        Deps.Player.Added!.UserId.Should().Be("3");
+        Deps.Player.Added!.Role.Should().Be(Role.Manager);
     }
 
     private AddBunch.Request CreateRequest(string displayName = DisplayName, string currencySymbol = CurrencySymbol, string currencyLayout = CurrencyLayout, string? timeZone = null)

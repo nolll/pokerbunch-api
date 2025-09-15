@@ -17,8 +17,8 @@ public class Suite10CashgameTests
         var result = await TestClient.Cashgame.Add(token, TestData.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.Id.Should().Be(TestData.CashgameId);
-        result.Model?.IsRunning.Should().BeTrue();
+        result.Model.Id.Should().Be(TestData.CashgameId);
+        result.Model.IsRunning.Should().BeTrue();
     }
 
     [Test]
@@ -62,8 +62,8 @@ public class Suite10CashgameTests
         var userToken = await LoginHelper.GetUserToken();
         var result1 = await TestClient.Cashgame.Current(userToken, TestData.BunchId);
         result1.Model.Should().NotBeNull();
-        result1.Model?.Count().Should().Be(1);
-        result1.Model?.First().Id.Should().Be(TestData.CashgameId);
+        result1.Model.Count().Should().Be(1);
+        result1.Model.First().Id.Should().Be(TestData.CashgameId);
     }
 
     [Test]
@@ -73,30 +73,30 @@ public class Suite10CashgameTests
         var userToken = await LoginHelper.GetUserToken();
         var result1 = await TestClient.Cashgame.Get(userToken, TestData.CashgameId);
         result1.Model.Should().NotBeNull();
-        result1.Model?.Id.Should().Be("1");
-        result1.Model?.IsRunning.Should().BeTrue();
-        result1.Model?.Players.Count.Should().Be(3);
+        result1.Model.Id.Should().Be("1");
+        result1.Model.IsRunning.Should().BeTrue();
+        result1.Model.Players.Count.Should().Be(3);
 
-        result1.Model?.Players[0].Name.Should().Be("Player Name");
-        result1.Model?.Players[0].Actions[0].Type.Should().Be("buyin");
-        result1.Model?.Players[0].Actions[0].Added.Should().Be(100);
-        result1.Model?.Players[0].Actions[1].Type.Should().Be("report");
-        result1.Model?.Players[0].Actions[1].Stack.Should().Be(175);
+        result1.Model.Players[0].Name.Should().Be("Player Name");
+        result1.Model.Players[0].Actions[0].Type.Should().Be("buyin");
+        result1.Model.Players[0].Actions[0].Added.Should().Be(100);
+        result1.Model.Players[0].Actions[1].Type.Should().Be("report");
+        result1.Model.Players[0].Actions[1].Stack.Should().Be(175);
 
-        result1.Model?.Players[1].Name.Should().Be("User");
-        result1.Model?.Players[1].Actions[0].Type.Should().Be("buyin");
-        result1.Model?.Players[1].Actions[0].Added.Should().Be(200);
-        result1.Model?.Players[1].Actions[1].Type.Should().Be("report");
-        result1.Model?.Players[1].Actions[1].Stack.Should().Be(265);
+        result1.Model.Players[1].Name.Should().Be("User");
+        result1.Model.Players[1].Actions[0].Type.Should().Be("buyin");
+        result1.Model.Players[1].Actions[0].Added.Should().Be(200);
+        result1.Model.Players[1].Actions[1].Type.Should().Be("report");
+        result1.Model.Players[1].Actions[1].Stack.Should().Be(265);
 
-        result1.Model?.Players[2].Name.Should().Be("Manager");
-        result1.Model?.Players[2].Actions[0].Type.Should().Be("buyin");
-        result1.Model?.Players[2].Actions[0].Added.Should().Be(100);
-        result1.Model?.Players[2].Actions[1].Type.Should().Be("buyin");
-        result1.Model?.Players[2].Actions[1].Added.Should().Be(100);
-        result1.Model?.Players[2].Actions[1].Stack.Should().Be(150);
-        result1.Model?.Players[2].Actions[2].Type.Should().Be("report");
-        result1.Model?.Players[2].Actions[2].Stack.Should().Be(75);
+        result1.Model.Players[2].Name.Should().Be("Manager");
+        result1.Model.Players[2].Actions[0].Type.Should().Be("buyin");
+        result1.Model.Players[2].Actions[0].Added.Should().Be(100);
+        result1.Model.Players[2].Actions[1].Type.Should().Be("buyin");
+        result1.Model.Players[2].Actions[1].Added.Should().Be(100);
+        result1.Model.Players[2].Actions[1].Stack.Should().Be(150);
+        result1.Model.Players[2].Actions[2].Type.Should().Be("report");
+        result1.Model.Players[2].Actions[2].Stack.Should().Be(75);
     }
 
     [Test]
@@ -117,21 +117,21 @@ public class Suite10CashgameTests
         var userToken = await LoginHelper.GetUserToken();
         var result = await TestClient.Cashgame.Get(userToken, TestData.CashgameId);
         result.Model.Should().NotBeNull();
-        result.Model?.Id.Should().Be("1");
-        result.Model?.IsRunning.Should().BeFalse();
-        result.Model?.Players.Count.Should().Be(3);
+        result.Model.Id.Should().Be("1");
+        result.Model.IsRunning.Should().BeFalse();
+        result.Model.Players.Count.Should().Be(3);
 
-        result.Model?.Players[0].Name.Should().Be("Player Name");
-        result.Model?.Players[0].Actions[2].Type.Should().Be("cashout");
-        result.Model?.Players[0].Actions[2].Stack.Should().Be(310);
+        result.Model.Players[0].Name.Should().Be("Player Name");
+        result.Model.Players[0].Actions[2].Type.Should().Be("cashout");
+        result.Model.Players[0].Actions[2].Stack.Should().Be(310);
 
-        result.Model?.Players[1].Name.Should().Be("User");
-        result.Model?.Players[1].Actions[2].Type.Should().Be("cashout");
-        result.Model?.Players[1].Actions[2].Stack.Should().Be(255);
+        result.Model.Players[1].Name.Should().Be("User");
+        result.Model.Players[1].Actions[2].Type.Should().Be("cashout");
+        result.Model.Players[1].Actions[2].Stack.Should().Be(255);
 
-        result.Model?.Players[2].Name.Should().Be("Manager");
-        result.Model?.Players[2].Actions[3].Type.Should().Be("cashout");
-        result.Model?.Players[2].Actions[3].Stack.Should().Be(85);
+        result.Model.Players[2].Name.Should().Be("Manager");
+        result.Model.Players[2].Actions[3].Type.Should().Be("cashout");
+        result.Model.Players[2].Actions[3].Stack.Should().Be(85);
     }
 
     [Test]
@@ -142,7 +142,7 @@ public class Suite10CashgameTests
         var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, TestData.EventId);
         var result = await TestClient.Cashgame.Update(managerToken, TestData.CashgameId, parameters);
         result.Success.Should().BeTrue();
-        result.Model?.Event?.Name.Should().Be(TestData.EventName);
+        result.Model!.Event!.Name.Should().Be(TestData.EventName);
     }
 
     [Test]
@@ -153,8 +153,8 @@ public class Suite10CashgameTests
         var result = await TestClient.Cashgame.ListByBunch(userToken, TestData.BunchId);
         result.Success.Should().BeTrue();
 
-        var list = result.Model?.ToList();
-        list?.Count.Should().Be(1);
+        var list = result.Model!.ToList();
+        list.Count.Should().Be(1);
     }
 
     [Test]
@@ -165,8 +165,8 @@ public class Suite10CashgameTests
         var result = await TestClient.Cashgame.ListByBunch(userToken, TestData.BunchId, DateTime.Now.Year);
         result.Success.Should().BeTrue();
 
-        var list = result.Model?.ToList();
-        list?.Count.Should().Be(1);
+        var list = result.Model!.ToList();
+        list.Count.Should().Be(1);
     }
 
     [Test]
@@ -177,8 +177,8 @@ public class Suite10CashgameTests
         var result = await TestClient.Cashgame.ListByEvent(userToken, TestData.EventId);
         result.Success.Should().BeTrue();
 
-        var list = result.Model?.ToList();
-        list?.Count.Should().Be(1);
+        var list = result.Model!.ToList();
+        list.Count.Should().Be(1);
     }
 
     [Test]
@@ -189,8 +189,8 @@ public class Suite10CashgameTests
         var result = await TestClient.Cashgame.ListByPlayer(userToken, TestData.PlayerPlayerId);
         result.Success.Should().BeTrue();
 
-        var list = result.Model?.ToList();
-        list?.Count.Should().Be(1);
+        var list = result.Model!.ToList();
+        list.Count.Should().Be(1);
     }
 
     [Test]
@@ -210,7 +210,7 @@ public class Suite10CashgameTests
         var parameters = new UpdateCashgamePostModel(TestData.BunchLocationId, null);
         var result = await TestClient.Cashgame.Update(managerToken, TestData.CashgameId, parameters);
         result.Success.Should().BeTrue();
-        result.Model?.Event.Should().BeNull();;
+        result.Model!.Event.Should().BeNull();;
     }
 
     [Test]
@@ -244,8 +244,8 @@ public class Suite10CashgameTests
         deleteResult.Success.Should().BeTrue();
 
         var getResult = await TestClient.Cashgame.ListByBunch(managerToken, TestData.BunchId);
-        var list = getResult.Model?.ToList();
-        list?.Count.Should().Be(0);
+        var list = getResult.Model!.ToList();
+        list.Count.Should().Be(0);
     }
 
     private async Task Buyin(string? token, string cashgameId, string playerId, int buyin, int leftInStack = 0)

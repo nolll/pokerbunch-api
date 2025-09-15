@@ -12,7 +12,7 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        result.Data?.Events.Count.Should().Be(2);
+        result.Data!.Events.Count.Should().Be(2);
     }
 
     [Test]
@@ -20,8 +20,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        result.Data?.Events[0].Name.Should().Be(TestData.EventNameB);
-        result.Data?.Events[1].Name.Should().Be(TestData.EventNameA);
+        result.Data!.Events[0].Name.Should().Be(TestData.EventNameB);
+        result.Data!.Events[1].Name.Should().Be(TestData.EventNameA);
     }
 
     [Test]
@@ -29,8 +29,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        result.Data?.Events[0].StartDate.Should().Be(new Date(2002, 2, 2));
-        result.Data?.Events[1].StartDate.Should().Be(new Date(2001, 1, 1));
+        result.Data!.Events[0].StartDate.Should().Be(new Date(2002, 2, 2));
+        result.Data!.Events[1].StartDate.Should().Be(new Date(2001, 1, 1));
     }
 
     [Test]
@@ -38,8 +38,8 @@ class EventListTests : TestBase
     {
         var result = await Sut.Execute(CreateInput());
 
-        result.Data?.Events[0].EventId.Should().Be("2");
-        result.Data?.Events[1].EventId.Should().Be("1");
+        result.Data!.Events[0].EventId.Should().Be("2");
+        result.Data!.Events[1].EventId.Should().Be("1");
     }
 
     private EventList Sut => new(

@@ -17,7 +17,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class EditCheckpointTests : TestBase
         var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
         var result = await Sut.Execute(request);
 
-        result.Error?.Type.Should().Be(ErrorType.Validation);
+        result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Test]
@@ -36,8 +36,8 @@ public class EditCheckpointTests : TestBase
 
         var result = await Sut.Execute(request);
 
-        result.Data?.CashgameId.Should().Be("1");
-        result.Data?.PlayerId.Should().Be("1");
+        result.Data!.CashgameId.Should().Be("1");
+        result.Data!.PlayerId.Should().Be("1");
     }
         
     [Test]
@@ -48,10 +48,10 @@ public class EditCheckpointTests : TestBase
         await Sut.Execute(request);
 
         var updatedCheckpoint = Deps.Cashgame.Updated?.UpdatedCheckpoints.First();
-        updatedCheckpoint?.Type.Should().Be(CheckpointType.Buyin);
-        updatedCheckpoint?.Id.Should().Be(TestData.BuyinCheckpointId);
-        updatedCheckpoint?.Stack.Should().Be(ChangedStack);
-        updatedCheckpoint?.Amount.Should().Be(ChangedAmount);
+        updatedCheckpoint!.Type.Should().Be(CheckpointType.Buyin);
+        updatedCheckpoint.Id.Should().Be(TestData.BuyinCheckpointId);
+        updatedCheckpoint.Stack.Should().Be(ChangedStack);
+        updatedCheckpoint.Amount.Should().Be(ChangedAmount);
     }
 
     private EditCheckpoint Sut => new(Deps.Cashgame);

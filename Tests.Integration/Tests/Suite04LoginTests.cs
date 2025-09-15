@@ -14,7 +14,7 @@ public class Suite04LoginTests
     {
         var result = await LoginHelper.LoginAdmin();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model?.AccessToken.Should().NotBeEmpty();
+        result.Model!.AccessToken.Should().NotBeEmpty();
     }
 
     [Test]
@@ -23,7 +23,7 @@ public class Suite04LoginTests
     {
         var result = await LoginHelper.LoginManager();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model?.AccessToken.Should().NotBeEmpty();
+        result.Model!.AccessToken.Should().NotBeEmpty();
     }
 
     [Test]
@@ -32,7 +32,7 @@ public class Suite04LoginTests
     {
         var result = await LoginHelper.LoginUser();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model?.AccessToken.Should().NotBeEmpty();
+        result.Model!.AccessToken.Should().NotBeEmpty();
     }
     
     [Test]
@@ -42,6 +42,6 @@ public class Suite04LoginTests
         var loginResult = await LoginHelper.LoginUser();
         var refreshResult = await TestClient.Auth.Refresh(new RefreshPostModel(loginResult.Model!.RefreshToken));
         refreshResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        refreshResult.Model?.AccessToken.Should().NotBe(loginResult.Model.AccessToken);
+        refreshResult.Model!.AccessToken.Should().NotBe(loginResult.Model.AccessToken);
     }
 }

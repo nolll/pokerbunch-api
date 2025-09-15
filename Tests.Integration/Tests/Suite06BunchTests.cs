@@ -20,16 +20,16 @@ public class Suite06BunchTests
         var result = await TestClient.Bunch.Add(token, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model?.Name.Should().Be(TestData.BunchDisplayName);
-        result.Model?.Id.Should().Be(TestData.BunchId);
-        result.Model?.DefaultBuyin.Should().Be(0);
-        result.Model?.CurrencySymbol.Should().Be(TestData.CurrencySymbol);
-        result.Model?.CurrencyLayout.Should().Be(TestData.CurrencyLayout);
-        result.Model?.CurrencyFormat.Should().Be("${0}");
-        result.Model?.Description.Should().Be(TestData.BunchDescription);
-        result.Model?.HouseRules.Should().Be("");
-        result.Model?.Timezone.Should().Be(TestData.TimeZone);
-        result.Model?.ThousandSeparator.Should().Be(" ");
+        result.Model!.Name.Should().Be(TestData.BunchDisplayName);
+        result.Model!.Id.Should().Be(TestData.BunchId);
+        result.Model!.DefaultBuyin.Should().Be(0);
+        result.Model!.CurrencySymbol.Should().Be(TestData.CurrencySymbol);
+        result.Model!.CurrencyLayout.Should().Be(TestData.CurrencyLayout);
+        result.Model!.CurrencyFormat.Should().Be("${0}");
+        result.Model!.Description.Should().Be(TestData.BunchDescription);
+        result.Model!.HouseRules.Should().Be("");
+        result.Model!.Timezone.Should().Be(TestData.TimeZone);
+        result.Model!.ThousandSeparator.Should().Be(" ");
     }
 
     [Test]
@@ -110,14 +110,14 @@ public class Suite06BunchTests
         var managerToken = await LoginHelper.GetManagerToken();
         var parameters = new UpdateBunchPostModel(newDescription, houseRules, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout, defaultBuyin);
         var updateResult = await TestClient.Bunch.Update(managerToken, TestData.BunchId, parameters);
-        updateResult.Model?.Description.Should().Be(newDescription);
-        updateResult.Model?.HouseRules.Should().Be(houseRules);
-        updateResult.Model?.DefaultBuyin.Should().Be(defaultBuyin);
+        updateResult.Model!.Description.Should().Be(newDescription);
+        updateResult.Model!.HouseRules.Should().Be(houseRules);
+        updateResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
 
         var getResult = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
-        getResult.Model?.Description.Should().Be(newDescription);
-        getResult.Model?.HouseRules.Should().Be(houseRules);
-        getResult.Model?.DefaultBuyin.Should().Be(defaultBuyin);
+        getResult.Model!.Description.Should().Be(newDescription);
+        getResult.Model!.HouseRules.Should().Be(houseRules);
+        getResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
     }
 
     [Test]
@@ -127,10 +127,10 @@ public class Suite06BunchTests
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.Bunch.List(token);
         result.Success.Should().BeTrue();
-        var list = result.Model?.ToList();
-        var first = list?.First();
-        list?.Count.Should().Be(1);
-        first?.Name.Should().Be(TestData.BunchDisplayName);
+        var list = result.Model!.ToList();
+        var first = list.First();
+        list.Count.Should().Be(1);
+        first.Name.Should().Be(TestData.BunchDisplayName);
     }
 
     [Test]
@@ -153,10 +153,10 @@ public class Suite06BunchTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.Bunch.ListForUser(managerToken);
         result.Success.Should().BeTrue();
-        var list = result.Model?.ToList();
-        var first = list?.First();
-        list?.Count.Should().Be(1);
-        first?.Name.Should().Be(TestData.BunchDisplayName);
+        var list = result.Model!.ToList();
+        var first = list.First();
+        list.Count.Should().Be(1);
+        first.Name.Should().Be(TestData.BunchDisplayName);
     }
 
     [Test]
@@ -166,7 +166,7 @@ public class Suite06BunchTests
         var token = await LoginHelper.GetAdminToken();
         var result = await TestClient.Bunch.ListForUser(token);
         result.Success.Should().BeTrue();
-        result.Model?.Count().Should().Be(0);
+        result.Model!.Count().Should().Be(0);
     }
 
     private static string GetVerificationCode(string messageBody) => 
@@ -192,15 +192,15 @@ public class Suite06BunchTests
 
     private void AssertCommonProperties(BunchModel? bunch)
     {
-        bunch?.Name.Should().Be(TestData.BunchDisplayName);
-        bunch?.Id.Should().Be(TestData.BunchId);
-        bunch?.DefaultBuyin.Should().Be(0);
-        bunch?.CurrencySymbol.Should().Be(TestData.CurrencySymbol);
-        bunch?.CurrencyLayout.Should().Be(TestData.CurrencyLayout);
-        bunch?.CurrencyFormat.Should().Be("${0}");
-        bunch?.Description.Should().Be(TestData.BunchDescription);
-        bunch?.HouseRules.Should().Be("");
-        bunch?.Timezone.Should().Be(TestData.TimeZone);
-        bunch?.ThousandSeparator.Should().Be(" ");
+        bunch!.Name.Should().Be(TestData.BunchDisplayName);
+        bunch.Id.Should().Be(TestData.BunchId);
+        bunch.DefaultBuyin.Should().Be(0);
+        bunch.CurrencySymbol.Should().Be(TestData.CurrencySymbol);
+        bunch.CurrencyLayout.Should().Be(TestData.CurrencyLayout);
+        bunch.CurrencyFormat.Should().Be("${0}");
+        bunch.Description.Should().Be(TestData.BunchDescription);
+        bunch.HouseRules.Should().Be("");
+        bunch.Timezone.Should().Be(TestData.TimeZone);
+        bunch.ThousandSeparator.Should().Be(" ");
     }
 }
