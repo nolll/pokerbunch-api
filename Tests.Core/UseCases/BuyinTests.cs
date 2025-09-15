@@ -6,7 +6,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class BuyinTests : TestBase
+public class BuyinTests : TestBase
 {
     private const string PlayerId = "1";
     private const int ValidBuyin = 1;

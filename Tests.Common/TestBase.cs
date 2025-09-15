@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System;
+using System.Net.Mail;
 using AutoFixture;
 using Core.Entities;
 using NUnit.Framework;
@@ -42,5 +43,26 @@ public class TestBase
             globalRole, 
             encryptedPassword, 
             salt);
+    }
+    
+    protected Bunch CreateBunch(
+        string? id = null,
+        string? slug = null,
+        string? displayName = null,
+        string? description = null,
+        string? houseRules = null,
+        TimeZoneInfo? timezone = null,
+        int? defaultBuyin = null,
+        Currency? currency = null)
+    {
+        return new Bunch(
+            id ?? Fixture.Create<string>(),
+            slug ?? Fixture.Create<string>(),
+            displayName ?? Fixture.Create<string>(),
+            description ?? Fixture.Create<string>(),
+            houseRules ?? Fixture.Create<string>(),
+            timezone ?? Fixture.Create<TimeZoneInfo>(),
+            defaultBuyin ?? Fixture.Create<int>(),
+            currency ?? Fixture.Create<Currency>());
     }
 }

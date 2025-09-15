@@ -5,7 +5,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class AddPlayerTests : TestBase
+public class AddPlayerTests : TestBase
 {
     private const string EmptyName = "";
     private const string UniqueName = "Unique Name";

@@ -5,7 +5,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class CashgameListTests : TestBase
+public class CashgameListTests : TestBase
 {
     [Test]
     public async Task CashgameList_SlugIsSet()

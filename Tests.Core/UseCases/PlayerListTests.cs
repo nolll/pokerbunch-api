@@ -4,7 +4,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class PlayerListTests : TestBase
+public class PlayerListTests : TestBase
 {
     [Test]
     public async Task Execute_WithSlug_SlugAndPlayersAreSet()

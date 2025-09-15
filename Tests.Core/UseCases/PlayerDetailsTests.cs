@@ -5,7 +5,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class PlayerDetailsTests : TestBase
+public class PlayerDetailsTests : TestBase
 {
     [Test]
     public async Task PlayerDetails_DisplayNameIsSet()

@@ -5,7 +5,7 @@ using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
-class EventListTests : TestBase
+public class EventListTests : TestBase
 {
     [Test]
     public async Task EventList_ReturnsAllEvents()

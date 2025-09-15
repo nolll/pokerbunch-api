@@ -33,6 +33,7 @@ public abstract class Arrange : UseCaseTest<Cashout>
         CheckpointCountBeforeCashout = cashgame.Checkpoints.Count;
         UpdatedCashgame = null;
 
+        
         Mock<ICashgameRepository>().Setup(s => s.Get(CashgameId)).Returns(Task.FromResult(CreateCashgame()));
         Mock<ICashgameRepository>().Setup(o => o.Update(It.IsAny<Cashgame>())).Callback((Cashgame c) => UpdatedCashgame = c);
     }

@@ -4,7 +4,7 @@ using Tests.Common;
 
 namespace Tests.Core.UseCases;
 
-class ResetPasswordTests : TestBase
+public class ResetPasswordTests : TestBase
 {
     private const string ValidEmail = TestData.UserEmailA;
     private const string InvalidEmail = "";

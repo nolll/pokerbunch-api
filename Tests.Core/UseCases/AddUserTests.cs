@@ -5,7 +5,7 @@ using Tests.Common;
 
 namespace Tests.Core.UseCases;
 
-class AddUserTests : TestBase
+public class AddUserTests : TestBase
 {
     private const string ValidUserName = "a";
     private const string ValidDisplayName = "b";

@@ -5,7 +5,7 @@ using Tests.Common;
 
 namespace Tests.Core.UseCases;
 
-class AddBunchTests : TestBase
+public class AddBunchTests : TestBase
 {
     private const string DisplayName = "A Display Name";
     private const string Description = "b";
