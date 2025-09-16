@@ -9,7 +9,7 @@ public class HasAccessWithGames : Arrange
     public void ReturnsListOfGames()
     {
         var games = Result!.Data!.Games;
-        games!.Count.Should().Be(1);
+        games.Count.Should().Be(1);
         var game = games.First();
         game.Slug.Should().Be(Slug);
         game.Id.Should().Be(CashgameId);

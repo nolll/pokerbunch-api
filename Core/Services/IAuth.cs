@@ -12,6 +12,7 @@ public interface IAuth
     bool CanSeeAppSettings { get; }
     bool CanListBunches { get; }
     bool CanListUsers { get; }
+    bool CanViewFullUserData { get; }
     string Id { get; }
     string UserName { get; }
     string DisplayName { get; }

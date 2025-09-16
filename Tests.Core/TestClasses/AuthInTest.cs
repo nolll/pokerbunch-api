@@ -16,6 +16,7 @@ public class AuthInTest(
     bool canSeeCashgame = false,
     bool canSeeLocation = false,
     bool canListUsers = false,
+    bool canViewFullUserData = false,
     bool canAddLocation = false,
     bool canEditBunch = false,
     bool canListLocations = false,
@@ -46,6 +47,7 @@ public class AuthInTest(
     public bool CanSeeAppSettings => canSeeAppSettings;
     public bool CanListBunches => canListBunches;
     public bool CanListUsers => canListUsers;
+    public bool CanViewFullUserData => canViewFullUserData;
     public bool CanEditCashgame(string bunchId) => canEditCashgame;
     public bool CanDeleteCashgame(string bunchId) => canDeleteCashgame;
     public bool CanSeeCashgame(string bunchId) => canSeeCashgame;

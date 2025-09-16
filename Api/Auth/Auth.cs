@@ -44,6 +44,7 @@ public class Auth : IAuth
     public bool CanSeeAppSettings => _isAdmin;
     public bool CanListBunches => _isAdmin;
     public bool CanListUsers => _isAdmin;
+    public bool CanViewFullUserData => _isAdmin;
     
     public bool CanAddCashgame(string bunchId) => IsPlayer(bunchId);
     public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
