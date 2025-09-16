@@ -1,4 +1,5 @@
 using System;
+using AutoFixture;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
@@ -6,32 +7,20 @@ using Core.UseCases;
 using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
-using Xunit;
 
 namespace Tests.Core.UseCases;
 
 public class ReportTests : TestBase
 {
-    private const string CashgameId = "2";
-    private const string PlayerId = "3";
-    private const string BunchId = "4";
-    private static DateTime CurrentTime => DateTime.MinValue;
-    
     private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
-
-    public ReportTests()
-    {
-        var cashgame = new CashgameInTest(bunchId: BunchId);
-
-        _cashgameRepository.Get(CashgameId).Returns(Task.FromResult<Cashgame>(cashgame));
-    }
 
     [Fact]
     public async Task ReturnsValidationError()
     {
         const int invalidStack = -1;
-        var request = new Report.Request(new AuthInTest(canEditCashgameActionsFor: true), CashgameId, PlayerId, invalidStack, CurrentTime);
-        var result = await Sut.Execute(request);
+        
+        var result = await ExecuteAsync(false, stack: invalidStack);
+        
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -39,10 +28,25 @@ public class ReportTests : TestBase
     public async Task AddsCheckpoint()
     {
         const int stack = 5;
-        var request = new Report.Request(new AuthInTest(canEditCashgameActionsFor: true), CashgameId, PlayerId, stack, CurrentTime);
-        await Sut.Execute(request);
+        var cashgame = CreateCashgame();
+        _cashgameRepository.Get(cashgame.Id).Returns(Task.FromResult(cashgame));
         
+        var result = await ExecuteAsync(true, cashgame.Id, stack);
+        
+        result.Success.Should().BeTrue();
         await _cashgameRepository.Received().Update(Arg.Is<Cashgame>(o => o.AddedCheckpoints.First().Stack == stack));
+    }
+
+    private async Task<UseCaseResult<Report.Result>> ExecuteAsync(bool canEditCashgameActionsFor, string? cashgameId = null, int? stack = null)
+    {
+        var request = new Report.Request(
+            new AuthInTest(canEditCashgameActionsFor: canEditCashgameActionsFor),
+            cashgameId ?? Fixture.Create<string>(),
+            Fixture.Create<string>(),
+            stack ?? Fixture.Create<int>(),
+            Fixture.Create<DateTime>());
+        
+        return await Sut.Execute(request);
     }
     
     private Report Sut => new(_cashgameRepository);

@@ -3,7 +3,6 @@ using Core.UseCases;
 using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
-using Xunit;
 
 namespace Tests.Core.UseCases;
 

@@ -66,7 +66,7 @@ public class TestBase
             defaultBuyin ?? Fixture.Create<int>(),
             currency ?? Fixture.Create<Currency>());
     }
-
+    
     protected Cashgame CreateCashgame(
         string? bunchId = null,
         string? locationId = null,

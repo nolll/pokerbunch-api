@@ -8,7 +8,7 @@ public class DateTests
     private const int Month = 2;
     private const int Day = 3;
 
-    [Test]
+    [Fact]
     public void Construct_PropertiesAreSet()
     {
         Sut.Year.Should().Be(Year);
@@ -16,7 +16,7 @@ public class DateTests
         Sut.Day.Should().Be(Day);
     }
 
-    [Test]
+    [Fact]
     public void IsoString_IsCorrectFormat() => Sut.IsoString.Should().Be("2000-02-03");
 
     private static Date Sut => new(Year, Month, Day);

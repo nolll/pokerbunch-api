@@ -5,7 +5,6 @@ using Core.Services;
 using Core.UseCases;
 using NSubstitute;
 using Tests.Common;
-using Xunit;
 
 namespace Tests.Core.UseCases;
 
