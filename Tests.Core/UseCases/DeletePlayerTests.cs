@@ -16,8 +16,7 @@ public class DeletePlayerTests : TestBase
         var request = new DeletePlayer.Request(new AuthInTest(canDeletePlayer: true, currentBunch: currentBunch), playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);
 
-        result.Data!.Slug.Should().Be(TestData.SlugA);
-        result.Data!.PlayerId.Should().Be(playerIdThatHasNotPlayed);
+        result.Success.Should().BeTrue();
         Deps.Player.Deleted.Should().Be(playerIdThatHasNotPlayed);
     }
 

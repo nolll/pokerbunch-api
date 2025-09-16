@@ -16,8 +16,8 @@ public class UserListTests : TestBase
     [Fact]
     public async Task UserList_ReturnsListOfUserItems()
     {
-        var user1 = Fixture.Create<User>();
-        var user2 = Fixture.Create<User>();
+        var user1 = Create.User();
+        var user2 = Create.User();
         
         _userRepository.List().Returns([user1, user2]);
         

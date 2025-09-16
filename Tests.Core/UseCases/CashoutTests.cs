@@ -27,19 +27,17 @@ public class CashoutTests : TestBase
     [Fact]
     public async Task HasCashedOutBefore_UpdatesAction()
     {
-        var cashoutStack = Fixture.Create<int>();
+        var cashoutStack = Create.Int();
         var startTime = DateTime.Parse("2001-01-01 12:00:00");
-        var cashgameId = Fixture.Create<string>();
-        var playerId = Fixture.Create<string>();
-        List<Checkpoint> checkpoints =
-        [
-            Checkpoint.Create("1", cashgameId, playerId, startTime, CheckpointType.Buyin, 200, 200),
-            Checkpoint.Create("3", cashgameId, playerId, startTime.AddMinutes(1), CheckpointType.Cashout, 200, 0)
-        ];
-        var cashgame = CreateCashgame(id: cashgameId, checkpoints: checkpoints);
+        var playerId = Create.String();
+        var cashgame = Create.Cashgame();
+        cashgame.SetCheckpoints([
+            Create.BuyinAction("1", cashgame.Id, playerId, startTime, 200, 200),
+            Create.CashoutAction("3", cashgame.Id, playerId, startTime.AddMinutes(1), 200)
+        ]);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
-        await ExecuteAsync(cashgameId, playerId, cashoutStack, startTime.AddMinutes(2));
+        await ExecuteAsync(cashgame.Id, playerId, cashoutStack, startTime.AddMinutes(2));
         
         await _cashgameRepository.Received().Update(Arg.Is<Cashgame>(o =>
             o.UpdatedCheckpoints.Count == 1 &&
@@ -49,15 +47,14 @@ public class CashoutTests : TestBase
     [Fact]
     public async Task AddsCheckpoint()
     {
-        var cashoutStack = Fixture.Create<int>();
+        var cashoutStack = Create.Int();
         var startTime = DateTime.Parse("2001-01-01 12:00:00");
-        var cashgameId = Fixture.Create<string>();
-        var playerId = Fixture.Create<string>();
-        List<Checkpoint> checkpoints =
-        [
-            Checkpoint.Create("1", cashgameId, playerId, startTime, CheckpointType.Buyin, 200, 200)
-        ];
-        var cashgame = CreateCashgame(id: cashgameId, checkpoints: checkpoints);
+        var cashgameId = Create.String();
+        var playerId = Create.String();
+        var cashgame = Create.Cashgame(id: cashgameId);
+        cashgame.SetCheckpoints([
+            Create.BuyinAction(cashgameId: cashgameId, timestamp: startTime, stack: 200, buyin: 200)
+        ]);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
         await ExecuteAsync(cashgameId, playerId, cashoutStack, startTime.AddMinutes(2));
@@ -71,10 +68,10 @@ public class CashoutTests : TestBase
     {
         return await Sut.Execute(new Cashout.Request(
             new AuthInTest(canEditCashgameActionsFor: true),
-            cashgameId ?? Fixture.Create<string>(),
-            playerId ?? Fixture.Create<string>(),
-            stack ?? Fixture.Create<int>(),
-            cashoutTime ?? Fixture.Create<DateTime>()));
+            cashgameId ?? Create.String(),
+            playerId ?? Create.String(),
+            stack ?? Create.Int(),
+            cashoutTime ?? Create.DateTime()));
     }
 
     private Cashout Sut => new(_cashgameRepository);

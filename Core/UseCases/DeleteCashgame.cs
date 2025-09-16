@@ -4,15 +4,12 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class DeleteCashgame(
-    ICashgameRepository cashgameRepository,
-    IBunchRepository bunchRepository)
+public class DeleteCashgame(ICashgameRepository cashgameRepository)
     : UseCase<DeleteCashgame.Request, DeleteCashgame.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = await cashgameRepository.Get(request.Id);
-        var bunch = await bunchRepository.Get(cashgame.BunchId);
 
         if (!request.Auth.CanDeleteCashgame(cashgame.BunchId))
             return Error(new AccessDeniedError());
@@ -25,7 +22,7 @@ public class DeleteCashgame(
 
         await cashgameRepository.DeleteGame(cashgame.Id);
 
-        return Success(new Result(bunch.Slug));
+        return Success(new Result());
     }
     
     public class Request(IAuth auth, string id)
@@ -34,8 +31,7 @@ public class DeleteCashgame(
         public string Id { get; } = id;
     }
 
-    public class Result(string slug)
+    public class Result()
     {
-        public string Slug { get; private set; } = slug;
     }
 }

@@ -1,0 +1,126 @@
+using System;
+using System.Net.Mail;
+using AutoFixture;
+using Core.Entities;
+using Core.Entities.Checkpoints;
+
+namespace Tests.Common;
+
+public class TestDataFactory
+{
+    private readonly Fixture _fixture = new();
+    
+    private T Create<T>() => _fixture.Create<T>();
+    public string String() => Create<string>();
+    public int Int() => Create<int>();
+    public DateTime DateTime() => Create<DateTime>();
+    public string EmailAddress() => Create<MailAddress>().Address;
+    
+    public User User(
+        string? id = null,
+        string? userName = null,
+        string? displayName = "default",
+        string? realName = null,
+        string? email = null,
+        Role globalRole = Role.Player,
+        string? encryptedPassword = null,
+        string? salt = null)
+    {
+        return new User(
+            id ?? String(), 
+            userName ?? String(), 
+            displayName ?? String(),
+            realName ?? String(),
+            email ?? EmailAddress(), 
+            globalRole, 
+            encryptedPassword, 
+            salt);
+    }
+    
+    public Bunch Bunch(
+        string? id = null,
+        string? slug = null,
+        string? displayName = null,
+        string? description = null,
+        string? houseRules = null,
+        TimeZoneInfo? timezone = null,
+        int? defaultBuyin = null,
+        Currency? currency = null)
+    {
+        return new Bunch(
+            id ?? String(),
+            slug ?? String(),
+            displayName ?? String(),
+            description ?? String(),
+            houseRules ?? String(),
+            timezone ?? Create<TimeZoneInfo>(),
+            defaultBuyin ?? Int(),
+            currency ?? Create<Currency>());
+    }
+    
+    public Cashgame Cashgame(
+        string? bunchId = null,
+        string? locationId = null,
+        string? eventId = null,
+        GameStatus? status = null,
+        string? id = null)
+    {
+        return new Cashgame(
+            bunchId ?? String(),
+            locationId ?? String(),
+            eventId,
+            status ?? Create<GameStatus>(),
+            id ?? String(),
+            []);
+    }
+    
+    public Checkpoint BuyinAction(
+        string? id = null,
+        string? cashgameId = null,
+        string? playerId = null,
+        DateTime? timestamp = null,
+        int? stack = null,
+        int? buyin = null)
+    {
+        return Checkpoint.Create(
+            id ?? String(),
+            cashgameId ?? String(),
+            playerId ?? String(),
+            timestamp ?? DateTime(),
+            CheckpointType.Buyin,
+            stack ?? Int(),
+            buyin ?? Int());
+    }
+    
+    public Checkpoint ReportAction(
+        string? id = null,
+        string? cashgameId = null,
+        string? playerId = null,
+        DateTime? timestamp = null,
+        int? stack = null)
+    {
+        return Checkpoint.Create(
+            id ?? String(),
+            cashgameId ?? String(),
+            playerId ?? String(),
+            timestamp ?? DateTime(),
+            CheckpointType.Report,
+            stack ?? Int());
+    }
+    
+    public Checkpoint CashoutAction(
+        string? id = null,
+        string? cashgameId = null,
+        string? playerId = null,
+        DateTime? timestamp = null,
+        int? stack = null)
+    {
+        return Checkpoint.Create(
+            id ?? String(),
+            cashgameId ?? String(),
+            playerId ?? String(),
+            timestamp ?? DateTime(),
+            CheckpointType.Cashout,
+            stack ?? Int());
+    }
+}

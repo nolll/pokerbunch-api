@@ -15,8 +15,8 @@ public class CurrentCashgamesTests : TestBase
     [Fact]
     public async Task HasAccess_WithGames_ReturnsListOfGames()
     {
-        var cashgame = CreateCashgame();
-        var bunch = CreateBunch();
+        var cashgame = Create.Cashgame();
+        var bunch = Create.Bunch();
         
         _cashgameRepository.GetRunning(bunch.Id).Returns(cashgame);
 
@@ -32,7 +32,7 @@ public class CurrentCashgamesTests : TestBase
     [Fact]
     public async Task HasAccess_NoGames_ReturnsEmptyList()
     {
-        var bunch = CreateBunch();
+        var bunch = Create.Bunch();
 
         var result = await ExecuteAsync(true, bunch);
 
@@ -42,7 +42,7 @@ public class CurrentCashgamesTests : TestBase
     [Fact]
     public async Task NoAccess_ReturnsAccessDeniedError()
     {
-        var bunch = CreateBunch();
+        var bunch = Create.Bunch();
 
         var result = await ExecuteAsync(false, bunch);
         

@@ -13,8 +13,8 @@ public class UserDetailsTests : TestBase
     [Fact]
     public async Task StandardUser_UserIsReturned()
     {
-        var currentUser = CreateUser();
-        var viewUser = CreateUser(email: "hello@example.org");
+        var currentUser = Create.User();
+        var viewUser = Create.User(email: "hello@example.org");
 
         _userRepository.GetByUserName(viewUser.UserName).Returns(viewUser);
         
@@ -31,8 +31,8 @@ public class UserDetailsTests : TestBase
     [Fact]
     public async Task IsAdmin_CanViewAllIsTrue()
     {
-        var currentUser = CreateUser();
-        var viewUser = CreateUser();
+        var currentUser = Create.User();
+        var viewUser = Create.User();
         
         _userRepository.GetByUserName(viewUser.UserName).Returns(viewUser);
         
@@ -44,7 +44,7 @@ public class UserDetailsTests : TestBase
     [Fact]
     public async Task OwnUser_CanViewAllIsTrue()
     {
-        var currentUser = CreateUser();
+        var currentUser = Create.User();
         
         _userRepository.GetByUserName(currentUser.UserName).Returns(currentUser);
         

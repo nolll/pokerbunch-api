@@ -14,8 +14,8 @@ public class ClearCacheTests
     public async Task HasAccess_NoException()
     {
         var result = await ExecuteAsync(true);
-        result.Success.Should().BeTrue();
         
+        result.Success.Should().BeTrue();
         _cache.Received().ClearAll();
     }
     
@@ -23,9 +23,9 @@ public class ClearCacheTests
     public async Task NoAccess_ReturnsError()
     {
         var result = await ExecuteAsync(false);
+        
         result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
-        
         _cache.DidNotReceive().ClearAll();
     }
 

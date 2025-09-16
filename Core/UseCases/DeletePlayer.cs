@@ -13,8 +13,7 @@ public class DeletePlayer(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var player = await playerRepository.Get(request.PlayerId);
-
-        var bunchInfo = request.Auth.GetBunchById(player.BunchId);
+        
         if (!request.Auth.CanDeletePlayer(player.BunchId))
             return Error(new AccessDeniedError());
 
@@ -26,7 +25,7 @@ public class DeletePlayer(
 
         await playerRepository.Delete(request.PlayerId);
 
-        return Success(new Result(bunchInfo.Slug, request.PlayerId));
+        return Success(new Result());
     }
     
     public class Request(IAuth auth, string playerId)
@@ -35,9 +34,7 @@ public class DeletePlayer(
         public string PlayerId { get; } = playerId;
     }
 
-    public class Result(string slug, string playerId)
+    public class Result()
     {
-        public string Slug { get; private set; } = slug;
-        public string PlayerId { get; private set; } = playerId;
     }
 }

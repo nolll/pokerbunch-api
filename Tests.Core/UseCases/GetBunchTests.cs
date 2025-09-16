@@ -15,7 +15,7 @@ public class GetBunchTests : TestBase
     
     public GetBunchTests()
     {
-        _bunch = CreateBunch();
+        _bunch = Create.Bunch();
         _bunchRepository.GetBySlug(_bunch.Slug).Returns(_bunch);
     }
     

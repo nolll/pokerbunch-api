@@ -28,7 +28,7 @@ public class ReportTests : TestBase
     public async Task AddsCheckpoint()
     {
         const int stack = 5;
-        var cashgame = CreateCashgame();
+        var cashgame = Create.Cashgame();
         _cashgameRepository.Get(cashgame.Id).Returns(Task.FromResult(cashgame));
         
         var result = await ExecuteAsync(true, cashgame.Id, stack);
@@ -41,10 +41,10 @@ public class ReportTests : TestBase
     {
         var request = new Report.Request(
             new AuthInTest(canEditCashgameActionsFor: canEditCashgameActionsFor),
-            cashgameId ?? Fixture.Create<string>(),
-            Fixture.Create<string>(),
-            stack ?? Fixture.Create<int>(),
-            Fixture.Create<DateTime>());
+            cashgameId ?? Create.String(),
+            Create.String(),
+            stack ?? Create.Int(),
+            Create.DateTime());
         
         return await Sut.Execute(request);
     }

@@ -42,10 +42,10 @@ public class EditUserTests : TestBase
     [Test]
     public async Task EditUser_ValidInput_UserIsSaved()
     {
-        var user = CreateUser();
+        var user = Create.User();
         
-        var changedDisplayName = Fixture.Create<string>();
-        var changedEmail = CreateEmailAddress();
+        var changedDisplayName = Create.String();
+        var changedEmail = Create.EmailAddress();
 
         _userRepository.GetByUserName(user.UserName).Returns(user);
         
@@ -64,10 +64,10 @@ public class EditUserTests : TestBase
         string? email = null)
     {
         return new EditUser.Request(
-            userName ?? Fixture.Create<string>(),
-            displayName ?? Fixture.Create<string>(),
-            realName ?? Fixture.Create<string>(),
-            email ?? CreateEmailAddress());
+            userName ?? Create.String(),
+            displayName ?? Create.String(),
+            realName ?? Create.String(),
+            email ?? Create.EmailAddress());
     }
 
     private EditUser Sut => new(_userRepository);

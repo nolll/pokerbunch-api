@@ -15,7 +15,7 @@ public class TestEmailTests : TestBase
     [Fact]
     public async Task HasAccess_EmailIsSent()
     {
-        var to = CreateEmailAddress();
+        var to = Create.EmailAddress();
         var result = await ExecuteAsync(true, to);
         result.Success.Should().BeTrue();
         result.Data!.Email.Should().Be(to);
@@ -26,7 +26,7 @@ public class TestEmailTests : TestBase
     [Fact]
     public async Task NoAccess_ReturnsError()
     {
-        var result = await ExecuteAsync(false, CreateEmailAddress());
+        var result = await ExecuteAsync(false, Create.EmailAddress());
         result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }

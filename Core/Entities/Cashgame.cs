@@ -6,7 +6,7 @@ namespace Core.Entities;
 
 public class Cashgame : IEntity
 {
-    public IList<Checkpoint> Checkpoints { get; }
+    public IList<Checkpoint> Checkpoints { get; private set; }
     public IList<Checkpoint> AddedCheckpoints { get; }
     public IList<Checkpoint> UpdatedCheckpoints { get; }
     public IList<Checkpoint> DeletedCheckpoints { get; }
@@ -46,13 +46,7 @@ public class Cashgame : IEntity
         Status = status;
     }
 
-    public bool IsReadyToEnd
-    {
-        get
-        {
-            return Checkpoints.Count > 0 && Results.Count(o => !o.HasCachedOut) == 0;
-        }
-    }
+    public bool IsReadyToEnd => Checkpoints.Count > 0 && Results.All(o => o.HasCachedOut);
 
     private void CheckpointsUpdated()
     {
@@ -62,10 +56,7 @@ public class Cashgame : IEntity
         PlayerCount = Results.Count;
     }
 
-    public Checkpoint GetCheckpoint(string checkpointId)
-    {
-        return Checkpoints.First(o => o.Id == checkpointId);
-    }
+    public Checkpoint GetCheckpoint(string checkpointId) => Checkpoints.First(o => o.Id == checkpointId);
 
     private static IList<CashgameResult> CreateResults(IEnumerable<Checkpoint> checkpoints)
     {
@@ -135,6 +126,12 @@ public class Cashgame : IEntity
     {
         Checkpoints.Remove(checkpoint);
         DeletedCheckpoints.Add(checkpoint);
+        CheckpointsUpdated();
+    }
+
+    public void SetCheckpoints(List<Checkpoint> checkpoints)
+    {
+        Checkpoints = checkpoints;
         CheckpointsUpdated();
     }
 
