@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using AutoFixture;
 using Core.Entities;
+using Core.Entities.Checkpoints;
 using NUnit.Framework;
 
 namespace Tests.Common;
@@ -64,5 +65,22 @@ public class TestBase
             timezone ?? Fixture.Create<TimeZoneInfo>(),
             defaultBuyin ?? Fixture.Create<int>(),
             currency ?? Fixture.Create<Currency>());
+    }
+
+    protected Cashgame CreateCashgame(
+        string? bunchId = null,
+        string? locationId = null,
+        string? eventId = null,
+        GameStatus? status = null,
+        string? id = null,
+        IList<Checkpoint>? checkpoints = null)
+    {
+        return new Cashgame(
+            bunchId ?? Fixture.Create<string>(),
+            locationId ?? Fixture.Create<string>(),
+            eventId ?? Fixture.Create<string>(),
+            status ?? Fixture.Create<GameStatus>(),
+            id ?? Fixture.Create<string>(),
+            checkpoints ?? []);
     }
 }
