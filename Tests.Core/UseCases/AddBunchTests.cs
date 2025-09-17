@@ -1,94 +1,110 @@
 ﻿using Core.Entities;
 using Core.Errors;
+using Core.Repositories;
+using Core.Services;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
 public class AddBunchTests : TestBase
 {
+    private readonly IBunchRepository _bunchRepository = Substitute.For<IBunchRepository>();
+    private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
+    
     private const string DisplayName = "A Display Name";
-    private const string Description = "b";
-    private const string CurrencySymbol = "c";
-    private const string CurrencyLayout = "d";
-    private readonly string _existingDisplayName = TestData.BunchA.DisplayName;
+    private const string Slug = "a-display-name";
 
-    private string _timeZone = TestData.LocalTimeZoneName;
+    private const string TimeZone = TestData.LocalTimeZoneName;
 
-    [SetUp]
-    public void SetUp()
-    {
-        _timeZone = TestData.LocalTimeZoneName;
-    }
-        
-    [Test]
+    [Fact]
     public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
-        var result = await Sut.Execute(CreateRequest(""));
+        var result = await ExecuteAsync(displayName: "");
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
-        var result = await Sut.Execute(CreateRequest(currencySymbol: ""));
+        var result = await ExecuteAsync(currencySymbol: "");
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
-        var result = await Sut.Execute(CreateRequest(currencyLayout: ""));
+        var result = await ExecuteAsync(currencyLayout: "");
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
-        var result = await Sut.Execute(CreateRequest(timeZone: ""));
+        var result = await ExecuteAsync(timeZone: "");
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddBunch_WithExistingSlug_ReturnsConflictError()
     {
-        var result = await Sut.Execute(CreateRequest(_existingDisplayName));
+        var existingBunch = Create.Bunch(slug: Slug);
+        _bunchRepository.GetBySlugOrNull(Slug).Returns(existingBunch);
+        
+        var result = await ExecuteAsync(displayName: DisplayName);
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
-    [Test]
-    public async Task AddBunch_WithGoodInput_CreatesBunch()
+    [Fact]
+    public async Task AddBunch_WithGoodInput_CreatesBunchAndAddsPlayer()
     {
-        await Sut.Execute(CreateRequest());
+        var auth = new AuthInTest(id: Create.String(), userName: Create.String());
+        var description = Create.String();
+        var currencySymbol = Create.String();
+        var currencyLayout = Create.String();
+        
+        await ExecuteAsync(
+            auth: auth, 
+            displayName: DisplayName,
+            description: description,
+            timeZone: TimeZone,
+            currencySymbol: currencySymbol,
+            currencyLayout: currencyLayout);
 
-        Deps.Bunch.Added!.Id.Should().Be("");
-        Deps.Bunch.Added!.Slug.Should().Be("a-display-name");
-        Deps.Bunch.Added!.DisplayName.Should().Be(DisplayName);
-        Deps.Bunch.Added!.Description.Should().Be(Description);
-        Deps.Bunch.Added!.HouseRules.Should().Be("");
-        Deps.Bunch.Added!.Timezone.Id.Should().Be(TestData.TimeZoneLocal.Id);
-        Deps.Bunch.Added!.DefaultBuyin.Should().Be(0);
-        Deps.Bunch.Added!.Currency.Symbol.Should().Be(CurrencySymbol);
-        Deps.Bunch.Added!.Currency.Layout.Should().Be(CurrencyLayout);
+        await _bunchRepository.Received().Add(Arg.Is<Bunch>(o =>
+            o.Slug == Slug &&
+            o.DisplayName == DisplayName &&
+            o.Description == description &&
+            o.HouseRules == "" &&
+            o.DefaultBuyin == 0 &&
+            o.Timezone.Id == TimeZone &&
+            o.Currency.Symbol == currencySymbol &&
+            o.Currency.Layout == currencyLayout));
+        
+        await _playerRepository.Received().Add(Arg.Is<Player>(o =>
+            o.UserId == auth.Id &&
+            o.Role == Role.Manager));
+    }
+    
+    private Task<UseCaseResult<AddBunch.Result>> ExecuteAsync(
+        IAuth? auth = null,
+        string? displayName = null, 
+        string? description = null,
+        string? currencySymbol = null, 
+        string? currencyLayout = null,
+        string? timeZone = null)
+    {
+        var request = new AddBunch.Request(
+            auth ?? new AuthInTest(),
+            displayName ?? Create.String(), 
+            description ?? Create.String(), 
+            currencySymbol ?? Create.String(), 
+            currencyLayout ?? Create.String(), 
+            timeZone ?? TimeZone);
+        return Sut.Execute(request);
     }
 
-    [Test]
-    public async Task AddBunch_WithGoodInput_CreatesPlayer()
-    {
-        await Sut.Execute(CreateRequest());
-
-        Deps.Player.Added!.BunchId.Should().Be("1");
-        Deps.Player.Added!.UserId.Should().Be("3");
-        Deps.Player.Added!.Role.Should().Be(Role.Manager);
-    }
-
-    private AddBunch.Request CreateRequest(string displayName = DisplayName, string currencySymbol = CurrencySymbol, string currencyLayout = CurrencyLayout, string? timeZone = null)
-    {
-        return new AddBunch.Request(TestData.UserNameC, displayName, Description, currencySymbol, currencyLayout, timeZone ?? _timeZone);
-    }
-
-    private AddBunch Sut => new(
-        Deps.User,
-        Deps.Bunch,
-        Deps.Player);
+    private AddBunch Sut => new(_bunchRepository, _playerRepository);
 }

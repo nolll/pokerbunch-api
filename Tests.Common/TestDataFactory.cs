@@ -11,6 +11,7 @@ public class TestDataFactory
     private readonly Fixture _fixture = new();
     
     private T Create<T>() => _fixture.Create<T>();
+    public T Type<T>() => Create<T>();
     public string String() => Create<string>();
     public int Int() => Create<int>();
     public DateTime DateTime() => Create<DateTime>();

@@ -8,7 +8,6 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class AddBunch(
-    IUserRepository userRepository,
     IBunchRepository bunchRepository,
     IPlayerRepository playerRepository)
     : UseCase<AddBunch.Request, AddBunch.Result>
@@ -28,8 +27,7 @@ public class AddBunch(
 
         var bunch = CreateBunch(request);
         var id = await bunchRepository.Add(bunch);
-        var user = await userRepository.GetByUserName(request.UserName);
-        var player = Player.New(id, user.Id, user.UserName, Role.Manager);
+        var player = Player.New(id, request.Auth.Id, request.Auth.UserName, Role.Manager);
         await playerRepository.Add(player);
 
         return Success(new Result(bunch));
@@ -50,7 +48,7 @@ public class AddBunch(
 
     public class Request
     {
-        public string UserName { get; }
+        public IAuth Auth { get; }
         [Required(ErrorMessage = "Display Name can't be empty")]
         public string DisplayName { get; }
         public string Description { get; }
@@ -61,9 +59,9 @@ public class AddBunch(
         [Required(ErrorMessage = "Timezone can't be empty")]
         public string TimeZone { get; }
 
-        public Request(string userName, string displayName, string description, string currencySymbol, string currencyLayout, string timeZone)
+        public Request(IAuth auth, string displayName, string description, string currencySymbol, string currencyLayout, string timeZone)
         {
-            UserName = userName;
+            Auth = auth;
             DisplayName = displayName;
             Description = description;
             CurrencySymbol = currencySymbol;
