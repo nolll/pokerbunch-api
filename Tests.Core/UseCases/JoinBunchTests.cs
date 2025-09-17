@@ -1,5 +1,8 @@
+using Core.Entities;
 using Core.Errors;
+using Core.Services;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -7,6 +10,7 @@ namespace Tests.Core.UseCases;
 
 public class JoinBunchTests : TestBase
 {
+    private readonly IInvitationCodeCreator _invitationCodeCreator = Substitute.For<IInvitationCodeCreator>();
     private const string ValidCode = "abcdefghij";
 
     [Test]
@@ -14,6 +18,9 @@ public class JoinBunchTests : TestBase
     {
         var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
         const string code = "";
+        
+        _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns(ValidCode);
+        
         var request = new JoinBunch.Request(auth, TestData.SlugA, code);
         var result = await Sut.Execute(request);
 
@@ -25,6 +32,9 @@ public class JoinBunchTests : TestBase
     {
         var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
         const string code = "abc";
+        
+        _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns(ValidCode);
+        
         var request = new JoinBunch.Request(auth, TestData.SlugA, code);
         var result = await Sut.Execute(request);
 
@@ -36,6 +46,8 @@ public class JoinBunchTests : TestBase
     {
         var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
         var request = new JoinBunch.Request(auth, TestData.SlugA, ValidCode);
+        
+        _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns(ValidCode);
 
         var result = await Sut.Execute(request);
         result.Data!.Slug.Should().Be("bunch-a");
@@ -47,6 +59,8 @@ public class JoinBunchTests : TestBase
         var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
         var request = new JoinBunch.Request(auth, TestData.SlugA, ValidCode);
 
+        _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns(ValidCode);
+
         await Sut.Execute(request);
         Deps.Player.Joined!.PlayerId.Should().Be(TestData.PlayerA.Id);
         Deps.Player.Joined!.BunchId.Should().Be(TestData.BunchA.Id);
@@ -56,5 +70,5 @@ public class JoinBunchTests : TestBase
     private JoinBunch Sut => new(
         Deps.Bunch,
         Deps.Player,
-        Deps.InvitationCodeCreator);
+        _invitationCodeCreator);
 }

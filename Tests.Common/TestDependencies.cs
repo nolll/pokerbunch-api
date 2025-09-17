@@ -5,33 +5,10 @@ namespace Tests.Common;
 
 public class TestDependencies
 {
-    public FakeBunchRepository Bunch { get; }
-    public FakeUserRepository User { get; }
-    public FakePlayerRepository Player { get; }
-    public FakeCashgameRepository Cashgame { get; }
-    public FakeEventRepository Event { get; }
-    public FakeLocationRepository Location { get; }
-
-    public FakeEmailSender EmailSender { get; }
-    public FakeRandomizer Randomizer { get; }
-    public FakeInvitationCodeCreator InvitationCodeCreator { get; }
-
-    public TestDependencies()
-    {
-        Bunch = new FakeBunchRepository();
-        User = new FakeUserRepository();
-        Player = new FakePlayerRepository();
-        Cashgame = new FakeCashgameRepository();
-        Event = new FakeEventRepository();
-        Location = new FakeLocationRepository();
-
-        EmailSender = new FakeEmailSender();
-        Randomizer = new FakeRandomizer();
-        InvitationCodeCreator = new FakeInvitationCodeCreator();
-    }
-
-    public void Clear()
-    {
-        EmailSender.Reset();
-    }
+    public FakeBunchRepository Bunch { get; } = new();
+    public FakeUserRepository User { get; } = new();
+    public FakePlayerRepository Player { get; } = new();
+    public FakeCashgameRepository Cashgame { get; } = new();
+    public FakeEventRepository Event { get; } = new();
+    public FakeLocationRepository Location { get; } = new();
 }

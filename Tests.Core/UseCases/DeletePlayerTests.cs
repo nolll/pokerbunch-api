@@ -12,8 +12,8 @@ public class DeletePlayerTests : TestBase
     {
         const string playerIdThatHasNotPlayed = "3";
 
-        var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
-        var request = new DeletePlayer.Request(new AuthInTest(canDeletePlayer: true, currentBunch: currentBunch), playerIdThatHasNotPlayed);
+        var userBunch = Create.UserBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
+        var request = new DeletePlayer.Request(new AuthInTest(canDeletePlayer: true, userBunch: userBunch), playerIdThatHasNotPlayed);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();

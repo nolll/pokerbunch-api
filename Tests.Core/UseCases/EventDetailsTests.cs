@@ -10,8 +10,8 @@ public class EventDetailsTests : TestBase
     [Test]
     public async Task EventDetails_NameIsSet()
     {
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        var input = new EventDetails.Request(new AuthInTest(canSeeEventDetails: true, currentBunch: currentBunch), "1");
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
+        var input = new EventDetails.Request(new AuthInTest(canSeeEventDetails: true, userBunch: userBunch), "1");
         var result = await Sut.Execute(input);
 
         result.Data!.Name.Should().Be(TestData.EventNameA);

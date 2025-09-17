@@ -6,23 +6,14 @@ using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
 
-public class WebApplicationFactoryInTest : WebApplicationFactory<Program>
+public class WebApplicationFactoryInTest(IEmailSender emailSender, IDb db) : WebApplicationFactory<Program>
 {
-    private readonly IEmailSender _emailSender;
-    private readonly IDb _db;
-
-    public WebApplicationFactoryInTest(IEmailSender emailSender, IDb db)
-    {
-        _emailSender = emailSender;
-        _db = db;
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            services.ReplaceSingleton(_db);
-            services.ReplaceSingleton(_emailSender);
+            services.ReplaceSingleton(db);
+            services.ReplaceSingleton(emailSender);
             services.ReplaceSingleton<IRandomizer>(new FakeRandomizer());
             services.ReplaceSingleton<ICache>(new FakeCache());
         });

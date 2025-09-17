@@ -1,5 +1,8 @@
-﻿using Core.Errors;
+﻿using Core;
+using Core.Errors;
+using Core.Services;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -9,6 +12,9 @@ public class ResetPasswordTests : TestBase
     private const string ValidEmail = TestData.UserEmailA;
     private const string InvalidEmail = "";
     private const string NonExistingEmail = "a@b.com";
+    
+    private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
+    private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
 
     [Test]
     public async Task ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
@@ -34,16 +40,18 @@ public class ResetPasswordTests : TestBase
 aaaaaaaa
 
 Please sign in here: loginUrl";
+        _randomizer.GetAllowedChars().Returns("a");
+        
         await Sut.Execute(CreateRequest());
 
-        Deps.EmailSender.To.Should().Be(ValidEmail);
-        Deps.EmailSender.Message!.Subject.Should().Be(subject);
-        Deps.EmailSender.Message!.Body.Should().Be(body);
+        _emailSender.Received().Send(Arg.Is<string>(o => o == ValidEmail),
+            Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
     }
 
     [Test]
     public async Task ResetPassword_SavesUserWithNewPassword()
     {
+        _randomizer.GetAllowedChars().Returns("a");
         await Sut.Execute(CreateRequest());
 
         var savedUser = Deps.User.Saved;
@@ -58,6 +66,6 @@ Please sign in here: loginUrl";
 
     private ResetPassword Sut => new(
         Deps.User,
-        Deps.EmailSender,
-        Deps.Randomizer);
+        _emailSender,
+        _randomizer);
 }

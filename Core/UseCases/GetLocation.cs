@@ -4,8 +4,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class GetLocation(
-    ILocationRepository locationRepository)
+public class GetLocation(ILocationRepository locationRepository)
     : UseCase<GetLocation.Request, GetLocation.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)

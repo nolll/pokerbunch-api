@@ -52,8 +52,8 @@ public class CurrentCashgamesTests : TestBase
     
     private async Task<UseCaseResult<CurrentCashgames.Result>> ExecuteAsync(bool canListCurrentGames, Bunch bunch)
     {
-        var currentBunch = new CurrentBunch(bunch.Id, bunch.Slug);
-        var auth = new AuthInTest(canListCurrentGames: canListCurrentGames, currentBunch: currentBunch);
+        var userBunch = Create.UserBunch(bunch.Id, bunch.Slug);
+        var auth = new AuthInTest(canListCurrentGames: canListCurrentGames, userBunch: userBunch);
         return await Sut.Execute(new CurrentCashgames.Request(auth, bunch.Slug));
     }
 

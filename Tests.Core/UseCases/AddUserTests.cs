@@ -1,6 +1,9 @@
-﻿using Core.Entities;
+﻿using Core;
+using Core.Entities;
 using Core.Errors;
+using Core.Services;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -13,7 +16,10 @@ public class AddUserTests : TestBase
     private const string ValidPassword = "c";
     private readonly string _existingUserName = TestData.UserA.UserName;
     private readonly string _existingEmail = TestData.UserA.Email;
-        
+
+    private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
+    private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
+
     [Test]
     public async Task AddUser_WithEmptyUserName_ReturnsError()
     {
@@ -74,6 +80,8 @@ public class AddUserTests : TestBase
         const string expectedEncryptedPassword = "1cb313748ba4b822b78fe05de42558539efd9156";
         const string expectedSalt = "aaaaaaaaaa";
 
+        _randomizer.GetAllowedChars().Returns("a");
+        
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
         await Sut.Execute(request);
 
@@ -100,13 +108,12 @@ Please sign in here: /loginUrl";
         var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/loginUrl");
         await Sut.Execute(request);
 
-        Deps.EmailSender.To.Should().Be(ValidEmail);
-        Deps.EmailSender.Message!.Subject.Should().Be(subject);
-        Deps.EmailSender.Message!.Body.Should().Be(body);
+        _emailSender.Received().Send(Arg.Is<string>(o => o == ValidEmail),
+            Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
     }
 
     private AddUser Sut => new(
         Deps.User,
-        Deps.Randomizer,
-        Deps.EmailSender);
+        _randomizer,
+        _emailSender);
 }

@@ -1,6 +1,8 @@
 using Core.Entities;
 using Core.Errors;
+using Core.Repositories;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -8,28 +10,31 @@ namespace Tests.Core.UseCases;
 
 public class AddEventTests : TestBase
 {
+    private readonly IEventRepository _eventRepository = Substitute.For<IEventRepository>();
+    
     [Test]
     public async Task AddEvent_AllOk_EventIsAdded()
     {
-        const string addedEventName = "added event";
+        var eventName = Create.String();
+        await ExecuteAsync(eventName);
 
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
-        await Sut.Execute(request);
-
-        Deps.Event.Added!.Name.Should().Be(addedEventName);
+        await _eventRepository.Received().Add(Arg.Is<Event>(o => o.Name == eventName));
     }
 
     [Test]
     public async Task AddEvent_InvalidName_ReturnsValidationError()
     {
-        const string addedEventName = "";
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.None);
-        var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
-        var result = await Sut.Execute(request);
+        var result = await ExecuteAsync("");
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    private AddEvent Sut => new(Deps.Event);
+    private async Task<UseCaseResult<AddEvent.Result>> ExecuteAsync(string eventName)
+    {
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
+        var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, userBunch: userBunch), TestData.BunchA.Slug, eventName);
+        return await Sut.Execute(request);
+    }
+
+    private AddEvent Sut => new(_eventRepository);
 }

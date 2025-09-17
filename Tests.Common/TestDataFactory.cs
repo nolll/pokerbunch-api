@@ -60,6 +60,23 @@ public class TestDataFactory
             currency ?? Create<Currency>());
     }
     
+    public UserBunch UserBunch(
+        string? id = null,
+        string? slug = null,
+        string? name = null,
+        string? playerId = null,
+        string? playerName = null,
+        Role? role = null)
+    {
+        return new UserBunch(
+            id ?? String(),
+            slug ?? String(),
+            name ?? String(),
+            playerId ?? String(),
+            playerName ?? String(),
+            role ?? Type<Role>());
+    }
+    
     public Cashgame Cashgame(
         string? bunchId = null,
         string? locationId = null,

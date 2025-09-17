@@ -40,7 +40,6 @@ public static class TestData
     private const string UserDisplayNameC = "Display Name C";
     private const string UserDisplayNameD = "Display Name D";
     public const string UserPasswordA = "PasswordA";
-    public const string UserPasswordB = "PasswordB";
     private const string UserEncryptedPasswordA = "5a99a164773c45966e5fcdd1c3110937861094aa";
     private const string UserEncryptedPasswordB = "6873088c1117d25d1abf4b75272d463b0ec6a504";
     private const string UserEncryptedPasswordC = "not_used_in_any_test_yet";
@@ -58,8 +57,6 @@ public static class TestData
     public static User UserB => new(UserIdB, UserNameB, UserDisplayNameB, UserRealNameB, UserEmailB, Role.Admin, UserEncryptedPasswordB, UserSaltB);
     public static User UserC => new(UserIdC, UserNameC, UserDisplayNameC, UserRealNameC, UserEmailC, Role.Player, UserEncryptedPasswordC, UserSaltC);
     public static User UserD => new(UserIdD, UserNameD, UserDisplayNameD, UserRealNameD, UserEmailD, Role.Player, UserEncryptedPasswordD, UserSaltD);
-    public static User AdminUser => UserB;
-    public static User ManagerUser => UserC;
 
     public static readonly Bunch BunchA = new(BunchIdA, SlugA, BunchNameA, DescriptionA, HouseRulesA, TimeZoneUtc, DefaultBuyinA, Currency.Default);
     public static readonly Bunch BunchB = new(BunchIdB, SlugB, BunchNameB, DescriptionB, HouseRulesB, TimeZoneLocal, DefaultBuyinB, Currency.Default);
@@ -68,17 +65,9 @@ public static class TestData
     public static readonly Player PlayerB = new(BunchIdA, PlayerIdB, UserIdB, UserNameB, PlayerNameB, Role.Player, "#9e9e9e");
     public static readonly Player PlayerC = new(BunchIdA, PlayerIdC, UserIdC, UserNameC, PlayerNameC, Role.Manager, "#9e9e9e");
     public static readonly Player PlayerD = new(BunchIdA, PlayerIdD, default, default, PlayerNameD, Role.Player, "#9e9e9e");
-    public static readonly Player ManagerPlayer = PlayerC;
 
     public const string BuyinCheckpointId = "1";
-    public const int BuyinCheckpointStack = 100;
-    public const int BuyinCheckpointAmount = 200;
     public const string ReportCheckpointId = "2"; 
-    public const int ReportCheckpointStack = 300;
-    public const int ReportCheckpointAmount = 400;
-    public const int CashoutCheckpointId = 3;
-    public const int CashoutCheckpointStack = 500;
-    public const int CashoutCheckpointAmount = 600;
     
     public const string PlayerIdA = "1";
     public const string PlayerIdB = "2";
@@ -100,9 +89,6 @@ public static class TestData
     public const string LocationNameB = "Location B";
     public const string LocationNameC = "Location C";
     public const string ChangedLocationName = "Changed Location";
-    public const string DateStringA = "2001-01-01";
-    public const string DateStringB = "2002-02-02";
-    public const string DateStringC = "2003-03-03";
     public static DateTime StartTimeA = DateTime.SpecifyKind(DateTime.Parse("2001-01-01 12:00:00"), DateTimeKind.Utc);
     public static DateTime StartTimeB = DateTime.SpecifyKind(DateTime.Parse("2002-02-02 12:00:00"), DateTimeKind.Utc);
     public static DateTime StartTimeC = DateTime.SpecifyKind(DateTime.Parse("2003-03-03 12:00:00"), DateTimeKind.Utc);

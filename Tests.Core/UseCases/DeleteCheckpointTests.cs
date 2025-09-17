@@ -10,9 +10,9 @@ public class DeleteCheckpointTests : TestBase
     [Test]
     public async Task DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues()
     {
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
         var request = new DeleteCheckpoint.Request(
-            new AuthInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
+            new AuthInTest(canDeleteCheckpoint: true, userBunch: userBunch),
             TestData.ReportCheckpointId);
         var result = await Sut.Execute(request);
 
@@ -28,9 +28,9 @@ public class DeleteCheckpointTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
         var request =
-            new DeleteCheckpoint.Request(new AuthInTest(canDeleteCheckpoint: true, currentBunch: currentBunch),
+            new DeleteCheckpoint.Request(new AuthInTest(canDeleteCheckpoint: true, userBunch: userBunch),
                 "12");
         var result = await Sut.Execute(request);
 

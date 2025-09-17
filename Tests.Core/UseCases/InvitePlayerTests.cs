@@ -1,6 +1,9 @@
-﻿using Core.Entities;
+﻿using Core;
+using Core.Entities;
 using Core.Errors;
+using Core.Services;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -8,6 +11,9 @@ namespace Tests.Core.UseCases;
 
 public class InvitePlayerTests : TestBase
 {
+    private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
+    private readonly IInvitationCodeCreator _invitationCodeCreator = Substitute.For<IInvitationCodeCreator>();
+
     [Test]
     public async Task InvitePlayer_ReturnUrlIsSet()
     {
@@ -37,23 +43,24 @@ Use this link to accept the invitation: https://pokerbunch.com/fakejoin/bunch-a/
 use this link instead, https://pokerbunch.com/fakejoin/bunch-a, and enter this verification code: abcdefghij
 
 If you don't have an account, you can register at https://pokerbunch.com/test";
-        var request = CreateRequest();
 
+        _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns("abcdefghij");
+        
+        var request = CreateRequest();
         await Sut.Execute(request);
 
-        Deps.EmailSender.To.Should().Be(TestData.UserEmailA);
-        Deps.EmailSender.Message!.Subject.Should().Be(subject);
-        Deps.EmailSender.Message!.Body.Should().Be(body);
+        _emailSender.Received().Send(Arg.Is<string>(o => o == TestData.UserEmailA),
+            Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
     }
 
-    private static InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)
+    private InvitePlayer.Request CreateRequest(string email = TestData.UserEmailA)
     {
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
-        return new InvitePlayer.Request(new AuthInTest(canInvitePlayer: true, currentBunch: currentBunch), TestData.PlayerIdA, email, TestData.TestUrl, "https://pokerbunch.com/fakejoin/{0}", "https://pokerbunch.com/fakejoin/{0}/{1}");
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
+        return new InvitePlayer.Request(new AuthInTest(canInvitePlayer: true, userBunch: userBunch), TestData.PlayerIdA, email, TestData.TestUrl, "https://pokerbunch.com/fakejoin/{0}", "https://pokerbunch.com/fakejoin/{0}/{1}");
     }
 
     private InvitePlayer Sut => new(
         Deps.Player,
-        Deps.EmailSender,
-        Deps.InvitationCodeCreator);
+        _emailSender,
+        _invitationCodeCreator);
 }

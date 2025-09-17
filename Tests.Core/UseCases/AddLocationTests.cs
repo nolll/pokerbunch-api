@@ -13,8 +13,8 @@ public class AddLocationTests : TestBase
     {
         const string addedEventName = "added location";
 
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.Manager);
-        var request = new AddLocation.Request(new AuthInTest(canAddLocation: true, currentBunch: currentBunch), TestData.BunchA.Slug, addedEventName);
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, "", "", "", Role.Manager);
+        var request = new AddLocation.Request(new AuthInTest(canAddLocation: true, userBunch: userBunch), TestData.BunchA.Slug, addedEventName);
         await Sut.Execute(request);
 
         Deps.Location.Added!.Name.Should().Be(addedEventName);

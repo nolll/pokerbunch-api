@@ -13,8 +13,8 @@ public class CashgameDetailsTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, TestData.PlayerIdA, "", Role.Player);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, TestData.PlayerIdA, "", Role.Player);
+        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         result.Data!.PlayerId.Should().Be(TestData.PlayerIdA);
@@ -28,8 +28,8 @@ public class CashgameDetailsTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName);
+        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         result.Data!.Slug.Should().Be("bunch-a");
@@ -40,8 +40,8 @@ public class CashgameDetailsTests : TestBase
     {
         Deps.Cashgame.SetupRunningGame();
 
-        var currentBunch = new CurrentBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, "", "", Role.None);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, currentBunch: currentBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName);
+        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), TestData.CashgameIdC, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         result.Data!.PlayerItems.Count.Should().Be(2);

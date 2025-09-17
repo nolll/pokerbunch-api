@@ -14,7 +14,7 @@ public class Auth : IAuth
     private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
     
     private readonly bool _isAdmin;
-    private readonly CurrentBunch[] _userBunches = [];
+    private readonly UserBunch[] _userBunches = [];
 
     public string Id { get; } = "";
     public string UserName { get; } = "";
@@ -33,11 +33,11 @@ public class Auth : IAuth
         Id = GetClaim(principal, CustomClaimTypes.UserId) ?? "";
         DisplayName = GetClaim(principal, CustomClaimTypes.UserDisplayName) ?? "";
         UserName = principal!.Identity?.Name ?? "";
-        _userBunches = GetUserTokenBunches(principal!).Select(ToCurrentBunch).ToArray();
+        _userBunches = GetUserTokenBunches(principal!).Select(ToUserBunch).ToArray();
     }
     
-    public CurrentBunch GetBunchById(string id) => _userBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
-    public CurrentBunch GetBunchBySlug(string slug) => _userBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
+    public UserBunch GetBunchById(string id) => _userBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
+    public UserBunch GetBunchBySlug(string slug) => _userBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
 
     public bool CanClearCache => _isAdmin;
     public bool CanSendTestEmail => _isAdmin;
@@ -111,7 +111,7 @@ public class Auth : IAuth
             : JsonSerializer.Deserialize<TokenBunchModel[]>(value) ?? [];
     }
 
-    private static CurrentBunch ToCurrentBunch(TokenBunchModel b) => 
+    private static UserBunch ToUserBunch(TokenBunchModel b) => 
         new(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
     
     private static string? GetClaim(ClaimsPrincipal? principal, string type) => principal?.Claims.FirstOrDefault(o => o.Type == type)?.Value;
@@ -122,5 +122,5 @@ public class Auth : IAuth
         return claim is not null && bool.Parse(claim);
     }
     
-    private static CurrentBunch CreateEmptyBunch() => new("", "");
+    private static UserBunch CreateEmptyBunch() => new("", "");
 }

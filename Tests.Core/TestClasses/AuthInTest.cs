@@ -37,7 +37,7 @@ public class AuthInTest(
     bool canListCurrentGames = false,
     bool canDeleteCheckpoint = false,
     bool canEditCashgameActionsFor = false,
-    CurrentBunch? currentBunch = null) : IAuth
+    UserBunch? userBunch = null) : IAuth
 {
     public string Id => id ?? "";
     public string UserName => userName ?? "";
@@ -73,6 +73,6 @@ public class AuthInTest(
     public bool CanDeleteCheckpoint(string bunchId) => canDeleteCheckpoint;
     public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) => canEditCashgameActionsFor;
 
-    public CurrentBunch GetBunchById(string bunchId) => currentBunch!;
-    public CurrentBunch GetBunchBySlug(string slug) => currentBunch!;
+    public UserBunch GetBunchById(string bunchId) => userBunch!;
+    public UserBunch GetBunchBySlug(string slug) => userBunch!;
 }

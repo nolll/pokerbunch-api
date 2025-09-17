@@ -1,6 +1,6 @@
 namespace Core.Entities;
 
-public class CurrentBunch(
+public class UserBunch(
     string id,
     string slug,
     string name = "",

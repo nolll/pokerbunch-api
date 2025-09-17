@@ -44,8 +44,8 @@ public class AddCashgameTests : TestBase
         string slug,
         string? locationId = null)
     {
-        var currentBunch = new CurrentBunch(bunchId, slug);
-        var request = new AddCashgame.Request(new AuthInTest(canAddCashgame: true, currentBunch: currentBunch), slug, locationId);
+        var userBunch = Create.UserBunch(bunchId, slug);
+        var request = new AddCashgame.Request(new AuthInTest(canAddCashgame: true, userBunch: userBunch), slug, locationId);
         return await Sut.Execute(request);
     }
 
