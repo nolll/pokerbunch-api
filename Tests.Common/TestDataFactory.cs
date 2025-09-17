@@ -16,6 +16,7 @@ public class TestDataFactory
     public int Int() => Create<int>();
     public DateTime DateTime() => Create<DateTime>();
     public string EmailAddress() => Create<MailAddress>().Address;
+    public string TimeZoneId() => Create<TimeZoneInfo>().Id;
     
     public User User(
         string? id = null,

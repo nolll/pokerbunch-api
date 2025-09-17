@@ -8,8 +8,7 @@ namespace Core.UseCases;
 
 public class AddCashgame(
     IBunchRepository bunchRepository,
-    ICashgameRepository cashgameRepository,
-    ILocationRepository locationRepository)
+    ICashgameRepository cashgameRepository)
     : UseCase<AddCashgame.Request, AddCashgame.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -24,9 +23,8 @@ public class AddCashgame(
         var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
         if (!request.Auth.CanAddCashgame(bunchInfo.Id))
             return Error(new AccessDeniedError()); 
-
-        var location = await locationRepository.Get(request.LocationId!);
-        var cashgame = new Cashgame(bunchInfo.Id, location.Id, null, GameStatus.Running);
+        
+        var cashgame = new Cashgame(bunchInfo.Id, request.LocationId!, null, GameStatus.Running);
         var cashgameId = await cashgameRepository.Add(bunch, cashgame);
 
         return Success(new Result(request.Slug, cashgameId));

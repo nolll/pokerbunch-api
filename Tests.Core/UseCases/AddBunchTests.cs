@@ -17,8 +17,6 @@ public class AddBunchTests : TestBase
     private const string DisplayName = "A Display Name";
     private const string Slug = "a-display-name";
 
-    private const string TimeZone = TestData.LocalTimeZoneName;
-
     [Fact]
     public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
@@ -64,12 +62,13 @@ public class AddBunchTests : TestBase
         var description = Create.String();
         var currencySymbol = Create.String();
         var currencyLayout = Create.String();
+        var timeZone = Create.TimeZoneId();
         
         await ExecuteAsync(
             auth: auth, 
             displayName: DisplayName,
             description: description,
-            timeZone: TimeZone,
+            timeZone: timeZone,
             currencySymbol: currencySymbol,
             currencyLayout: currencyLayout);
 
@@ -79,7 +78,7 @@ public class AddBunchTests : TestBase
             o.Description == description &&
             o.HouseRules == "" &&
             o.DefaultBuyin == 0 &&
-            o.Timezone.Id == TimeZone &&
+            o.Timezone.Id == timeZone &&
             o.Currency.Symbol == currencySymbol &&
             o.Currency.Layout == currencyLayout));
         
@@ -102,7 +101,7 @@ public class AddBunchTests : TestBase
             description ?? Create.String(), 
             currencySymbol ?? Create.String(), 
             currencyLayout ?? Create.String(), 
-            timeZone ?? TimeZone);
+            timeZone ?? Create.TimeZoneId());
         return Sut.Execute(request);
     }
 

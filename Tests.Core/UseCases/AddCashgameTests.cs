@@ -1,6 +1,8 @@
 ﻿using Core.Entities;
 using Core.Errors;
+using Core.Repositories;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -8,40 +10,44 @@ namespace Tests.Core.UseCases;
 
 public class AddCashgameTests : TestBase
 {
-    [Test]
-    public async Task AddCashgame_SlugIsSet()
-    {
-        var request = CreateRequest(TestData.LocationIdA);
-        var result = await Sut.Execute(request);
-
-        result.Data!.Slug.Should().Be(TestData.SlugA);
-    }
-
-    [Test]
+    private readonly IBunchRepository _bunchRepository = Substitute.For<IBunchRepository>();
+    private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
+    
+    [Fact]
     public async Task AddCashgame_WithLocation_GameIsAdded()
     {
-        var request = CreateRequest(TestData.LocationIdA);
-        await Sut.Execute(request);
+        var locationId = Create.String();
+        var bunch = Create.Bunch();
+        _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
+        
+        var result = await ExecuteAsync(bunch.Id, bunch.Slug, locationId);
 
-        Deps.Cashgame.Added.Should().NotBeNull();
+        result.Data!.Slug.Should().Be(bunch.Slug);
+        await _cashgameRepository.Received()
+            .Add(
+                Arg.Is<Bunch>(o => o.Id == bunch.Id),
+                Arg.Is<Cashgame>(o => o.BunchId == bunch.Id && o.LocationId == locationId));
     }
 
-    [Test]
+    [Fact]
     public async Task AddCashgame_WithoutLocation_ReturnsError()
     {
-        var request = CreateRequest();
-        var result = await Sut.Execute(request);
+        var bunch = Create.Bunch();
+        
+        var result = await ExecuteAsync(bunch.Id, bunch.Slug);
+        
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
-
-    private static AddCashgame.Request CreateRequest(string? locationId = null)
+    
+    private async Task<UseCaseResult<AddCashgame.Result>> ExecuteAsync(
+        string bunchId,
+        string slug,
+        string? locationId = null)
     {
-        var currentBunch = new CurrentBunch(TestData.BunchIdA, TestData.SlugA, "", "", "", Role.None);
-        return new AddCashgame.Request(new AuthInTest(canAddCashgame: true, currentBunch: currentBunch), TestData.SlugA, locationId);
+        var currentBunch = new CurrentBunch(bunchId, slug);
+        var request = new AddCashgame.Request(new AuthInTest(canAddCashgame: true, currentBunch: currentBunch), slug, locationId);
+        return await Sut.Execute(request);
     }
 
-    private AddCashgame Sut => new(
-        Deps.Bunch,
-        Deps.Cashgame,
-        Deps.Location);
+    private AddCashgame Sut => new(_bunchRepository, _cashgameRepository);
 }
