@@ -8,10 +8,8 @@ using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class BunchDb
+public class BunchDb(IDb db)
 {
-    private readonly IDb _db;
-
     private static Query BunchQuery => new(Schema.Bunch);
 
     private static Query GetQuery => BunchQuery
@@ -31,15 +29,10 @@ public class BunchDb
 
     private static Query FindQuery => BunchQuery.Select(Schema.Bunch.Id);
 
-    public BunchDb(IDb db)
-    {
-        _db = db;
-    }
-
     public async Task<Bunch> Get(string id)
     {
         var query = GetQuery.Where(Schema.Bunch.Id, int.Parse(id));
-        var dto = await _db.FirstAsync<BunchDto>(query);
+        var dto = await db.FirstAsync<BunchDto>(query);
 
         if (dto is null)
             throw new PokerBunchException($"Bunch with id {id} was not found");
@@ -50,20 +43,20 @@ public class BunchDb
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.Bunch.Id, ids.Select(int.Parse));
-        var dtos = await _db.GetAsync<BunchDto>(query);
+        var dtos = await db.GetAsync<BunchDto>(query);
         return dtos.Select(BunchMapper.ToBunch).ToList();
     }
 
     public async Task<IList<string>> Search()
     {
-        var result = await _db.GetAsync<int>(FindQuery);
+        var result = await db.GetAsync<int>(FindQuery);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> Search(string slug)
     {
         var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        var id = await _db.FirstOrDefaultAsync<int?>(query);
+        var id = await db.FirstOrDefaultAsync<int?>(query);
 
         return id is not null
             ? new List<string> { id.Value.ToString() }
@@ -76,7 +69,7 @@ public class BunchDb
             .Where($"{Schema.Player.UserId}", int.Parse(userId))
             .OrderBy($"{Schema.Bunch.Name}");
 
-        var result = await _db.GetAsync<int>(query);
+        var result = await db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -97,7 +90,7 @@ public class BunchDb
             { Schema.Bunch.HouseRules, bunch.HouseRules }
         };
 
-        var result = await _db.InsertGetIdAsync(BunchQuery, parameters);
+        var result = await db.InsertGetIdAsync(BunchQuery, parameters);
         return result.ToString();
     }
 
@@ -119,13 +112,13 @@ public class BunchDb
         };
 
         var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
-        await _db.UpdateAsync(query, parameters);
+        await db.UpdateAsync(query, parameters);
     }
 
     public async Task<bool> DeleteBunch(string id)
     {
         var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(id));
-        var rowCount = await _db.DeleteAsync(query);
+        var rowCount = await db.DeleteAsync(query);
 
         return rowCount > 0;
     }

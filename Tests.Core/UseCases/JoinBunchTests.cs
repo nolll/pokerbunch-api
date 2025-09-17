@@ -1,6 +1,7 @@
 using Core.Errors;
 using Core.UseCases;
 using Tests.Common;
+using Tests.Core.TestClasses;
 
 namespace Tests.Core.UseCases;
 
@@ -11,8 +12,9 @@ public class JoinBunchTests : TestBase
     [Test]
     public async Task JoinBunch_EmptyCode_ReturnsError()
     {
+        var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
         const string code = "";
-        var request = new JoinBunch.Request(TestData.SlugA, TestData.UserNameA, code);
+        var request = new JoinBunch.Request(auth, TestData.SlugA, code);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
@@ -21,8 +23,9 @@ public class JoinBunchTests : TestBase
     [Test]
     public async Task JoinBunch_InvalidCode_ReturnsError()
     {
+        var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
         const string code = "abc";
-        var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, code);
+        var request = new JoinBunch.Request(auth, TestData.SlugA, code);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
@@ -31,7 +34,8 @@ public class JoinBunchTests : TestBase
     [Test]
     public async Task JoinBunch_ValidCode_JoinsBunch()
     {
-        var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
+        var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
+        var request = new JoinBunch.Request(auth, TestData.SlugA, ValidCode);
 
         var result = await Sut.Execute(request);
         result.Data!.Slug.Should().Be("bunch-a");
@@ -40,7 +44,8 @@ public class JoinBunchTests : TestBase
     [Test]
     public async Task JoinBunch_ValidCode_ReturnsConfirmationUrl()
     {
-        var request = new JoinBunch.Request(TestData.UserNameA, TestData.SlugA, ValidCode);
+        var auth = new AuthInTest(id: TestData.UserIdA, userName: TestData.UserNameA);
+        var request = new JoinBunch.Request(auth, TestData.SlugA, ValidCode);
 
         await Sut.Execute(request);
         Deps.Player.Joined!.PlayerId.Should().Be(TestData.PlayerA.Id);
@@ -51,6 +56,5 @@ public class JoinBunchTests : TestBase
     private JoinBunch Sut => new(
         Deps.Bunch,
         Deps.Player,
-        Deps.User,
         Deps.InvitationCodeCreator);
 }

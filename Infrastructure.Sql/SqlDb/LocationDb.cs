@@ -8,10 +8,8 @@ using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class LocationDb
+public class LocationDb(IDb db)
 {
-    private readonly IDb _db;
-
     private static Query LocationQuery => new(Schema.Location);
 
     private static Query GetQuery => LocationQuery
@@ -23,15 +21,10 @@ public class LocationDb
     private static Query FindQuery => LocationQuery
         .Select(Schema.Location.Id);
 
-    public LocationDb(IDb db)
-    {
-        _db = db;
-    }
-
     public async Task<Location> Get(string id)
     {
         var query = GetQuery.Where(Schema.Location.Id, int.Parse(id));
-        var locationDto = await _db.FirstOrDefaultAsync<LocationDto>(query);
+        var locationDto = await db.FirstOrDefaultAsync<LocationDto>(query);
         var location = locationDto?.ToLocation();
 
         if (location is null)
@@ -46,14 +39,14 @@ public class LocationDb
             return new List<Location>();
 
         var query = GetQuery.WhereIn(Schema.Location.Id, ids.Select(int.Parse));
-        var locationDtos = await _db.GetAsync<LocationDto>(query);
+        var locationDtos = await db.GetAsync<LocationDto>(query);
         return locationDtos.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string bunchId)
     {
         var query = FindQuery.Where(Schema.Location.BunchId, int.Parse(bunchId));
-        return (await _db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
+        return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Location location)
@@ -64,7 +57,7 @@ public class LocationDb
             { Schema.Location.BunchId, int.Parse(location.BunchId) }
         };
 
-        var result = await _db.InsertGetIdAsync(LocationQuery, parameters);
+        var result = await db.InsertGetIdAsync(LocationQuery, parameters);
         return result.ToString();
     }
 }

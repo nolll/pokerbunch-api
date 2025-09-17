@@ -15,7 +15,7 @@ public class ChangePassword(IUserRepository userRepository, IRandomizer randomiz
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var user = await userRepository.GetByUserName(request.UserName);
+        var user = await userRepository.GetByUserName(request.Auth.UserName);
         var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
         if (!isCurrentPwdValid)
             return Error(new AuthError("The old password was not correct"));
@@ -39,9 +39,9 @@ public class ChangePassword(IUserRepository userRepository, IRandomizer randomiz
         encryptedPassword,
         salt);
 
-    public class Request(string userName, string newPassword, string oldPassword)
+    public class Request(IAuth auth, string newPassword, string oldPassword)
     {
-        public string UserName { get; } = userName;
+        public IAuth Auth { get; } = auth;
 
         [Required(ErrorMessage = "Password can't be empty")]
         public string NewPassword { get; } = newPassword;

@@ -8,10 +8,8 @@ using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class EventDb
+public class EventDb(IDb db)
 {
-    private readonly IDb _db;
-
     private static Query EventQuery => new(Schema.Event);
     private static Query EventCashgameQuery => new(Schema.EventCashgame);
 
@@ -32,15 +30,10 @@ public class EventDb
         .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id))
         .OrderBy(Schema.Event.Id, Schema.Cashgame.Date);
 
-    public EventDb(IDb db)
-    {
-        _db = db;
-    }
-
     public async Task<Event> Get(string id)
     {
         var query = GetQuery.Where(Schema.Event.Id, int.Parse(id));
-        var eventDayDtos = await _db.GetAsync<EventDayDto>(query);
+        var eventDayDtos = await db.GetAsync<EventDayDto>(query);
 
         var events = eventDayDtos.ToEvents();
         var @event = events.FirstOrDefault();
@@ -54,7 +47,7 @@ public class EventDb
     public async Task<IList<Event>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.Event.Id, ids.Select(int.Parse));
-        var eventDayDtos = await _db.GetAsync<EventDayDto>(query);
+        var eventDayDtos = await db.GetAsync<EventDayDto>(query);
 
         return eventDayDtos.ToEvents();
     }
@@ -62,14 +55,14 @@ public class EventDb
     public async Task<IList<string>> FindByBunchId(string bunchId)
     {
         var query = EventQuery.Select(Schema.Event.Id).Where(Schema.Event.BunchId, int.Parse(bunchId));
-        var result = await _db.GetAsync<int>(query);
+        var result = await db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
         var query = EventCashgameQuery.Select(Schema.EventCashgame.EventId).Where(Schema.EventCashgame.EventId, int.Parse(cashgameId));
-        var result = await _db.GetAsync<int>(query);
+        var result = await db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -81,7 +74,7 @@ public class EventDb
             { Schema.Event.BunchId, int.Parse(e.BunchId) }
         };
 
-        var result = await _db.InsertGetIdAsync(EventQuery, parameters);
+        var result = await db.InsertGetIdAsync(EventQuery, parameters);
         return result.ToString();
     }
 
@@ -93,7 +86,7 @@ public class EventDb
             { Schema.EventCashgame.CashgameId, int.Parse(cashgameId) }
         };
 
-        await _db.InsertAsync(EventCashgameQuery, parameters);
+        await db.InsertAsync(EventCashgameQuery, parameters);
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)
@@ -102,6 +95,6 @@ public class EventDb
             .Where(Schema.EventCashgame.EventId, int.Parse(eventId))
             .Where(Schema.EventCashgame.CashgameId, int.Parse(cashgameId));
 
-        await _db.DeleteAsync(query);
+        await db.DeleteAsync(query);
     }
 }

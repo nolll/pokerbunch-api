@@ -8,10 +8,8 @@ using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class UserDb
+public class UserDb(IDb db)
 {
-    private readonly IDb _db;
-
     private static Query UserQuery => new(Schema.User);
 
     private static Query GetQuery => UserQuery
@@ -27,15 +25,10 @@ public class UserDb
 
     private static Query FindQuery => UserQuery.Select(Schema.User.Id);
 
-    public UserDb(IDb db)
-    {
-        _db = db;
-    }
-
     public async Task<User> Get(string id)
     {
         var query = GetQuery.Where(Schema.User.Id, int.Parse(id));
-        var userDto = await _db.FirstOrDefaultAsync<UserDto>(query);
+        var userDto = await db.FirstOrDefaultAsync<UserDto>(query);
         var user = userDto?.ToUser();
 
         return user ?? throw new PokerBunchException($"User with id {id} was not found");
@@ -44,7 +37,7 @@ public class UserDb
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.User.Id, ids.Select(int.Parse));
-        var userDtos = await _db.GetAsync<UserDto>(query);
+        var userDtos = await db.GetAsync<UserDto>(query);
         return userDtos.Select(UserMapper.ToUser).OrderBy(o => o.DisplayName).ToList();
     }
 
@@ -59,7 +52,7 @@ public class UserDb
             return null;
 
         var query = FindQuery.Where(Schema.User.UserName, name);
-        var result = await _db.FirstOrDefaultAsync<int?>(query);
+        var result = await db.FirstOrDefaultAsync<int?>(query);
         return result?.ToString();
     }
 
@@ -69,7 +62,7 @@ public class UserDb
             return null;
 
         var query = FindQuery.Where(Schema.User.Email, email);
-        var result = await _db.FirstOrDefaultAsync<int?>(query);
+        var result = await db.FirstOrDefaultAsync<int?>(query);
         return result?.ToString();
     }
 
@@ -81,7 +74,7 @@ public class UserDb
         var query = FindQuery
             .Where(Schema.User.UserName, nameOrEmail)
             .OrWhere(Schema.User.Email, nameOrEmail);
-        var result = await _db.FirstOrDefaultAsync<int?>(query);
+        var result = await db.FirstOrDefaultAsync<int?>(query);
         return result?.ToString();
     }
 
@@ -97,7 +90,7 @@ public class UserDb
         };
 
         var query = UserQuery.Where(Schema.User.Id, int.Parse(user.Id));
-        await _db.UpdateAsync(query, parameters);
+        await db.UpdateAsync(query, parameters);
     }
 
     public async Task<string> Add(User user)
@@ -112,21 +105,21 @@ public class UserDb
             { Schema.User.Salt, user.Salt }
         };
 
-        var result = await _db.InsertGetIdAsync(UserQuery, parameters);
+        var result = await db.InsertGetIdAsync(UserQuery, parameters);
         return result.ToString();
     }
 
     private async Task<IList<string>> GetIds()
     {
         var query = FindQuery.OrderBy(Schema.User.DisplayName);
-        var result = await _db.GetAsync<int>(query);
+        var result = await db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<bool> DeleteUser(string userId)
     {
         var query = UserQuery.Where(Schema.User.Id, int.Parse(userId));
-        var rowCount = await _db.DeleteAsync(query);
+        var rowCount = await db.DeleteAsync(query);
         return rowCount > 0;
     }
 }

@@ -8,10 +8,8 @@ using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class PlayerDb
+public class PlayerDb(IDb db)
 {
-    private readonly IDb _db;
-
     private static Query PlayerQuery => new(Schema.Player);
 
     private static Query GetQuery => PlayerQuery
@@ -27,22 +25,17 @@ public class PlayerDb
 
     private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
 
-    public PlayerDb(IDb db)
-    {
-        _db = db;
-    }
-
     public async Task<IList<string>> Find(string bunchId)
     {
         var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId));
-        var result = await _db.GetAsync<string>(query);
+        var result = await db.GetAsync<string>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {
         var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId)).Where(Schema.Player.UserId, int.Parse(userId));
-        var result = await _db.GetAsync<string>(query);
+        var result = await db.GetAsync<string>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -52,7 +45,7 @@ public class PlayerDb
             return new List<Player>();
 
         var query = GetQuery.WhereIn(Schema.Player.Id, ids.Select(int.Parse));
-        var playerDtos = await _db.GetAsync<PlayerDto>(query);
+        var playerDtos = await db.GetAsync<PlayerDto>(query);
 
         return playerDtos.Select(PlayerMapper.ToPlayer).ToList();
     }
@@ -60,7 +53,7 @@ public class PlayerDb
     public async Task<Player> Get(string id)
     {
         var query = GetQuery.Where(Schema.Player.Id, int.Parse(id));
-        var playerDto = await _db.FirstOrDefaultAsync<PlayerDto?>(query);
+        var playerDto = await db.FirstOrDefaultAsync<PlayerDto?>(query);
         var player = playerDto?.ToPlayer();
 
         if (player is null)
@@ -89,7 +82,7 @@ public class PlayerDb
                 { Schema.Player.Color, player.Color }
             };
 
-        var result = await _db.InsertGetIdAsync(PlayerQuery, parameters);
+        var result = await db.InsertGetIdAsync(PlayerQuery, parameters);
         return result.ToString();
     }
 
@@ -104,13 +97,13 @@ public class PlayerDb
         };
 
         var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(player.Id));
-        var rowCount = await _db.UpdateAsync(query, parameters);
+        var rowCount = await db.UpdateAsync(query, parameters);
         return rowCount > 0;
     }
 
     public async Task Delete(string playerId)
     {
         var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(playerId));
-        await _db.DeleteAsync(query);
+        await db.DeleteAsync(query);
     }
 }

@@ -15,7 +15,7 @@ public static class ChangePasswordHandler
         IAuth auth,
         [FromBody] ChangePasswordPostModel post)
     {
-        var request = new ChangePassword.Request(auth.UserName, post.NewPassword, post.OldPassword);
+        var request = new ChangePassword.Request(auth, post.NewPassword, post.OldPassword);
         var result = await changePassword.Execute(request);
         return ResultHandler.Model(result, () => new OkModel());
     }

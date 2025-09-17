@@ -10,7 +10,6 @@ namespace Core.UseCases;
 public class JoinBunch(
     IBunchRepository bunchRepository,
     IPlayerRepository playerRepository,
-    IUserRepository userRepository,
     IInvitationCodeCreator invitationCodeCreator)
     : UseCase<JoinBunch.Request, JoinBunch.Result>
 {
@@ -26,18 +25,17 @@ public class JoinBunch(
 
         if (player == null)
             return Error(new InvalidJoinCodeError());
-
-        var user = await userRepository.GetByUserName(request.UserName);
-        await playerRepository.JoinBunch(player, bunch, user.Id);
+        
+        await playerRepository.JoinBunch(player, bunch, request.Auth.Id);
         return Success(new Result(bunch.Slug, player.Id));
     }
     
     private Player? GetMatchedPlayer(IEnumerable<Player> players, string postedCode) => 
         players.FirstOrDefault(player => invitationCodeCreator.GetCode(player) == postedCode);
 
-    public class Request(string userName, string slug, string code)
+    public class Request(IAuth auth, string slug, string code)
     {
-        public string UserName { get; } = userName;
+        public IAuth Auth { get; } = auth;
         public string Slug { get; } = slug;
 
         [Required(ErrorMessage = "Code can't be empty")]

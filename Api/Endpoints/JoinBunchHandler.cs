@@ -12,7 +12,7 @@ public static class JoinBunchHandler
 {
     public static async Task<IResult> Handle(JoinBunch joinBunch, IAuth auth, string bunchId, [FromBody] JoinBunchPostModel post)
     {
-        var request = new JoinBunch.Request(auth.UserName, bunchId, post.Code);
+        var request = new JoinBunch.Request(auth, bunchId, post.Code);
         var result = await joinBunch.Execute(request);
         return ResultHandler.Model(result, CreateModel);
         PlayerJoinedModel? CreateModel() => result.Data?.PlayerId is not null ? new PlayerJoinedModel(result.Data.PlayerId) : null;
