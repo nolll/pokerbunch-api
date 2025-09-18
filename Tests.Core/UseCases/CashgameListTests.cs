@@ -1,4 +1,7 @@
-﻿using Core.UseCases;
+﻿using System.Collections.Generic;
+using Core.Repositories;
+using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -6,48 +9,46 @@ namespace Tests.Core.UseCases;
 
 public class CashgameListTests : TestBase
 {
-    [Test]
-    public async Task CashgameList_SlugIsSet()
-    {
-        var result = await Sut.Execute(CreateRequest());
-
-        result.Data!.Slug.Should().Be(TestData.SlugA);
-    }
+    private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
+    private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
+    private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
 
     [Test]
     public async Task CashgameList_WithoutGames_HasEmptyListOfGames()
     {
-        Deps.Cashgame.ClearList();
-
-        var result = await Sut.Execute(CreateRequest());
-
+        var bunch = Create.Bunch();
+        _cashgameRepository.GetFinished(bunch.Id).Returns([]);
+        
+        var result = await Sut.Execute(CreateRequest(bunch.Id, bunch.Slug));
         result.Data!.Items.Count.Should().Be(0);
     }
 
     [Test]
-    public async Task CashgameList_DefaultSort_FirstItemLocationIsSet()
+    public async Task CashgameList_ReturnsList()
     {
-        var result = await Sut.Execute(CreateRequest());
+        var bunch = Create.Bunch();
+        var location = Create.Location(bunchId: bunch.Id);
+        var cashgame = Create.Cashgame(bunchId: bunch.Id, locationId: location.Id);
+        _cashgameRepository.GetFinished(bunch.Id, Arg.Any<int?>()).Returns([cashgame]);
+        _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
+        _locationRepository.List(bunch.Id).Returns([location]);
+        
+        var result = await Sut.Execute(CreateRequest(bunch.Id, bunch.Slug));
 
-        result.Data!.Items[0].LocationName.Should().Be(TestData.LocationNameB);
-    }
-
-    [Test]
-    public async Task CashgameList_DefaultSort_FirstItemUrlIsSet()
-    {
-        var result = await Sut.Execute(CreateRequest());
-
-        result.Data!.Items[0].CashgameId.Should().Be("2");
+        result.Success.Should().BeTrue();
+        result.Data!.Slug.Should().Be(bunch.Slug);
+        result.Data!.Items[0].LocationName.Should().Be(location.Name);
+        result.Data!.Items[0].CashgameId.Should().Be(cashgame.Id);
     }
     
-    private CashgameList.Request CreateRequest(int? year = null)
+    private CashgameList.Request CreateRequest(string bunchId, string slug)
     {
-        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
-        return new CashgameList.Request(new AuthInTest(canListCashgames: true, userBunch: userBunch), TestData.SlugA, year);
+        var userBunch = Create.UserBunch(bunchId, slug);
+        return new CashgameList.Request(new AuthInTest(canListCashgames: true, userBunch: userBunch), slug, null);
     }
 
     private CashgameList Sut => new(
-        Deps.Cashgame,
-        Deps.Player,
-        Deps.Location);
+        _cashgameRepository,
+        _playerRepository,
+        _locationRepository);
 }

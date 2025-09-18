@@ -1,5 +1,7 @@
 using Core.Entities;
+using Core.Repositories;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -7,39 +9,32 @@ namespace Tests.Core.UseCases;
 
 public class DeleteCheckpointTests : TestBase
 {
-    [Test]
-    public async Task DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues()
+    private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
+
+    [Xunit.Theory]
+    [InlineData(GameStatus.Finished)]
+    [InlineData(GameStatus.Running)]
+    public async Task DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues(GameStatus status)
     {
+        var cashgame = Create.Cashgame(status: status);
+        var buyin = Create.BuyinAction(cashgameId: cashgame.Id);
+        var report = Create.ReportAction(cashgameId: cashgame.Id);
+        cashgame.SetCheckpoints([buyin, report]);
+        _cashgameRepository.GetByCheckpoint(report.Id).Returns(cashgame);
+        
         var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
         var request = new DeleteCheckpoint.Request(
             new AuthInTest(canDeleteCheckpoint: true, userBunch: userBunch),
-            TestData.ReportCheckpointId);
+            report.Id);
         var result = await Sut.Execute(request);
 
-        var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
-        deletedCheckpointIds!.Contains(TestData.ReportCheckpointId).Should().BeTrue();
+        await _cashgameRepository.Received()
+            .Update(Arg.Is<Cashgame>(o => o.DeletedCheckpoints.Any(c => c.Id == report.Id)));
+        
         result.Data!.Slug.Should().Be("bunch-a");
-        result.Data!.CashgameId.Should().Be("1");
-        result.Data!.GameIsRunning.Should().BeFalse();
+        result.Data!.CashgameId.Should().Be(cashgame.Id);
+        result.Data!.GameIsRunning.Should().Be(status == GameStatus.Running);
     }
 
-    [Test]
-    public async Task DeleteCheckpoint_RunningGame_DeletesCheckpointAndReturnsCorrectValues()
-    {
-        Deps.Cashgame.SetupRunningGame();
-
-        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
-        var request =
-            new DeleteCheckpoint.Request(new AuthInTest(canDeleteCheckpoint: true, userBunch: userBunch),
-                "12");
-        var result = await Sut.Execute(request);
-
-        var deletedCheckpointIds = Deps.Cashgame.Updated?.DeletedCheckpoints.Select(o => o.Id);
-        deletedCheckpointIds!.Contains("12").Should().BeTrue();
-        result.Data!.Slug.Should().Be("bunch-a");
-        result.Data!.CashgameId.Should().Be("3");
-        result.Data!.GameIsRunning.Should().BeTrue();
-    }
-
-    private DeleteCheckpoint Sut => new(Deps.Cashgame);
+    private DeleteCheckpoint Sut => new(_cashgameRepository);
 }
