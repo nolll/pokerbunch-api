@@ -1,6 +1,9 @@
 ﻿using System;
+using Core.Entities;
 using Core.Errors;
+using Core.Repositories;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -13,6 +16,8 @@ public class BuyinTests : TestBase
     private const int InvalidBuyin = 0;
     private const int ValidStack = 0;
     private const int InvalidStack = -1;
+    
+    private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
 
     [Test]
     public async Task Buyin_InvalidBuyin_ReturnsError()
@@ -40,17 +45,18 @@ public class BuyinTests : TestBase
         const int stack = 2;
         const int savedStack = 3;
 
-        Deps.Cashgame.SetupRunningGame();
+        var cashgame = Create.Cashgame(status: GameStatus.Running);
+        _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
-        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, buyin, stack, timestamp);
+        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), cashgame.Id, PlayerId, buyin, stack, timestamp);
         await Sut.Execute(request);
-
-        var result = Deps.Cashgame.Updated?.AddedCheckpoints.First();
-
-        result!.Timestamp.Should().Be(timestamp);
-        result.Amount.Should().Be(buyin);
-        result.Stack.Should().Be(savedStack);
+        
+        await _cashgameRepository.Received()
+            .Update(Arg.Is<Cashgame>(o => o.AddedCheckpoints.Count == 1 &&
+                                          o.AddedCheckpoints.First().Timestamp == timestamp &&
+                                          o.AddedCheckpoints.First().Amount == buyin &&
+                                          o.AddedCheckpoints.First().Stack == savedStack));
     }
 
-    private Buyin Sut => new(Deps.Cashgame);
+    private Buyin Sut => new(_cashgameRepository);
 }

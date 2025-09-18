@@ -5,7 +5,6 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakePlayerRepository : IPlayerRepository
 {
-    public Player? Added { get; private set; }
     public string? Deleted { get; private set; }
     public JoinedData? Joined { get; private set; }
     private readonly IList<Player> _list;
@@ -37,7 +36,6 @@ public class FakePlayerRepository : IPlayerRepository
 
     public Task<string> Add(Player player)
     {
-        Added = player;
         return Task.FromResult("1");
     }
 

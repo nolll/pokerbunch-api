@@ -6,7 +6,6 @@ namespace Tests.Common.FakeRepositories;
 public class FakeLocationRepository : ILocationRepository
 {
     private readonly IList<Location> _list;
-    public Location? Added { get; private set; }
         
     public FakeLocationRepository()
     {
@@ -30,7 +29,6 @@ public class FakeLocationRepository : ILocationRepository
         
     public Task<string> Add(Location location)
     {
-        Added = location;
         const string id = "1000";
         _list.Add(new Location(id, location.Name, location.BunchId));
         return Task.FromResult(id);

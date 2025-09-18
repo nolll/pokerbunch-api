@@ -5,7 +5,6 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakeEventRepository : IEventRepository
 {
-    public Event? Added { get; private set; }
     public string? AddedCashgameId { get; private set; }
 
     private readonly IList<Event> _list;
@@ -37,7 +36,6 @@ public class FakeEventRepository : IEventRepository
 
     public Task<string> Add(Event e)
     {
-        Added = e;
         return Task.FromResult("1");
     }
 

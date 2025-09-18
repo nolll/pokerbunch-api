@@ -5,7 +5,6 @@ namespace Tests.Common.FakeRepositories;
 
 public class FakeUserRepository : IUserRepository
 {
-    public User? Added { get; private set; }
     public User? Saved { get; private set; }
     private readonly IList<User> _list;
 
@@ -41,7 +40,6 @@ public class FakeUserRepository : IUserRepository
 
     public Task<string> Add(User user)
     {
-        Added = user;
         return Task.FromResult("1");
     }
 
