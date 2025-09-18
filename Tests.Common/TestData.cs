@@ -67,7 +67,6 @@ public static class TestData
     public static readonly Player PlayerD = new(BunchIdA, PlayerIdD, default, default, PlayerNameD, Role.Player, "#9e9e9e");
 
     public const string BuyinCheckpointId = "1";
-    public const string ReportCheckpointId = "2"; 
     
     public const string PlayerIdA = "1";
     public const string PlayerIdB = "2";
@@ -97,8 +96,6 @@ public static class TestData
     public const string EventIdB = "2";
     public const string EventNameA = "Event A";
     public const string EventNameB = "Event B";
-
-    public const string TestUrl = "https://pokerbunch.com/test";
 
     public static IList<Checkpoint> RunningGameCheckpoints =>
         new List<Checkpoint>
