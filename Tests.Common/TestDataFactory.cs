@@ -17,7 +17,7 @@ public class TestDataFactory
     public DateTime DateTime() => Create<DateTime>();
     public string EmailAddress() => Create<MailAddress>().Address;
     public string TimeZoneId() => Create<TimeZoneInfo>().Id;
-    
+
     public User User(
         string? id = null,
         string? userName = null,
@@ -26,19 +26,16 @@ public class TestDataFactory
         string? email = null,
         Role globalRole = Role.Player,
         string? encryptedPassword = null,
-        string? salt = null)
-    {
-        return new User(
-            id ?? String(), 
-            userName ?? String(), 
-            displayName ?? String(),
-            realName ?? String(),
-            email ?? EmailAddress(), 
-            globalRole, 
-            encryptedPassword, 
-            salt);
-    }
-    
+        string? salt = null) => new(
+        id ?? String(),
+        userName ?? String(),
+        displayName ?? String(),
+        realName ?? String(),
+        email ?? EmailAddress(),
+        globalRole,
+        encryptedPassword,
+        salt);
+
     public Bunch Bunch(
         string? id = null,
         string? slug = null,
@@ -47,18 +44,20 @@ public class TestDataFactory
         string? houseRules = null,
         TimeZoneInfo? timezone = null,
         int? defaultBuyin = null,
-        Currency? currency = null)
-    {
-        return new Bunch(
-            id ?? String(),
-            slug ?? String(),
-            displayName ?? String(),
-            description ?? String(),
-            houseRules ?? String(),
-            timezone ?? Create<TimeZoneInfo>(),
-            defaultBuyin ?? Int(),
-            currency ?? Create<Currency>());
-    }
+        Currency? currency = null) => new(
+        id ?? String(),
+        slug ?? String(),
+        displayName ?? String(),
+        description ?? String(),
+        houseRules ?? String(),
+        timezone ?? Create<TimeZoneInfo>(),
+        defaultBuyin ?? Int(),
+        currency ?? Create<Currency>());
+
+    public Location Location(string? id = null, string? name = null, string? bunchId = null) => new(
+        id ?? String(),
+        name ?? String(),
+        bunchId ?? String());
 
     public Player Player(
         string? bunchId = null,
@@ -67,17 +66,14 @@ public class TestDataFactory
         string? userName = null,
         string? displayName = null,
         Role? role = null,
-        string? color = null)
-    {
-        return new Player(
-            bunchId ?? String(),
-            id ?? String(),
-            userId,
-            userName,
-            displayName ?? String(),
-            role ?? Role.Player,
-            color);
-    }
+        string? color = null) => new(
+        bunchId ?? String(),
+        id ?? String(),
+        userId,
+        userName,
+        displayName ?? String(),
+        role ?? Role.Player,
+        color);
 
     public UserBunch UserBunch(
         string? id = null,
@@ -85,80 +81,65 @@ public class TestDataFactory
         string? name = null,
         string? playerId = null,
         string? playerName = null,
-        Role? role = null)
-    {
-        return new UserBunch(
-            id ?? String(),
-            slug ?? String(),
-            name ?? String(),
-            playerId ?? String(),
-            playerName ?? String(),
-            role ?? Type<Role>());
-    }
-    
+        Role? role = null) => new(
+        id ?? String(),
+        slug ?? String(),
+        name ?? String(),
+        playerId ?? String(),
+        playerName ?? String(),
+        role ?? Type<Role>());
+
     public Cashgame Cashgame(
         string? bunchId = null,
         string? locationId = null,
         string? eventId = null,
         GameStatus? status = null,
-        string? id = null)
-    {
-        return new Cashgame(
-            bunchId ?? String(),
-            locationId ?? String(),
-            eventId,
-            status ?? Create<GameStatus>(),
-            id ?? String(),
-            []);
-    }
-    
+        string? id = null) => new(
+        bunchId ?? String(),
+        locationId ?? String(),
+        eventId,
+        status ?? Create<GameStatus>(),
+        id ?? String(),
+        []);
+
     public Checkpoint BuyinAction(
         string? id = null,
         string? cashgameId = null,
         string? playerId = null,
         DateTime? timestamp = null,
         int? stack = null,
-        int? buyin = null)
-    {
-        return Checkpoint.Create(
-            id ?? String(),
-            cashgameId ?? String(),
-            playerId ?? String(),
-            timestamp ?? DateTime(),
-            CheckpointType.Buyin,
-            stack ?? Int(),
-            buyin ?? Int());
-    }
-    
+        int? buyin = null) => Checkpoint.Create(
+        id ?? String(),
+        cashgameId ?? String(),
+        playerId ?? String(),
+        timestamp ?? DateTime(),
+        CheckpointType.Buyin,
+        stack ?? Int(),
+        buyin ?? Int());
+
     public Checkpoint ReportAction(
         string? id = null,
         string? cashgameId = null,
         string? playerId = null,
         DateTime? timestamp = null,
-        int? stack = null)
-    {
-        return Checkpoint.Create(
-            id ?? String(),
-            cashgameId ?? String(),
-            playerId ?? String(),
-            timestamp ?? DateTime(),
-            CheckpointType.Report,
-            stack ?? Int());
-    }
-    
+        int? stack = null) => Checkpoint.Create(
+        id ?? String(),
+        cashgameId ?? String(),
+        playerId ?? String(),
+        timestamp ?? DateTime(),
+        CheckpointType.Report,
+        stack ?? Int());
+
     public Checkpoint CashoutAction(
         string? id = null,
         string? cashgameId = null,
         string? playerId = null,
         DateTime? timestamp = null,
-        int? stack = null)
-    {
-        return Checkpoint.Create(
-            id ?? String(),
-            cashgameId ?? String(),
-            playerId ?? String(),
-            timestamp ?? DateTime(),
-            CheckpointType.Cashout,
-            stack ?? Int());
-    }
+        int? stack = null) => Checkpoint.Create(
+        id ?? String(),
+        cashgameId ?? String(),
+        playerId ?? String(),
+        timestamp ?? DateTime(),
+        CheckpointType.Cashout,
+        stack ?? Int());
 }

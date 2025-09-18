@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Core.Entities;
+using Core.Repositories;
 using Core.UseCases;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -8,61 +11,56 @@ namespace Tests.Core.UseCases;
 
 public class CashgameDetailsTests : TestBase
 {
-    [Test]
+    private readonly IBunchRepository _bunchRepository = Substitute.For<IBunchRepository>();
+    private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
+    private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
+    private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
+    private readonly IEventRepository _eventRepository = Substitute.For<IEventRepository>();
+
+    [Fact]
     public async Task CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
     {
-        Deps.Cashgame.SetupRunningGame();
-
-        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName, TestData.PlayerIdA, "", Role.Player);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), TestData.CashgameIdC, DateTime.UtcNow);
-        var result = await Sut.Execute(request);
-
-        result.Data!.PlayerId.Should().Be(TestData.PlayerIdA);
-        result.Data!.LocationName.Should().Be(TestData.LocationNameC);
-        result.Data!.DefaultBuyin.Should().Be(100);
-        result.Data!.Role.Should().Be(Role.Player);
-    }
+        var bunch = Create.Bunch();
+        _bunchRepository.Get(bunch.Id).Returns(bunch);
+        var location = Create.Location(bunchId: bunch.Id);
+        _locationRepository.Get(location.Id).Returns(location);
+        var cashgame = Create.Cashgame(locationId: location.Id, bunchId: bunch.Id, status: GameStatus.Running);
+        _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
+        var player1 = Create.Player();
+        var player2 = Create.Player();
+        _playerRepository.Get(Arg.Any<IList<string>>()).Returns([player1, player2]);
+        var action1 = Create.BuyinAction(cashgameId: cashgame.Id, playerId: player1.Id);
+        var action2 = Create.BuyinAction(cashgameId: cashgame.Id, playerId: player2.Id);
+        cashgame.SetCheckpoints([action1, action2]);
         
-    [Test]
-    public async Task CashgameDetails_CashgameRunning_SlugIsSet()
-    {
-        Deps.Cashgame.SetupRunningGame();
-
-        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), TestData.CashgameIdC, DateTime.UtcNow);
+        var userBunch = Create.UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName, role: Role.Player);
+        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), cashgame.Id, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
-        result.Data!.Slug.Should().Be("bunch-a");
-    }
-
-    [Test]
-    public async Task CashgameDetails_CashgameRunning_PlayerItemsAreSet()
-    {
-        Deps.Cashgame.SetupRunningGame();
-
-        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug, TestData.BunchA.DisplayName);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), TestData.CashgameIdC, DateTime.UtcNow);
-        var result = await Sut.Execute(request);
-
+        result.Success.Should().BeTrue();
+        result.Data!.Slug.Should().Be(bunch.Slug);
+        result.Data!.PlayerId.Should().Be(userBunch.PlayerId);
+        result.Data!.LocationName.Should().Be(location.Name);
+        result.Data!.DefaultBuyin.Should().Be(bunch.DefaultBuyin);
+        result.Data!.Role.Should().Be(Role.Player);
+        
         result.Data!.PlayerItems.Count.Should().Be(2);
         result.Data!.PlayerItems[0].Checkpoints.Count.Should().Be(1);
         result.Data!.PlayerItems[0].HasCashedOut.Should().BeFalse();
-        result.Data!.PlayerItems[0].Name.Should().Be(TestData.PlayerA.DisplayName);
-        result.Data!.PlayerItems[0].PlayerId.Should().Be(TestData.PlayerA.Id);
-        result.Data!.PlayerItems[0].CashgameId.Should().Be("3");
-        result.Data!.PlayerItems[0].PlayerId.Should().Be("1");
+        result.Data!.PlayerItems[0].Name.Should().Be(player1.DisplayName);
+        result.Data!.PlayerItems[0].PlayerId.Should().Be(player1.Id);
+        result.Data!.PlayerItems[0].CashgameId.Should().Be(cashgame.Id);
         result.Data!.PlayerItems[1].Checkpoints.Count.Should().Be(1);
         result.Data!.PlayerItems[1].HasCashedOut.Should().BeFalse();
-        result.Data!.PlayerItems[1].Name.Should().Be(TestData.PlayerB.DisplayName);
-        result.Data!.PlayerItems[1].PlayerId.Should().Be(TestData.PlayerB.Id);
-        result.Data!.PlayerItems[1].CashgameId.Should().Be("3");
-        result.Data!.PlayerItems[1].PlayerId.Should().Be("2");
+        result.Data!.PlayerItems[1].Name.Should().Be(player2.DisplayName);
+        result.Data!.PlayerItems[1].PlayerId.Should().Be(player2.Id);
+        result.Data!.PlayerItems[1].CashgameId.Should().Be(cashgame.Id);
     }
-
+    
     private CashgameDetails Sut => new(
-        Deps.Bunch,
-        Deps.Cashgame,
-        Deps.Player,
-        Deps.Location,
-        Deps.Event);
+        _bunchRepository,
+        _cashgameRepository,
+        _playerRepository,
+        _locationRepository,
+        _eventRepository);
 }

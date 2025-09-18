@@ -1,5 +1,4 @@
-﻿using Core.Entities;
-using Core.UseCases;
+﻿using Core.UseCases;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
