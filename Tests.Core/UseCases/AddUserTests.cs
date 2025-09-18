@@ -11,11 +11,6 @@ namespace Tests.Core.UseCases;
 
 public class AddUserTests : TestBase
 {
-    private const string ValidUserName = "a";
-    private const string ValidDisplayName = "b";
-    private const string ValidEmail = "a@b.com";
-    private const string ValidPassword = "c";
-
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
     private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
@@ -119,11 +114,11 @@ public class AddUserTests : TestBase
         var request = CreateRequest(loginUrl: "/loginUrl");
         await Sut.Execute(request);
 
-        _emailSender.Received().Send(Arg.Is<string>(o => o == ValidEmail),
+        _emailSender.Received().Send(Arg.Is<string>(o => o == request.Email),
             Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
     }
     
-    private static AddUser.Request CreateRequest(
+    private AddUser.Request CreateRequest(
         string? userName = null,
         string? displayName = null,
         string? email = null,
@@ -131,10 +126,10 @@ public class AddUserTests : TestBase
         string? loginUrl = null)
     {
         return new AddUser.Request(
-            userName ?? ValidUserName, 
-            displayName ?? ValidDisplayName, 
-            email ?? ValidEmail, 
-            password ?? ValidPassword, 
+            userName ?? Create.String(), 
+            displayName ?? Create.String(), 
+            email ?? Create.EmailAddress(), 
+            password ?? Create.String(), 
             loginUrl ?? "/");
     }
 
