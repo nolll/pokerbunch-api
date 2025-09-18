@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Entities;
 using Core.Errors;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using NSubstitute;
@@ -14,106 +15,131 @@ public class AddUserTests : TestBase
     private const string ValidDisplayName = "b";
     private const string ValidEmail = "a@b.com";
     private const string ValidPassword = "c";
-    private readonly string _existingUserName = TestData.UserA.UserName;
-    private readonly string _existingEmail = TestData.UserA.Email;
 
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
     private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
+    private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
 
-    [Test]
+    [Fact]
     public async Task AddUser_WithEmptyUserName_ReturnsError()
     {
-        var request = new AddUser.Request("", ValidDisplayName, ValidEmail, ValidPassword, "/");
+        var request = CreateRequest(userName: "");
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddUser_WithEmptyDisplayName_ReturnsError()
     {
-        var request = new AddUser.Request(ValidUserName, "", ValidEmail, ValidPassword, "/");
+        var request = CreateRequest(displayName: "");
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddUser_WithEmptyEmail_ReturnsError()
     {
-        var request = new AddUser.Request(ValidUserName, ValidDisplayName, "", ValidPassword, "/");
+        var request = CreateRequest(email: "");
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
-    public async Task AddUser_WithEmptyPAssword_ReturnsError()
+    [Fact]
+    public async Task AddUser_WithEmptyPassword_ReturnsError()
     {
-        var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, "", "/");
+        var request = CreateRequest(password: "");
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task AddUser_UserNameAlreadyInUse_ReturnsError()
     {
-        var request = new AddUser.Request(_existingUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
+        var existingUser = Create.User();
+        _userRepository.GetByUserName(existingUser.UserName).Returns(existingUser);
+        
+        var request = CreateRequest(userName: existingUser.UserName);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
-    [Test]
+    [Fact]
     public async Task AddUser_EmailAlreadyInUse_ReturnsError()
     {
-        var request = new AddUser.Request(ValidUserName, ValidDisplayName, _existingEmail, ValidPassword, "/");
+        var existingUser = Create.User();
+        _userRepository.GetByUserEmail(existingUser.Email).Returns(existingUser);
+        
+        var request = CreateRequest(email: existingUser.Email);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
-    [Test]
+    [Fact]
     public async Task AddUser_WithValidInput_UserWithCorrectPropertiesIsAdded()
     {
+        const string password = "c";
         const string expectedEncryptedPassword = "1cb313748ba4b822b78fe05de42558539efd9156";
         const string expectedSalt = "aaaaaaaaaa";
 
+        var userName = Create.String();
+        var displayName = Create.String();
+        var email = Create.EmailAddress();
+
         _randomizer.GetAllowedChars().Returns("a");
         
-        var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/");
+        var request = CreateRequest(userName, displayName, email, password);
         await Sut.Execute(request);
 
-        var user = Deps.User.Added;
-
-        user!.Id.Should().Be("");
-        user.UserName.Should().Be(ValidUserName);
-        user.DisplayName.Should().Be(ValidDisplayName);
-        user.RealName.Should().Be("");
-        user.Email.Should().Be(ValidEmail);
-        user.GlobalRole.Should().Be(Role.Player);
-        user.EncryptedPassword.Should().Be(expectedEncryptedPassword);
-        user.Salt.Should().Be(expectedSalt);
+        await _userRepository.Received().Add(Arg.Is<User>(o => 
+            o.UserName == userName && 
+            o.DisplayName == displayName &&
+            o.RealName == "" &&
+            o.Email == email &&
+            o.GlobalRole == Role.Player &&
+            o.EncryptedPassword == expectedEncryptedPassword &&
+            o.Salt == expectedSalt));
     }
 
-    [Test]
+    [Fact]
     public async Task AddUser_WithValidInput_SendsRegistrationEmail()
     {
         const string subject = "Poker Bunch Registration";
-        const string body = @"Thanks for registering with Poker Bunch.
+        const string body = """
+                            Thanks for registering with Poker Bunch.
 
-Please sign in here: /loginUrl";
+                            Please sign in here: /loginUrl
+                            """;
 
-        var request = new AddUser.Request(ValidUserName, ValidDisplayName, ValidEmail, ValidPassword, "/loginUrl");
+        var request = CreateRequest(loginUrl: "/loginUrl");
         await Sut.Execute(request);
 
         _emailSender.Received().Send(Arg.Is<string>(o => o == ValidEmail),
             Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
     }
+    
+    private static AddUser.Request CreateRequest(
+        string? userName = null,
+        string? displayName = null,
+        string? email = null,
+        string? password = null,
+        string? loginUrl = null)
+    {
+        return new AddUser.Request(
+            userName ?? ValidUserName, 
+            displayName ?? ValidDisplayName, 
+            email ?? ValidEmail, 
+            password ?? ValidPassword, 
+            loginUrl ?? "/");
+    }
 
     private AddUser Sut => new(
-        Deps.User,
+        _userRepository,
         _randomizer,
         _emailSender);
 }

@@ -59,7 +59,26 @@ public class TestDataFactory
             defaultBuyin ?? Int(),
             currency ?? Create<Currency>());
     }
-    
+
+    public Player Player(
+        string? bunchId = null,
+        string? id = null,
+        string? userId = null,
+        string? userName = null,
+        string? displayName = null,
+        Role? role = null,
+        string? color = null)
+    {
+        return new Player(
+            bunchId ?? String(),
+            id ?? String(),
+            userId,
+            userName,
+            displayName ?? String(),
+            role ?? Role.Player,
+            color);
+    }
+
     public UserBunch UserBunch(
         string? id = null,
         string? slug = null,

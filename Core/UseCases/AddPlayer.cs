@@ -8,9 +8,7 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class AddPlayer(
-    IBunchRepository bunchRepository,
-    IPlayerRepository playerRepository)
+public class AddPlayer(IPlayerRepository playerRepository)
     : UseCase<AddPlayer.Request, AddPlayer.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -20,17 +18,17 @@ public class AddPlayer(
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
 
-        if (!request.Auth.CanAddPlayer(bunch.Id))
+        if (!request.Auth.CanAddPlayer(bunchInfo.Id))
             return Error(new AccessDeniedError());
 
-        var existingPlayers = await playerRepository.List(bunch.Id);
+        var existingPlayers = await playerRepository.List(bunchInfo.Id);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
         if (player != null)
             return Error(new PlayerExistsError());
 
-        player = Player.New(bunch.Id, request.Name);
+        player = Player.New(bunchInfo.Id, request.Name);
         var id = await playerRepository.Add(player);
 
         return Success(new Result(id));
