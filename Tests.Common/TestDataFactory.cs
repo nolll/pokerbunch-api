@@ -58,6 +58,11 @@ public class TestDataFactory
         id ?? String(),
         name ?? String(),
         bunchId ?? String());
+    
+    public Event Event(string? id = null, string? name = null, string? bunchId = null) => new(
+        id ?? String(),
+        name ?? String(),
+        bunchId ?? String());
 
     public Player Player(
         string? bunchId = null,
