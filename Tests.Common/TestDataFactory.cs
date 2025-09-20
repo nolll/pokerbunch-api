@@ -17,6 +17,7 @@ public class TestDataFactory
     public DateTime DateTime() => Create<DateTime>();
     public string EmailAddress() => Create<MailAddress>().Address;
     public string TimeZoneId() => Create<TimeZoneInfo>().Id;
+    public Date Date() => new(Create<DateTime>());
 
     public User User(
         string? id = null,
@@ -59,10 +60,20 @@ public class TestDataFactory
         name ?? String(),
         bunchId ?? String());
     
-    public Event Event(string? id = null, string? name = null, string? bunchId = null) => new(
+    public Event Event(
+        string? id = null,
+        string? name = null,
+        string? bunchId = null,
+        string? locationId = null,
+        Date? startDate = null,
+        Date? endDate = null) =>
+        new(
         id ?? String(),
         name ?? String(),
-        bunchId ?? String());
+        bunchId ?? String(),
+        locationId ?? String(),
+        startDate ?? Date(),
+        endDate ?? Date());
 
     public Player Player(
         string? bunchId = null,
@@ -96,6 +107,9 @@ public class TestDataFactory
     
     public UserBunch UserBunch(Bunch bunch, Player player) 
         => UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName, player.Id, player.DisplayName, player.Role);
+    
+    public UserBunch UserBunch(Bunch bunch) 
+        => UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName);
 
     public Cashgame Cashgame(
         string? bunchId = null,
