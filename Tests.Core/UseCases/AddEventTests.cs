@@ -3,6 +3,7 @@ using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
+using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 

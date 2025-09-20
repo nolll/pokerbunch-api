@@ -3,6 +3,7 @@ using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
+using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 

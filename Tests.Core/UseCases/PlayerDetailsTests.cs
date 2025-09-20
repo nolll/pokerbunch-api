@@ -1,5 +1,6 @@
 ﻿using Core.Services;
 using Core.UseCases;
+using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
