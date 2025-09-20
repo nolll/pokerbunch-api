@@ -1,7 +1,10 @@
-﻿using Core.Entities.Checkpoints;
+﻿using System;
+using Core.Entities;
+using Core.Entities.Checkpoints;
 using Core.Errors;
+using Core.Repositories;
 using Core.UseCases;
-using NUnit.Framework;
+using NSubstitute;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -9,51 +12,63 @@ namespace Tests.Core.UseCases;
 
 public class EditCheckpointTests : TestBase
 {
-    private const int ChangedStack = 1;
-    private const int ChangedAmount = 2;
+    private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
 
-    [Test]
+    [Fact]
     public async Task EditCheckpoint_InvalidStack_ReturnsError()
     {
-        var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, -1, ChangedAmount);
+        var request = CreateRequest(stack: -1);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
-    public async Task EditCheckpoint_InvalidAmount_ReturnsError()
+    [Fact]
+    public async Task EditCheckpoint_InvalidAdded_ReturnsError()
     {
-        var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, -1);
+        var request = CreateRequest(added: -1);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
-    }
-
-    [Test]
-    public async Task EditCheckpoint_ValidInput_ReturnUrlIsSet()
-    {
-        var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
-
-        var result = await Sut.Execute(request);
-
-        result.Data!.CashgameId.Should().Be("1");
-        result.Data!.PlayerId.Should().Be("1");
     }
         
-    [Test]
+    [Fact]
     public async Task EditCheckpoint_ValidInput_CheckpointIsSaved()
     {
-        var request = new EditCheckpoint.Request(new AuthInTest(canEditCashgameAction: true), TestData.BuyinCheckpointId, TestData.StartTimeA, ChangedStack, ChangedAmount);
+        var cashgame = Create.Cashgame();
+        var action = Create.BuyinAction(cashgameId: cashgame.Id);
+        cashgame.SetCheckpoints([action]);
+        _cashgameRepository.GetByCheckpoint(action.Id).Returns(cashgame);
+        var stack = Create.Int();
+        var added = Create.Int();
+        
+        var request = CreateRequest(actionId: action.Id, stack: stack, added: added);
+        var result = await Sut.Execute(request);
 
-        await Sut.Execute(request);
-
-        var updatedCheckpoint = Deps.Cashgame.Updated?.UpdatedCheckpoints.First();
-        updatedCheckpoint!.Type.Should().Be(CheckpointType.Buyin);
-        updatedCheckpoint.Id.Should().Be(TestData.BuyinCheckpointId);
-        updatedCheckpoint.Stack.Should().Be(ChangedStack);
-        updatedCheckpoint.Amount.Should().Be(ChangedAmount);
+        await _cashgameRepository.Received().Update(Arg.Is<Cashgame>(o =>
+            o.UpdatedCheckpoints.First().Id == action.Id && 
+            o.UpdatedCheckpoints.First().Type == CheckpointType.Buyin &&
+            o.UpdatedCheckpoints.First().Stack == stack && 
+            o.UpdatedCheckpoints.First().Amount == added));
+        
+        result.Data!.CashgameId.Should().Be(cashgame.Id);
+        result.Data!.PlayerId.Should().Be(action.PlayerId);
+    }
+    
+    private EditCheckpoint.Request CreateRequest(
+        bool? canEditCashgameAction = null,
+        string? actionId = null,
+        DateTime? timestamp = null,
+        int? stack = null,
+        int? added = null)
+    {
+        return new EditCheckpoint.Request(
+            new AuthInTest(canEditCashgameAction: canEditCashgameAction ?? true),
+            actionId ?? Create.String(),
+            timestamp ?? Create.DateTime(),
+            stack ?? Create.Int(),
+            added ?? Create.Int());
     }
 
-    private EditCheckpoint Sut => new(Deps.Cashgame);
+    private EditCheckpoint Sut => new(_cashgameRepository);
 }
