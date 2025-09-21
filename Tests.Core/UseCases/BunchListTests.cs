@@ -1,7 +1,6 @@
 ﻿using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -11,7 +10,7 @@ public class BunchListTests : TestBase
 {
     private readonly IBunchRepository _bunchRepository = Substitute.For<IBunchRepository>(); 
     
-    [Test]
+    [Fact]
     public async Task BunchList_ReturnsListOfBunchItems()
     {
         var bunch1 = Create.Bunch();

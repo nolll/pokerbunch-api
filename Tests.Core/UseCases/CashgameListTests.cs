@@ -2,7 +2,6 @@
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -14,7 +13,7 @@ public class CashgameListTests : TestBase
     private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
     private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
 
-    [Test]
+    [Fact]
     public async Task CashgameList_WithoutGames_HasEmptyListOfGames()
     {
         var bunch = Create.Bunch();
@@ -24,7 +23,7 @@ public class CashgameListTests : TestBase
         result.Data!.Items.Count.Should().Be(0);
     }
 
-    [Test]
+    [Fact]
     public async Task CashgameList_ReturnsList()
     {
         var bunch = Create.Bunch();

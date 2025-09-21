@@ -3,7 +3,6 @@ using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -13,7 +12,7 @@ public class AddEventTests : TestBase
 {
     private readonly IEventRepository _eventRepository = Substitute.For<IEventRepository>();
     
-    [Test]
+    [Fact]
     public async Task AddEvent_AllOk_EventIsAdded()
     {
         var eventName = Create.String();
@@ -22,7 +21,7 @@ public class AddEventTests : TestBase
         await _eventRepository.Received().Add(Arg.Is<Event>(o => o.Name == eventName));
     }
 
-    [Test]
+    [Fact]
     public async Task AddEvent_InvalidName_ReturnsValidationError()
     {
         var result = await ExecuteAsync("");
@@ -32,8 +31,8 @@ public class AddEventTests : TestBase
 
     private async Task<UseCaseResult<AddEvent.Result>> ExecuteAsync(string eventName)
     {
-        var userBunch = Create.UserBunch(TestData.BunchA.Id, TestData.BunchA.Slug);
-        var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, userBunch: userBunch), TestData.BunchA.Slug, eventName);
+        var userBunch = Create.UserBunch();
+        var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, userBunch: userBunch), Create.String(), eventName);
         return await Sut.Execute(request);
     }
 

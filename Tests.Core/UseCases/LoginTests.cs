@@ -1,9 +1,7 @@
-﻿using Core.Entities;
-using Core.Errors;
+﻿using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -14,7 +12,7 @@ public class LoginTests : TestBase
     private readonly IBunchRepository _bunchRepository = Substitute.For<IBunchRepository>();
     private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
 
-    [Test]
+    [Fact]
     public async Task Login_UserNotFound_ReturnsError()
     {
         var user = Create.User();
@@ -26,7 +24,7 @@ public class LoginTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
-    [Test]
+    [Fact]
     public async Task Login_UserFoundButPasswordIsWrong_ReturnsError()
     {
         var user = Create.User(salt: "aaaaaaaaaa", encryptedPassword: "1cb313748ba4b822b78fe05de42558539efd9156");
@@ -38,7 +36,7 @@ public class LoginTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
-    [Test]
+    [Fact]
     public async Task Login_UserFoundAndPasswordIsCorrect_UserIsLoggedIn()
     {
         var user = Create.User(salt: "aaaaaaaaaa", encryptedPassword: "1cb313748ba4b822b78fe05de42558539efd9156");

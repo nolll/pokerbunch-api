@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Runtime.InteropServices.JavaScript;
 using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -20,25 +20,25 @@ public class BuyinTests : TestBase
     
     private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
 
-    [Test]
+    [Fact]
     public async Task Buyin_InvalidBuyin_ReturnsError()
     {
-        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
+        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), Create.String(), PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task Buyin_InvalidStackSize_ReturnsError()
     {
-        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), TestData.CashgameIdA, PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
+        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), Create.String(), PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task Buyin_StartedCashgame_AddsCheckpointWithCorrectValues()
     {
         var timestamp = DateTime.UtcNow;

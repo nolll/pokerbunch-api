@@ -3,7 +3,6 @@ using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -15,7 +14,7 @@ public class EditCashgameTests : TestBase
     private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
     private readonly IEventRepository _eventRepository = Substitute.For<IEventRepository>();
 
-    [Test]
+    [Fact]
     public async Task EditCashgame_NoAccess_ReturnsError()
     {
         var cashgame = Create.Cashgame();
@@ -27,7 +26,7 @@ public class EditCashgameTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
     
-    [Test]
+    [Fact]
     public async Task EditCashgame_EmptyLocation_ReturnsError()
     {
         var request = CreateRequest(locationId: "");
@@ -37,7 +36,7 @@ public class EditCashgameTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task EditCashgame_ValidLocation_SavesCashgame()
     {
         var cashgame = Create.Cashgame();
@@ -52,7 +51,7 @@ public class EditCashgameTests : TestBase
         result.Success.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task EditCashgame_WithEventId_GameIsAddedToEvent()
     {
         var @event = Create.Event();
@@ -68,7 +67,7 @@ public class EditCashgameTests : TestBase
         await _eventRepository.Received().AddCashgame(@event.Id, cashgame.Id);
     }
     
-    [Test]
+    [Fact]
     public async Task EditCashgame_WithoutEventId_GameIsRemovedFromEvent()
     {
         var @event = Create.Event();

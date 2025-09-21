@@ -13,10 +13,4 @@ public class FakeEmailSender : IEmailSender
         To = to;
         LastMessage = message;
     }
-
-    public void Reset()
-    {
-        To = null;
-        LastMessage = null;
-    }
 }

@@ -5,7 +5,6 @@ using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -16,7 +15,7 @@ public class ResetPasswordTests : TestBase
     private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
 
-    [Test]
+    [Fact]
     public async Task ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
     {
         var request = CreateRequest(email: "");
@@ -25,7 +24,7 @@ public class ResetPasswordTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task ResetPassword_UserNotFound_ReturnsError()
     {
         var request = CreateRequest();
@@ -34,7 +33,7 @@ public class ResetPasswordTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.NotFound);
     }
 
-    [Test]
+    [Fact]
     public async Task ResetPassword_PasswordIsChangedAndEmailIsSent()
     {
         const string subject = "Poker Bunch Password Recovery";

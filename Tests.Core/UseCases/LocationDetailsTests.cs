@@ -2,8 +2,6 @@ using Core.Entities;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NSubstitute.ReceivedExtensions;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -13,7 +11,7 @@ public class LocationDetailsTests : TestBase
 {
     private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
 
-    [Test]
+    [Fact]
     public async Task LocationDetails_AllPropertiesAreSet()
     {
         var location = Create.Type<Location>();

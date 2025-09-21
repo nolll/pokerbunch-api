@@ -1,10 +1,8 @@
-﻿using AutoFixture;
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 
 namespace Tests.Core.UseCases;
@@ -13,7 +11,7 @@ public class EditUserTests : TestBase
 {
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
 
-    [Test]
+    [Fact]
     public async Task EditUser_EmptyDisplayName_ReturnsError()
     {
         var request = CreateRequest(displayName: "");
@@ -22,7 +20,7 @@ public class EditUserTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task EditUser_EmptyEmail_ReturnsError()
     {
         var request = CreateRequest(email: "");
@@ -31,7 +29,7 @@ public class EditUserTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task EditUser_InvalidEmail_ReturnsError()
     {
         var request = CreateRequest(email: "a");
@@ -40,7 +38,7 @@ public class EditUserTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    [Test]
+    [Fact]
     public async Task EditUser_ValidInput_UserIsSaved()
     {
         var user = Create.User();

@@ -3,7 +3,6 @@ using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
-using NUnit.Framework;
 using Tests.Common;
 using Tests.Core.TestClasses;
 
@@ -14,7 +13,7 @@ public class EventListTests : TestBase
     private readonly IEventRepository _eventRepository = Substitute.For<IEventRepository>();
     private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
 
-    [Test]
+    [Fact]
     public async Task EventList_NoAccess_ReturnsError()
     {
         var userBunch = Create.UserBunch(Create.Bunch());
@@ -25,7 +24,7 @@ public class EventListTests : TestBase
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
     
-    [Test]
+    [Fact]
     public async Task EventList_ReturnsAllEvents()
     {
         var bunch = Create.Bunch();
@@ -52,7 +51,7 @@ public class EventListTests : TestBase
     {
         return new EventList.Request(
             new AuthInTest(canListEvents: canListEvents ?? true, userBunch: userBunch), 
-            TestData.SlugA);
+            Create.String());
     }
 
     private EventList Sut => new(_eventRepository, _locationRepository);
