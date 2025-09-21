@@ -1,5 +1,7 @@
 ﻿using Core;
+using Core.Entities;
 using Core.Errors;
+using Core.Repositories;
 using Core.Services;
 using Core.UseCases;
 using NSubstitute;
@@ -10,17 +12,14 @@ namespace Tests.Core.UseCases;
 
 public class ResetPasswordTests : TestBase
 {
-    private const string ValidEmail = TestData.UserEmailA;
-    private const string InvalidEmail = "";
-    private const string NonExistingEmail = "a@b.com";
-    
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
     private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
+    private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
 
     [Test]
     public async Task ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
     {
-        var request = CreateRequest(InvalidEmail);
+        var request = CreateRequest(email: "");
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
@@ -29,44 +28,46 @@ public class ResetPasswordTests : TestBase
     [Test]
     public async Task ResetPassword_UserNotFound_ReturnsError()
     {
-        var result = await Sut.Execute(CreateRequest(NonExistingEmail));
+        var request = CreateRequest();
+        var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.NotFound);
     }
 
     [Test]
-    public async Task ResetPassword_SendsPasswordEmail()
+    public async Task ResetPassword_PasswordIsChangedAndEmailIsSent()
     {
         const string subject = "Poker Bunch Password Recovery";
-        const string body = @"Here is your new password for Poker Bunch:
-aaaaaaaa
+        const string body = """
+                            Here is your new password for Poker Bunch:
+                            aaaaaaaa
 
-Please sign in here: loginUrl";
+                            Please sign in here: https://loginUrl
+                            """;
         _randomizer.GetAllowedChars().Returns("a");
-        
-        await Sut.Execute(CreateRequest());
 
-        _emailSender.Received().Send(Arg.Is<string>(o => o == ValidEmail),
+        var user = Create.User();
+        _userRepository.GetByUserEmail(user.Email).Returns(user);
+        var request = CreateRequest(email: user.Email, loginUrl: "https://loginUrl");
+        await Sut.Execute(request);
+
+        _emailSender.Received().Send(Arg.Is<string>(o => o == user.Email),
             Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
+
+        await _userRepository.Received().Update(Arg.Is<User>(o => o.Id == user.Id && 
+                                                                  user.EncryptedPassword == "0478095c8ece0bbc11f94663ac2c4f10b29666de" &&
+                                                                  user.Salt == "aaaaaaaaaa"));
     }
 
-    [Test]
-    public async Task ResetPassword_SavesUserWithNewPassword()
+    private ResetPassword.Request CreateRequest(string? email = null, string? loginUrl = null)
     {
-        _randomizer.GetAllowedChars().Returns("a");
-        await Sut.Execute(CreateRequest());
-
-        var savedUser = Deps.User.Saved;
-        savedUser!.EncryptedPassword.Should().Be("0478095c8ece0bbc11f94663ac2c4f10b29666de");
-        savedUser.Salt.Should().Be("aaaaaaaaaa");
-    }
-
-    private ResetPassword.Request CreateRequest(string email = ValidEmail)
-    {
-        return new ResetPassword.Request(email, "loginUrl");
+        return new ResetPassword.Request(
+            email ?? Create.EmailAddress(),
+            loginUrl ?? Create.String());
     }
 
     private ResetPassword Sut => new(
-        Deps.User,
+        _userRepository,
         _emailSender,
         _randomizer);
 }
