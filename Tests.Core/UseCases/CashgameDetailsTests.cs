@@ -45,16 +45,19 @@ public class CashgameDetailsTests : TestBase
         result.Data!.Role.Should().Be(Role.Player);
         
         result.Data!.PlayerItems.Count.Should().Be(2);
-        result.Data!.PlayerItems[0].Checkpoints.Count.Should().Be(1);
-        result.Data!.PlayerItems[0].HasCashedOut.Should().BeFalse();
-        result.Data!.PlayerItems[0].Name.Should().Be(player1.DisplayName);
-        result.Data!.PlayerItems[0].PlayerId.Should().Be(player1.Id);
-        result.Data!.PlayerItems[0].CashgameId.Should().Be(cashgame.Id);
-        result.Data!.PlayerItems[1].Checkpoints.Count.Should().Be(1);
-        result.Data!.PlayerItems[1].HasCashedOut.Should().BeFalse();
-        result.Data!.PlayerItems[1].Name.Should().Be(player2.DisplayName);
-        result.Data!.PlayerItems[1].PlayerId.Should().Be(player2.Id);
-        result.Data!.PlayerItems[1].CashgameId.Should().Be(cashgame.Id);
+        var p1 = result.Data!.PlayerItems.First(o => o.PlayerId == player1.Id);
+        var p2 = result.Data!.PlayerItems.First(o => o.PlayerId == player2.Id);
+        
+        p1.Checkpoints.Count.Should().Be(1);
+        p1.HasCashedOut.Should().BeFalse();
+        p1.Name.Should().Be(player1.DisplayName);
+        p1.PlayerId.Should().Be(player1.Id);
+        p1.CashgameId.Should().Be(cashgame.Id);
+        p2.Checkpoints.Count.Should().Be(1);
+        p2.HasCashedOut.Should().BeFalse();
+        p2.Name.Should().Be(player2.DisplayName);
+        p2.PlayerId.Should().Be(player2.Id);
+        p2.CashgameId.Should().Be(cashgame.Id);
     }
     
     private CashgameDetails Sut => new(
