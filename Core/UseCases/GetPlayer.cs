@@ -18,14 +18,15 @@ public class GetPlayer(
         var player = await GetPlayerOrNull(request.PlayerId);
         if (player == null)
             return Error(new PlayerNotFoundError(request.PlayerId));
-
-        var bunch = await bunchRepository.Get(player.BunchId);
+        
         var user = player.UserId != null 
             ? await userRepository.GetById(player.UserId)
             : null;
         
         if (!request.Auth.CanSeePlayer(player.BunchId))
             return Error(new AccessDeniedError());
+        
+        var bunch = await bunchRepository.Get(player.BunchId);
 
         var canDelete = request.Auth.CanDeletePlayer(player.BunchId);
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);
