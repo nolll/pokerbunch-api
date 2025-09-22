@@ -16,7 +16,9 @@ public class AddEventTests : TestBase
     public async Task AddEvent_AllOk_EventIsAdded()
     {
         var eventName = Create.String();
-        await ExecuteAsync(eventName);
+        
+        var request = CreateRequest(eventName);
+        await Sut.Execute(request);
 
         await _eventRepository.Received().Add(Arg.Is<Event>(o => o.Name == eventName));
     }
@@ -24,16 +26,16 @@ public class AddEventTests : TestBase
     [Fact]
     public async Task AddEvent_InvalidName_ReturnsValidationError()
     {
-        var result = await ExecuteAsync("");
+        var request = CreateRequest("");
+        var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
-    private async Task<UseCaseResult<AddEvent.Result>> ExecuteAsync(string eventName)
+    private AddEvent.Request CreateRequest(string eventName)
     {
         var userBunch = Create.UserBunch();
-        var request = new AddEvent.Request(new AuthInTest(canAddEvent: true, userBunch: userBunch), Create.String(), eventName);
-        return await Sut.Execute(request);
+        return new AddEvent.Request(new AuthInTest(canAddEvent: true, userBunch: userBunch), Create.String(), eventName);
     }
 
     private AddEvent Sut => new(_eventRepository);

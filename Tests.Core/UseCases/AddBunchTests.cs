@@ -20,28 +20,32 @@ public class AddBunchTests : TestBase
     [Fact]
     public async Task AddBunch_WithEmptyDisplayName_ReturnsValidationError()
     {
-        var result = await ExecuteAsync(displayName: "");
+        var request = CreateRequest(displayName: "");
+        var result = await Sut.Execute(request);
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Fact]
     public async Task AddBunch_WithEmptyCurrencySymbol_ReturnsValidationError()
     {
-        var result = await ExecuteAsync(currencySymbol: "");
+        var request = CreateRequest(currencySymbol: "");
+        var result = await Sut.Execute(request);
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Fact]
     public async Task AddBunch_WithEmptyCurrencyLayout_ReturnsValidationError()
     {
-        var result = await ExecuteAsync(currencyLayout: "");
+        var request = CreateRequest(currencyLayout: "");
+        var result = await Sut.Execute(request);
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
     [Fact]
     public async Task AddBunch_WithEmptyTimeZone_ReturnsValidationError()
     {
-        var result = await ExecuteAsync(timeZone: "");
+        var request = CreateRequest(timeZone: "");
+        var result = await Sut.Execute(request);
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -50,8 +54,9 @@ public class AddBunchTests : TestBase
     {
         var existingBunch = Create.Bunch(slug: Slug);
         _bunchRepository.GetBySlugOrNull(Slug).Returns(existingBunch);
-        
-        var result = await ExecuteAsync(displayName: DisplayName);
+     
+        var request = CreateRequest(displayName: DisplayName);
+        var result = await Sut.Execute(request);
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
@@ -64,13 +69,15 @@ public class AddBunchTests : TestBase
         var currencyLayout = Create.String();
         var timeZone = Create.TimeZoneId();
         
-        await ExecuteAsync(
+        var request = CreateRequest(
             auth: auth, 
             displayName: DisplayName,
             description: description,
             timeZone: timeZone,
             currencySymbol: currencySymbol,
             currencyLayout: currencyLayout);
+        
+        await Sut.Execute(request);
 
         await _bunchRepository.Received().Add(Arg.Is<Bunch>(o =>
             o.Slug == Slug &&
@@ -86,24 +93,21 @@ public class AddBunchTests : TestBase
             o.UserId == auth.Id &&
             o.Role == Role.Manager));
     }
-    
-    private Task<UseCaseResult<AddBunch.Result>> ExecuteAsync(
+
+    private AddBunch.Request CreateRequest(
         IAuth? auth = null,
-        string? displayName = null, 
+        string? displayName = null,
         string? description = null,
-        string? currencySymbol = null, 
+        string? currencySymbol = null,
         string? currencyLayout = null,
-        string? timeZone = null)
-    {
-        var request = new AddBunch.Request(
+        string? timeZone = null) =>
+        new(
             auth ?? new AuthInTest(),
-            displayName ?? Create.String(), 
-            description ?? Create.String(), 
-            currencySymbol ?? Create.String(), 
-            currencyLayout ?? Create.String(), 
+            displayName ?? Create.String(),
+            description ?? Create.String(),
+            currencySymbol ?? Create.String(),
+            currencyLayout ?? Create.String(),
             timeZone ?? Create.TimeZoneId());
-        return Sut.Execute(request);
-    }
 
     private AddBunch Sut => new(_bunchRepository, _playerRepository);
 }
