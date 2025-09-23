@@ -19,8 +19,10 @@ public class PlayerDetailsTests : TestBase
     {
         var player = Create.Player();
         _playerRepository.Get(player.Id).Returns(player);
+        
         var request = CreateRequest(playerId: player.Id, canSeePlayer: false);
         var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
     

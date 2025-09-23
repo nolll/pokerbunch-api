@@ -16,7 +16,10 @@ public class TestEmailTests : TestBase
     public async Task HasAccess_EmailIsSent()
     {
         var to = Create.EmailAddress();
-        var result = await ExecuteAsync(true, to);
+        
+        var request = CreateRequest(to);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeTrue();
         result.Data!.Email.Should().Be(to);
         
@@ -26,13 +29,17 @@ public class TestEmailTests : TestBase
     [Fact]
     public async Task NoAccess_ReturnsError()
     {
-        var result = await ExecuteAsync(false, Create.EmailAddress());
+        var to = Create.EmailAddress();
+        
+        var request = CreateRequest(to, false);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
-    private async Task<UseCaseResult<TestEmail.Result>> ExecuteAsync(bool canSendTestEmail, string to) => 
-        await Sut.Execute(new TestEmail.Request(new AuthInTest(canSendTestEmail: canSendTestEmail), to));
+    private TestEmail.Request CreateRequest(string to, bool? canSendTestEmail = null) => 
+        new(new AuthInTest(canSendTestEmail: canSendTestEmail ?? true), to);
 
     private TestEmail Sut => new(_emailSender);
 }

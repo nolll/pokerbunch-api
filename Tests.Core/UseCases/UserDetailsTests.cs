@@ -18,7 +18,9 @@ public class UserDetailsTests : TestBase
 
         _userRepository.GetByUserName(viewUser.UserName).Returns(viewUser);
         
-        var result = await ExecuteAsync(currentUser.UserName, false, viewUser.UserName);
+        var request = CreateRequest(currentUser.UserName, false, viewUser.UserName);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeTrue();
         result.Data!.UserName.Should().Be(viewUser.UserName);
         result.Data!.DisplayName.Should().Be(viewUser.DisplayName);
@@ -36,7 +38,9 @@ public class UserDetailsTests : TestBase
         
         _userRepository.GetByUserName(viewUser.UserName).Returns(viewUser);
         
-        var result = await ExecuteAsync(currentUser.UserName, true, viewUser.UserName);
+        var request = CreateRequest(currentUser.UserName, true, viewUser.UserName);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeTrue();
         result.Data!.CanViewAll.Should().BeTrue();
     }
@@ -48,18 +52,20 @@ public class UserDetailsTests : TestBase
         
         _userRepository.GetByUserName(currentUser.UserName).Returns(currentUser);
         
-        var result = await ExecuteAsync(currentUser.UserName, false);
+        var request = CreateRequest(currentUser.UserName, false);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeTrue();
         result.Data!.CanViewAll.Should().BeTrue();
     }
 
-    private async Task<UseCaseResult<UserDetails.Result>> ExecuteAsync(
+    private UserDetails.Request CreateRequest(
         string currentUserName, 
         bool canViewAllData,
         string? viewUserName = null)
     {
         var auth = new AuthInTest(userName: currentUserName, canViewFullUserData: canViewAllData);
-        return await Sut.Execute(new UserDetails.Request(auth, viewUserName));
+        return new UserDetails.Request(auth, viewUserName);
     }
 
     private UserDetails Sut => new(_userRepository);

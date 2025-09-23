@@ -14,15 +14,23 @@ public class LocationDetailsTests : TestBase
     [Fact]
     public async Task LocationDetails_AllPropertiesAreSet()
     {
+        var bunch = Create.Bunch();
         var location = Create.Type<Location>();
-        var userBunch = Create.UserBunch();
-        var request = new GetLocation.Request(new AuthInTest(canSeeLocation: true, userBunch: userBunch), location.Id);
         _locationRepository.Get(location.Id).Returns(location);
-        
+
+        var request = CreateRequest(bunch.Id, bunch.Slug, location.Id);
         var result = await Sut.Execute(request);
         
         result.Data!.Name.Should().Be(location.Name);
-        result.Data!.Slug.Should().Be(userBunch.Slug);
+        result.Data!.Slug.Should().Be(bunch.Slug);
+    }
+
+    private GetLocation.Request CreateRequest(string? bunchId = null, string? slug = null, string? locationId = null, bool? canSeeLocation = null)
+    {
+        var userBunch = Create.UserBunch(bunchId, slug);
+        return new GetLocation.Request(
+            new AuthInTest(canSeeLocation: true, userBunch: userBunch),
+            locationId ?? Create.String());
     }
 
     private GetLocation Sut => new(_locationRepository);

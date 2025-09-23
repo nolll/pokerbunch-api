@@ -47,6 +47,7 @@ public class ResetPasswordTests : TestBase
 
         var user = Create.User();
         _userRepository.GetByUserEmail(user.Email).Returns(user);
+        
         var request = CreateRequest(email: user.Email, loginUrl: "https://loginUrl");
         await Sut.Execute(request);
 
@@ -58,12 +59,9 @@ public class ResetPasswordTests : TestBase
                                                                   user.Salt == "aaaaaaaaaa"));
     }
 
-    private ResetPassword.Request CreateRequest(string? email = null, string? loginUrl = null)
-    {
-        return new ResetPassword.Request(
-            email ?? Create.EmailAddress(),
-            loginUrl ?? Create.String());
-    }
+    private ResetPassword.Request CreateRequest(string? email = null, string? loginUrl = null) => new(
+        email ?? Create.EmailAddress(),
+        loginUrl ?? Create.String());
 
     private ResetPassword Sut => new(
         _userRepository,

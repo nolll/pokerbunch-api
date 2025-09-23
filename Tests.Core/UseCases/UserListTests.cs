@@ -20,11 +20,17 @@ public class UserListTests : TestBase
         var user2 = Create.User();
         
         _userRepository.List().Returns([user1, user2]);
-        
-        var result = await Sut.Execute(new UserList.Request(new AuthInTest(canListUsers: true)));
+
+        var request = CreateRequest();
+        var result = await Sut.Execute(request);
 
         result.Data!.Users.Count.Should().Be(2);
         result.Data!.Users.First().DisplayName.Should().Be(user1.DisplayName);
         result.Data!.Users.First().UserName.Should().Be(user1.UserName);
+    }
+
+    private UserList.Request CreateRequest()
+    {
+        return new UserList.Request(new AuthInTest(canListUsers: true));
     }
 }
