@@ -18,8 +18,10 @@ public class CashgameListTests : TestBase
     {
         var bunch = Create.Bunch();
         _cashgameRepository.GetFinished(bunch.Id).Returns([]);
+
+        var request = CreateRequest(bunch.Id, bunch.Slug);
+        var result = await Sut.Execute(request);
         
-        var result = await Sut.Execute(CreateRequest(bunch.Id, bunch.Slug));
         result.Data!.Items.Count.Should().Be(0);
     }
 
@@ -32,8 +34,9 @@ public class CashgameListTests : TestBase
         _cashgameRepository.GetFinished(bunch.Id, Arg.Any<int?>()).Returns([cashgame]);
         _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
         _locationRepository.List(bunch.Id).Returns([location]);
-        
-        var result = await Sut.Execute(CreateRequest(bunch.Id, bunch.Slug));
+
+        var request = CreateRequest(bunch.Id, bunch.Slug);
+        var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
         result.Data!.Slug.Should().Be(bunch.Slug);

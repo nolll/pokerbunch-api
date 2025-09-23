@@ -13,14 +13,27 @@ public class CurrentCashgamesTests : TestBase
     private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
     
     [Fact]
+    public async Task NoAccess_ReturnsAccessDeniedError()
+    {
+        var bunch = Create.Bunch();
+
+        var request = CreateRequest(bunch, false);
+        var result = await Sut.Execute(request);
+        
+        result.Success.Should().BeFalse();
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
+    }
+    
+    [Fact]
     public async Task HasAccess_WithGames_ReturnsListOfGames()
     {
         var cashgame = Create.Cashgame();
         var bunch = Create.Bunch();
         
         _cashgameRepository.GetRunning(bunch.Id).Returns(cashgame);
-
-        var result = await ExecuteAsync(true, bunch);
+        
+        var request = CreateRequest(bunch);
+        var result = await Sut.Execute(request);
         
         var games = result.Data!.Games;
         games.Count.Should().Be(1);
@@ -33,28 +46,20 @@ public class CurrentCashgamesTests : TestBase
     public async Task HasAccess_NoGames_ReturnsEmptyList()
     {
         var bunch = Create.Bunch();
-
-        var result = await ExecuteAsync(true, bunch);
+        
+        var request = CreateRequest(bunch);
+        var result = await Sut.Execute(request);
 
         result.Data!.Games.Count.Should().Be(0);
     }
-
-    [Fact]
-    public async Task NoAccess_ReturnsAccessDeniedError()
-    {
-        var bunch = Create.Bunch();
-
-        var result = await ExecuteAsync(false, bunch);
-        
-        result.Success.Should().BeFalse();
-        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
-    }
     
-    private async Task<UseCaseResult<CurrentCashgames.Result>> ExecuteAsync(bool canListCurrentGames, Bunch bunch)
+    private CurrentCashgames.Request CreateRequest(Bunch bunch, bool? canListCurrentGames = null)
     {
         var userBunch = Create.UserBunch(bunch.Id, bunch.Slug);
-        var auth = new AuthInTest(canListCurrentGames: canListCurrentGames, userBunch: userBunch);
-        return await Sut.Execute(new CurrentCashgames.Request(auth, bunch.Slug));
+        var auth = new AuthInTest(
+            canListCurrentGames: canListCurrentGames ?? true, 
+            userBunch: userBunch);
+        return new CurrentCashgames.Request(auth, bunch.Slug);
     }
 
     private CurrentCashgames Sut => new(_cashgameRepository);

@@ -32,14 +32,13 @@ public class CashgameDetailsTests : TestBase
         var action1 = Create.BuyinAction(cashgameId: cashgame.Id, playerId: player1.Id);
         var action2 = Create.BuyinAction(cashgameId: cashgame.Id, playerId: player2.Id);
         cashgame.SetCheckpoints([action1, action2]);
-        
-        var userBunch = Create.UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName, role: Role.Player);
-        var request = new CashgameDetails.Request(new AuthInTest(canSeeCashgame: true, userBunch: userBunch), cashgame.Id, DateTime.UtcNow);
+
+        var request = CreateRequest(bunch.Id, bunch.Slug, bunch.DisplayName, player1.Id, cashgame.Id);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
         result.Data!.Slug.Should().Be(bunch.Slug);
-        result.Data!.PlayerId.Should().Be(userBunch.PlayerId);
+        result.Data!.PlayerId.Should().Be(player1.Id);
         result.Data!.LocationName.Should().Be(location.Name);
         result.Data!.DefaultBuyin.Should().Be(bunch.DefaultBuyin);
         result.Data!.Role.Should().Be(Role.Player);
@@ -58,6 +57,25 @@ public class CashgameDetailsTests : TestBase
         p2.Name.Should().Be(player2.DisplayName);
         p2.PlayerId.Should().Be(player2.Id);
         p2.CashgameId.Should().Be(cashgame.Id);
+    }
+
+    private CashgameDetails.Request CreateRequest(
+        string? bunchId = null,
+        string? slug = null,
+        string? bunchName = null,
+        string? playerId = null,
+        string? cashgameId = null)
+    {
+        var userBunch = Create.UserBunch(
+            bunchId, 
+            slug, 
+            bunchName,
+            playerId,
+            role: Role.Player);
+        return new CashgameDetails.Request(
+            new AuthInTest(canSeeCashgame: true, userBunch: userBunch), 
+            cashgameId ?? Create.String(), 
+            DateTime.UtcNow);
     }
     
     private CashgameDetails Sut => new(

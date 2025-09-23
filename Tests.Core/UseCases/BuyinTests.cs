@@ -13,17 +13,15 @@ namespace Tests.Core.UseCases;
 public class BuyinTests : TestBase
 {
     private const string PlayerId = "1";
-    private const int ValidBuyin = 1;
-    private const int InvalidBuyin = 0;
-    private const int ValidStack = 0;
-    private const int InvalidStack = -1;
     
     private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
 
-    [Fact]
-    public async Task Buyin_InvalidBuyin_ReturnsError()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task Buyin_InvalidBuyin_ReturnsError(int buyin)
     {
-        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), Create.String(), PlayerId, InvalidBuyin, ValidStack, DateTime.UtcNow);
+        var request = CreateRequest(buyin: buyin);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
@@ -32,7 +30,7 @@ public class BuyinTests : TestBase
     [Fact]
     public async Task Buyin_InvalidStackSize_ReturnsError()
     {
-        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), Create.String(), PlayerId, ValidBuyin, InvalidStack, DateTime.UtcNow);
+        var request = CreateRequest(stack: -1);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
@@ -41,15 +39,16 @@ public class BuyinTests : TestBase
     [Fact]
     public async Task Buyin_StartedCashgame_AddsCheckpointWithCorrectValues()
     {
-        var timestamp = DateTime.UtcNow;
-        const int buyin = 1;
-        const int stack = 2;
-        const int savedStack = 3;
+        var timestamp = Create.DateTime();
+        var buyin = Create.Int();
+        var stack = Create.Int();
+        var savedStack = buyin + stack;
 
         var cashgame = Create.Cashgame(status: GameStatus.Running);
+        var player = Create.Player();
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
-        var request = new Buyin.Request(new AuthInTest(canEditCashgameActionsFor: true), cashgame.Id, PlayerId, buyin, stack, timestamp);
+        var request = CreateRequest(cashgameId: cashgame.Id, playerId: player.Id, buyin: buyin, stack: stack, timestamp: timestamp);
         await Sut.Execute(request);
         
         await _cashgameRepository.Received()
@@ -57,6 +56,24 @@ public class BuyinTests : TestBase
                                           o.AddedCheckpoints.First().Timestamp == timestamp &&
                                           o.AddedCheckpoints.First().Amount == buyin &&
                                           o.AddedCheckpoints.First().Stack == savedStack));
+    }
+
+    private Buyin.Request CreateRequest(
+        string? cashgameId = null,
+        string? playerId = null,
+        int? buyin = null,
+        int? stack = null,
+        DateTime? timestamp = null,
+        bool? canEditCashgameActionsFor = null)
+    {
+        return new Buyin.Request(
+            new AuthInTest(
+                canEditCashgameActionsFor: canEditCashgameActionsFor ?? true), 
+            cashgameId ?? Create.String(), 
+            playerId ?? Create.String(),
+            buyin ?? Create.Int(),
+            stack ?? Create.Int(),
+            timestamp ?? Create.DateTime());
     }
 
     private Buyin Sut => new(_cashgameRepository);

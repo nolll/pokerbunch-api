@@ -22,6 +22,7 @@ public class AddBunchTests : TestBase
     {
         var request = CreateRequest(displayName: "");
         var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -30,6 +31,7 @@ public class AddBunchTests : TestBase
     {
         var request = CreateRequest(currencySymbol: "");
         var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -38,6 +40,7 @@ public class AddBunchTests : TestBase
     {
         var request = CreateRequest(currencyLayout: "");
         var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -46,6 +49,7 @@ public class AddBunchTests : TestBase
     {
         var request = CreateRequest(timeZone: "");
         var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -57,6 +61,7 @@ public class AddBunchTests : TestBase
      
         var request = CreateRequest(displayName: DisplayName);
         var result = await Sut.Execute(request);
+        
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
 
@@ -76,7 +81,6 @@ public class AddBunchTests : TestBase
             timeZone: timeZone,
             currencySymbol: currencySymbol,
             currencyLayout: currencyLayout);
-        
         await Sut.Execute(request);
 
         await _bunchRepository.Received().Add(Arg.Is<Bunch>(o =>

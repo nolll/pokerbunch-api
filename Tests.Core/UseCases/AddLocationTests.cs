@@ -13,28 +13,47 @@ public class AddLocationTests : TestBase
     private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
     
     [Fact]
+    public async Task AddEvent_NoAccess_ReturnsError()
+    {
+        var bunch = Create.Bunch();
+        
+        var request = CreateRequest(slug: bunch.Slug, locationName: "added location", canAddLocation: false);
+        var result = await Sut.Execute(request);
+
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
+    }
+    
+    [Fact]
+    public async Task AddEvent_InvalidName_ReturnsError()
+    {
+        var bunch = Create.Bunch();
+        
+        var request = CreateRequest(slug: bunch.Slug, locationName: "");
+        var result = await Sut.Execute(request);
+
+        result.Error!.Type.Should().Be(ErrorType.Validation);
+    }
+    
+    [Fact]
     public async Task AddLocation_AllOk_LocationIsAdded()
     {
         const string locationName = "added location";
-
         var bunch = Create.Bunch();
-        var userBunch = Create.UserBunch(bunch.Id, bunch.Slug, "", "", "", Role.Manager);
-        var request = new AddLocation.Request(new AuthInTest(canAddLocation: true, userBunch: userBunch), bunch.Slug, locationName);
+
+        var request = CreateRequest(bunch.Slug, locationName: locationName);
         await Sut.Execute(request);
 
         await _locationRepository.Received().Add(Arg.Is<Location>(o => o.Name == locationName));
     }
 
-    [Fact]
-    public async Task AddEvent_InvalidName_ReturnsError()
+    private AddLocation.Request CreateRequest(string? bunchId = null, string? slug = null, string? locationName = null, bool? canAddLocation = null)
     {
-        const string addedEventName = "";
-
-        var bunch = Create.Bunch();
-        var request = new AddLocation.Request(new AuthInTest(canAddLocation: true), bunch.Slug, addedEventName);
-        var result = await Sut.Execute(request);
-
-        result.Error!.Type.Should().Be(ErrorType.Validation);
+        return new AddLocation.Request(
+            new AuthInTest(
+                canAddLocation: canAddLocation ?? true, 
+                userBunch: Create.UserBunch(bunchId, slug)), 
+            slug ?? Create.String(), 
+            locationName ?? Create.String());
     }
 
     private AddLocation Sut => new(_locationRepository);

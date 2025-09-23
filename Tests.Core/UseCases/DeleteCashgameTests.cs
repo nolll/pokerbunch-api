@@ -23,7 +23,8 @@ public class DeleteCashgameTests : TestBase
         cashgame.SetCheckpoints([new BuyinCheckpoint(cashgameId, "", DateTime.Now, 0, 200, "")]);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
         
-        var result = await ExecuteAsync(cashgame.Id);
+        var request = CreateRequest(cashgame.Id);
+        var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
@@ -34,7 +35,8 @@ public class DeleteCashgameTests : TestBase
         var cashgame = Create.Cashgame(eventId: Create.String());
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
         
-        var result = await ExecuteAsync(cashgame.Id);
+        var request = CreateRequest(cashgame.Id);
+        var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Conflict);
     }
@@ -45,19 +47,18 @@ public class DeleteCashgameTests : TestBase
         var cashgame = Create.Cashgame();
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
-        var result = await ExecuteAsync(cashgame.Id);
+        var request = CreateRequest(cashgame.Id);
+        var result = await Sut.Execute(request);
 
         await _cashgameRepository.Received().DeleteGame(cashgame.Id);
         result.Success.Should().BeTrue();
     }
 
-    private async Task<UseCaseResult<DeleteCashgame.Result>> ExecuteAsync(string? cashgameId = null)
+    private DeleteCashgame.Request CreateRequest(string? cashgameId = null)
     {
-        var request = new DeleteCashgame.Request(
+        return new DeleteCashgame.Request(
             new AuthInTest(canDeleteCashgame: true),
             cashgameId ?? Create.String());
-        
-        return await Sut.Execute(request);
     }
 
     private DeleteCashgame Sut => new(_cashgameRepository);

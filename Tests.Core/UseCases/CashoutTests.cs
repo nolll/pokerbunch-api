@@ -19,7 +19,9 @@ public class CashoutTests : TestBase
     [Fact]
     public async Task InvalidStack_ReturnsError()
     {
-        var result = await ExecuteAsync(stack: -1);
+        var request = CreateRequest(stack: -1);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
@@ -37,7 +39,8 @@ public class CashoutTests : TestBase
         ]);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
-        await ExecuteAsync(cashgame.Id, playerId, cashoutStack, startTime.AddMinutes(2));
+        var request = CreateRequest(cashgame.Id, playerId, cashoutStack, startTime.AddMinutes(2));
+        await Sut.Execute(request);
         
         await _cashgameRepository.Received().Update(Arg.Is<Cashgame>(o =>
             o.UpdatedCheckpoints.Count == 1 &&
@@ -57,21 +60,22 @@ public class CashoutTests : TestBase
         ]);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
 
-        await ExecuteAsync(cashgameId, playerId, cashoutStack, startTime.AddMinutes(2));
+        var request = CreateRequest(cashgameId, playerId, cashoutStack, startTime.AddMinutes(2));
+        await Sut.Execute(request);
         
         await _cashgameRepository.Received().Update(Arg.Is<Cashgame>(o =>
             o.AddedCheckpoints.Count == 1 &&
             o.AddedCheckpoints.First(a => a.Type == CheckpointType.Cashout).Stack == cashoutStack));
     }
     
-    private async Task<UseCaseResult<Cashout.Result>> ExecuteAsync(string? cashgameId = null, string? playerId = null, int? stack = null, DateTime? cashoutTime = null)
+    private Cashout.Request CreateRequest(string? cashgameId = null, string? playerId = null, int? stack = null, DateTime? cashoutTime = null)
     {
-        return await Sut.Execute(new Cashout.Request(
+        return new Cashout.Request(
             new AuthInTest(canEditCashgameActionsFor: true),
             cashgameId ?? Create.String(),
             playerId ?? Create.String(),
             stack ?? Create.Int(),
-            cashoutTime ?? Create.DateTime()));
+            cashoutTime ?? Create.DateTime());
     }
 
     private Cashout Sut => new(_cashgameRepository);
