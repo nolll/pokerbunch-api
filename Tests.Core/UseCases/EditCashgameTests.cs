@@ -30,7 +30,6 @@ public class EditCashgameTests : TestBase
     public async Task EditCashgame_EmptyLocation_ReturnsError()
     {
         var request = CreateRequest(locationId: "");
-        
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.Validation);
@@ -87,14 +86,12 @@ public class EditCashgameTests : TestBase
         string? cashgameId = null, 
         string? locationId = null,
         string? eventId = null,
-        bool? canEditCashgame = null)
-    {
-        return new EditCashgame.Request(
+        bool? canEditCashgame = null) =>
+        new(
             new AuthInTest(canEditCashgame: canEditCashgame ?? true), 
             cashgameId ?? Create.String(), 
             locationId ?? Create.String(), 
             eventId);
-    }
 
     private EditCashgame Sut => new(
         _cashgameRepository,

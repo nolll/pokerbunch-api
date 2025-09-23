@@ -22,24 +22,30 @@ public class GetBunchTests : TestBase
     [Fact]
     public async Task NoAccess_AccessDenied()
     {
-        var result = await ExecuteAsync(false, _bunch.Slug);
+        var request = CreateRequest(_bunch.Slug, canGetBunch: false);
+        var result = await Sut.Execute(request);
+        
+        result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
     }
 
     [Fact]
     public async Task BunchNameIsSet()
     {
-        var result = await ExecuteAsync(true, _bunch.Slug);
+        var request = CreateRequest(_bunch.Slug);
+        var result = await Sut.Execute(request);
+        
         result.Success.Should().BeTrue();
-        result!.Data!.Name.Should().Be(_bunch.DisplayName);
-        result!.Data!.Description.Should().Be(_bunch.Description);
-        result!.Data!.HouseRules.Should().Be(_bunch.HouseRules);
+        result.Data!.Name.Should().Be(_bunch.DisplayName);
+        result.Data!.Description.Should().Be(_bunch.Description);
+        result.Data!.HouseRules.Should().Be(_bunch.HouseRules);
     }
 
-    private async Task<UseCaseResult<GetBunch.Result>> ExecuteAsync(bool canGetBunch, string slug)
+    private GetBunch.Request CreateRequest(string slug, bool? canGetBunch = null)
     {
-        return await Sut.Execute(
-            new GetBunch.Request(new AuthInTest(canGetBunch: canGetBunch), slug));
+        return new GetBunch.Request(
+            new AuthInTest(canGetBunch: canGetBunch ?? true), 
+            slug);
     }
 
     private GetBunch Sut => new(_bunchRepository);

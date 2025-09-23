@@ -67,7 +67,6 @@ public class EditBunchTests : TestBase
         var defaultBuyin = Create.Int();
         
         var request = CreateRequest(bunch.Slug, description, currencySymbol, currencyLayout, timeZone, houseRules, defaultBuyin);
-
         var result = await Sut.Execute(request);
 
         await _bunchRepository.Received()
@@ -89,9 +88,8 @@ public class EditBunchTests : TestBase
         string? timeZone = null,
         string? houseRules = null,
         int? defaultBuyin = null,
-        bool? canEditBunch = null)
-    {
-        return new EditBunch.Request(
+        bool? canEditBunch = null) =>
+        new(
             new AuthInTest(canEditBunch: canEditBunch ?? true), 
             slug ?? Create.String(), 
             description ?? Create.String(), 
@@ -100,7 +98,6 @@ public class EditBunchTests : TestBase
             timeZone ?? Create.TimeZoneId(), 
             houseRules ?? Create.String(), 
             defaultBuyin ?? Create.Int());
-    }
 
     private EditBunch Sut => new(_bunchRepository);
 }

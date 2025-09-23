@@ -16,7 +16,7 @@ public class InvitePlayerTests : TestBase
     private readonly IInvitationCodeCreator _invitationCodeCreator = Substitute.For<IInvitationCodeCreator>();
     private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
 
-    [Xunit.Theory]
+    [Theory]
     [InlineData("")]
     [InlineData("a")]
     public async Task InvitePlayer_InvalidEmail_ReturnsError(string email)
@@ -46,6 +46,7 @@ public class InvitePlayerTests : TestBase
         var player = Create.Player(bunchId: bunch.Id);
         _playerRepository.Get(player.Id).Returns(player);
         var email = Create.EmailAddress();
+        
         var request = CreateRequest(email: email, bunchId: bunch.Id, slug: bunch.Slug, bunchName: bunch.DisplayName, playerId: player.Id);
         var result = await Sut.Execute(request);
         

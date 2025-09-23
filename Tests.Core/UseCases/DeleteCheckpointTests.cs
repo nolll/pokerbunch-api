@@ -22,11 +22,8 @@ public class DeleteCheckpointTests : TestBase
         var report = Create.ReportAction(cashgameId: cashgame.Id);
         cashgame.SetCheckpoints([buyin, report]);
         _cashgameRepository.GetByCheckpoint(report.Id).Returns(cashgame);
-        
-        var userBunch = Create.UserBunch(bunch.Id, bunch.Slug);
-        var request = new DeleteCheckpoint.Request(
-            new AuthInTest(canDeleteCheckpoint: true, userBunch: userBunch),
-            report.Id);
+
+        var request = CreateRequest(bunch.Id, bunch.Slug, report.Id);
         var result = await Sut.Execute(request);
 
         await _cashgameRepository.Received()
@@ -35,6 +32,14 @@ public class DeleteCheckpointTests : TestBase
         result.Data!.Slug.Should().Be(bunch.Slug);
         result.Data!.CashgameId.Should().Be(cashgame.Id);
         result.Data!.GameIsRunning.Should().Be(status == GameStatus.Running);
+    }
+
+    private DeleteCheckpoint.Request CreateRequest(string? bunchId = null, string? slug = null, string? reportId = null)
+    {
+        var userBunch = Create.UserBunch(bunchId, slug);
+        return new DeleteCheckpoint.Request(
+            new AuthInTest(canDeleteCheckpoint: true, userBunch: userBunch),
+            reportId ?? Create.String());
     }
 
     private DeleteCheckpoint Sut => new(_cashgameRepository);

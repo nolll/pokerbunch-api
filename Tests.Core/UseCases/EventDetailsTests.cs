@@ -46,12 +46,10 @@ public class EventDetailsTests : TestBase
     private EventDetails.Request CreateRequest(
         UserBunch userBunch, 
         string? eventId = null,
-        bool? canSeeEventDetails = null)
-    {
-        return new EventDetails.Request(
+        bool? canSeeEventDetails = null) =>
+        new(
             new AuthInTest(canSeeEventDetails: canSeeEventDetails ?? true, userBunch: userBunch),
             eventId ?? Create.String());
-    }
 
     private EventDetails Sut => new(_eventRepository, _locationRepository);
 }

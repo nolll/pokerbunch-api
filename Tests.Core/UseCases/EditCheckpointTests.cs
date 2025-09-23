@@ -60,15 +60,13 @@ public class EditCheckpointTests : TestBase
         string? actionId = null,
         DateTime? timestamp = null,
         int? stack = null,
-        int? added = null)
-    {
-        return new EditCheckpoint.Request(
+        int? added = null) =>
+        new(
             new AuthInTest(canEditCashgameAction: canEditCashgameAction ?? true),
             actionId ?? Create.String(),
             timestamp ?? Create.DateTime(),
             stack ?? Create.Int(),
             added ?? Create.Int());
-    }
 
     private EditCheckpoint Sut => new(_cashgameRepository);
 }

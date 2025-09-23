@@ -17,6 +17,7 @@ public class EventListTests : TestBase
     public async Task EventList_NoAccess_ReturnsError()
     {
         var userBunch = Create.UserBunch(Create.Bunch());
+        
         var request = CreateRequest(userBunch, canListEvents: false);
         var result = await Sut.Execute(request);
 
@@ -47,12 +48,10 @@ public class EventListTests : TestBase
         result.Data!.Events[1].StartDate.Should().Be(event2.StartDate);
     }
 
-    private EventList.Request CreateRequest(UserBunch userBunch, bool? canListEvents = null)
-    {
-        return new EventList.Request(
+    private EventList.Request CreateRequest(UserBunch userBunch, bool? canListEvents = null) =>
+        new(
             new AuthInTest(canListEvents: canListEvents ?? true, userBunch: userBunch), 
             Create.String());
-    }
 
     private EventList Sut => new(_eventRepository, _locationRepository);
 }

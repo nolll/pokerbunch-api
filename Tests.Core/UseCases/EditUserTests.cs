@@ -49,7 +49,6 @@ public class EditUserTests : TestBase
         _userRepository.GetByUserName(user.UserName).Returns(user);
         
         var request = CreateRequest(user.UserName, changedDisplayName, email: changedEmail);
-
         await Sut.Execute(request);
 
         await _userRepository.Received()
@@ -60,14 +59,12 @@ public class EditUserTests : TestBase
         string? userName = null,
         string? displayName = null,
         string? realName = null,
-        string? email = null)
-    {
-        return new EditUser.Request(
+        string? email = null) =>
+        new(
             userName ?? Create.String(),
             displayName ?? Create.String(),
             realName ?? Create.String(),
             email ?? Create.EmailAddress());
-    }
 
     private EditUser Sut => new(_userRepository);
 }
