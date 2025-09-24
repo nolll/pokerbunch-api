@@ -31,6 +31,10 @@ public class EventDb(IDb db)
         .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Event.BunchId)
         .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id))
         .OrderBy(Schema.Event.Id, Schema.Cashgame.Date);
+    
+    private static Query FindQuery => EventQuery
+        .Select(Schema.Event.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Event.BunchId);
 
     public async Task<Event> Get(string id)
     {
@@ -53,10 +57,10 @@ public class EventDb(IDb db)
 
         return eventDayDtos.ToEvents();
     }
-
-    public async Task<IList<string>> FindByBunchId(string bunchId)
+    
+    public async Task<IList<string>> FindBySlug(string slug)
     {
-        var query = EventQuery.Select(Schema.Event.Id).Where(Schema.Event.BunchId, int.Parse(bunchId));
+        var query = FindQuery.Where(Schema.Bunch.Name, slug);
         var result = await db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
