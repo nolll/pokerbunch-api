@@ -38,7 +38,7 @@ public class ResetPassword(IUserRepository userRepository, IEmailSender emailSen
     {
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; } = email;
+        public string Email { get; } = email.ToLower();
 
         public string LoginUrl { get; } = loginUrl;
     }
@@ -47,24 +47,17 @@ public class ResetPassword(IUserRepository userRepository, IEmailSender emailSen
     {
     }
 
-    private class ResetPasswordMessage : IMessage
+    private class ResetPasswordMessage(string password, string loginUrl) : IMessage
     {
-        private readonly string _password;
-        private readonly string _loginUrl;
-
-        public ResetPasswordMessage(string password, string loginUrl)
-        {
-            _password = password;
-            _loginUrl = loginUrl;
-        }
-
         public string Subject => "Poker Bunch Password Recovery";
-        public string Body => string.Format(BodyFormat, _password, _loginUrl);
+        public string Body => string.Format(BodyFormat, password, loginUrl);
 
         private const string BodyFormat =
-            @"Here is your new password for Poker Bunch:
-{0}
+            """
+            Here is your new password for Poker Bunch:
+            {0}
 
-Please sign in here: {1}";
+            Please sign in here: {1}
+            """;
     }
 }

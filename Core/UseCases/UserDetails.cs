@@ -25,7 +25,7 @@ public class UserDetails(IUserRepository userRepository) : UseCase<UserDetails.R
     public class Request(IAuth auth, string? userName = null)
     {
         public IAuth Auth { get; } = auth;
-        public string UserName { get; } = userName ?? auth.UserName;
+        public string UserName { get; } = userName?.ToLower() ?? auth.UserName;
     }
 
     public class Result(

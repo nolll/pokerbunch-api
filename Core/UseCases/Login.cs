@@ -47,7 +47,7 @@ public class Login(
 
     public class Request(string userNameOrEmail, string password)
     {
-        public string UserNameOrEmail { get; } = userNameOrEmail;
+        public string UserNameOrEmail { get; } = userNameOrEmail.ToLower();
         public string Password { get; } = password;
     }
 

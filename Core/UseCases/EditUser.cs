@@ -33,7 +33,7 @@ public class EditUser(IUserRepository userRepository) : UseCase<EditUser.Request
 
     public class Request(string userName, string displayName, string? realName, string email)
     {
-        public string UserName { get; } = userName;
+        public string UserName { get; } = userName.ToLower();
 
         [Required(ErrorMessage = "Display Name can't be empty")]
         public string DisplayName { get; } = displayName;
@@ -42,7 +42,7 @@ public class EditUser(IUserRepository userRepository) : UseCase<EditUser.Request
 
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; } = email;
+        public string Email { get; } = email.ToLower();
     }
 
     public class Result(string userName)

@@ -18,7 +18,7 @@ public class AddUser(
 
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
-
+        
         var userByName = await GetExistingUserByUserName(request.UserName);
         if (userByName != null)
             return Error(new UserExistsError());
@@ -63,9 +63,8 @@ public class AddUser(
         }
     }
 
-    private static User CreateUser(Request request, string encryptedPassword, string salt)
-    {
-        return new User(
+    private static User CreateUser(Request request, string encryptedPassword, string salt) =>
+        new(
             "",
             request.UserName,
             request.DisplayName,
@@ -74,19 +73,18 @@ public class AddUser(
             Role.Player,
             encryptedPassword,
             salt);
-    }
 
     public class Request(string userName, string displayName, string email, string password, string loginUrl)
     {
         [Required(ErrorMessage = "Login Name can't be empty")]
-        public string UserName { get; } = userName;
+        public string UserName { get; } = userName.ToLower();
 
         [Required(ErrorMessage = "Display Name can't be empty")]
         public string DisplayName { get; } = displayName;
 
         [Required(ErrorMessage = "Email can't be empty")]
         [EmailAddress(ErrorMessage = "The email address is not valid")]
-        public string Email { get; } = email;
+        public string Email { get; } = email.ToLower();
 
         [Required(ErrorMessage = "Password can't be empty")]
         public string Password { get; } = password;
