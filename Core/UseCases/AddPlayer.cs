@@ -28,7 +28,7 @@ public class AddPlayer(IPlayerRepository playerRepository)
         if (player != null)
             return Error(new PlayerExistsError());
 
-        player = Player.New(bunchInfo.Id, request.Name);
+        player = Player.New(bunchInfo.Id, bunchInfo.Slug, request.Name);
         var id = await playerRepository.Add(player);
 
         return Success(new Result(id));

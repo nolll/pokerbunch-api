@@ -77,6 +77,7 @@ public class TestDataFactory
 
     public Player Player(
         string? bunchId = null,
+        string? slug = null,
         string? id = null,
         string? userId = null,
         string? userName = null,
@@ -84,6 +85,7 @@ public class TestDataFactory
         Role? role = null,
         string? color = null) => new(
         bunchId ?? String(),
+        slug ?? String(),
         id ?? String(),
         userId,
         userName,

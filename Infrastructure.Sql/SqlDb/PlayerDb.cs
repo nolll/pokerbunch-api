@@ -19,9 +19,12 @@ public class PlayerDb(IDb db)
             Schema.Player.UserId,
             Schema.Player.RoleId,
             Schema.Player.Color,
-            Schema.User.UserName)
+            Schema.User.UserName,
+            Schema.Bunch.Name)
         .SelectRaw($"COALESCE({Schema.User.DisplayName}, {Schema.Player.PlayerName}) AS {Schema.Player.PlayerName.AsParam()}")
-        .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId);
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
+        .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
 
     private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
 

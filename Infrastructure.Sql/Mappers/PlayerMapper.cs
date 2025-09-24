@@ -9,6 +9,7 @@ internal static class PlayerMapper
     {
         return new Player(
             playerDto.Bunch_Id.ToString(),
+            playerDto.Bunch_Slug,
             playerDto.Player_Id.ToString(),
             playerDto.User_Id != null ? playerDto.User_Id.ToString() : null,
             playerDto.User_Name,
