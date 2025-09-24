@@ -21,7 +21,7 @@ public class CashgameList(
             return Error(new AccessDeniedError());
         
         var cashgames = (await cashgameRepository.GetFinished(bunchInfo.Id, request.Year)).OrderByDescending(o => o.StartTime);
-        var locations = await locationRepository.List(bunchInfo.Id);
+        var locations = await locationRepository.List(request.Slug);
         var players = await playerRepository.List(bunchInfo.Id);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 

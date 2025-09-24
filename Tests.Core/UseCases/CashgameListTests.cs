@@ -33,7 +33,7 @@ public class CashgameListTests : TestBase
         var cashgame = Create.Cashgame(bunchId: bunch.Id, locationId: location.Id);
         _cashgameRepository.GetFinished(bunch.Id, Arg.Any<int?>()).Returns([cashgame]);
         _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
-        _locationRepository.List(bunch.Id).Returns([location]);
+        _locationRepository.List(bunch.Slug).Returns([location]);
 
         var request = CreateRequest(bunch.Id, bunch.Slug);
         var result = await Sut.Execute(request);

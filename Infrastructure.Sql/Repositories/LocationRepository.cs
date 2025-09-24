@@ -19,10 +19,10 @@ public class LocationRepository(IDb container, ICache cache) : ILocationReposito
     {
         return GetAndCache(ids);
     }
-
-    public async Task<IList<Location>> List(string bunchId)
+    
+    public async Task<IList<Location>> List(string slug)
     {
-        var ids = await _locationDb.Find(bunchId);
+        var ids = await _locationDb.Find(slug);
         return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
