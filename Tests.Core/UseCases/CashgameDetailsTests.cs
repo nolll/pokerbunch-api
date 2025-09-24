@@ -21,10 +21,10 @@ public class CashgameDetailsTests : TestBase
     public async Task CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
     {
         var bunch = Create.Bunch();
-        _bunchRepository.Get(bunch.Id).Returns(bunch);
+        _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
         var location = Create.Location(bunchId: bunch.Id);
         _locationRepository.Get(location.Id).Returns(location);
-        var cashgame = Create.Cashgame(locationId: location.Id, bunchId: bunch.Id, status: GameStatus.Running);
+        var cashgame = Create.Cashgame(locationId: location.Id, bunchSlug: bunch.Slug, bunchId: bunch.Id, status: GameStatus.Running);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
         var player1 = Create.Player();
         var player2 = Create.Player();

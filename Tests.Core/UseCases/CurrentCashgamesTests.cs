@@ -17,7 +17,7 @@ public class CurrentCashgamesTests : TestBase
     {
         var bunch = Create.Bunch();
 
-        var request = CreateRequest(bunch, false);
+        var request = CreateRequest(bunch.Slug, false);
         var result = await Sut.Execute(request);
         
         result.Success.Should().BeFalse();
@@ -30,9 +30,9 @@ public class CurrentCashgamesTests : TestBase
         var cashgame = Create.Cashgame();
         var bunch = Create.Bunch();
         
-        _cashgameRepository.GetRunning(bunch.Id).Returns(cashgame);
+        _cashgameRepository.GetRunning(bunch.Slug).Returns(cashgame);
         
-        var request = CreateRequest(bunch);
+        var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
         
         var games = result.Data!.Games;
@@ -47,19 +47,17 @@ public class CurrentCashgamesTests : TestBase
     {
         var bunch = Create.Bunch();
         
-        var request = CreateRequest(bunch);
+        var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
 
         result.Data!.Games.Count.Should().Be(0);
     }
     
-    private CurrentCashgames.Request CreateRequest(Bunch bunch, bool? canListCurrentGames = null)
+    private CurrentCashgames.Request CreateRequest(string slug, bool? canListCurrentGames = null)
     {
-        var userBunch = Create.UserBunch(bunch.Id, bunch.Slug);
         var auth = new AuthInTest(
-            canListCurrentGames: canListCurrentGames ?? true, 
-            userBunch: userBunch);
-        return new CurrentCashgames.Request(auth, bunch.Slug);
+            canListCurrentGames: canListCurrentGames ?? true);
+        return new CurrentCashgames.Request(auth, slug);
     }
 
     private CurrentCashgames Sut => new(_cashgameRepository);

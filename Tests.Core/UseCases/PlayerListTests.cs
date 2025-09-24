@@ -18,7 +18,7 @@ public class PlayerListTests : TestBase
         _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
         var player1 = Create.Player(displayName: "a");
         var player2 = Create.Player(displayName: "b");
-        _playerRepository.List(bunch.Id).Returns([player1, player2]);
+        _playerRepository.List(bunch.Slug).Returns([player1, player2]);
         
         var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
@@ -37,7 +37,7 @@ public class PlayerListTests : TestBase
     {
         var bunch = Create.Bunch();
         _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
-        _playerRepository.List(bunch.Id).Returns([]);
+        _playerRepository.List(bunch.Slug).Returns([]);
         
         var request = CreateRequest(bunch.Slug, canAddPlayer: true);
         var result = await Sut.Execute(request);

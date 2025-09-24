@@ -18,13 +18,13 @@ public class EventCashgameList(
     {
         var @event = await eventRepository.Get(request.EventId);
 
-        if (!request.Auth.CanListEventCashgames(@event.BunchId))
+        if (!request.Auth.CanListEventCashgames(@event.BunchSlug))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByEvent(request.EventId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = await locationRepository.List(@event.BunchId);
-        var players = await playerRepository.List(@event.BunchId);
+        var locations = await locationRepository.List(@event.BunchSlug);
+        var players = await playerRepository.List(@event.BunchSlug);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));

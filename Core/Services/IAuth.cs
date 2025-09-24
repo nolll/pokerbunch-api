@@ -4,8 +4,7 @@ namespace Core.Services;
 
 public interface IAuth
 {
-    UserBunch GetBunchById(string id);
-    UserBunch GetBunchBySlug(string id);
+    UserBunch GetBunch(string slug);
 
     bool CanClearCache { get; }
     bool CanSendTestEmail { get; }
@@ -16,28 +15,28 @@ public interface IAuth
     string Id { get; }
     string UserName { get; }
     string DisplayName { get; }
-    bool CanEditCashgame(string bunchId);
-    bool CanDeleteCashgame(string bunchId);
-    bool CanSeeCashgame(string bunchId);
-    bool CanSeeLocation(string bunchId);
-    bool CanAddLocation(string bunchId);
-    bool CanEditBunch(string bunchId);
-    bool CanListLocations(string bunchId);
-    bool CanAddCashgame(string bunchId);
-    bool CanGetBunch(string bunchId);
-    bool CanSeePlayer(string bunchId);
-    bool CanDeletePlayer(string bunchId);
-    bool CanListPlayers(string bunchId);
-    bool CanAddPlayer(string bunchId);
-    bool CanAddEvent(string bunchId);
-    bool CanEditCashgameAction(string bunchId);
-    bool CanListEvents(string bunchId);
-    bool CanInvitePlayer(string bunchId);
-    bool CanSeeEventDetails(string bunchId);
-    bool CanListCashgames(string bunchId);
-    bool CanListPlayerCashgames(string bunchId);
-    bool CanListEventCashgames(string bunchId);
-    bool CanListCurrentGames(string bunchId);
-    bool CanDeleteCheckpoint(string bunchId);
-    bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId);
+    bool CanEditCashgame(string slug);
+    bool CanDeleteCashgame(string slug);
+    bool CanSeeCashgame(string slug);
+    bool CanSeeLocation(string slug);
+    bool CanAddLocation(string slug);
+    bool CanEditBunch(string slug);
+    bool CanListLocations(string slug);
+    bool CanAddCashgame(string slug);
+    bool CanGetBunch(string slug);
+    bool CanSeePlayer(string slug);
+    bool CanDeletePlayer(string slug);
+    bool CanListPlayers(string slug);
+    bool CanAddPlayer(string slug);
+    bool CanAddEvent(string slug);
+    bool CanEditCashgameAction(string slug);
+    bool CanListEvents(string slug);
+    bool CanInvitePlayer(string slug);
+    bool CanSeeEventDetails(string slug);
+    bool CanListCashgames(string slug);
+    bool CanListPlayerCashgames(string slug);
+    bool CanListEventCashgames(string slug);
+    bool CanListCurrentGames(string slug);
+    bool CanDeleteCheckpoint(string slug);
+    bool CanEditCashgameActionsFor(string slug, string requestedPlayerId);
 }

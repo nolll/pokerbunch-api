@@ -14,7 +14,7 @@ public class DeletePlayer(
     {
         var player = await playerRepository.Get(request.PlayerId);
         
-        if (!request.Auth.CanDeletePlayer(player.BunchId))
+        if (!request.Auth.CanDeletePlayer(player.BunchSlug))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);

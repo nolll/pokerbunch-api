@@ -17,9 +17,9 @@ public class CashgameListTests : TestBase
     public async Task CashgameList_WithoutGames_HasEmptyListOfGames()
     {
         var bunch = Create.Bunch();
-        _cashgameRepository.GetFinished(bunch.Id).Returns([]);
+        _cashgameRepository.GetFinished(bunch.Slug).Returns([]);
 
-        var request = CreateRequest(bunch.Id, bunch.Slug);
+        var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
         
         result.Data!.Items.Count.Should().Be(0);
@@ -31,11 +31,11 @@ public class CashgameListTests : TestBase
         var bunch = Create.Bunch();
         var location = Create.Location(bunchId: bunch.Id);
         var cashgame = Create.Cashgame(bunchId: bunch.Id, locationId: location.Id);
-        _cashgameRepository.GetFinished(bunch.Id, Arg.Any<int?>()).Returns([cashgame]);
+        _cashgameRepository.GetFinished(bunch.Slug, Arg.Any<int?>()).Returns([cashgame]);
         _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
-        _locationRepository.List(bunch.Id).Returns([location]);
+        _locationRepository.List(bunch.Slug).Returns([location]);
 
-        var request = CreateRequest(bunch.Id, bunch.Slug);
+        var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
@@ -44,10 +44,9 @@ public class CashgameListTests : TestBase
         result.Data!.Items[0].CashgameId.Should().Be(cashgame.Id);
     }
     
-    private CashgameList.Request CreateRequest(string bunchId, string slug)
+    private CashgameList.Request CreateRequest(string slug)
     {
-        var userBunch = Create.UserBunch(bunchId, slug);
-        return new CashgameList.Request(new AuthInTest(canListCashgames: true, userBunch: userBunch), slug, null);
+        return new CashgameList.Request(new AuthInTest(canListCashgames: true), slug, null);
     }
 
     private CashgameList Sut => new(

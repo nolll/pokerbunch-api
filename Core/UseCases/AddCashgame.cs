@@ -19,12 +19,11 @@ public class AddCashgame(
             return Error(new ValidationError(validator));
         
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
-        if (!request.Auth.CanAddCashgame(bunchInfo.Id))
+        
+        if (!request.Auth.CanAddCashgame(bunch.Slug))
             return Error(new AccessDeniedError()); 
         
-        var cashgame = new Cashgame(bunchInfo.Id, request.LocationId!, null, GameStatus.Running);
+        var cashgame = new Cashgame(bunch.Id, bunch.Slug, request.LocationId!, null, GameStatus.Running);
         var cashgameId = await cashgameRepository.Add(bunch, cashgame);
 
         return Success(new Result(request.Slug, cashgameId));

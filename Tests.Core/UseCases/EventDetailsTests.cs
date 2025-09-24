@@ -18,9 +18,8 @@ public class EventDetailsTests : TestBase
     {
         var @event = Create.Event();
         _eventRepository.Get(@event.Id).Returns(@event);
-        var userBunch = Create.UserBunch(Create.Bunch(), Create.Player());
         
-        var request = CreateRequest(userBunch, eventId: @event.Id, canSeeEventDetails: false);
+        var request = CreateRequest(eventId: @event.Id, canSeeEventDetails: false);
         var result = await Sut.Execute(request);
 
         result.Error!.Type.Should().Be(ErrorType.AccessDenied);
@@ -34,9 +33,7 @@ public class EventDetailsTests : TestBase
         var location = Create.Location();
         _locationRepository.Get(location.Id).Returns(location);
         
-        var userBunch = Create.UserBunch(Create.Bunch(), Create.Player());
-        
-        var request = CreateRequest(userBunch, eventId: @event.Id);
+        var request = CreateRequest(eventId: @event.Id);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
@@ -44,11 +41,10 @@ public class EventDetailsTests : TestBase
     }
 
     private EventDetails.Request CreateRequest(
-        UserBunch userBunch, 
         string? eventId = null,
         bool? canSeeEventDetails = null) =>
         new(
-            new AuthInTest(canSeeEventDetails: canSeeEventDetails ?? true, userBunch: userBunch),
+            new AuthInTest(canSeeEventDetails: canSeeEventDetails ?? true),
             eventId ?? Create.String());
 
     private EventDetails Sut => new(_eventRepository, _locationRepository);

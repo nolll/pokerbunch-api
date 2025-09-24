@@ -19,10 +19,10 @@ public class CashgameDetails(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = await cashgameRepository.Get(request.Id);
-        var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var bunchAccess = request.Auth.GetBunchById(cashgame.BunchId);
+        var bunch = await bunchRepository.GetBySlug(cashgame.BunchSlug);
+        var bunchRelation = request.Auth.GetBunch(cashgame.BunchSlug);
 
-        if (!request.Auth.CanSeeCashgame(cashgame.BunchId))
+        if (!request.Auth.CanSeeCashgame(cashgame.BunchSlug))
             return Error(new AccessDeniedError());
 
         var playerIds = GetPlayerIds(cashgame);
@@ -48,7 +48,7 @@ public class CashgameDetails(
         var result = new Result(
             bunch.Slug,
             bunch.Timezone.Id,
-            bunchAccess.PlayerId,
+            bunchRelation.PlayerId,
             cashgame.Id,
             startTime,
             updatedTime,
@@ -63,7 +63,7 @@ public class CashgameDetails(
             currencyLayout,
             thousandSeparator,
             culture,
-            bunchAccess.Role,
+            bunchRelation.Role,
             cashgame.Status == GameStatus.Running);
 
         return Success(result);

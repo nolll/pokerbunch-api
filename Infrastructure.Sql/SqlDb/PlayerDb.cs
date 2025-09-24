@@ -19,15 +19,20 @@ public class PlayerDb(IDb db)
             Schema.Player.UserId,
             Schema.Player.RoleId,
             Schema.Player.Color,
-            Schema.User.UserName)
+            Schema.User.UserName,
+            Schema.Bunch.Name)
         .SelectRaw($"COALESCE({Schema.User.DisplayName}, {Schema.Player.PlayerName}) AS {Schema.Player.PlayerName.AsParam()}")
-        .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId);
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
+        .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
 
-    private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
-
-    public async Task<IList<string>> Find(string bunchId)
+    private static Query FindQuery => PlayerQuery
+        .Select(Schema.Player.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
+    
+    public async Task<IList<string>> Find(string slug)
     {
-        var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId));
+        var query = FindQuery.Where(Schema.Bunch.Name, slug);
         var result = await db.GetAsync<string>(query);
         return result.Select(o => o.ToString()).ToList();
     }

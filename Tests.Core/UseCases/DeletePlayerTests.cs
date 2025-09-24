@@ -19,7 +19,7 @@ public class DeletePlayerTests : TestBase
         _playerRepository.Get(player.Id).Returns(player);
         _cashgameRepository.GetByPlayer(player.Id).Returns([]);
 
-        var request = CreateRequest(bunch.Id, bunch.Slug, player.Id);
+        var request = CreateRequest(player.Id);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
@@ -36,18 +36,17 @@ public class DeletePlayerTests : TestBase
         _playerRepository.Get(player.Id).Returns(player);
         _cashgameRepository.GetByPlayer(player.Id).Returns([cashgame]);
 
-        var request = CreateRequest(bunch.Id, bunch.Slug, player.Id);
+        var request = CreateRequest(player.Id);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeFalse();
         await _playerRepository.DidNotReceive().Delete(Arg.Any<string>());
     }
 
-    private DeletePlayer.Request CreateRequest(string? bunchId = null, string? slug = null, string? playerId = null)
+    private DeletePlayer.Request CreateRequest(string? playerId = null)
     {
-        var userBunch = Create.UserBunch(bunchId, slug);
         return new DeletePlayer.Request(
-            new AuthInTest(canDeletePlayer: true, userBunch: userBunch),
+            new AuthInTest(canDeletePlayer: true),
             playerId ?? Create.String());
     }
 

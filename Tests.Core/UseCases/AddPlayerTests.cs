@@ -28,7 +28,7 @@ public class AddPlayerTests : TestBase
     {
         var existingPlayer = Create.Player();
         var userBunch = Create.UserBunch();
-        _playerRepository.List(userBunch.Id).Returns([existingPlayer]);
+        _playerRepository.List(userBunch.Slug).Returns([existingPlayer]);
         
         var request = CreateRequest(userBunch, existingPlayer.DisplayName);
         var result = await Sut.Execute(request);

@@ -20,7 +20,7 @@ public class JoinBunch(
             return Error(new ValidationError(validator));
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
-        var players = await playerRepository.List(bunch.Id);
+        var players = await playerRepository.List(request.Slug);
         var player = GetMatchedPlayer(players, request.Code);
 
         if (player == null)

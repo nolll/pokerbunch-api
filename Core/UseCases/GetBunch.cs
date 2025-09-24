@@ -13,9 +13,9 @@ public class GetBunch(IBunchRepository bunchRepository)
     {
         var bunch = await bunchRepository.GetBySlug(request.Slug);
         
-        return !request.Auth.CanGetBunch(bunch.Id) ? 
-            Error(new AccessDeniedError()) : 
-            Success(new Result(bunch));
+        return !request.Auth.CanGetBunch(request.Slug)
+            ? Error(new AccessDeniedError())
+            : Success(new Result(bunch));
     }
 
     public class Request(IAuth auth, string slug)

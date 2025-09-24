@@ -13,13 +13,12 @@ public class EventDetails(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var e = await eventRepository.Get(request.EventId);
-        if (!request.Auth.CanSeeEventDetails(e.BunchId))
+        if (!request.Auth.CanSeeEventDetails(e.BunchSlug))
             return Error(new AccessDeniedError());
         
         var location = e.LocationId != null ? await locationRepository.Get(e.LocationId) : null;
-        var bunchInfo = request.Auth.GetBunchById(e.BunchId);
 
-        return Success(new Result(e.Id, e.Name, bunchInfo.Slug, location?.Id, location?.Name, e.StartDate));
+        return Success(new Result(e.Id, e.Name, e.BunchSlug, location?.Id, location?.Name, e.StartDate));
     }
 
     public class Request(IAuth auth, string eventId)

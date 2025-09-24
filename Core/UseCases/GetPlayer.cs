@@ -7,7 +7,6 @@ using Core.Services;
 namespace Core.UseCases;
 
 public class GetPlayer(
-    IBunchRepository bunchRepository,
     IPlayerRepository playerRepository,
     ICashgameRepository cashgameRepository,
     IUserRepository userRepository)
@@ -23,17 +22,15 @@ public class GetPlayer(
             ? await userRepository.GetById(player.UserId)
             : null;
         
-        if (!request.Auth.CanSeePlayer(player.BunchId))
+        if (!request.Auth.CanSeePlayer(player.BunchSlug))
             return Error(new AccessDeniedError());
-        
-        var bunch = await bunchRepository.Get(player.BunchId);
 
-        var canDelete = request.Auth.CanDeletePlayer(player.BunchId);
+        var canDelete = request.Auth.CanDeletePlayer(player.BunchSlug);
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
 
-        return Success(new Result(bunch, player, user, canDelete, hasPlayed, avatarUrl));
+        return Success(new Result(player, user, canDelete, hasPlayed, avatarUrl));
     }
 
     private async Task<Player?> GetPlayerOrNull(string id)
@@ -66,7 +63,7 @@ public class GetPlayer(
         public string Slug { get; }
         public string? Color { get; }
 
-        public Result(Bunch bunch, Player player, User? user, bool canDelete, bool hasPlayed, string avatarUrl)
+        public Result(Player player, User? user, bool canDelete, bool hasPlayed, string avatarUrl)
         {
             var isUser = user is not null;
 
@@ -78,7 +75,7 @@ public class GetPlayer(
             UserName = user?.UserName ?? null;
             AvatarUrl = avatarUrl;
             Color = player.Color;
-            Slug = bunch.Slug;
+            Slug = player.BunchSlug;
         }
     }
 }

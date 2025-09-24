@@ -4,6 +4,7 @@ public class SqlBunch : SqlTable
 {
     public SqlColumn Id { get; }
     public SqlColumn Name { get; }
+    public SqlColumn Slug { get; }
     public SqlColumn DisplayName { get; }
     public SqlColumn Description { get; }
     public SqlColumn Currency { get; }
@@ -19,6 +20,7 @@ public class SqlBunch : SqlTable
     {
         Id = new SqlColumn(this, "bunch_id");
         Name = new SqlColumn(this, "name");
+        Slug = new SqlColumn(this, "bunch_slug");
         DisplayName = new SqlColumn(this, "display_name");
         Description = new SqlColumn(this, "description");
         Currency = new SqlColumn(this, "currency");

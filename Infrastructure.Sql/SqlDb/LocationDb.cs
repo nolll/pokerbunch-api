@@ -16,10 +16,13 @@ public class LocationDb(IDb db)
         .Select(
             Schema.Location.Id,
             Schema.Location.Name,
-            Schema.Location.BunchId);
+            Schema.Location.BunchId)
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Location.BunchId);
 
     private static Query FindQuery => LocationQuery
-        .Select(Schema.Location.Id);
+        .Select(Schema.Location.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Location.BunchId);
 
     public async Task<Location> Get(string id)
     {
@@ -43,9 +46,9 @@ public class LocationDb(IDb db)
         return locationDtos.Select(LocationMapper.ToLocation).ToList();
     }
 
-    public async Task<IList<string>> Find(string bunchId)
+    public async Task<IList<string>> Find(string slug)
     {
-        var query = FindQuery.Where(Schema.Location.BunchId, int.Parse(bunchId));
+        var query = FindQuery.Where(Schema.Bunch.Name, slug);
         return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
     }
         

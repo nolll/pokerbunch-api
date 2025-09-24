@@ -17,13 +17,13 @@ public class PlayerCashgameList(
     {
         var player = await playerRepository.Get(request.PlayerId);
 
-        if (!request.Auth.CanListPlayerCashgames(player.BunchId))
+        if (!request.Auth.CanListPlayerCashgames(player.BunchSlug))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(request.PlayerId);
         cashgames = SortItems(cashgames).ToList();
-        var locations = await locationRepository.List(player.BunchId);
-        var players = await playerRepository.List(player.BunchId);
+        var locations = await locationRepository.List(player.BunchSlug);
+        var players = await playerRepository.List(player.BunchSlug);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(items.ToList()));

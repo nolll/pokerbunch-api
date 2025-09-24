@@ -13,16 +13,14 @@ public class EventList(
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
-
-        if (!request.Auth.CanListEvents(bunchInfo.Id))
+        if (!request.Auth.CanListEvents(request.Slug))
             return Error(new AccessDeniedError());
 
-        var events = await eventRepository.List(bunchInfo.Id);
+        var events = await eventRepository.List(request.Slug);
         var locationIds = events.Select(o => o.LocationId).Where(o => o != null).Distinct().ToList();
         var locations = await locationRepository.List(locationIds!);
 
-        var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, bunchInfo.Slug)).ToList();
+        var eventItems = events.OrderByDescending(o => o.StartDate).Select(o => CreateEventItem(o, locations, request.Slug)).ToList();
 
         return Success(new Result(eventItems));
     }

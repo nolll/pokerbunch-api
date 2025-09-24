@@ -10,13 +10,12 @@ public class GetLocationList(ILocationRepository locationRepository)
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
-        if (!request.Auth.CanListLocations(bunchInfo.Id))
+        if (!request.Auth.CanListLocations(request.Slug))
             return Error(new AccessDeniedError());
 
-        var locations = await locationRepository.List(bunchInfo.Id);
+        var locations = await locationRepository.List(request.Slug);
 
-        var locationItems = locations.Select(o => CreateLocationItem(o, bunchInfo.Slug)).OrderBy(o => o.Name).ToList();
+        var locationItems = locations.Select(o => CreateLocationItem(o, request.Slug)).OrderBy(o => o.Name).ToList();
 
         return Success(new Result(locationItems));
     }

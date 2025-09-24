@@ -20,13 +20,13 @@ public class EditCashgame(
 
         var cashgame = await cashgameRepository.Get(request.Id);
 
-        if (!request.Auth.CanEditCashgame(cashgame.BunchId))
+        if (!request.Auth.CanEditCashgame(cashgame.BunchSlug))
             return Error(new AccessDeniedError());
 
         var location = await locationRepository.Get(request.LocationId!);
         var @event = request.EventId != null ? await eventRepository.Get(request.EventId) : null;
         var eventId = @event?.Id;
-        var updatedCashgame = new Cashgame(cashgame.BunchId, location.Id, eventId, cashgame.Status, cashgame.Id);
+        var updatedCashgame = new Cashgame(cashgame.BunchId, cashgame.BunchSlug, location.Id, eventId, cashgame.Status, cashgame.Id);
         await cashgameRepository.Update(updatedCashgame);
 
         if (cashgame.EventId == null && request.EventId != null)

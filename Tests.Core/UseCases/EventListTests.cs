@@ -16,9 +16,7 @@ public class EventListTests : TestBase
     [Fact]
     public async Task EventList_NoAccess_ReturnsError()
     {
-        var userBunch = Create.UserBunch(Create.Bunch());
-        
-        var request = CreateRequest(userBunch, canListEvents: false);
+        var request = CreateRequest(canListEvents: false);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeFalse();
@@ -32,10 +30,9 @@ public class EventListTests : TestBase
         var event1 = Create.Event(bunchId: bunch.Id, startDate: new Date(2025, 2, 1), endDate: new Date(2025, 2, 2));
         var event2 = Create.Event(bunchId: bunch.Id, startDate: new Date(2025, 1, 1), endDate: new Date(2025, 1, 2));
         Event[] events = [event1, event2];
-        _eventRepository.List(bunch.Id).Returns(events.OrderByDescending(o => o.StartDate).ToList());
-        var userBunch = Create.UserBunch(bunch);
+        _eventRepository.List(bunch.Slug).Returns(events.OrderByDescending(o => o.StartDate).ToList());
 
-        var request = CreateRequest(userBunch);
+        var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
@@ -48,10 +45,10 @@ public class EventListTests : TestBase
         result.Data!.Events[1].StartDate.Should().Be(event2.StartDate);
     }
 
-    private EventList.Request CreateRequest(UserBunch userBunch, bool? canListEvents = null) =>
+    private EventList.Request CreateRequest(string? slug = null, bool? canListEvents = null) =>
         new(
-            new AuthInTest(canListEvents: canListEvents ?? true, userBunch: userBunch), 
-            Create.String());
+            new AuthInTest(canListEvents: canListEvents ?? true), 
+            slug ?? Create.String());
 
     private EventList Sut => new(_eventRepository, _locationRepository);
 }

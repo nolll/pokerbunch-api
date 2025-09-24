@@ -10,11 +10,10 @@ public class GetLocation(ILocationRepository locationRepository)
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var location = await locationRepository.Get(request.LocationId);
-        var bunchInfo = request.Auth.GetBunchById(location.BunchId);
 
-        return !request.Auth.CanSeeLocation(location.BunchId) 
+        return !request.Auth.CanSeeLocation(location.BunchSlug) 
             ? Error(new AccessDeniedError())
-            : Success(new Result(location.Id, location.Name, bunchInfo.Slug));
+            : Success(new Result(location.Id, location.Name, location.BunchSlug));
     }
 
     public class Request(IAuth auth, string locationId)

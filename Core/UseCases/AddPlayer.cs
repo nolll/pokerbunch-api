@@ -18,17 +18,17 @@ public class AddPlayer(IPlayerRepository playerRepository)
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunch(request.Slug);
 
-        if (!request.Auth.CanAddPlayer(bunchInfo.Id))
+        if (!request.Auth.CanAddPlayer(request.Slug))
             return Error(new AccessDeniedError());
 
-        var existingPlayers = await playerRepository.List(bunchInfo.Id);
+        var existingPlayers = await playerRepository.List(request.Slug);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
         if (player != null)
             return Error(new PlayerExistsError());
 
-        player = Player.New(bunchInfo.Id, request.Name);
+        player = Player.New(bunchInfo.Id, request.Slug, request.Name);
         var id = await playerRepository.Add(player);
 
         return Success(new Result(id));

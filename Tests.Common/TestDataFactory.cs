@@ -55,15 +55,17 @@ public class TestDataFactory
         defaultBuyin ?? Int(),
         currency ?? Create<Currency>());
 
-    public Location Location(string? id = null, string? name = null, string? bunchId = null) => new(
+    public Location Location(string? id = null, string? name = null, string? bunchId = null, string? bunchSlug = null) => new(
         id ?? String(),
         name ?? String(),
-        bunchId ?? String());
+        bunchId ?? String(),
+        bunchSlug ?? String());
     
     public Event Event(
         string? id = null,
         string? name = null,
         string? bunchId = null,
+        string? bunchSlug = null,
         string? locationId = null,
         Date? startDate = null,
         Date? endDate = null) =>
@@ -71,12 +73,14 @@ public class TestDataFactory
         id ?? String(),
         name ?? String(),
         bunchId ?? String(),
+        bunchSlug ?? String(),
         locationId ?? String(),
         startDate ?? Date(),
         endDate ?? Date());
 
     public Player Player(
         string? bunchId = null,
+        string? slug = null,
         string? id = null,
         string? userId = null,
         string? userName = null,
@@ -84,6 +88,7 @@ public class TestDataFactory
         Role? role = null,
         string? color = null) => new(
         bunchId ?? String(),
+        slug ?? String(),
         id ?? String(),
         userId,
         userName,
@@ -104,20 +109,16 @@ public class TestDataFactory
         playerId ?? String(),
         playerName ?? String(),
         role ?? Type<Role>());
-    
-    public UserBunch UserBunch(Bunch bunch, Player player) 
-        => UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName, player.Id, player.DisplayName, player.Role);
-    
-    public UserBunch UserBunch(Bunch bunch) 
-        => UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName);
 
     public Cashgame Cashgame(
         string? bunchId = null,
+        string? bunchSlug = null,
         string? locationId = null,
         string? eventId = null,
         GameStatus? status = null,
         string? id = null) => new(
         bunchId ?? String(),
+        bunchSlug ?? String(),
         locationId ?? String(),
         eventId,
         status ?? Create<GameStatus>(),

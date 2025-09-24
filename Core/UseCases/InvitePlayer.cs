@@ -19,14 +19,14 @@ public class InvitePlayer(
             return Error(new ValidationError(validator));
 
         var player = await playerRepository.Get(request.PlayerId);
-        var bunchInfo = request.Auth.GetBunchById(player.BunchId);
 
-        if (!request.Auth.CanInvitePlayer(player.BunchId))
+        if (!request.Auth.CanInvitePlayer(player.BunchSlug))
             return Error(new AccessDeniedError());
-
+        
+        var bunchInfo = request.Auth.GetBunch(player.BunchSlug);
         var invitationCode = invitationCodeCreator.GetCode(player);
-        var joinUrl = string.Format(request.JoinUrlFormat, bunchInfo.Slug);
-        var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, bunchInfo.Slug, invitationCode);
+        var joinUrl = string.Format(request.JoinUrlFormat, player.BunchSlug);
+        var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, player.BunchSlug, invitationCode);
         var message = new InvitationMessage(bunchInfo.Name, invitationCode, request.RegisterUrl, joinUrl, joinWithCodeUrl);
         emailSender.Send(request.Email, message);
 

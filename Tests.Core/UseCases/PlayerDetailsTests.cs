@@ -9,7 +9,6 @@ namespace Tests.Core.UseCases;
 
 public class PlayerDetailsTests : TestBase
 {
-    private readonly IBunchRepository _bunchRepository = Substitute.For<IBunchRepository>();
     private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
     private readonly ICashgameRepository _cashgameRepository = Substitute.For<ICashgameRepository>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
@@ -29,9 +28,7 @@ public class PlayerDetailsTests : TestBase
     [Fact]
     public async Task PlayerDetails_WithoutUser_DisplayNameIsSet()
     {
-        var bunch = Create.Bunch();
-        _bunchRepository.Get(bunch.Id).Returns(bunch);
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player();
         _playerRepository.Get(player.Id).Returns(player);
         
         var request = CreateRequest(playerId: player.Id);
@@ -51,9 +48,8 @@ public class PlayerDetailsTests : TestBase
     {
         var user = Create.User(email: "email@example.com");
         _userRepository.GetById(user.Id).Returns(user);
-        var bunch = Create.Bunch();
-        _bunchRepository.Get(bunch.Id).Returns(bunch);
-        var player = Create.Player(bunchId: bunch.Id, userId: user.Id);
+
+        var player = Create.Player(userId: user.Id);
         _playerRepository.Get(player.Id).Returns(player);
         
         var request = CreateRequest(playerId: player.Id);
@@ -68,9 +64,7 @@ public class PlayerDetailsTests : TestBase
     [Fact]
     public async Task PlayerDetails_WithDeletePermissionAndPlayerHasNotPlayedGames_CanDeleteIsTrue()
     {
-        var bunch = Create.Bunch();
-        _bunchRepository.Get(bunch.Id).Returns(bunch);
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player();
         _playerRepository.Get(player.Id).Returns(player);
         _cashgameRepository.GetByPlayer(player.Id).Returns([]);
         
@@ -83,9 +77,7 @@ public class PlayerDetailsTests : TestBase
     [Fact]
     public async Task PlayerDetails_DeletePermissionButPlayerHasPlayedGames_CanDeleteIsFalse()
     {
-        var bunch = Create.Bunch();
-        _bunchRepository.Get(bunch.Id).Returns(bunch);
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player();
         _playerRepository.Get(player.Id).Returns(player);
         var cashgame = Create.Cashgame();
         _cashgameRepository.GetByPlayer(player.Id).Returns([cashgame]);
@@ -107,7 +99,6 @@ public class PlayerDetailsTests : TestBase
     }
 
     private GetPlayer Sut => new(
-        _bunchRepository,
         _playerRepository,
         _cashgameRepository,
         _userRepository);

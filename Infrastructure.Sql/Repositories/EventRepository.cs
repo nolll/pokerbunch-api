@@ -19,10 +19,10 @@ public class EventRepository(IDb db, ICache cache) : IEventRepository
     {
         return cache.GetAndStoreAsync(_eventDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
-
+    
     public async Task<IList<Event>> List(string bunchId)
     {
-        var ids = await _eventDb.FindByBunchId(bunchId);
+        var ids = await _eventDb.FindBySlug(bunchId);
         return await Get(ids);
     }
 

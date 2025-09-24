@@ -22,7 +22,9 @@ public class CashgameDb(IDb db)
             Schema.Cashgame.LocationId,
             Schema.EventCashgame.EventId,
             Schema.Cashgame.Status)
-        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id);
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
+        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Cashgame.BunchId);
 
     private static Query GetCheckpointQuery => CashgameCheckpointQuery
         .Select(
@@ -34,9 +36,12 @@ public class CashgameDb(IDb db)
             Schema.CashgameCheckpoint.Amount,
             Schema.CashgameCheckpoint.Timestamp);
 
-    private static Query FindQuery => CashgameQuery.Select(Schema.Cashgame.Id);
-    private static Query FindByBunchAndStatusQuery(string bunchId, GameStatus status) => FindQuery
-        .Where(Schema.Cashgame.BunchId, int.Parse(bunchId))
+    private static Query FindQuery => CashgameQuery
+        .Select(Schema.Cashgame.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Cashgame.BunchId);
+    
+    private static Query FindByBunchAndStatusQuery(string slug, GameStatus status) => FindQuery
+        .Where(Schema.Bunch.Name, slug)
         .Where(Schema.Cashgame.Status, (int)status);
 
     public async Task<Cashgame> Get(string cashgameId)
@@ -66,18 +71,18 @@ public class CashgameDb(IDb db)
         var checkpointDtos = await GetCheckpoints(ids);
         return cashgameDtos.ToCashgameList(checkpointDtos);
     }
-
-    public async Task<IList<string>> FindFinished(string bunchId) => await FindByBunchAndStatus(bunchId, GameStatus.Finished);
-    public async Task<IList<string>> FindRunning(string bunchId) => await FindByBunchAndStatus(bunchId, GameStatus.Running);
-
-    private async Task<IList<string>> FindByBunchAndStatus(string bunchId, GameStatus status)
+    
+    public async Task<IList<string>> FindFinished(string slug) => await FindByBunchAndStatus(slug, GameStatus.Finished);
+    public async Task<IList<string>> FindRunning(string slug) => await FindByBunchAndStatus(slug, GameStatus.Running);
+    
+    private async Task<IList<string>> FindByBunchAndStatus(string slug, GameStatus status)
     {
-        var query = FindByBunchAndStatusQuery(bunchId, status);
+        var query = FindByBunchAndStatusQuery(slug, status);
 
         var result = await db.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
-
+    
     public async Task<IList<string>> FindFinished(string bunchId, int year)
     {
         var query = FindByBunchAndStatusQuery(bunchId, GameStatus.Finished)

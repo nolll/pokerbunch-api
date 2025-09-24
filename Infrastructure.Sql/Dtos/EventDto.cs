@@ -1,22 +1,13 @@
 // ReSharper disable InconsistentNaming
 namespace Infrastructure.Sql.Dtos;
 
-public class EventDto
+public class EventDto(int id, int bunchId, string bunchSlug, string name, int? locationId, DateTime startDate, DateTime endDate)
 {
-    public int Event_Id { get; }
-    public int Bunch_Id { get; }
-    public string Name { get; }
-    public int? Location_Id { get; }
-    public DateTime StartDate { get; }
-    public DateTime EndDate { get; }
-    
-    public EventDto(int id, int bunchId, string name, int? locationId, DateTime startDate, DateTime endDate)
-    {
-        Event_Id = id;
-        Bunch_Id = bunchId;
-        Name = name;
-        Location_Id = locationId;
-        StartDate = startDate;
-        EndDate = endDate;
-    }
+    public int Event_Id { get; } = id;
+    public int Bunch_Id { get; } = bunchId;
+    public string Bunch_Slug { get; } = bunchSlug;
+    public string Name { get; } = name;
+    public int? Location_Id { get; } = locationId;
+    public DateTime StartDate { get; } = startDate;
+    public DateTime EndDate { get; } = endDate;
 }

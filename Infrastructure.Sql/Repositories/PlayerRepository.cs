@@ -19,10 +19,10 @@ public class PlayerRepository(IDb db, ICache cache) : IPlayerRepository
     {
         return cache.GetAndStoreAsync(_playerDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
-
-    public async Task<IList<Player>> List(string bunchId)
+    
+    public async Task<IList<Player>> List(string slug)
     {
-        var ids = await _playerDb.Find(bunchId);
+        var ids = await _playerDb.Find(slug);
         return await Get(ids);
     }
 

@@ -23,7 +23,7 @@ public class EditBunch(
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
         
-        if (!request.Auth.CanEditBunch(bunch.Id))
+        if (!request.Auth.CanEditBunch(request.Slug))
             return Error(new AccessDeniedError());
 
         var postedBunch = CreateBunch(bunch, request, timezone);
