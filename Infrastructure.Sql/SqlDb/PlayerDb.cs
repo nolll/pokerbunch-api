@@ -26,11 +26,13 @@ public class PlayerDb(IDb db)
         .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId)
         .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
 
-    private static Query FindQuery => PlayerQuery.Select(Schema.Player.Id);
-
-    public async Task<IList<string>> Find(string bunchId)
+    private static Query FindQuery => PlayerQuery
+        .Select(Schema.Player.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
+    
+    public async Task<IList<string>> Find(string slug)
     {
-        var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId));
+        var query = FindQuery.Where(Schema.Bunch.Name, slug);
         var result = await db.GetAsync<string>(query);
         return result.Select(o => o.ToString()).ToList();
     }

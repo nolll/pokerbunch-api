@@ -22,7 +22,7 @@ public class CashgameList(
         
         var cashgames = (await cashgameRepository.GetFinished(bunchInfo.Id, request.Year)).OrderByDescending(o => o.StartTime);
         var locations = await locationRepository.List(request.Slug);
-        var players = await playerRepository.List(bunchInfo.Id);
+        var players = await playerRepository.List(request.Slug);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));
 
         return Success(new Result(request.Slug, items.ToList()));

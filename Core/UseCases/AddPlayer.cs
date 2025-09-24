@@ -23,7 +23,7 @@ public class AddPlayer(IPlayerRepository playerRepository)
         if (!request.Auth.CanAddPlayer(request.Slug))
             return Error(new AccessDeniedError());
 
-        var existingPlayers = await playerRepository.List(bunchInfo.Id);
+        var existingPlayers = await playerRepository.List(request.Slug);
         var player = existingPlayers.FirstOrDefault(o => string.Equals(o.DisplayName, request.Name, StringComparison.CurrentCultureIgnoreCase));
         if (player != null)
             return Error(new PlayerExistsError());
