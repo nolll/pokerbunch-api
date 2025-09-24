@@ -11,6 +11,7 @@ public static class RandomStringGenerator
     {
         if (string.IsNullOrEmpty(allowedCharacters))
             return "";
+        
         var max = allowedCharacters.Length - 1;
         var str = new StringBuilder();
         for(var i = 0; i < stringLength; i++)
@@ -18,6 +19,7 @@ public static class RandomStringGenerator
             var randomPos = Random.Next(max);
             str.Append(allowedCharacters.Substring(randomPos, 1));
         }
+        
         return str.ToString();
     }
 }

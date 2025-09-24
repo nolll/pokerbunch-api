@@ -15,10 +15,12 @@ public static class EncryptionService
     {
         var sb = new StringBuilder();
         var inputBytes = MD5.HashData(Encoding.UTF8.GetBytes(input.Trim()));
+        
         foreach (var inputByte in inputBytes)
         {
             sb.Append(inputByte.ToString("x2"));
         }
+        
         return sb.ToString();
     }
 }
