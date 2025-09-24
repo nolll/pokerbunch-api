@@ -16,6 +16,19 @@ public class InvitePlayerTests : TestBase
     private readonly IInvitationCodeCreator _invitationCodeCreator = Substitute.For<IInvitationCodeCreator>();
     private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
 
+    [Fact]
+    public async Task InvitePlayer_NoAccess_ReturnsError()
+    {
+        var player = Create.Player();
+        _playerRepository.Get(player.Id).Returns(player);
+        
+        var request = CreateRequest(playerId: player.Id, canInvitePlayer: false);
+        var result = await Sut.Execute(request);
+
+        result.Success.Should().BeFalse();
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
+    }
+    
     [Theory]
     [InlineData("")]
     [InlineData("a")]
@@ -24,6 +37,7 @@ public class InvitePlayerTests : TestBase
         var request = CreateRequest(email: email);
         var result = await Sut.Execute(request);
 
+        result.Success.Should().BeFalse();
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
 
@@ -53,6 +67,7 @@ public class InvitePlayerTests : TestBase
         _emailSender.Received().Send(Arg.Is<string>(o => o == email),
             Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
         
+        result.Success.Should().BeTrue();
         result.Data!.PlayerId.Should().Be(player.Id);
     }
 
@@ -61,11 +76,12 @@ public class InvitePlayerTests : TestBase
         string? slug = null,
         string? bunchName = null,
         string? email = null,
-        string? playerId = null)
+        string? playerId = null,
+        bool? canInvitePlayer = null)
     {
         var userBunch = Create.UserBunch(bunchId, slug, bunchName);
         return new InvitePlayer.Request(
-            new AuthInTest(canInvitePlayer: true, userBunch: userBunch),
+            new AuthInTest(canInvitePlayer: canInvitePlayer ?? true, userBunch: userBunch),
             playerId ?? Create.String(), 
             email ?? Create.EmailAddress(), 
             "https://pokerbunch.com/fakeregister", 

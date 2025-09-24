@@ -19,11 +19,11 @@ public class InvitePlayer(
             return Error(new ValidationError(validator));
 
         var player = await playerRepository.Get(request.PlayerId);
-        var bunchInfo = request.Auth.GetBunch(player.BunchSlug);
 
         if (!request.Auth.CanInvitePlayer(player.BunchSlug))
             return Error(new AccessDeniedError());
-
+        
+        var bunchInfo = request.Auth.GetBunch(player.BunchSlug);
         var invitationCode = invitationCodeCreator.GetCode(player);
         var joinUrl = string.Format(request.JoinUrlFormat, player.BunchSlug);
         var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, player.BunchSlug, invitationCode);

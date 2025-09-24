@@ -17,10 +17,11 @@ public class EditCheckpoint(ICashgameRepository cashgameRepository)
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.GetByCheckpoint(request.CheckpointId);
-        var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
 
         if (!request.Auth.CanEditCashgameAction(cashgame.BunchSlug))
             return Error(new AccessDeniedError());
+        
+        var existingCheckpoint = cashgame.GetCheckpoint(request.CheckpointId);
 
         var postedCheckpoint = Checkpoint.Create(
             existingCheckpoint.Id,
