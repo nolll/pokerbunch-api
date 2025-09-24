@@ -18,7 +18,7 @@ public class EventCashgameList(
     {
         var @event = await eventRepository.Get(request.EventId);
 
-        if (!request.Auth.CanListEventCashgames(@event.BunchId))
+        if (!request.Auth.CanListEventCashgames(@event.BunchSlug))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByEvent(request.EventId);

@@ -25,8 +25,10 @@ public class EventDb(IDb db)
             Schema.Event.Name,
             Schema.Cashgame.LocationId,
             Schema.Cashgame.Timestamp)
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
         .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.EventId, Schema.Event.Id)
         .LeftJoin(Schema.Cashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Event.BunchId)
         .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id))
         .OrderBy(Schema.Event.Id, Schema.Cashgame.Date);
 

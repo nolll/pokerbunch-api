@@ -15,7 +15,7 @@ public class LocationDetailsTests : TestBase
     public async Task LocationDetails_AllPropertiesAreSet()
     {
         var bunch = Create.Bunch();
-        var location = Create.Type<Location>();
+        var location = Create.Location(bunchId: bunch.Id, bunchSlug: bunch.Slug);
         _locationRepository.Get(location.Id).Returns(location);
 
         var request = CreateRequest(bunch.Id, bunch.Slug, location.Id);
@@ -29,7 +29,7 @@ public class LocationDetailsTests : TestBase
     {
         var userBunch = Create.UserBunch(bunchId, slug);
         return new GetLocation.Request(
-            new AuthInTest(canSeeLocation: true, userBunch: userBunch),
+            new AuthInTest(canSeeLocation: canSeeLocation ?? true, userBunch: userBunch),
             locationId ?? Create.String());
     }
 

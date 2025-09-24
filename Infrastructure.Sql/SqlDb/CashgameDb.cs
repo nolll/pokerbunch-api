@@ -22,7 +22,9 @@ public class CashgameDb(IDb db)
             Schema.Cashgame.LocationId,
             Schema.EventCashgame.EventId,
             Schema.Cashgame.Status)
-        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id);
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
+        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id)
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Cashgame.BunchId);
 
     private static Query GetCheckpointQuery => CashgameCheckpointQuery
         .Select(

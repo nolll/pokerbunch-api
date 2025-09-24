@@ -22,10 +22,10 @@ public class GetPlayer(
             ? await userRepository.GetById(player.UserId)
             : null;
         
-        if (!request.Auth.CanSeePlayer(player.BunchId))
+        if (!request.Auth.CanSeePlayer(player.BunchSlug))
             return Error(new AccessDeniedError());
 
-        var canDelete = request.Auth.CanDeletePlayer(player.BunchId);
+        var canDelete = request.Auth.CanDeletePlayer(player.BunchSlug);
         var cashgames = await cashgameRepository.GetByPlayer(player.Id);
         var hasPlayed = cashgames.Any();
         var avatarUrl = user != null ? GravatarService.GetAvatarUrl(user.Email) : "";
@@ -75,7 +75,7 @@ public class GetPlayer(
             UserName = user?.UserName ?? null;
             AvatarUrl = avatarUrl;
             Color = player.Color;
-            Slug = player.Slug;
+            Slug = player.BunchSlug;
         }
     }
 }

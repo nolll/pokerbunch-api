@@ -19,10 +19,10 @@ public class CashgameDetails(
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var cashgame = await cashgameRepository.Get(request.Id);
-        var bunch = await bunchRepository.Get(cashgame.BunchId);
-        var bunchAccess = request.Auth.GetBunchById(cashgame.BunchId);
+        var bunch = await bunchRepository.GetBySlug(cashgame.BunchSlug);
+        var bunchAccess = request.Auth.GetBunch(cashgame.BunchSlug);
 
-        if (!request.Auth.CanSeeCashgame(cashgame.BunchId))
+        if (!request.Auth.CanSeeCashgame(cashgame.BunchSlug))
             return Error(new AccessDeniedError());
 
         var playerIds = GetPlayerIds(cashgame);

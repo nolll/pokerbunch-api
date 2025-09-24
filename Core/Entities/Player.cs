@@ -2,7 +2,7 @@ namespace Core.Entities;
 
 public class Player(
     string bunchId,
-    string slug,
+    string bunchSlug,
     string id,
     string? userId,
     string? userName,
@@ -14,7 +14,7 @@ public class Player(
     private const string DefaultColor = "#9e9e9e";
     
     public string BunchId { get; } = bunchId;
-    public string Slug { get; } = slug;
+    public string BunchSlug { get; } = bunchSlug;
     public string Id { get; } = id;
     public string? UserId { get; } = userId;
     public string? UserName { get; } = userName;

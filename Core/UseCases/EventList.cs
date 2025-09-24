@@ -13,9 +13,9 @@ public class EventList(
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunch(request.Slug);
 
-        if (!request.Auth.CanListEvents(bunchInfo.Id))
+        if (!request.Auth.CanListEvents(request.Slug))
             return Error(new AccessDeniedError());
 
         var events = await eventRepository.List(bunchInfo.Id);

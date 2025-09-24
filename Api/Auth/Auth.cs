@@ -36,8 +36,7 @@ public class Auth : IAuth
         _userBunches = GetUserTokenBunches(principal!).Select(ToUserBunch).ToArray();
     }
     
-    public UserBunch GetBunchById(string id) => _userBunches.FirstOrDefault(o => o.Id == id) ?? CreateEmptyBunch();
-    public UserBunch GetBunchBySlug(string slug) => _userBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
+    public UserBunch GetBunch(string slug) => _userBunches.FirstOrDefault(o => o.Slug == slug) ?? CreateEmptyBunch();
 
     public bool CanClearCache => _isAdmin;
     public bool CanSendTestEmail => _isAdmin;
@@ -46,43 +45,43 @@ public class Auth : IAuth
     public bool CanListUsers => _isAdmin;
     public bool CanViewFullUserData => _isAdmin;
     
-    public bool CanAddCashgame(string bunchId) => IsPlayer(bunchId);
-    public bool CanEditCashgame(string bunchId) => IsManager(bunchId);
-    public bool CanDeleteCashgame(string bunchId) => IsManager(bunchId);
-    public bool CanSeeCashgame(string bunchId) => IsPlayer(bunchId);
-    public bool CanListCashgames(string bunchId) => IsPlayer(bunchId);
-    public bool CanListPlayerCashgames(string bunchId) => IsPlayer(bunchId);
-    public bool CanListEventCashgames(string bunchId) => IsPlayer(bunchId);
-    public bool CanListCurrentGames(string bunchId) => IsPlayer(bunchId);
+    public bool CanAddCashgame(string slug) => IsPlayer(slug);
+    public bool CanEditCashgame(string slug) => IsManager(slug);
+    public bool CanDeleteCashgame(string slug) => IsManager(slug);
+    public bool CanSeeCashgame(string slug) => IsPlayer(slug);
+    public bool CanListCashgames(string slug) => IsPlayer(slug);
+    public bool CanListPlayerCashgames(string slug) => IsPlayer(slug);
+    public bool CanListEventCashgames(string slug) => IsPlayer(slug);
+    public bool CanListCurrentGames(string slug) => IsPlayer(slug);
     
-    public bool CanEditCashgameAction(string bunchId) => IsManager(bunchId);
-    public bool CanDeleteCheckpoint(string bunchId) => IsManager(bunchId);
-    public bool CanEditCashgameActionsFor(string bunchId, string requestedPlayerId) =>
-        IsManager(bunchId) || IsRequestedPlayer(bunchId, requestedPlayerId);
+    public bool CanEditCashgameAction(string slug) => IsManager(slug);
+    public bool CanDeleteCheckpoint(string slug) => IsManager(slug);
+    public bool CanEditCashgameActionsFor(string slug, string requestedPlayerId) =>
+        IsManager(slug) || IsRequestedPlayer(slug, requestedPlayerId);
 
-    public bool CanSeeLocation(string bunchId) => IsPlayer(bunchId);
-    public bool CanAddLocation(string bunchId) => IsPlayer(bunchId);
-    public bool CanListLocations(string bunchId) => IsPlayer(bunchId);
+    public bool CanSeeLocation(string slug) => IsPlayer(slug);
+    public bool CanAddLocation(string slug) => IsPlayer(slug);
+    public bool CanListLocations(string slug) => IsPlayer(slug);
 
-    public bool CanGetBunch(string bunchId) => IsPlayer(bunchId);
-    public bool CanEditBunch(string bunchId) => IsManager(bunchId);
+    public bool CanGetBunch(string slug) => IsPlayer(slug);
+    public bool CanEditBunch(string slug) => IsManager(slug);
     
-    public bool CanAddPlayer(string bunchId) => IsManager(bunchId);
-    public bool CanSeePlayer(string bunchId) => IsPlayer(bunchId);
-    public bool CanListPlayers(string bunchId) => IsPlayer(bunchId);
-    public bool CanDeletePlayer(string bunchId) => IsManager(bunchId);
-    public bool CanInvitePlayer(string bunchId) => IsManager(bunchId);
+    public bool CanAddPlayer(string slug) => IsManager(slug);
+    public bool CanSeePlayer(string slug) => IsPlayer(slug);
+    public bool CanListPlayers(string slug) => IsPlayer(slug);
+    public bool CanDeletePlayer(string slug) => IsManager(slug);
+    public bool CanInvitePlayer(string slug) => IsManager(slug);
 
-    public bool CanAddEvent(string bunchId) => IsPlayer(bunchId);
-    public bool CanListEvents(string bunchId) => IsPlayer(bunchId);
-    public bool CanSeeEventDetails(string bunchId) => IsPlayer(bunchId);
-
-    private bool IsManager(string bunchId) => IsInRole(bunchId, Role.Manager);
-    private bool IsPlayer(string bunchId) => IsInRole(bunchId, Role.Player);
-    private bool IsRequestedPlayer(string bunchId, string requestedPlayerId) => GetPlayerId(bunchId) == requestedPlayerId;
-    private bool IsInRole(string bunchId, Role role) => RoleHandler.IsInRole(GetRole(bunchId), role);
-    private Role GetRole(string bunchId) => GetBunchById(bunchId).Role;
-    private string GetPlayerId(string bunchId) => GetBunchById(bunchId).PlayerId;
+    public bool CanAddEvent(string slug) => IsPlayer(slug);
+    public bool CanListEvents(string slug) => IsPlayer(slug);
+    public bool CanSeeEventDetails(string slug) => IsPlayer(slug);
+    
+    private bool IsManager(string slug) => IsInRole(slug, Role.Manager);
+    private bool IsPlayer(string slug) => IsInRole(slug, Role.Player);
+    private bool IsRequestedPlayer(string slug, string requestedPlayerId) => GetPlayerId(slug) == requestedPlayerId;
+    private bool IsInRole(string slug, Role role) => RoleHandler.IsInRole(GetRole(slug), role);
+    private Role GetRole(string slug) => GetBunch(slug).Role;
+    private string GetPlayerId(string slug) => GetBunch(slug).PlayerId;
 
     private static bool IsValid(ClaimsPrincipal? principal)
     {

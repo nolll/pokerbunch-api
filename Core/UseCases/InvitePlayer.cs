@@ -19,9 +19,9 @@ public class InvitePlayer(
             return Error(new ValidationError(validator));
 
         var player = await playerRepository.Get(request.PlayerId);
-        var bunchInfo = request.Auth.GetBunchById(player.BunchId);
+        var bunchInfo = request.Auth.GetBunch(player.BunchSlug);
 
-        if (!request.Auth.CanInvitePlayer(player.BunchId))
+        if (!request.Auth.CanInvitePlayer(player.BunchSlug))
             return Error(new AccessDeniedError());
 
         var invitationCode = invitationCodeCreator.GetCode(player);

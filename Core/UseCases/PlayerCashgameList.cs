@@ -17,7 +17,7 @@ public class PlayerCashgameList(
     {
         var player = await playerRepository.Get(request.PlayerId);
 
-        if (!request.Auth.CanListPlayerCashgames(player.BunchId))
+        if (!request.Auth.CanListPlayerCashgames(player.BunchSlug))
             return Error(new AccessDeniedError());
 
         var cashgames = await cashgameRepository.GetByPlayer(request.PlayerId);

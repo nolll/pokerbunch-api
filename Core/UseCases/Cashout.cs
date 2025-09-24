@@ -18,7 +18,7 @@ public class Cashout(ICashgameRepository cashgameRepository)
             return Error(new ValidationError(validator));
 
         var cashgame = await cashgameRepository.Get(request.CashgameId);
-        if (!request.Auth.CanEditCashgameActionsFor(cashgame.BunchId, request.PlayerId))
+        if (!request.Auth.CanEditCashgameActionsFor(cashgame.BunchSlug, request.PlayerId))
             return Error(new AccessDeniedError());
 
         var result = cashgame.GetResult(request.PlayerId);

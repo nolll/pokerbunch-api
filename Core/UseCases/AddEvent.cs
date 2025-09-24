@@ -16,12 +16,12 @@ public class AddEvent(IEventRepository eventRepository)
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
         
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunch(request.Slug);
 
-        if (!request.Auth.CanAddEvent(bunchInfo.Id))
+        if (!request.Auth.CanAddEvent(request.Slug))
             return Error(new AccessDeniedError());
 
-        var e = new Event("", bunchInfo.Id, request.Name);
+        var e = new Event("", bunchInfo.Id, request.Slug, request.Name);
         var id = await eventRepository.Add(e);
 
         return Success(new Result(id));

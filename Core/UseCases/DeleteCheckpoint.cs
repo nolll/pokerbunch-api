@@ -12,9 +12,9 @@ public class DeleteCheckpoint(ICashgameRepository cashgameRepository)
     {
         var cashgame = await cashgameRepository.GetByCheckpoint(request.CheckpointId);
         var checkpoint = cashgame.GetCheckpoint(request.CheckpointId);
-        var bunchInfo = request.Auth.GetBunchById(cashgame.BunchId);
+        var bunchInfo = request.Auth.GetBunch(cashgame.BunchSlug);
 
-        if (!request.Auth.CanDeleteCheckpoint(cashgame.BunchId))
+        if (!request.Auth.CanDeleteCheckpoint(cashgame.BunchSlug))
             return Error(new AccessDeniedError());
 
         cashgame.DeleteCheckpoint(checkpoint);

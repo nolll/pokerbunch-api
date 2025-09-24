@@ -11,7 +11,7 @@ public class DeleteCashgame(ICashgameRepository cashgameRepository)
     {
         var cashgame = await cashgameRepository.Get(request.Id);
 
-        if (!request.Auth.CanDeleteCashgame(cashgame.BunchId))
+        if (!request.Auth.CanDeleteCashgame(cashgame.BunchSlug))
             return Error(new AccessDeniedError());
 
         if (cashgame.EventId != null)

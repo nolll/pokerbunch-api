@@ -15,9 +15,9 @@ public class CashgameList(
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunch(request.Slug);
 
-        if (!request.Auth.CanListCashgames(bunchInfo.Id))
+        if (!request.Auth.CanListCashgames(request.Slug))
             return Error(new AccessDeniedError());
         
         var cashgames = (await cashgameRepository.GetFinished(bunchInfo.Id, request.Year)).OrderByDescending(o => o.StartTime);

@@ -13,6 +13,7 @@ internal static class CashgameMapper
 
         return new Cashgame(
             dto.Bunch_Id.ToString(),
+            dto.Bunch_Slug,
             dto.Location_Id.ToString(),
             dto.Event_Id != 0 ? dto.Event_Id.ToString() : null,
             (GameStatus)dto.Status,

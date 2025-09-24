@@ -16,12 +16,12 @@ public class AddLocation(ILocationRepository locationRepository)
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
+        var bunchInfo = request.Auth.GetBunch(request.Slug);
 
-        if (!request.Auth.CanAddLocation(bunchInfo.Id))
+        if (!request.Auth.CanAddLocation(request.Slug))
             return Error(new AccessDeniedError());
 
-        var location = new Location("", request.Name, bunchInfo.Id);
+        var location = new Location("", request.Name, bunchInfo.Id, bunchInfo.Slug);
         var id = await locationRepository.Add(location);
 
         return Success(new Result(bunchInfo.Slug, id, location.Name));

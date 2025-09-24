@@ -16,7 +16,9 @@ public class LocationDb(IDb db)
         .Select(
             Schema.Location.Id,
             Schema.Location.Name,
-            Schema.Location.BunchId);
+            Schema.Location.BunchId)
+        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
+        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Location.BunchId);
 
     private static Query FindQuery => LocationQuery
         .Select(Schema.Location.Id);

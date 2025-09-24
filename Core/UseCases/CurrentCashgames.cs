@@ -9,8 +9,8 @@ public class CurrentCashgames(ICashgameRepository cashgameRepository)
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunchBySlug(request.Slug);
-        if (!request.Auth.CanListCurrentGames(bunchInfo.Id))
+        var bunchInfo = request.Auth.GetBunch(request.Slug);
+        if (!request.Auth.CanListCurrentGames(request.Slug))
             return Error(new AccessDeniedError());
 
         var cashgame = await cashgameRepository.GetRunning(bunchInfo.Id);

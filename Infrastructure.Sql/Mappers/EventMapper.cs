@@ -17,6 +17,7 @@ internal static class EventMapper
         return new Event(
             eventDto.Event_Id.ToString(),
             eventDto.Bunch_Id.ToString(),
+            eventDto.Bunch_Slug,
             eventDto.Name,
             eventDto.Location_Id?.ToString(),
             new Date(eventDto.StartDate),
@@ -47,7 +48,7 @@ internal static class EventMapper
             var item = map[key];
             var firstItem = item.First();
             var lastItem = item.Last();
-            eventDtos.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
+            eventDtos.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Id, firstItem.Bunch_Slug, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
         }
         return eventDtos;
     }

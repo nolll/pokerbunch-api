@@ -10,6 +10,7 @@ internal static class LocationMapper
         return new Location(
             locationDto.Location_Id.ToString(),
             locationDto.Name,
-            locationDto.Bunch_Id.ToString());
+            locationDto.Bunch_Id.ToString(),
+            locationDto.Bunch_Slug);
     }
 }
