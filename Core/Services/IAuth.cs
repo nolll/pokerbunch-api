@@ -4,7 +4,7 @@ namespace Core.Services;
 
 public interface IAuth
 {
-    UserBunch GetBunch(string id);
+    UserBunch GetBunch(string slug);
 
     bool CanClearCache { get; }
     bool CanSendTestEmail { get; }

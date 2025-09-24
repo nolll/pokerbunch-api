@@ -17,7 +17,7 @@ public class DeleteCheckpointTests : TestBase
     public async Task DeleteCheckpoint_EndedGame_DeletesCheckpointAndReturnsCorrectValues(GameStatus status)
     {
         var bunch = Create.Bunch();
-        var cashgame = Create.Cashgame(status: status);
+        var cashgame = Create.Cashgame(bunchSlug: bunch.Slug, status: status);
         var buyin = Create.BuyinAction(cashgameId: cashgame.Id);
         var report = Create.ReportAction(cashgameId: cashgame.Id);
         cashgame.SetCheckpoints([buyin, report]);

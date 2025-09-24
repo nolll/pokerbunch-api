@@ -30,7 +30,7 @@ public class CurrentCashgamesTests : TestBase
         var cashgame = Create.Cashgame();
         var bunch = Create.Bunch();
         
-        _cashgameRepository.GetRunning(bunch.Id).Returns(cashgame);
+        _cashgameRepository.GetRunning(bunch.Slug).Returns(cashgame);
         
         var request = CreateRequest(bunch);
         var result = await Sut.Execute(request);

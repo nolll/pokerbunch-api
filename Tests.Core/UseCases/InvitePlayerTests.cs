@@ -43,7 +43,7 @@ public class InvitePlayerTests : TestBase
         _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns("abcdefghij");
 
         var bunch = Create.Bunch(slug: "bunch-a", displayName: "Bunch A");
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player(slug: bunch.Slug, bunchId: bunch.Id);
         _playerRepository.Get(player.Id).Returns(player);
         var email = Create.EmailAddress();
         

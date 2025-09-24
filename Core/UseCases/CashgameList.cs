@@ -15,12 +15,10 @@ public class CashgameList(
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunch(request.Slug);
-
         if (!request.Auth.CanListCashgames(request.Slug))
             return Error(new AccessDeniedError());
         
-        var cashgames = (await cashgameRepository.GetFinished(bunchInfo.Id, request.Year)).OrderByDescending(o => o.StartTime);
+        var cashgames = (await cashgameRepository.GetFinished(request.Slug, request.Year)).OrderByDescending(o => o.StartTime);
         var locations = await locationRepository.List(request.Slug);
         var players = await playerRepository.List(request.Slug);
         var items = cashgames.Select(o => new Item(o, GetLocation(o, locations), players));

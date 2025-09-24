@@ -9,15 +9,14 @@ public class CurrentCashgames(ICashgameRepository cashgameRepository)
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
-        var bunchInfo = request.Auth.GetBunch(request.Slug);
         if (!request.Auth.CanListCurrentGames(request.Slug))
             return Error(new AccessDeniedError());
 
-        var cashgame = await cashgameRepository.GetRunning(bunchInfo.Id);
+        var cashgame = await cashgameRepository.GetRunning(request.Slug);
 
         var gameList = new List<Game>();
         if (cashgame != null)
-            gameList.Add(new Game(bunchInfo.Slug, cashgame.Id));
+            gameList.Add(new Game(request.Slug, cashgame.Id));
 
         return Success(new Result(gameList));
     }

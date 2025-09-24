@@ -17,7 +17,7 @@ public class CashgameListTests : TestBase
     public async Task CashgameList_WithoutGames_HasEmptyListOfGames()
     {
         var bunch = Create.Bunch();
-        _cashgameRepository.GetFinished(bunch.Id).Returns([]);
+        _cashgameRepository.GetFinished(bunch.Slug).Returns([]);
 
         var request = CreateRequest(bunch.Id, bunch.Slug);
         var result = await Sut.Execute(request);
@@ -31,7 +31,7 @@ public class CashgameListTests : TestBase
         var bunch = Create.Bunch();
         var location = Create.Location(bunchId: bunch.Id);
         var cashgame = Create.Cashgame(bunchId: bunch.Id, locationId: location.Id);
-        _cashgameRepository.GetFinished(bunch.Id, Arg.Any<int?>()).Returns([cashgame]);
+        _cashgameRepository.GetFinished(bunch.Slug, Arg.Any<int?>()).Returns([cashgame]);
         _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
         _locationRepository.List(bunch.Slug).Returns([location]);
 

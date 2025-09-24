@@ -25,8 +25,8 @@ public class InvitePlayer(
             return Error(new AccessDeniedError());
 
         var invitationCode = invitationCodeCreator.GetCode(player);
-        var joinUrl = string.Format(request.JoinUrlFormat, bunchInfo.Slug);
-        var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, bunchInfo.Slug, invitationCode);
+        var joinUrl = string.Format(request.JoinUrlFormat, player.BunchSlug);
+        var joinWithCodeUrl = string.Format(request.JoinWithCodeUrlFormat, player.BunchSlug, invitationCode);
         var message = new InvitationMessage(bunchInfo.Name, invitationCode, request.RegisterUrl, joinUrl, joinWithCodeUrl);
         emailSender.Send(request.Email, message);
 

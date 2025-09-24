@@ -19,12 +19,12 @@ public class CashgameRepository(IDb db, ICache cache) : ICashgameRepository
     {
         return cache.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
     }
-
-    public async Task<IList<Cashgame>> GetFinished(string bunchId, int? year = null)
+    
+    public async Task<IList<Cashgame>> GetFinished(string slug, int? year = null)
     {
         var ids = year == null
-            ? await _cashgameDb.FindFinished(bunchId)
-            : await _cashgameDb.FindFinished(bunchId, year.Value);
+            ? await _cashgameDb.FindFinished(slug)
+            : await _cashgameDb.FindFinished(slug, year.Value);
         return await Get(ids);
     }
 
@@ -39,10 +39,10 @@ public class CashgameRepository(IDb db, ICache cache) : ICashgameRepository
         var ids = await _cashgameDb.FindByPlayerId(playerId);
         return await Get(ids);
     }
-
-    public async Task<Cashgame?> GetRunning(string bunchId)
+    
+    public async Task<Cashgame?> GetRunning(string slug)
     {
-        var ids = await _cashgameDb.FindRunning(bunchId);
+        var ids = await _cashgameDb.FindRunning(slug);
         return (await Get(ids)).FirstOrDefault();
     }
 
