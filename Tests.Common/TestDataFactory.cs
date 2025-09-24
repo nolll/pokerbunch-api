@@ -109,12 +109,6 @@ public class TestDataFactory
         playerId ?? String(),
         playerName ?? String(),
         role ?? Type<Role>());
-    
-    public UserBunch UserBunch(Bunch bunch, Player player) 
-        => UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName, player.Id, player.DisplayName, player.Role);
-    
-    public UserBunch UserBunch(Bunch bunch) 
-        => UserBunch(bunch.Id, bunch.Slug, bunch.DisplayName);
 
     public Cashgame Cashgame(
         string? bunchId = null,

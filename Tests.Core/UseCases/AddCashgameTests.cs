@@ -20,7 +20,7 @@ public class AddCashgameTests : TestBase
         var bunch = Create.Bunch();
         _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
         
-        var request = CreateRequest(bunch.Id, bunch.Slug, locationId);
+        var request = CreateRequest(bunch.Slug, locationId);
         var result = await Sut.Execute(request);
 
         result.Data!.Slug.Should().Be(bunch.Slug);
@@ -35,19 +35,17 @@ public class AddCashgameTests : TestBase
     {
         var bunch = Create.Bunch();
         
-        var request = CreateRequest(bunch.Id, bunch.Slug);
+        var request = CreateRequest(bunch.Slug);
         var result = await Sut.Execute(request);
         
         result.Error!.Type.Should().Be(ErrorType.Validation);
     }
     
     private AddCashgame.Request CreateRequest(
-        string bunchId,
         string slug,
         string? locationId = null)
     {
-        var userBunch = Create.UserBunch(bunchId, slug);
-        return new AddCashgame.Request(new AuthInTest(canAddCashgame: true, userBunch: userBunch), slug, locationId);
+        return new AddCashgame.Request(new AuthInTest(canAddCashgame: true), slug, locationId);
     }
 
     private AddCashgame Sut => new(_bunchRepository, _cashgameRepository);

@@ -21,10 +21,10 @@ public class AddLocation(ILocationRepository locationRepository)
         if (!request.Auth.CanAddLocation(request.Slug))
             return Error(new AccessDeniedError());
 
-        var location = new Location("", request.Name, bunchInfo.Id, bunchInfo.Slug);
+        var location = new Location("", request.Name, bunchInfo.Id, request.Slug);
         var id = await locationRepository.Add(location);
 
-        return Success(new Result(bunchInfo.Slug, id, location.Name));
+        return Success(new Result(request.Slug, id, location.Name));
     }
     
     public class Request(IAuth auth, string slug, string name)
