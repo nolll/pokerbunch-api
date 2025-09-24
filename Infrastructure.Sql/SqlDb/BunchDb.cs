@@ -59,8 +59,8 @@ public class BunchDb(IDb db)
         var id = await db.FirstOrDefaultAsync<int?>(query);
 
         return id is not null
-            ? new List<string> { id.Value.ToString() }
-            : new List<string>();
+            ? [id.Value.ToString()]
+            : [];
     }
 
     public async Task<IList<string>> SearchByUser(string userId)

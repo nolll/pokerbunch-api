@@ -67,15 +67,8 @@ public class CashgameDb(IDb db)
         return cashgameDtos.ToCashgameList(checkpointDtos);
     }
 
-    public async Task<IList<string>> FindFinished(string bunchId)
-    {
-        return await FindByBunchAndStatus(bunchId, GameStatus.Finished);
-    }
-
-    public async Task<IList<string>> FindRunning(string bunchId)
-    {
-        return await FindByBunchAndStatus(bunchId, GameStatus.Running);
-    }
+    public async Task<IList<string>> FindFinished(string bunchId) => await FindByBunchAndStatus(bunchId, GameStatus.Finished);
+    public async Task<IList<string>> FindRunning(string bunchId) => await FindByBunchAndStatus(bunchId, GameStatus.Running);
 
     private async Task<IList<string>> FindByBunchAndStatus(string bunchId, GameStatus status)
     {
