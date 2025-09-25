@@ -18,7 +18,6 @@ public class Auth : IAuth
 
     public string Id { get; } = "";
     public string UserName { get; } = "";
-    public string DisplayName { get; } = "";
 
     public Auth(IHttpContextAccessor httpContextAccessor)
     {
@@ -31,7 +30,6 @@ public class Auth : IAuth
         
         _isAdmin = GetBoolClaim(principal, CustomClaimTypes.IsAdmin);
         Id = GetClaim(principal, CustomClaimTypes.UserId) ?? "";
-        DisplayName = GetClaim(principal, CustomClaimTypes.UserDisplayName) ?? "";
         UserName = principal!.Identity?.Name ?? "";
         _userBunches = GetUserTokenBunches(principal!).Select(ToUserBunch).ToArray();
     }

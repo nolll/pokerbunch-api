@@ -12,17 +12,14 @@ internal static class EventMapper
         return eventDtos.Select(ToEvent).ToList();
     }
 
-    private static Event ToEvent(this EventDto eventDto)
-    {
-        return new Event(
-            eventDto.Event_Id.ToString(),
-            eventDto.Bunch_Id.ToString(),
-            eventDto.Bunch_Slug,
-            eventDto.Name,
-            eventDto.Location_Id?.ToString(),
-            new Date(eventDto.StartDate),
-            new Date(eventDto.EndDate));
-    }
+    private static Event ToEvent(this EventDto eventDto) => new(
+        eventDto.Event_Id.ToString(),
+        eventDto.Bunch_Id.ToString(),
+        eventDto.Bunch_Slug,
+        eventDto.Name,
+        eventDto.Location_Id?.ToString(),
+        new Date(eventDto.StartDate),
+        new Date(eventDto.EndDate));
 
     private static IList<EventDto> ToEventDtos(IEnumerable<EventDayDto> eventDayDtos)
     {

@@ -14,7 +14,6 @@ public interface IAuth
     bool CanViewFullUserData { get; }
     string Id { get; }
     string UserName { get; }
-    string DisplayName { get; }
     bool CanEditCashgame(string slug);
     bool CanDeleteCashgame(string slug);
     bool CanSeeCashgame(string slug);
