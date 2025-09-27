@@ -109,7 +109,7 @@ public class Auth : IAuth
     }
 
     private static UserBunch ToUserBunch(TokenBunchModel b) => 
-        new(b.Id, b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
+        new(b.Slug, b.Name, b.PlayerId, b.PlayerName, Enum.Parse<Role>(b.Role, true));
     
     private static string? GetClaim(ClaimsPrincipal? principal, string type) => principal?.Claims.FirstOrDefault(o => o.Type == type)?.Value;
 

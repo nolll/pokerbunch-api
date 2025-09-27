@@ -92,13 +92,11 @@ public class TestDataFactory
         color);
 
     public UserBunch UserBunch(
-        string? id = null,
         string? slug = null,
         string? name = null,
         string? playerId = null,
         string? playerName = null,
         Role? role = null) => new(
-        id ?? String(),
         slug ?? String(),
         name ?? String(),
         playerId ?? String(),
