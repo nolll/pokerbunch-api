@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
@@ -13,6 +14,19 @@ public class CashgameListTests : TestBase
     private readonly IPlayerRepository _playerRepository = Substitute.For<IPlayerRepository>();
     private readonly ILocationRepository _locationRepository = Substitute.For<ILocationRepository>();
 
+    [Fact]
+    public async Task CashgameList_NoAccess_ReturnsError()
+    {
+        var bunch = Create.Bunch();
+        _cashgameRepository.GetFinished(bunch.Slug).Returns([]);
+
+        var request = CreateRequest(bunch.Slug, canListCashgames: false);
+        var result = await Sut.Execute(request);
+
+        result.Success.Should().BeFalse();
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
+    }
+    
     [Fact]
     public async Task CashgameList_WithoutGames_HasEmptyListOfGames()
     {
@@ -29,7 +43,7 @@ public class CashgameListTests : TestBase
     public async Task CashgameList_ReturnsList()
     {
         var bunch = Create.Bunch();
-        var location = Create.Location(bunchId: bunch.Id);
+        var location = Create.Location(bunchSlug: bunch.Slug);
         var cashgame = Create.Cashgame(bunchId: bunch.Id, locationId: location.Id);
         _cashgameRepository.GetFinished(bunch.Slug, Arg.Any<int?>()).Returns([cashgame]);
         _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
@@ -44,9 +58,11 @@ public class CashgameListTests : TestBase
         result.Data!.Items[0].CashgameId.Should().Be(cashgame.Id);
     }
     
-    private CashgameList.Request CreateRequest(string slug)
+    private CashgameList.Request CreateRequest(string slug, bool? canListCashgames = null)
     {
-        return new CashgameList.Request(new AuthInTest(canListCashgames: true), slug, null);
+        return new CashgameList.Request(
+            new AuthInTest(canListCashgames: canListCashgames ?? true),
+            slug);
     }
 
     private CashgameList Sut => new(

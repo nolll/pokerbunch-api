@@ -12,6 +12,6 @@ public interface IDb : IDisposable
     Task InsertAsync(Query query, IDictionary<SqlColumn, object?> parameters);
     Task<int> UpdateAsync(Query query, IDictionary<SqlColumn, object?> parameters);
     Task<int> DeleteAsync(Query query);
-    Task<int> ExecuteSql(string sql);
+    Task<int> ExecuteSql(string sql, Dictionary<string, object?>? parameters = null);
     string GetSql(Query query);
 }

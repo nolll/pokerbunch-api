@@ -21,7 +21,6 @@ public class EventDb(IDb db)
     private static Query GetQuery => EventQuery
         .Select(
             Schema.Event.Id,
-            Schema.Event.BunchId,
             Schema.Event.Name,
             Schema.Cashgame.LocationId,
             Schema.Cashgame.Timestamp)
@@ -74,13 +73,24 @@ public class EventDb(IDb db)
 
     public async Task<string> Add(Event e)
     {
-        var parameters = new Dictionary<SqlColumn, object?>
+        var sql = $"""
+                  INSERT INTO {Schema.Event} 
+                  ({Schema.Event.BunchId.AsParam()}, {Schema.Event.Name.AsParam()})
+                  VALUES
+                  (
+                    (SELECT {Schema.Bunch.Id} from {Schema.Bunch} where {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}),
+                    @{Schema.Event.Name.AsParam()}
+                  )
+                  RETURNING {Schema.Event.Id.AsParam()};)
+                  """;
+        
+        var parameters = new Dictionary<string, object?>
         {
-            { Schema.Event.Name, e.Name },
-            { Schema.Event.BunchId, int.Parse(e.BunchId) }
+            { Schema.Event.Name.AsParam(), e.Name },
+            { Schema.Bunch.Slug.AsParam(), e.BunchSlug }
         };
 
-        var result = await db.InsertGetIdAsync(EventQuery, parameters);
+        var result = await db.ExecuteSql(sql, parameters);
         return result.ToString();
     }
 

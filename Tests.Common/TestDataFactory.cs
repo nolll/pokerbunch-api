@@ -55,16 +55,14 @@ public class TestDataFactory
         defaultBuyin ?? Int(),
         currency ?? Create<Currency>());
 
-    public Location Location(string? id = null, string? name = null, string? bunchId = null, string? bunchSlug = null) => new(
+    public Location Location(string? id = null, string? name = null, string? bunchSlug = null) => new(
         id ?? String(),
         name ?? String(),
-        bunchId ?? String(),
         bunchSlug ?? String());
     
     public Event Event(
         string? id = null,
         string? name = null,
-        string? bunchId = null,
         string? bunchSlug = null,
         string? locationId = null,
         Date? startDate = null,
@@ -72,7 +70,6 @@ public class TestDataFactory
         new(
         id ?? String(),
         name ?? String(),
-        bunchId ?? String(),
         bunchSlug ?? String(),
         locationId ?? String(),
         startDate ?? Date(),

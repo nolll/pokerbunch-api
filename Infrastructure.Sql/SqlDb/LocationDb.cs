@@ -15,8 +15,7 @@ public class LocationDb(IDb db)
     private static Query GetQuery => LocationQuery
         .Select(
             Schema.Location.Id,
-            Schema.Location.Name,
-            Schema.Location.BunchId)
+            Schema.Location.Name)
         .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
         .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Location.BunchId);
 
@@ -54,13 +53,21 @@ public class LocationDb(IDb db)
         
     public async Task<string> Add(Location location)
     {
-        var parameters = new Dictionary<SqlColumn, object?>
-        {
-            { Schema.Location.Name, location.Name },
-            { Schema.Location.BunchId, int.Parse(location.BunchId) }
-        };
+        var sql = $"""
+                   INSERT INTO {Schema.Location} 
+                   ({Schema.Location.BunchId.AsParam()}, {Schema.Location.Name.AsParam()})
+                   VALUES
+                   ((SELECT {Schema.Bunch.Id} from {Schema.Bunch} where {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), @{Schema.Location.Name.AsParam()})
+                   RETURNING {Schema.Location.Id.AsParam()};
+                   """;
 
-        var result = await db.InsertGetIdAsync(LocationQuery, parameters);
+        var parameters = new Dictionary<string, object?>
+        {
+            { Schema.Location.Name.AsParam(), location.Name },
+            { Schema.Bunch.Slug.AsParam(), location.BunchSlug }
+        };
+        
+        var result = await db.ExecuteSql(sql, parameters);
         return result.ToString();
     }
 }

@@ -15,7 +15,7 @@ public class LocationDetailsTests : TestBase
     public async Task LocationDetails_AllPropertiesAreSet()
     {
         var bunch = Create.Bunch();
-        var location = Create.Location(bunchId: bunch.Id, bunchSlug: bunch.Slug);
+        var location = Create.Location(bunchSlug: bunch.Slug);
         _locationRepository.Get(location.Id).Returns(location);
 
         var request = CreateRequest(location.Id);

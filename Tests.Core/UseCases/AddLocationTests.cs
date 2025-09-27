@@ -46,12 +46,10 @@ public class AddLocationTests : TestBase
         await _locationRepository.Received().Add(Arg.Is<Location>(o => o.Name == locationName));
     }
 
-    private AddLocation.Request CreateRequest(string? bunchId = null, string? slug = null, string? locationName = null, bool? canAddLocation = null)
+    private AddLocation.Request CreateRequest(string? slug = null, string? locationName = null, bool? canAddLocation = null)
     {
         return new AddLocation.Request(
-            new AuthInTest(
-                canAddLocation: canAddLocation ?? true, 
-                userBunch: Create.UserBunch(bunchId, slug)), 
+            new AuthInTest(canAddLocation: canAddLocation ?? true), 
             slug ?? Create.String(), 
             locationName ?? Create.String());
     }

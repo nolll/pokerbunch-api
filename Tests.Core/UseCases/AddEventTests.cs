@@ -34,8 +34,7 @@ public class AddEventTests : TestBase
 
     private AddEvent.Request CreateRequest(string eventName)
     {
-        var userBunch = Create.UserBunch();
-        return new AddEvent.Request(new AuthInTest(canAddEvent: true, userBunch: userBunch), Create.String(), eventName);
+        return new AddEvent.Request(new AuthInTest(canAddEvent: true), Create.String(), eventName);
     }
 
     private AddEvent Sut => new(_eventRepository);

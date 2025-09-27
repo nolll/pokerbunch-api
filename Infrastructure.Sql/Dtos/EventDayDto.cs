@@ -6,7 +6,6 @@ namespace Infrastructure.Sql.Dtos;
 public class EventDayDto
 {
     [UsedImplicitly] public int Event_Id { get; set; }
-    [UsedImplicitly] public int Bunch_Id { get; set; }
     [UsedImplicitly] public string Bunch_Slug { get; } = "";
     [UsedImplicitly] public string Name { get; set; } = "";
     [UsedImplicitly] public int? Location_Id { get; set; }

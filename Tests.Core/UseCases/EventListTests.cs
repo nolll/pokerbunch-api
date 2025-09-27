@@ -27,8 +27,8 @@ public class EventListTests : TestBase
     public async Task EventList_ReturnsAllEvents()
     {
         var bunch = Create.Bunch();
-        var event1 = Create.Event(bunchId: bunch.Id, startDate: new Date(2025, 2, 1), endDate: new Date(2025, 2, 2));
-        var event2 = Create.Event(bunchId: bunch.Id, startDate: new Date(2025, 1, 1), endDate: new Date(2025, 1, 2));
+        var event1 = Create.Event(bunchSlug: bunch.Slug, startDate: new Date(2025, 2, 1), endDate: new Date(2025, 2, 2));
+        var event2 = Create.Event(bunchSlug: bunch.Slug, startDate: new Date(2025, 1, 1), endDate: new Date(2025, 1, 2));
         Event[] events = [event1, event2];
         _eventRepository.List(bunch.Slug).Returns(events.OrderByDescending(o => o.StartDate).ToList());
 

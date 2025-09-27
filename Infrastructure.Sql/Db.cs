@@ -45,9 +45,9 @@ public abstract class Db : IDb
         return QueryFactory.FromQuery(query).DeleteAsync();
     }
 
-    public Task<int> ExecuteSql(string sql)
+    public Task<int> ExecuteSql(string sql, Dictionary<string, object?>? parameters = null)
     {
-        return QueryFactory.StatementAsync(sql);
+        return QueryFactory.StatementAsync(sql, parameters);
     }
 
     public string GetSql(Query query)

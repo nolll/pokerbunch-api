@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 using Core.UseCases;
 using NSubstitute;
@@ -18,11 +19,24 @@ public class CashgameDetailsTests : TestBase
     private readonly IEventRepository _eventRepository = Substitute.For<IEventRepository>();
 
     [Fact]
+    public async Task CashgameDetails_NoAccess_ReturnsError()
+    {
+        var cashgame = Create.Cashgame();
+        _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
+
+        var request = CreateRequest(cashgameId: cashgame.Id, canSeeCashgames: false);
+        var result = await Sut.Execute(request);
+
+        result.Success.Should().BeFalse();
+        result.Error!.Type.Should().Be(ErrorType.AccessDenied);
+    }
+    
+    [Fact]
     public async Task CashgameDetails_CashgameRunning_AllSimplePropertiesAreSet()
     {
         var bunch = Create.Bunch();
         _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
-        var location = Create.Location(bunchId: bunch.Id);
+        var location = Create.Location(bunchSlug: bunch.Slug);
         _locationRepository.Get(location.Id).Returns(location);
         var cashgame = Create.Cashgame(locationId: location.Id, bunchSlug: bunch.Slug, bunchId: bunch.Id, status: GameStatus.Running);
         _cashgameRepository.Get(cashgame.Id).Returns(cashgame);
@@ -64,7 +78,8 @@ public class CashgameDetailsTests : TestBase
         string? slug = null,
         string? bunchName = null,
         string? playerId = null,
-        string? cashgameId = null)
+        string? cashgameId = null,
+        bool? canSeeCashgames = null)
     {
         var userBunch = Create.UserBunch(
             bunchId, 
@@ -73,7 +88,7 @@ public class CashgameDetailsTests : TestBase
             playerId,
             role: Role.Player);
         return new CashgameDetails.Request(
-            new AuthInTest(canSeeCashgame: true, userBunch: userBunch), 
+            new AuthInTest(canSeeCashgame: canSeeCashgames ?? true, userBunch: userBunch), 
             cashgameId ?? Create.String(), 
             DateTime.UtcNow);
     }

@@ -29,7 +29,7 @@ public class CashgameList(
     private static Location GetLocation(Cashgame cashgame, IEnumerable<Location> locations) => 
         locations.First(o => o.Id == cashgame.LocationId);
 
-    public record Request(IAuth Auth, string Slug, int? Year);
+    public record Request(IAuth Auth, string Slug, int? Year = null);
     public record Result(string Slug, IList<Item> Items);
 
     public class Item(Cashgame cashgame, Location location, IList<Player> players)
