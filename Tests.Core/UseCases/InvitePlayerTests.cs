@@ -61,7 +61,7 @@ public class InvitePlayerTests : TestBase
         _playerRepository.Get(player.Id).Returns(player);
         var email = Create.EmailAddress();
         
-        var request = CreateRequest(email: email, bunchId: bunch.Id, slug: bunch.Slug, bunchName: bunch.DisplayName, playerId: player.Id);
+        var request = CreateRequest(email: email, slug: bunch.Slug, bunchName: bunch.DisplayName, playerId: player.Id);
         var result = await Sut.Execute(request);
         
         _emailSender.Received().Send(Arg.Is<string>(o => o == email),
@@ -72,14 +72,13 @@ public class InvitePlayerTests : TestBase
     }
 
     private InvitePlayer.Request CreateRequest(
-        string? bunchId = null,
         string? slug = null,
         string? bunchName = null,
         string? email = null,
         string? playerId = null,
         bool? canInvitePlayer = null)
     {
-        var userBunch = Create.UserBunch(bunchId, slug, bunchName);
+        var userBunch = Create.UserBunch(slug, bunchName);
         return new InvitePlayer.Request(
             new AuthInTest(canInvitePlayer: canInvitePlayer ?? true, userBunch: userBunch),
             playerId ?? Create.String(), 

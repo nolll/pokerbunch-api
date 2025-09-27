@@ -47,7 +47,7 @@ public class CashgameDetailsTests : TestBase
         var action2 = Create.BuyinAction(cashgameId: cashgame.Id, playerId: player2.Id);
         cashgame.SetCheckpoints([action1, action2]);
 
-        var request = CreateRequest(bunch.Id, bunch.Slug, bunch.DisplayName, player1.Id, cashgame.Id);
+        var request = CreateRequest(bunch.Slug, bunch.DisplayName, player1.Id, cashgame.Id);
         var result = await Sut.Execute(request);
 
         result.Success.Should().BeTrue();
@@ -59,7 +59,7 @@ public class CashgameDetailsTests : TestBase
         
         result.Data!.PlayerItems.Count.Should().Be(2);
         var p1 = result.Data!.PlayerItems.First(o => o.PlayerId == player1.Id);
-        var p2 = result.Data!.PlayerItems.First(o => o.PlayerId == player2.Id);
+        var p2 = result.Data!.PlayerItems.Last(o => o.PlayerId == player2.Id);
         
         p1.Checkpoints.Count.Should().Be(1);
         p1.HasCashedOut.Should().BeFalse();
@@ -74,7 +74,6 @@ public class CashgameDetailsTests : TestBase
     }
 
     private CashgameDetails.Request CreateRequest(
-        string? bunchId = null,
         string? slug = null,
         string? bunchName = null,
         string? playerId = null,
@@ -82,7 +81,6 @@ public class CashgameDetailsTests : TestBase
         bool? canSeeCashgames = null)
     {
         var userBunch = Create.UserBunch(
-            bunchId, 
             slug, 
             bunchName,
             playerId,
