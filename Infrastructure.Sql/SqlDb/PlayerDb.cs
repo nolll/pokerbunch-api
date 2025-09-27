@@ -14,7 +14,6 @@ public class PlayerDb(IDb db)
 
     private static Query GetQuery => PlayerQuery
         .Select(
-            Schema.Player.BunchId,
             Schema.Player.Id,
             Schema.Player.UserId,
             Schema.Player.RoleId,

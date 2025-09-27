@@ -8,7 +8,6 @@ namespace Infrastructure.Sql.Mappers;
 internal static class CashgameMapper
 {
     internal static Cashgame ToCashgame(this CashgameDto dto, IList<CheckpointDto> checkpointDtos) => new(
-        dto.Bunch_Id.ToString(),
         dto.Bunch_Slug,
         dto.Location_Id.ToString(),
         dto.Event_Id != 0 ? dto.Event_Id.ToString() : null,

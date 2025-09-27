@@ -44,7 +44,7 @@ public class CashgameListTests : TestBase
     {
         var bunch = Create.Bunch();
         var location = Create.Location(bunchSlug: bunch.Slug);
-        var cashgame = Create.Cashgame(bunchId: bunch.Id, locationId: location.Id);
+        var cashgame = Create.Cashgame(bunchSlug: bunch.Slug, locationId: location.Id);
         _cashgameRepository.GetFinished(bunch.Slug, Arg.Any<int?>()).Returns([cashgame]);
         _playerRepository.Get(Arg.Any<IList<string>>()).Returns([]);
         _locationRepository.List(bunch.Slug).Returns([location]);

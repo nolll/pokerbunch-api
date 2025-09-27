@@ -27,7 +27,7 @@ public class AddCashgameTests : TestBase
         await _cashgameRepository.Received()
             .Add(
                 Arg.Is<Bunch>(o => o.Id == bunch.Id),
-                Arg.Is<Cashgame>(o => o.BunchId == bunch.Id && o.LocationId == locationId));
+                Arg.Is<Cashgame>(o => o.BunchSlug == bunch.Slug && o.LocationId == locationId));
     }
 
     [Fact]

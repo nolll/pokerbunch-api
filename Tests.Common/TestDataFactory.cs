@@ -106,13 +106,11 @@ public class TestDataFactory
         role ?? Type<Role>());
 
     public Cashgame Cashgame(
-        string? bunchId = null,
         string? bunchSlug = null,
         string? locationId = null,
         string? eventId = null,
         GameStatus? status = null,
         string? id = null) => new(
-        bunchId ?? String(),
         bunchSlug ?? String(),
         locationId ?? String(),
         eventId,

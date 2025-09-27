@@ -18,7 +18,6 @@ public class CashgameDb(IDb db)
     private static Query GetQuery => CashgameQuery
         .Select(
             Schema.Cashgame.Id,
-            Schema.Cashgame.BunchId,
             Schema.Cashgame.LocationId,
             Schema.EventCashgame.EventId,
             Schema.Cashgame.Status)

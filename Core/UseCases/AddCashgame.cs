@@ -23,7 +23,7 @@ public class AddCashgame(
         if (!request.Auth.CanAddCashgame(bunch.Slug))
             return Error(new AccessDeniedError()); 
         
-        var cashgame = new Cashgame(bunch.Id, bunch.Slug, request.LocationId!, null, GameStatus.Running);
+        var cashgame = new Cashgame(bunch.Slug, request.LocationId!, null, GameStatus.Running);
         var cashgameId = await cashgameRepository.Add(bunch, cashgame);
 
         return Success(new Result(request.Slug, cashgameId));

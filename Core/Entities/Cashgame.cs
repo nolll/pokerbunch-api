@@ -11,7 +11,6 @@ public class Cashgame : IEntity
     public IList<Checkpoint> UpdatedCheckpoints { get; }
     public IList<Checkpoint> DeletedCheckpoints { get; }
     public string Id { get; }
-    public string BunchId { get; }
     public string BunchSlug { get; }
     public string LocationId { get; }
     public string? EventId { get; }
@@ -22,7 +21,6 @@ public class Cashgame : IEntity
     public int PlayerCount { get; private set; }
 
     public Cashgame(
-        string bunchId,
         string bunchSlug,
         string locationId,
         string? eventId,
@@ -32,7 +30,6 @@ public class Cashgame : IEntity
     {
         Results = new List<CashgameResult>();
         Id = id;
-        BunchId = bunchId;
         BunchSlug = bunchSlug;
         LocationId = locationId;
         EventId = eventId;
