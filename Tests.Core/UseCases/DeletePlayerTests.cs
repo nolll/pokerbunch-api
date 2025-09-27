@@ -15,7 +15,7 @@ public class DeletePlayerTests : TestBase
     public async Task DeletePlayer_PlayerHasntPlayed_PlayerDeletedAndReturnUrlIsPlayerIndex()
     {
         var bunch = Create.Bunch();
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player(slug: bunch.Slug);
         _playerRepository.Get(player.Id).Returns(player);
         _cashgameRepository.GetByPlayer(player.Id).Returns([]);
 
@@ -31,7 +31,7 @@ public class DeletePlayerTests : TestBase
     public async Task DeletePlayer_PlayerHasPlayed_ReturnsError()
     {
         var bunch = Create.Bunch();
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player(slug: bunch.Slug);
         var cashgame = Create.Cashgame();
         _playerRepository.Get(player.Id).Returns(player);
         _cashgameRepository.GetByPlayer(player.Id).Returns([cashgame]);

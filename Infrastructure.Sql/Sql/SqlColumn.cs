@@ -1,16 +1,10 @@
 namespace Infrastructure.Sql.Sql;
 
-public class SqlColumn : IEqualityComparer<SqlColumn>
+public class SqlColumn(SqlTable table, string columnName) : IEqualityComparer<SqlColumn>
 {
-    private readonly string _table;
-    private readonly string _columnName;
+    private readonly string _table = table;
+    private readonly string _columnName = columnName;
     public string AsParam() => _columnName;
-
-    public SqlColumn(SqlTable table, string columnName)
-    {
-        _table = table;
-        _columnName = columnName;
-    }
 
     public override string ToString()
     {

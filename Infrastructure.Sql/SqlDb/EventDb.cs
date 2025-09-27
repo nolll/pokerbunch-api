@@ -75,13 +75,16 @@ public class EventDb(IDb db)
     {
         var sql = $"""
                   INSERT INTO {Schema.Event} 
-                  ({Schema.Event.BunchId.AsParam()}, {Schema.Event.Name.AsParam()})
+                  (
+                    {Schema.Event.BunchId.AsParam()},
+                    {Schema.Event.Name.AsParam()}
+                  )
                   VALUES
                   (
-                    (SELECT {Schema.Bunch.Id} from {Schema.Bunch} where {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}),
+                    (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}),
                     @{Schema.Event.Name.AsParam()}
                   )
-                  RETURNING {Schema.Event.Id.AsParam()};)
+                  RETURNING {Schema.Event.Id.AsParam()}
                   """;
         
         var parameters = new Dictionary<string, object?>
@@ -90,7 +93,7 @@ public class EventDb(IDb db)
             { Schema.Bunch.Slug.AsParam(), e.BunchSlug }
         };
 
-        var result = await db.ExecuteSql(sql, parameters);
+        var result = await db.CustomInsert(sql, parameters);
         return result.ToString();
     }
 

@@ -70,12 +70,12 @@ public class TestSetup
     }
 
     private static async Task CreateTables() => await Db.ExecuteSql(CreateScript);
-    private static async Task AddMasterData() => await Db.ExecuteSql(GetMasterDataSql);
+    private static async Task AddMasterData() => await Db.ExecuteSql(MasterDataSql);
 
     [OneTimeTearDown]
     public async Task TearDown() => await DestroyDbEngine();
 
-    private static string GetMasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
+    private static string MasterDataSql => ReadSqlFile("data/db-add-master-data.sql");
 
     private static string CreateScript
     {

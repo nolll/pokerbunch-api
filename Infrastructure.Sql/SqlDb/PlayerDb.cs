@@ -67,27 +67,77 @@ public class PlayerDb(IDb db)
         return player;
     }
 
-    public async Task<string> Add(Player player)
-    {
-        var parameters = player.IsUser
-            ? new Dictionary<SqlColumn, object?>
-            {
-                { Schema.Player.BunchId, int.Parse(player.BunchId) },
-                { Schema.Player.UserId, int.Parse(player.UserId!) },
-                { Schema.Player.RoleId, (int)player.Role },
-                { Schema.Player.Approved, true },
-                { Schema.Player.Color, player.Color }
-            }
-            : new Dictionary<SqlColumn, object?>
-            {
-                { Schema.Player.BunchId, int.Parse(player.BunchId) },
-                { Schema.Player.RoleId, (int)Role.Player },
-                { Schema.Player.Approved, true },
-                { Schema.Player.PlayerName, player.DisplayName },
-                { Schema.Player.Color, player.Color }
-            };
+    public async Task<string> Add(Player player) => player.IsUser 
+        ? await AddWithUser(player) 
+        : await AddWithoutUser(player);
 
-        var result = await db.InsertGetIdAsync(PlayerQuery, parameters);
+    private async Task<string> AddWithUser(Player player)
+    {
+        var sql = $"""
+                   INSERT INTO {Schema.Player} 
+                   (
+                     {Schema.Player.BunchId.AsParam()}, 
+                     {Schema.Player.UserId.AsParam()},
+                     {Schema.Player.RoleId.AsParam()},
+                     {Schema.Player.Approved.AsParam()},
+                     {Schema.Player.Color.AsParam()}
+                   )
+                   VALUES
+                   (
+                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
+                     @{Schema.Player.UserId.AsParam()},
+                     @{Schema.Player.RoleId.AsParam()},
+                     @{Schema.Player.Approved.AsParam()},
+                     @{Schema.Player.Color.AsParam()}
+                   )
+                   RETURNING {Schema.Player.Id.AsParam()}
+                   """;
+
+        var parameters = new Dictionary<string, object?>
+        {
+            { Schema.Bunch.Slug.AsParam(), player.BunchSlug },
+            { Schema.Player.UserId.AsParam(), int.Parse(player.UserId!) },
+            { Schema.Player.RoleId.AsParam(), (int)player.Role },
+            { Schema.Player.Approved.AsParam(), true },
+            { Schema.Player.Color.AsParam(), player.Color }
+        };
+        
+        var result = await db.CustomInsert(sql, parameters);
+        return result.ToString();
+    }
+    
+    private async Task<string> AddWithoutUser(Player player)
+    {
+        var sql = $"""
+                   INSERT INTO {Schema.Player} 
+                   (
+                     {Schema.Player.BunchId.AsParam()}, 
+                     {Schema.Player.RoleId.AsParam()},
+                     {Schema.Player.Approved.AsParam()},
+                     {Schema.Player.PlayerName.AsParam()},
+                     {Schema.Player.Color.AsParam()}
+                   )
+                   VALUES
+                   (
+                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
+                     @{Schema.Player.RoleId.AsParam()},
+                     @{Schema.Player.Approved.AsParam()},
+                     @{Schema.Player.PlayerName.AsParam()},
+                     @{Schema.Player.Color.AsParam()}
+                   )
+                   RETURNING {Schema.Player.Id.AsParam()}
+                   """;
+
+        var parameters = new Dictionary<string, object?>
+        {
+            { Schema.Bunch.Slug.AsParam(), player.BunchSlug },
+            { Schema.Player.RoleId.AsParam(), (int)Role.Player },
+            { Schema.Player.Approved.AsParam(), true },
+            { Schema.Player.PlayerName.AsParam(), player.DisplayName },
+            { Schema.Player.Color.AsParam(), player.Color }
+        };
+        
+        var result = await db.CustomInsert(sql, parameters);
         return result.ToString();
     }
 

@@ -29,7 +29,7 @@ public class JoinBunchTests : TestBase
     {
         var bunch = Create.Bunch();
         _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player(slug: bunch.Slug);
         _playerRepository.List(bunch.Slug).Returns([player]);
         _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns(Create.String());
         
@@ -45,7 +45,7 @@ public class JoinBunchTests : TestBase
         var user = Create.User();
         var bunch = Create.Bunch();
         _bunchRepository.GetBySlug(bunch.Slug).Returns(bunch);
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player(slug: bunch.Slug);
         _playerRepository.List(bunch.Slug).Returns([player]);
         var code = Create.String();
         _invitationCodeCreator.GetCode(Arg.Any<Player>()).Returns(code);

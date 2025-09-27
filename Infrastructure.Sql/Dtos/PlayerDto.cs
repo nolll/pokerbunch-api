@@ -5,7 +5,6 @@ namespace Infrastructure.Sql.Dtos;
 
 public class PlayerDto
 {
-    [UsedImplicitly] public int Bunch_Id { get; set; }
     [UsedImplicitly] public string Bunch_Slug { get; set; } = "";
     [UsedImplicitly] public int Player_Id { get; set; }
     [UsedImplicitly] public int? User_Id { get; set; }

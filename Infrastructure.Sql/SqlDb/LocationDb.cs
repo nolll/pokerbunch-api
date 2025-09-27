@@ -55,10 +55,16 @@ public class LocationDb(IDb db)
     {
         var sql = $"""
                    INSERT INTO {Schema.Location} 
-                   ({Schema.Location.BunchId.AsParam()}, {Schema.Location.Name.AsParam()})
+                   (
+                     {Schema.Location.BunchId.AsParam()}, 
+                     {Schema.Location.Name.AsParam()}
+                   )
                    VALUES
-                   ((SELECT {Schema.Bunch.Id} from {Schema.Bunch} where {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), @{Schema.Location.Name.AsParam()})
-                   RETURNING {Schema.Location.Id.AsParam()};
+                   (
+                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
+                     @{Schema.Location.Name.AsParam()}
+                   )
+                   RETURNING {Schema.Location.Id.AsParam()}
                    """;
 
         var parameters = new Dictionary<string, object?>
@@ -67,7 +73,7 @@ public class LocationDb(IDb db)
             { Schema.Bunch.Slug.AsParam(), location.BunchSlug }
         };
         
-        var result = await db.ExecuteSql(sql, parameters);
+        var result = await db.CustomInsert(sql, parameters);
         return result.ToString();
     }
 }

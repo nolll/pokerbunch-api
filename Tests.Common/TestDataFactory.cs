@@ -76,7 +76,6 @@ public class TestDataFactory
         endDate ?? Date());
 
     public Player Player(
-        string? bunchId = null,
         string? slug = null,
         string? id = null,
         string? userId = null,
@@ -84,7 +83,6 @@ public class TestDataFactory
         string? displayName = null,
         Role? role = null,
         string? color = null) => new(
-        bunchId ?? String(),
         slug ?? String(),
         id ?? String(),
         userId,

@@ -26,8 +26,8 @@ public class AddBunch(
             return Error(new BunchExistsError(slug));
 
         var bunch = CreateBunch(request);
-        var id = await bunchRepository.Add(bunch);
-        var player = Player.New(id, bunch.Slug, request.Auth.Id, request.Auth.UserName, Role.Manager);
+        await bunchRepository.Add(bunch);
+        var player = Player.New(bunch.Slug, request.Auth.Id, request.Auth.UserName, Role.Manager);
         await playerRepository.Add(player);
 
         return Success(new Result(bunch));

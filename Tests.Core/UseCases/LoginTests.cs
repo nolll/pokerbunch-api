@@ -45,7 +45,7 @@ public class LoginTests : TestBase
         var bunch = Create.Bunch();
         _bunchRepository.List(user.Id).Returns([bunch]);
 
-        var player = Create.Player(bunchId: bunch.Id);
+        var player = Create.Player(slug: bunch.Slug);
         _playerRepository.Get(bunch.Id, user.Id).Returns(player);   
         
         var request = CreateRequest(user.UserName, "c");
