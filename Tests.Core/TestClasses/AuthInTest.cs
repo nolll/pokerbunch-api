@@ -8,7 +8,6 @@ public class AuthInTest(
     string? userName = null,
     bool canClearCache = false,
     bool canSendTestEmail = false,
-    bool canSeeAppSettings = false,
     bool canListBunches = false,
     bool canEditCashgame = false,
     bool canDeleteCashgame = false,
@@ -42,7 +41,6 @@ public class AuthInTest(
     public string UserName => userName ?? "";
     public bool CanClearCache => canClearCache;
     public bool CanSendTestEmail => canSendTestEmail;
-    public bool CanSeeAppSettings => canSeeAppSettings;
     public bool CanListBunches => canListBunches;
     public bool CanListUsers => canListUsers;
     public bool CanViewFullUserData => canViewFullUserData;
