@@ -8,7 +8,6 @@ public interface IAuth
 
     bool CanClearCache { get; }
     bool CanSendTestEmail { get; }
-    bool CanSeeAppSettings { get; }
     bool CanListBunches { get; }
     bool CanListUsers { get; }
     bool CanViewFullUserData { get; }

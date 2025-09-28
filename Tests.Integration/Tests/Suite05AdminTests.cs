@@ -48,25 +48,4 @@ public class Suite05AdminTests
         //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
-    
-    [Test]
-    [Order(5)]
-    public async Task Test05SettingsAsAdmin()
-    {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await TestClient.General.Settings(token);
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Test]
-    [Order(6)]
-    public async Task Test06SettingsAsManager()
-    {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.General.Settings(managerToken);
-        
-        // todo: Find out why forbid returns 404
-        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
 }

@@ -267,9 +267,5 @@ public static class EndpointsMapper
         app.MapPost(ApiRoutes.Admin.SendEmail, SendEmailHandler.Handle)
             .RequireAuthorization()
             .ExcludeFromDescription();
-        
-        app.MapGet(ApiRoutes.Settings, SettingsHandler.Handle)
-            .RequireAuthorization()
-            .ExcludeFromDescription();
     }
 }

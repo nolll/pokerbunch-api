@@ -46,7 +46,6 @@ public static class DependencyInjection
         // Admin
         services.AddSingleton<ClearCache>();
         services.AddSingleton<TestEmail>();
-        services.AddSingleton<RequireAppsettingsAccess>();
 
         // Auth
         services.AddSingleton<Login>();
