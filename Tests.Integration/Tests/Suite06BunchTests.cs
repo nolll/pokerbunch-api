@@ -2,7 +2,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
-using FluentAssertions;
 
 namespace Tests.Integration.Tests;
 
