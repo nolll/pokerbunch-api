@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
-using Microsoft.OpenApi.Models;
 
 namespace Api.Extensions.Swagger;
 
