@@ -6,7 +6,7 @@ public static class GravatarService
     {
         var hash = EncryptionService.GetMd5Hash(email);
         const int size = 100;
-        const string defaultMode = "blank";
+        const string defaultMode = "mp";
 
         return $"https://gravatar.com/avatar/{hash}?s={size}&d={defaultMode}";
     }
