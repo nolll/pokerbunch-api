@@ -11,7 +11,7 @@ namespace Api.Auth;
 
 public class Auth : IAuth
 {
-    private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31");
+    private static readonly DateTime TokenMinDate = DateTime.Parse("2025-08-31T00:00:00Z").ToUniversalTime();
     
     private readonly bool _isAdmin;
     private readonly UserBunch[] _userBunches = [];
@@ -94,7 +94,7 @@ public class Auth : IAuth
     private static bool IsTokenTooOld(ClaimsPrincipal principal) => GetIssuedAt(principal) < TokenMinDate;
 
     private static DateTime GetIssuedAt(ClaimsPrincipal principal) => 
-        DateTimeService.FromUnixTimeStamp(int.Parse(GetClaim(principal, CustomClaimTypes.IssuedAt) ?? "0"));
+        DateTimeService.UtcFromUnixTimeStamp(int.Parse(GetClaim(principal, CustomClaimTypes.IssuedAt) ?? "0"));
 
     private static TokenBunchModel[] GetUserTokenBunches(ClaimsPrincipal principal)
     {
