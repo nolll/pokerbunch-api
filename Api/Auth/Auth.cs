@@ -38,7 +38,7 @@ public class Auth : IAuth
 
     public bool CanClearCache => _isAdmin;
     public bool CanSendTestEmail => _isAdmin;
-    public bool CanListBunches => _isAdmin;
+    public bool CanListBunches => true;
     public bool CanListUsers => _isAdmin;
     public bool CanViewFullUserData => _isAdmin;
     

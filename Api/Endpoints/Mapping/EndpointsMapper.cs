@@ -112,6 +112,11 @@ public static class EndpointsMapper
             .WithTags(Tags.Bunches)
             .RequireAuthorization()
             .WithSummary("Join bunch");
+        
+        app.MapPost(ApiRoutes.Bunch.JoinRequest, JoinBunchHandler.Handle)
+            .WithTags(Tags.Bunches)
+            .RequireAuthorization()
+            .WithSummary("Send request to join bunch");
     }
 
     private static void MapCashgameEndpoints(WebApplication app)

@@ -25,6 +25,7 @@ public static class ApiRoutes
         public const string Add = List;
         public const string Get = "/bunches/{bunchId}";
         public const string Join = "/bunches/{bunchId}/join";
+        public const string JoinRequest = "/bunches/{bunchId}/joinrequest";
         public const string List = "/bunches";
         public const string ListForCurrentUser = "/user/bunches";
         public const string Update = Get;

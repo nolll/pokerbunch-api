@@ -118,13 +118,13 @@ public class Suite06BunchTests
         getResult.Model!.HouseRules.Should().Be(houseRules);
         getResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
     }
-
+    
     [Test]
     [Order(9)]
-    public async Task Test09ListBunchesAsAdmin()
+    public async Task Test10ListBunchesAsUser()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await TestClient.Bunch.List(token);
+        var managerToken = await LoginHelper.GetUserToken();
+        var result = await TestClient.Bunch.List(managerToken);
         result.Success.Should().BeTrue();
         var list = result.Model!.ToList();
         var first = list.First();
@@ -134,19 +134,6 @@ public class Suite06BunchTests
 
     [Test]
     [Order(10)]
-    public async Task Test10ListBunchesAsManager()
-    {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Bunch.List(managerToken);
-        result.Success.Should().BeFalse();
-        
-        // todo: Find out why forbid returns 404
-        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    [Test]
-    [Order(11)]
     public async Task Test11ListUserBunchesForUserWithOneBunch()
     {
         var managerToken = await LoginHelper.GetManagerToken();
@@ -159,7 +146,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(12)]
+    [Order(11)]
     public async Task Test12ListUserBunchesForUserWithNoBunches()
     {
         var token = await LoginHelper.GetAdminToken();
