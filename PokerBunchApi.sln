@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yaml = docker-compose.yaml
 		Dockerfile = Dockerfile
 		.github\workflows\heroku.yaml = .github\workflows\heroku.yaml
+		build.yaml = build.yaml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Integration", "Tests.Integration\Tests.Integration.csproj", "{03CBBEA4-045E-4F85-BC57-EF8629DBADFF}"

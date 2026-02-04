@@ -27,7 +27,7 @@ public class UserDetailsTests : TestBase
         result.Data!.RealName.Should().Be(viewUser.RealName);
         result.Data!.Email.Should().Be(viewUser.Email);
         result.Data!.CanViewAll.Should().BeFalse();
-        result.Data!.AvatarUrl.Should().Be("https://gravatar.com/avatar/76d6c4d514b53a7aa38b21e5d71f5ed1?s=100&d=blank");
+        result.Data!.AvatarUrl.Should().Be("https://gravatar.com/avatar/76d6c4d514b53a7aa38b21e5d71f5ed1?s=100&d=mp");
     }
 
     [Fact]

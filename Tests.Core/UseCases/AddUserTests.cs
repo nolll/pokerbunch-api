@@ -25,15 +25,6 @@ public class AddUserTests : TestBase
     }
 
     [Fact]
-    public async Task AddUser_WithEmptyDisplayName_ReturnsError()
-    {
-        var request = CreateRequest(displayName: "");
-        var result = await Sut.Execute(request);
-
-        result.Error!.Type.Should().Be(ErrorType.Validation);
-    }
-
-    [Fact]
     public async Task AddUser_WithEmptyEmail_ReturnsError()
     {
         var request = CreateRequest(email: "");
@@ -99,6 +90,21 @@ public class AddUserTests : TestBase
             o.GlobalRole == Role.Player &&
             o.EncryptedPassword == expectedEncryptedPassword &&
             o.Salt == expectedSalt));
+    }
+    
+    [Fact]
+    public async Task AddUser_WithoutDisplayName_UserNameIsUsedAsDisplayName()
+    {
+        var userName = Create.String();
+
+        _randomizer.GetAllowedChars().Returns("a");
+        
+        var request = CreateRequest(userName, "");
+        await Sut.Execute(request);
+
+        await _userRepository.Received().Add(Arg.Is<User>(o => 
+            o.UserName == userName && 
+            o.DisplayName == userName));
     }
 
     [Fact]

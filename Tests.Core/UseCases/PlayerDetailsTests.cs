@@ -55,7 +55,7 @@ public class PlayerDetailsTests : TestBase
         var request = CreateRequest(playerId: player.Id);
         var result = await Sut.Execute(request);
 
-        const string expected = "https://gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=100&d=blank";
+        const string expected = "https://gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=100&d=mp";
         result.Data!.AvatarUrl.Should().Be(expected);
         result.Data!.UserName.Should().Be(user.UserName);
         result.Data!.IsUser.Should().BeTrue();

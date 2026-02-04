@@ -67,7 +67,9 @@ public class AddUser(
         new(
             "",
             request.UserName,
-            request.DisplayName,
+            !string.IsNullOrEmpty(request.DisplayName) 
+                ? request.DisplayName 
+                : request.UserName,
             "",
             request.Email,
             Role.Player,
@@ -76,17 +78,16 @@ public class AddUser(
 
     public class Request(string userName, string displayName, string email, string password, string loginUrl)
     {
-        [Required(ErrorMessage = "Login Name can't be empty")]
+        [Required(ErrorMessage = "Login Name is required.")]
         public string UserName { get; } = userName.ToLower();
 
-        [Required(ErrorMessage = "Display Name can't be empty")]
         public string DisplayName { get; } = displayName;
 
-        [Required(ErrorMessage = "Email can't be empty")]
-        [EmailAddress(ErrorMessage = "The email address is not valid")]
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "The email address is not valid.")]
         public string Email { get; } = email.ToLower();
 
-        [Required(ErrorMessage = "Password can't be empty")]
+        [Required(ErrorMessage = "Password is required.")]
         public string Password { get; } = password;
 
         public string LoginUrl { get; } = loginUrl;
