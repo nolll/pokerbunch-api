@@ -11,6 +11,7 @@ public static class EndpointsMapper
         public const string Auth = "Auth";
         public const string Users = "Users";
         public const string Bunches = "Bunches";
+        public const string JoinRequests = "Join requests";
         public const string Cashgames = "Cashgames";
         public const string CashgameActions = "Cashgame actions";
         public const string Players = "Players";
@@ -23,6 +24,7 @@ public static class EndpointsMapper
         MapAuthEndpoints(app);
         MapUserEndpoints(app);
         MapBunchEndpoints(app);
+        MapJoinRequestEndpoints(app);
         MapCashgameEndpoints(app);
         MapCashgameActionEndpoints(app);
         MapPlayerEndpoints(app);
@@ -114,6 +116,29 @@ public static class EndpointsMapper
             .WithSummary("Join bunch");
     }
 
+    private static void MapJoinRequestEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.JoinRequest.ListByBunch, ListJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("List join requests for bunch");
+        
+        app.MapPost(ApiRoutes.JoinRequest.Add, AddJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("Send request to join bunch");
+        
+        app.MapPost(ApiRoutes.JoinRequest.Accept, AcceptJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("Accept or deny a join request");
+        
+        app.MapPost(ApiRoutes.JoinRequest.Deny, DenyJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("Accept or deny a join request");
+    }
+    
     private static void MapCashgameEndpoints(WebApplication app)
     {
         app.MapGet(ApiRoutes.Cashgame.Get, GetCashgameHandler.Handle)

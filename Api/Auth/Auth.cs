@@ -38,7 +38,7 @@ public class Auth : IAuth
 
     public bool CanClearCache => _isAdmin;
     public bool CanSendTestEmail => _isAdmin;
-    public bool CanListBunches => _isAdmin;
+    public bool CanListBunches => true;
     public bool CanListUsers => _isAdmin;
     public bool CanViewFullUserData => _isAdmin;
     
@@ -62,6 +62,9 @@ public class Auth : IAuth
 
     public bool CanGetBunch(string slug) => IsPlayer(slug);
     public bool CanEditBunch(string slug) => IsManager(slug);
+    
+    public bool CanListJoinRequests(string slug) => IsManager(slug);
+    public bool CanHandleJoinRequest(string slug) => IsManager(slug);
     
     public bool CanAddPlayer(string slug) => IsManager(slug);
     public bool CanSeePlayer(string slug) => IsPlayer(slug);

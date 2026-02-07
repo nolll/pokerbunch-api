@@ -17,6 +17,8 @@ public class AuthInTest(
     bool canViewFullUserData = false,
     bool canAddLocation = false,
     bool canEditBunch = false,
+    bool canListJoinRequests = false,
+    bool canHandleJoinRequest = false,
     bool canListLocations = false,
     bool canAddCashgame = false,
     bool canGetBunch = false,
@@ -50,6 +52,8 @@ public class AuthInTest(
     public bool CanSeeLocation(string slug) => canSeeLocation;
     public bool CanAddLocation(string slug) => canAddLocation;
     public bool CanEditBunch(string slug) => canEditBunch;
+    public bool CanListJoinRequests(string slug) => canListJoinRequests;
+    public bool CanHandleJoinRequest(string slug) => canHandleJoinRequest;
     public bool CanListLocations(string slug) => canListLocations;
     public bool CanAddCashgame(string slug) => canAddCashgame;
     public bool CanGetBunch(string slug) => canGetBunch;

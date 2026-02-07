@@ -30,6 +30,14 @@ public static class ApiRoutes
         public const string Update = Get;
     }
 
+    public static class JoinRequest
+    {
+        public const string Add = ListByBunch;
+        public const string ListByBunch = "/bunches/{bunchId}/joinrequests";
+        public const string Accept = "/joinrequests/{joinRequestId}/accept";
+        public const string Deny = "/joinrequests/{joinRequestId}/deny";
+    }
+
     public static class Cashgame
     {
         public const string Add = ListByBunch;

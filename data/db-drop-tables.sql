@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS pb_event;
 DROP TABLE IF EXISTS pb_tournament;
 DROP TABLE IF EXISTS pb_comment;
 DROP TABLE IF EXISTS pb_player;
+DROP TABLE IF EXISTS pb_join_request;
 DROP TABLE IF EXISTS pb_bunch;
 DROP TABLE IF EXISTS pb_user;
 DROP TABLE IF EXISTS pb_role;

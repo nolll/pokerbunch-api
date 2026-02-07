@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddSingleton<IEventRepository, EventRepository>();
         services.AddSingleton<ILocationRepository, LocationRepository>();
         services.AddSingleton<IPlayerRepository, PlayerRepository>();
+        services.AddSingleton<IJoinRequestRepository, JoinRequestRepository>();
         services.AddSingleton(GetEmailSender(configuration));
         services.AddSingleton<IDb>(new PostgresDb(connectionString));
         services.AddSingleton<IRandomizer, Randomizer>();
@@ -65,6 +66,12 @@ public static class DependencyInjection
         services.AddSingleton<GetBunch>();
         services.AddSingleton<AddBunch>();
         services.AddSingleton<EditBunch>();
+        
+        // Join requests
+        services.AddSingleton<AddJoinRequest>();
+        services.AddSingleton<ListJoinRequests>();
+        services.AddSingleton<AcceptJoinRequest>();
+        services.AddSingleton<DenyJoinRequest>();
 
         // Events
         services.AddSingleton<EventDetails>();
