@@ -66,6 +66,10 @@ public static class DependencyInjection
         services.AddSingleton<GetBunch>();
         services.AddSingleton<AddBunch>();
         services.AddSingleton<EditBunch>();
+        
+        // Join requests
+        services.AddSingleton<AddJoinRequest>();
+        services.AddSingleton<ListJoinRequests>();
 
         // Events
         services.AddSingleton<EventDetails>();

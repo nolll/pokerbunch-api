@@ -6,9 +6,9 @@ public class SqlJoinRequest : SqlTable
     public SqlColumn BunchId { get; }
     public SqlColumn UserId { get; }
 
-    public SqlJoinRequest() : base("pb_joinrequest")
+    public SqlJoinRequest() : base("pb_join_request")
     {
-        Id = new SqlColumn(this, "request_id");
+        Id = new SqlColumn(this, "join_request_id");
         BunchId = new SqlColumn(this, "bunch_id");
         UserId = new SqlColumn(this, "user_id");
     }

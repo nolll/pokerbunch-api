@@ -5,10 +5,9 @@ using Core.Services;
 
 namespace Core.UseCases;
 
-public class JoinBunchRequest(
-    IBunchRepository bunchRepository,
+public class ListJoinRequests(
     IJoinRequestRepository joinRequestRepository)
-    : UseCase<JoinBunchRequest.Request, JoinBunchRequest.Result>
+    : UseCase<ListJoinRequests.Request, ListJoinRequests.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
@@ -16,10 +15,9 @@ public class JoinBunchRequest(
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
 
-        var bunch = await bunchRepository.GetBySlug(request.Slug);
-
-        var id = await joinRequestRepository.Add(new JoinRequest("", request.Slug, request.Auth.Id));
-        return Success(new Result(bunch.Slug, id));
+        var joinRequests = await joinRequestRepository.List(request.Slug);
+        
+        return Success(new Result(joinRequests));
     }
 
     public class Request(IAuth auth, string slug)
@@ -28,9 +26,8 @@ public class JoinBunchRequest(
         public string Slug { get; } = slug;
     }
 
-    public class Result(string slug, string playerId)
+    public class Result(IList<JoinRequest> joinRequests)
     {
-        public string Slug { get; private set; } = slug;
-        public string PlayerId { get; private set; } = playerId;
+        public IList<JoinRequest> JoinRequests { get; } = joinRequests;
     }
 }

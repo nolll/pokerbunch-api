@@ -11,6 +11,7 @@ public static class EndpointsMapper
         public const string Auth = "Auth";
         public const string Users = "Users";
         public const string Bunches = "Bunches";
+        public const string JoinRequests = "Join requests";
         public const string Cashgames = "Cashgames";
         public const string CashgameActions = "Cashgame actions";
         public const string Players = "Players";
@@ -23,6 +24,7 @@ public static class EndpointsMapper
         MapAuthEndpoints(app);
         MapUserEndpoints(app);
         MapBunchEndpoints(app);
+        MapJoinRequestEndpoints(app);
         MapCashgameEndpoints(app);
         MapCashgameActionEndpoints(app);
         MapPlayerEndpoints(app);
@@ -112,13 +114,21 @@ public static class EndpointsMapper
             .WithTags(Tags.Bunches)
             .RequireAuthorization()
             .WithSummary("Join bunch");
+    }
+
+    private static void MapJoinRequestEndpoints(WebApplication app)
+    {
+        app.MapGet(ApiRoutes.JoinRequest.List, ListJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("List join requests for bunch");
         
-        app.MapPost(ApiRoutes.Bunch.JoinRequest, JoinBunchHandler.Handle)
-            .WithTags(Tags.Bunches)
+        app.MapPost(ApiRoutes.JoinRequest.Add, AddJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
             .RequireAuthorization()
             .WithSummary("Send request to join bunch");
     }
-
+    
     private static void MapCashgameEndpoints(WebApplication app)
     {
         app.MapGet(ApiRoutes.Cashgame.Get, GetCashgameHandler.Handle)
