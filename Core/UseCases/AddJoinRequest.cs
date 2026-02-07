@@ -7,6 +7,7 @@ namespace Core.UseCases;
 
 public class AddJoinRequest(
     IBunchRepository bunchRepository,
+    IPlayerRepository playerRepository,
     IJoinRequestRepository joinRequestRepository)
     : UseCase<AddJoinRequest.Request, AddJoinRequest.Result>
 {
@@ -17,8 +18,16 @@ public class AddJoinRequest(
             return Error(new ValidationError(validator));
 
         var bunch = await bunchRepository.GetBySlug(request.Slug);
+        var existingPlayer = await playerRepository.Get(bunch.Id, request.Auth.Id);
+        if (existingPlayer is not null)
+            return Error(new ValidationError($"You are already a member of {bunch.DisplayName}"));
+
+        var existingApplication = await joinRequestRepository.Get(bunch.Id, request.Auth.Id);
+        if (existingApplication is not null)
+            return Error(new ValidationError($"You have already applied for membership to {bunch.DisplayName}"));
         
         await joinRequestRepository.Add(new JoinRequest("", request.Slug, request.Auth.Id, request.Auth.UserName));
+        
         return Success(new Result(bunch.Slug, bunch.DisplayName));
     }
 

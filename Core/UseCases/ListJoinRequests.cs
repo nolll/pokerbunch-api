@@ -14,6 +14,9 @@ public class ListJoinRequests(
         var validator = new Validator(request);
         if (!validator.IsValid)
             return Error(new ValidationError(validator));
+        
+        if (!request.Auth.CanListJoinRequests(request.Slug))
+            return Error(new AccessDeniedError());
 
         var joinRequests = await joinRequestRepository.List(request.Slug);
         

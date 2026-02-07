@@ -118,7 +118,7 @@ public static class EndpointsMapper
 
     private static void MapJoinRequestEndpoints(WebApplication app)
     {
-        app.MapGet(ApiRoutes.JoinRequest.List, ListJoinRequestHandler.Handle)
+        app.MapGet(ApiRoutes.JoinRequest.ListByBunch, ListJoinRequestHandler.Handle)
             .WithTags(Tags.JoinRequests)
             .RequireAuthorization()
             .WithSummary("List join requests for bunch");
@@ -127,6 +127,16 @@ public static class EndpointsMapper
             .WithTags(Tags.JoinRequests)
             .RequireAuthorization()
             .WithSummary("Send request to join bunch");
+        
+        app.MapPost(ApiRoutes.JoinRequest.Accept, AcceptJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("Accept or deny a join request");
+        
+        app.MapPost(ApiRoutes.JoinRequest.Deny, DenyJoinRequestHandler.Handle)
+            .WithTags(Tags.JoinRequests)
+            .RequireAuthorization()
+            .WithSummary("Accept or deny a join request");
     }
     
     private static void MapCashgameEndpoints(WebApplication app)

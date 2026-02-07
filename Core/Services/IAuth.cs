@@ -19,6 +19,8 @@ public interface IAuth
     bool CanSeeLocation(string slug);
     bool CanAddLocation(string slug);
     bool CanEditBunch(string slug);
+    bool CanListJoinRequests(string slug);
+    bool CanHandleJoinRequest(string slug);
     bool CanListLocations(string slug);
     bool CanAddCashgame(string slug);
     bool CanGetBunch(string slug);

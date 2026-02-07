@@ -70,6 +70,8 @@ public static class DependencyInjection
         // Join requests
         services.AddSingleton<AddJoinRequest>();
         services.AddSingleton<ListJoinRequests>();
+        services.AddSingleton<AcceptJoinRequest>();
+        services.AddSingleton<DenyJoinRequest>();
 
         // Events
         services.AddSingleton<EventDetails>();

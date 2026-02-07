@@ -17,6 +17,6 @@ public static class ListJoinRequestHandler
         var result = await listJoinRequest.Execute(request);
         return ResultHandler.Model(result, CreateModel);
         IEnumerable<JoinRequestModel>? CreateModel() => 
-            result.Data?.JoinRequests.Select(o => new JoinRequestModel(o.Id, o.BunchId, o.UserId, o.UserName));
+            result.Data?.JoinRequests.Select(o => new JoinRequestModel(o.Id, bunchId, o.UserId, o.UserName));
     }
 }

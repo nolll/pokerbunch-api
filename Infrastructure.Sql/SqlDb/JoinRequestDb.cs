@@ -25,6 +25,14 @@ public class JoinRequestDb(IDb db)
         return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
     }
     
+    public async Task<IList<string>> Find(string bunchId, string userId)
+    {
+        var query = FindQuery
+            .Where(Schema.JoinRequest.BunchId, int.Parse(bunchId))
+            .Where(Schema.JoinRequest.UserId, int.Parse(userId));
+        return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
+    }
+    
     private static Query FindQuery => JoinRequestQuery
         .Select(Schema.JoinRequest.Id)
         .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.JoinRequest.BunchId);
@@ -64,5 +72,11 @@ public class JoinRequestDb(IDb db)
         
         var result = await db.CustomInsert(sql, parameters);
         return result.ToString();
+    }
+    
+    public async Task Delete(string joinRequestId)
+    {
+        var query = JoinRequestQuery.Where(Schema.JoinRequest.Id, int.Parse(joinRequestId));
+        await db.DeleteAsync(query);
     }
 }
