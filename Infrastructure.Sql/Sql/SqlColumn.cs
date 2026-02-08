@@ -4,17 +4,11 @@ public class SqlColumn(SqlTable table, string columnName) : IEqualityComparer<Sq
 {
     private readonly string _table = table;
     private readonly string _columnName = columnName;
+    
     public string AsParam() => _columnName;
-
-    public override string ToString()
-    {
-        return $"{_table}.{_columnName}";
-    }
-
-    public static implicit operator string(SqlColumn column)
-    {
-        return column.ToString();
-    }
+    public override string ToString() => $"{_table}.{_columnName}";
+    public static implicit operator string(SqlColumn column) => column.ToString();
+    public int GetHashCode(SqlColumn obj) => HashCode.Combine(obj._table, obj._columnName);
 
     public bool Equals(SqlColumn? x, SqlColumn? y)
     {
@@ -23,10 +17,5 @@ public class SqlColumn(SqlTable table, string columnName) : IEqualityComparer<Sq
         if (ReferenceEquals(y, null)) return false;
         if (x.GetType() != y.GetType()) return false;
         return x._table == y._table && x._columnName == y._columnName;
-    }
-
-    public int GetHashCode(SqlColumn obj)
-    {
-        return HashCode.Combine(obj._table, obj._columnName);
     }
 }

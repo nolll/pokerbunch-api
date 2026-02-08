@@ -1,21 +1,8 @@
 namespace Infrastructure.Sql.Sql;
 
-public class SqlTable
+public class SqlTable(string tableName)
 {
-    private string TableName { get; }
-
-    protected SqlTable(string tableName)
-    {
-        TableName = tableName;
-    }
-
-    public override string ToString()
-    {
-        return TableName;
-    }
-
-    public static implicit operator string(SqlTable table)
-    {
-        return table.ToString();
-    }
+    private string TableName { get; } = tableName;
+    public override string ToString() => TableName;
+    public static implicit operator string(SqlTable table) => table.ToString();
 }

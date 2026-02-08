@@ -1,14 +1,5 @@
-﻿using Api.Settings;
-using Api.Urls.ApiUrls;
-using Core;
-using Core.Cache;
-using Core.Repositories;
-using Core.Services;
-using Core.UseCases;
-using Infrastructure.Cache;
-using Infrastructure.Email;
-using Infrastructure.Sql;
-using Infrastructure.Sql.Repositories;
+﻿using System.Collections.Generic;
+using Api.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,16 +8,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 using System.Text;
 using Api.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Api;
 using Api.Bootstrapping;
+using Api.Extensions.Swagger;
 using Api.Middleware;
 using Api.Routes;
-using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT");
@@ -105,6 +96,7 @@ builder.Services.AddOpenApi(options =>
         document.Info.Description = "For access to protected endpoints, you will need a token from the Login endpoints.";
         return Task.CompletedTask;
     });
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 var app = builder.Build();
