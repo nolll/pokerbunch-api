@@ -17,7 +17,7 @@ public static class UpdateBunchHandler
     {
         var request = new EditBunch.Request(auth, bunchId, post.Description, post.CurrencySymbol, post.CurrencyLayout, post.Timezone, post.HouseRules, post.DefaultBuyin);
         var result = await editBunch.Execute(request);
-        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
         return ResultHandler.Model(result, CreateModel);
+        BunchModel? CreateModel() => result.Data is not null ? new BunchModel(result.Data) : null;
     }
 }
