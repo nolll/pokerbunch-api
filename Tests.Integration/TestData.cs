@@ -18,7 +18,7 @@ public static class TestData
     public const string UserUserName = "user";
     public const string UserDisplayName = "User";
     public const string UserUserId = "3";
-    public const string UserPlayerName = "User Player Name";
+    public const string UserPlayerName = "User";
     public const string UserEmail = "user@example.org";
     public const string UserPassword = "userpassword";
     public const string UserPlayerId = "2";

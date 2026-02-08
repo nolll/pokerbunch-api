@@ -1,6 +1,5 @@
 using Api.Extensions;
 using Api.Models.JoinRequestModels;
-using Api.Urls.ApiUrls;
 using Core.Services;
 using Core.UseCases;
 using Microsoft.AspNetCore.Http;

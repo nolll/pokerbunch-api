@@ -33,36 +33,23 @@ public class Suite06BunchTests
 
     [Test]
     [Order(2)]
-    public async Task Test02AddPlayerForUser()
+    public async Task Test03ApplyForMembershipAndApprove()
     {
+        var userToken = await LoginHelper.GetUserToken();
+        var joinRequestResult = await TestClient.JoinRequest.Add(userToken, TestData.BunchId);
+        joinRequestResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        
         var managerToken = await LoginHelper.GetManagerToken();
-        await AddPlayer(managerToken, TestData.UserPlayerName);
+        var joinRequestListResult = await TestClient.JoinRequest.ListByBunch(managerToken, TestData.BunchId);
+        joinRequestListResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        var joinRequestId = joinRequestListResult.Model!.First().Id;
+
+        var acceptResult = await TestClient.JoinRequest.Accept(managerToken, joinRequestId);
+        acceptResult.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Test]
     [Order(3)]
-    public async Task Test03InviteAndJoin()
-    {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var inviteParameters = new PlayerInvitePostModel(TestData.UserEmail);
-        var inviteResult = await TestClient.Player.Invite(managerToken, TestData.UserPlayerId, inviteParameters);
-        var lastMessageBody = TestSetup.EmailSender?.LastMessage?.Body ?? "";
-        var verificationCode = GetVerificationCode(lastMessageBody);
-        var invitationUrl1 = GetRelativeInvitationUrl1(lastMessageBody);
-        var invitationUrl2 = GetRelativeInvitationUrl2(lastMessageBody);
-        inviteResult.StatusCode.Should().Be(HttpStatusCode.OK);
-        verificationCode.Should().NotBeNull();
-        invitationUrl1.Should().Be($"/bunches/bunch-1/join/{verificationCode}");
-        invitationUrl2.Should().Be("/bunches/bunch-1/join");
-
-        var userToken = await LoginHelper.GetUserToken();
-        var joinParameters = new JoinBunchPostModel(verificationCode);
-        var joinResult = await TestClient.Bunch.Join(userToken, TestData.BunchId, joinParameters);
-        joinResult.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Test]
-    [Order(4)]
     public async Task Test04AddPlayerWithoutUser()
     {
         var managerToken = await LoginHelper.GetManagerToken();
@@ -70,7 +57,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(5)]
+    [Order(4)]
     public async Task Test05GetBunchAsAdmin()
     {
         var token = await LoginHelper.GetAdminToken();
@@ -79,7 +66,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(6)]
+    [Order(5)]
     public async Task Test06GetBunchAsManager()
     {
         var managerToken = await LoginHelper.GetManagerToken();
@@ -89,7 +76,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(7)]
+    [Order(6)]
     public async Task Test07GetBunchAsUser()
     {
         var userToken = await LoginHelper.GetUserToken();
@@ -99,7 +86,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(8)]
+    [Order(7)]
     public async Task Test08UpdateBunch()
     {
         const string newDescription = $"UPDATED: {TestData.BunchDescription}";
@@ -120,7 +107,7 @@ public class Suite06BunchTests
     }
     
     [Test]
-    [Order(9)]
+    [Order(8)]
     public async Task Test10ListBunchesAsUser()
     {
         var managerToken = await LoginHelper.GetUserToken();
@@ -133,7 +120,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(10)]
+    [Order(9)]
     public async Task Test11ListUserBunchesForUserWithOneBunch()
     {
         var managerToken = await LoginHelper.GetManagerToken();
@@ -146,7 +133,7 @@ public class Suite06BunchTests
     }
 
     [Test]
-    [Order(11)]
+    [Order(10)]
     public async Task Test12ListUserBunchesForUserWithNoBunches()
     {
         var token = await LoginHelper.GetAdminToken();

@@ -1,8 +1,10 @@
 using System.Text.Json;
 using Api.Models.BunchModels;
 using Api.Models.CashgameModels;
+using Api.Models.CommonModels;
 using Api.Models.EventModels;
 using Api.Models.HomeModels;
+using Api.Models.JoinRequestModels;
 using Api.Models.LocationModels;
 using Api.Models.PlayerModels;
 using Api.Models.UserModels;
@@ -58,6 +60,18 @@ public static class TestClient
 
         public static async Task<TestClientResult<BunchModel>> Update(string? token, string bunchId, UpdateBunchPostModel parameters) => 
             await PutAsync<BunchModel>(token, new ApiBunchUpdateUrl(bunchId), parameters);
+    }
+
+    public static class JoinRequest
+    {
+        public static async Task<TestClientResult<MessageModel>> Add(string? token, string bunchId) => 
+            await PostAsync<MessageModel>(token, new ApiJoinRequestAddUrl(bunchId), null);
+        
+        public static async Task<TestClientResult<IEnumerable<JoinRequestModel>>> ListByBunch(string? token, string bunchId) => 
+            await GetAsync<IEnumerable<JoinRequestModel>>(token, new ApiJoinRequestListUrl(bunchId));
+        
+        public static async Task<TestClientResult<MessageModel>> Accept(string? token, string joinRequestId) => 
+            await PostAsync<MessageModel>(token, new ApiJoinRequestAcceptUrl(joinRequestId), null);
     }
 
     public static class Cashgame
@@ -194,10 +208,10 @@ public static class TestClient
         return HandleEmptyResponse(response);
     }
 
-    private static async Task<TestClientResult<T>> PostAsync<T>(ApiUrl url, object parameters) where T : class => 
+    private static async Task<TestClientResult<T>> PostAsync<T>(ApiUrl url, object? parameters) where T : class => 
         await PostAsync<T>(null, url, parameters);
 
-    private static async Task<TestClientResult<T>> PostAsync<T>(string? token, ApiUrl url, object parameters) where T : class
+    private static async Task<TestClientResult<T>> PostAsync<T>(string? token, ApiUrl url, object? parameters) where T : class
     {
         var response = await GetClient(token).PostAsJsonAsync(url.Relative, parameters);
         return await HandleJsonResponse<T>(response);
