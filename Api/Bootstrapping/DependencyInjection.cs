@@ -42,7 +42,6 @@ public static class DependencyInjection
         services.AddSingleton(GetEmailSender(configuration));
         services.AddSingleton<IDb>(new PostgresDb(connectionString));
         services.AddSingleton<IRandomizer, Randomizer>();
-        services.AddSingleton<IInvitationCodeCreator, InvitationCodeCreator>();
 
         // Admin
         services.AddSingleton<ClearCache>();
@@ -103,8 +102,6 @@ public static class DependencyInjection
         services.AddSingleton<GetPlayerList>();
         services.AddSingleton<AddPlayer>();
         services.AddSingleton<DeletePlayer>();
-        services.AddSingleton<InvitePlayer>();
-        services.AddSingleton<JoinBunch>();
     }
 
     private static IEmailSender GetEmailSender(IConfiguration configuration)

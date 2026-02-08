@@ -49,9 +49,6 @@ public static class TestClient
         public static async Task<TestClientResult<BunchModel>> Get(string? token, string bunchId) => 
             await GetAsync<BunchModel>(token, new ApiBunchUrl(bunchId));
 
-        public static async Task<TestClientResult> Join(string? token, string bunchId, JoinBunchPostModel parameters) => 
-            await PostAsync(token, new ApiBunchJoinUrl(bunchId), parameters);
-
         public static async Task<TestClientResult<IEnumerable<BunchModel>>> List(string? token) => 
             await GetAsync<IEnumerable<BunchModel>>(token, new ApiBunchesUrl());
 
@@ -144,9 +141,6 @@ public static class TestClient
 
         public static async Task<TestClientResult<PlayerModel>> Get(string? token, string playerId) => 
             await GetAsync<PlayerModel>(token, new ApiPlayerUrl(playerId));
-
-        public static async Task<TestClientResult> Invite(string? token, string playerId, PlayerInvitePostModel parameters) => 
-            await PostAsync(token, new ApiPlayerInviteUrl(playerId), parameters);
 
         public static async Task<TestClientResult<List<PlayerListItemModel>>> List(string? token, string bunchId) => 
             await GetAsync<List<PlayerListItemModel>>(token, new ApiPlayerListUrl(bunchId));

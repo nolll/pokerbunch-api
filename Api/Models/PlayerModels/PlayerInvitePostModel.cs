@@ -1,9 +1,0 @@
-using System.Text.Json.Serialization;
-
-namespace Api.Models.PlayerModels;
-
-[method: JsonConstructor]
-public class PlayerInvitePostModel(string email)
-{
-    public string Email { get; } = email;
-}
