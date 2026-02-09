@@ -3,6 +3,7 @@ using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.Sql;
 using SqlKata;
 

@@ -11,7 +11,6 @@ using Infrastructure.Sql;
 using Infrastructure.Sql.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 
 namespace Api.Bootstrapping;
 
@@ -20,88 +19,87 @@ public static class DependencyInjection
     public static void AddServices(
         this IServiceCollection services,
         AppSettings settings,
-        ConfigurationManager configuration)
+        ConfigurationManager configuration,
+        string connectionString)
     {
-        var connectionString = GetConnectionString(configuration);
-        
-        services.AddSingleton(settings);
+        services.AddTransient(_ => settings);
         services.AddHttpContextAccessor();
         services.AddTransient<IAuth, Auth.Auth>();
-        services.AddSingleton<ISettings>(new Core.Settings(settings.InvitationSecret));
-        services.AddSingleton(new UrlProvider(settings.Urls.Api, settings.Urls.Site));
+        services.AddTransient<ISettings>(_ => new Core.Settings(settings.InvitationSecret));
+        services.AddTransient(_ => new UrlProvider(settings.Urls.Api, settings.Urls.Site));
 
-        services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
-        services.AddSingleton<ICache, Cache>();
-        services.AddSingleton<IUserRepository, UserRepository>();
-        services.AddSingleton<IBunchRepository, BunchRepository>();
-        services.AddSingleton<ICashgameRepository, CashgameRepository>();
-        services.AddSingleton<IEventRepository, EventRepository>();
-        services.AddSingleton<ILocationRepository, LocationRepository>();
-        services.AddSingleton<IPlayerRepository, PlayerRepository>();
-        services.AddSingleton<IJoinRequestRepository, JoinRequestRepository>();
-        services.AddSingleton(GetEmailSender(configuration));
-        services.AddSingleton<IDb>(new PostgresDb(connectionString));
-        services.AddSingleton<IRandomizer, Randomizer>();
+        services.AddTransient<ICacheProvider, MemoryCacheProvider>();
+        services.AddTransient<ICache, Cache>();
+        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IBunchRepository, BunchRepository>();
+        services.AddTransient<ICashgameRepository, CashgameRepository>();
+        services.AddTransient<IEventRepository, EventRepository>();
+        services.AddTransient<ILocationRepository, LocationRepository>();
+        services.AddTransient<IPlayerRepository, PlayerRepository>();
+        services.AddTransient<IJoinRequestRepository, JoinRequestRepository>();
+        services.AddTransient(_ => GetEmailSender(configuration));
+        services.AddTransient<IDb>(_ => new PostgresDb(connectionString));
+        services.AddTransient<IRandomizer, Randomizer>();
 
         // Admin
-        services.AddSingleton<ClearCache>();
-        services.AddSingleton<TestEmail>();
+        services.AddTransient<ClearCache>();
+        services.AddTransient<TestEmail>();
 
         // Auth
-        services.AddSingleton<Login>();
-        services.AddSingleton<Refresh>();
+        services.AddTransient<Login>();
+        services.AddTransient<Refresh>();
 
         // User
-        services.AddSingleton<UserDetails>();
-        services.AddSingleton<UserList>();
-        services.AddSingleton<EditUser>();
-        services.AddSingleton<AddUser>();
-        services.AddSingleton<ChangePassword>();
-        services.AddSingleton<ResetPassword>();
+        services.AddTransient<UserDetails>();
+        services.AddTransient<UserList>();
+        services.AddTransient<EditUser>();
+        services.AddTransient<AddUser>();
+        services.AddTransient<ChangePassword>();
+        services.AddTransient<ResetPassword>();
 
         // Bunch
-        services.AddSingleton<GetBunchList>();
-        services.AddSingleton<GetBunchListForUser>();
-        services.AddSingleton<GetBunch>();
-        services.AddSingleton<AddBunch>();
-        services.AddSingleton<EditBunch>();
+        services.AddTransient<GetBunchList>();
+        services.AddTransient<GetBunchListForUser>();
+        services.AddTransient<GetBunch>();
+        services.AddTransient<AddBunch>();
+        services.AddTransient<EditBunch>();
         
         // Join requests
-        services.AddSingleton<AddJoinRequest>();
-        services.AddSingleton<ListJoinRequests>();
-        services.AddSingleton<AcceptJoinRequest>();
-        services.AddSingleton<DenyJoinRequest>();
+        services.AddTransient<AddJoinRequest>();
+        services.AddTransient<ListJoinRequests>();
+        services.AddTransient<AcceptJoinRequest>();
+        services.AddTransient<DenyJoinRequest>();
 
         // Events
-        services.AddSingleton<EventDetails>();
-        services.AddSingleton<EventList>();
-        services.AddSingleton<AddEvent>();
+        services.AddTransient<EventDetails>();
+        services.AddTransient<EventList>();
+        services.AddTransient<AddEvent>();
 
         // Locations
-        services.AddSingleton<GetLocationList>();
-        services.AddSingleton<GetLocation>();
-        services.AddSingleton<AddLocation>();
+        services.AddTransient<GetLocationList>();
+        services.AddTransient<GetLocation>();
+        services.AddTransient<AddLocation>();
 
         // Cashgame
-        services.AddSingleton<CashgameList>();
-        services.AddSingleton<EventCashgameList>();
-        services.AddSingleton<PlayerCashgameList>();
-        services.AddSingleton<CurrentCashgames>();
-        services.AddSingleton<CashgameDetails>();
-        services.AddSingleton<Buyin>();
-        services.AddSingleton<Report>();
-        services.AddSingleton<Cashout>();
-        services.AddSingleton<AddCashgame>();
-        services.AddSingleton<EditCashgame>();
-        services.AddSingleton<DeleteCashgame>();
-        services.AddSingleton<EditCheckpoint>();
-        services.AddSingleton<DeleteCheckpoint>();
+        services.AddTransient<CashgameList>();
+        services.AddTransient<EventCashgameList>();
+        services.AddTransient<PlayerCashgameList>();
+        services.AddTransient<CurrentCashgames>();
+        services.AddTransient<CashgameDetails>();
+        services.AddTransient<Buyin>();
+        services.AddTransient<Report>();
+        services.AddTransient<Cashout>();
+        services.AddTransient<AddCashgame>();
+        services.AddTransient<EditCashgame>();
+        services.AddTransient<DeleteCashgame>();
+        services.AddTransient<EditCheckpoint>();
+        services.AddTransient<DeleteCheckpoint>();
 
         // Player
-        services.AddSingleton<GetPlayer>();
-        services.AddSingleton<GetPlayerList>();
-        services.AddSingleton<AddPlayer>();
-        services.AddSingleton<DeletePlayer>();
+        services.AddTransient<GetPlayer>();
+        services.AddTransient<GetPlayerList>();
+        services.AddTransient<AddPlayer>();
+        services.AddTransient<DeletePlayer>();
     }
 
     private static IEmailSender GetEmailSender(IConfiguration configuration)
@@ -112,26 +110,5 @@ public static class DependencyInjection
         var login = configuration.GetValue<string>("SMTP_LOGIN");
         var password = configuration.GetValue<string>("SMTP_PASSWORD");
         return new SmtpEmailSender(host, port, login, password);
-    }
-
-    private static string GetConnectionString(IConfiguration configuration)
-    {
-        var databaseUrl = configuration.GetValue<string>("DATABASE_URL");
-        if (string.IsNullOrEmpty(databaseUrl))
-            return "";
-
-        var databaseUri = new Uri(databaseUrl);
-        var userInfo = databaseUri.UserInfo.Split(':');
-
-        var connectionStringBuilder = new NpgsqlConnectionStringBuilder
-        {
-            Host = databaseUri.Host,
-            Port = databaseUri.Port,
-            Username = userInfo[0],
-            Password = userInfo[1],
-            Database = databaseUri.LocalPath.TrimStart('/')
-        };
-
-        return connectionStringBuilder.ToString();
     }
 }

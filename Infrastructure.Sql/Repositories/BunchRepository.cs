@@ -3,17 +3,18 @@ using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class BunchRepository(IDb db, ICache cache) : IBunchRepository
+public class BunchRepository(IDb db, ICache cache, PokerBunchDbContext dbContext) : IBunchRepository
 {
-    private readonly BunchDb _bunchDb = new(db);
+    private readonly BunchDb _bunchDb = new(db, dbContext);
 
     public Task<Bunch> Get(string id)
     {
-        return cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
+        return cache.GetAndStoreAsync(_bunchDb.Get2, id, TimeSpan.FromMinutes(CacheTime.Long));
     }
 
     public async Task<Bunch> GetBySlug(string slug)
