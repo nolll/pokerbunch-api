@@ -59,11 +59,8 @@ public class PlayerDb(IDb db)
         var query = GetQuery.Where(Schema.Player.Id, int.Parse(id));
         var playerDto = await db.FirstOrDefaultAsync<PlayerDto?>(query);
         var player = playerDto?.ToPlayer();
-
-        if (player is null)
-            throw new PokerBunchException($"Player with id {id} was not found");
-
-        return player;
+        
+        return player ?? throw new PokerBunchException($"Player with id {id} was not found");
     }
 
     public async Task<string> Add(Player player) => player.IsUser 

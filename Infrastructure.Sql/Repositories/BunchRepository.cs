@@ -11,33 +11,27 @@ public class BunchRepository(IDb db, ICache cache) : IBunchRepository
 {
     private readonly BunchDb _bunchDb = new(db);
 
-    public Task<Bunch> Get(string id)
-    {
-        return cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    public Task<Bunch> Get(string id) => 
+        cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
 
     public async Task<Bunch> GetBySlug(string slug)
     {
         var ids = await Search(slug);
-        if (!ids.Any())
-            throw new PokerBunchException($"Bunch with slug {slug} was not found");
-        
-        return await Get(ids.First());
+        return ids.Any() 
+            ? await Get(ids.First()) 
+            : throw new PokerBunchException($"Bunch with slug {slug} was not found");
     }
 
     public async Task<Bunch?> GetBySlugOrNull(string slug)
     {
         var ids = await Search(slug);
-        if (ids.Any())
-            return await Get(ids.First());
-
-        return null;
+        return ids.Any()
+            ? await Get(ids.First()) 
+            : null;
     }
 
-    private Task<IList<Bunch>> List(IList<string> ids)
-    {
-        return cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    private Task<IList<Bunch>> List(IList<string> ids) => 
+        cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
 
     public async Task<IList<Bunch>> List()
     {
@@ -45,10 +39,7 @@ public class BunchRepository(IDb db, ICache cache) : IBunchRepository
         return await List(ids);
     }
 
-    private Task<IList<string>> Search(string slug)
-    {
-        return _bunchDb.Search(slug);
-    }
+    private Task<IList<string>> Search(string slug) => _bunchDb.Search(slug);
 
     public async Task<IList<Bunch>> List(string userId)
     {
@@ -56,10 +47,7 @@ public class BunchRepository(IDb db, ICache cache) : IBunchRepository
         return await List(ids);
     }
 
-    public Task<string> Add(Bunch bunch)
-    {
-        return _bunchDb.Add(bunch);
-    }
+    public Task<string> Add(Bunch bunch) => _bunchDb.Add(bunch);
 
     public async Task Update(Bunch bunch)
     {

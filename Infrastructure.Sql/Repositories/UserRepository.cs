@@ -10,10 +10,7 @@ public class UserRepository(IDb db, ICache cache) : IUserRepository
 {
     private readonly UserDb _userDb = new(db);
 
-    public Task<User> GetById(string id)
-    {
-        return GetAndCache(id);
-    }
+    public Task<User> GetById(string id) => GetAndCache(id);
 
     public async Task<IList<User>> List()
     {
@@ -33,19 +30,17 @@ public class UserRepository(IDb db, ICache cache) : IUserRepository
     public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
     {
         var id = await _userDb.FindByUserNameOrEmail(nameOrEmail.ToLower());
-        if (id == null)
-            throw new PokerBunchException($"User not found: {nameOrEmail}");
-
-        return await GetAndCache(id);
+        return id != null 
+            ? await GetAndCache(id) 
+            : throw new PokerBunchException($"User not found: {nameOrEmail}");
     }
 
     public async Task<User> GetByUserName(string name)
     {
         var id = await _userDb.FindByUserName(name.ToLower());
-        if (id == null)
-            throw new PokerBunchException($"User not found: {name}");
-
-        return await GetAndCache(id);
+        return id != null 
+            ? await GetAndCache(id) 
+            : throw new PokerBunchException($"User not found: {name}");
     }
 
     public async Task Update(User user)
@@ -54,18 +49,11 @@ public class UserRepository(IDb db, ICache cache) : IUserRepository
         cache.Remove<User>(user.Id);
     }
 
-    public Task<string> Add(User user)
-    {
-        return _userDb.Add(user);
-    }
+    public Task<string> Add(User user) => _userDb.Add(user);
 
-    private Task<User> GetAndCache(string id)
-    {
-        return cache.GetAndStoreAsync(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    private Task<User> GetAndCache(string id) => 
+        cache.GetAndStoreAsync(_userDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
 
-    private Task<IList<User>> GetAndCache(IList<string> ids)
-    {
-        return cache.GetAndStoreAsync(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    private Task<IList<User>> GetAndCache(IList<string> ids) => 
+        cache.GetAndStoreAsync(_userDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
 }

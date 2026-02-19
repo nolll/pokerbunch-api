@@ -10,16 +10,12 @@ public class CashgameRepository(IDb db, ICache cache) : ICashgameRepository
 {
     private readonly CashgameDb _cashgameDb = new(db);
 
-    public Task<Cashgame> Get(string cashgameId)
-    {
-        return cache.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    public Task<Cashgame> Get(string cashgameId) => 
+        cache.GetAndStoreAsync(_cashgameDb.Get, cashgameId, TimeSpan.FromMinutes(CacheTime.Long));
 
-    private Task<IList<Cashgame>> Get(IList<string> ids)
-    {
-        return cache.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
-    }
-    
+    private Task<IList<Cashgame>> Get(IList<string> ids) => 
+        cache.GetAndStoreAsync(_cashgameDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
+
     public async Task<IList<Cashgame>> GetFinished(string slug, int? year = null)
     {
         var ids = year == null
@@ -58,10 +54,7 @@ public class CashgameRepository(IDb db, ICache cache) : ICashgameRepository
         cache.Remove<Cashgame>(id);
     }
 
-    public Task<string> Add(Bunch bunch, Cashgame cashgame)
-    {
-        return _cashgameDb.AddGame(bunch, cashgame);
-    }
+    public Task<string> Add(Bunch bunch, Cashgame cashgame) => _cashgameDb.AddGame(bunch, cashgame);
 
     public async Task Update(Cashgame cashgame)
     {
