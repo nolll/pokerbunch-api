@@ -3,13 +3,14 @@ using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class BunchRepository(IDb db, ICache cache) : IBunchRepository
+public class BunchRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : IBunchRepository
 {
-    private readonly BunchDb _bunchDb = new(db);
+    private readonly BunchDb _bunchDb = new(db, dbold);
 
     public Task<Bunch> Get(string id)
     {
