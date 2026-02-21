@@ -2,13 +2,14 @@ using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class EventRepository(IDb db, ICache cache) : IEventRepository
+public class EventRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : IEventRepository
 {
-    private readonly EventDb _eventDb = new(db);
+    private readonly EventDb _eventDb = new(db, dbold);
 
     public Task<Event> Get(string id)
     {

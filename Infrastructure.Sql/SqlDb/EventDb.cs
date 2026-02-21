@@ -3,71 +3,69 @@ using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.Sql;
+using Microsoft.EntityFrameworkCore;
 using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class EventDb(IDb db)
+public class EventDb(PokerBunchDbContext db, IDb dbold)
 {
-    private static Query EventQuery => new(Schema.Event);
     private static Query EventCashgameQuery => new(Schema.EventCashgame);
-
-    private static Query CheckpointJoinQuery => new Query(Schema.CashgameCheckpoint)
-        .Select(Schema.CashgameCheckpoint.CheckpointId, Schema.CashgameCheckpoint.CashgameId)
-        .OrderByDesc(Schema.CashgameCheckpoint.Timestamp)
-        .Limit(1);
-
-    private static Query GetQuery => EventQuery
-        .Select(
-            Schema.Event.Id,
-            Schema.Event.Name,
-            Schema.Cashgame.LocationId,
-            Schema.Cashgame.Timestamp)
-        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
-        .LeftJoin(Schema.EventCashgame, Schema.EventCashgame.EventId, Schema.Event.Id)
-        .LeftJoin(Schema.Cashgame, Schema.EventCashgame.CashgameId, Schema.Cashgame.Id)
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Event.BunchId)
-        .LeftJoin(CheckpointJoinQuery.As("j"), j => j.On($"j.{Schema.Cashgame.Id.AsParam()}", Schema.Cashgame.Id))
-        .OrderBy(Schema.Event.Id, Schema.Cashgame.Date);
-    
-    private static Query FindQuery => EventQuery
-        .Select(Schema.Event.Id)
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Event.BunchId);
 
     public async Task<Event> Get(string id)
     {
-        var query = GetQuery.Where(Schema.Event.Id, int.Parse(id));
-        var eventDayDtos = await db.GetAsync<EventDayDto>(query);
-
-        var events = eventDayDtos.ToEvents();
-        var @event = events.FirstOrDefault();
-
-        if (@event is null)
-            throw new PokerBunchException($"Event with id {id} was not found");
-
-        return @event;
+        var query = db.PbEvent
+            .Where(o => o.EventId == int.Parse(id))
+            .Select(o => new EventDayDto
+            {
+                Event_Id = o.EventId,
+                Bunch_Slug = o.Bunch.Name,
+                Name = o.Name,
+                Location_Id = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
+                Timestamp = o.Cashgame.Any() ? o.Cashgame.First().Timestamp : DateTime.MinValue
+            });
+        
+        var dtos = await query.ToListAsync();
+        var events = dtos.ToEvents();
+        
+        return events.Count > 0 
+            ? events.First() 
+            : throw new PokerBunchException($"Event with id {id} was not found");
     }
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
-        var query = GetQuery.WhereIn(Schema.Event.Id, ids.Select(int.Parse));
-        var eventDayDtos = await db.GetAsync<EventDayDto>(query);
+        var query = db.PbEvent
+            .Where(o => ids.Select(int.Parse).Contains(o.EventId))
+            .Select(o => new EventDayDto
+            {
+                Event_Id = o.EventId,
+                Bunch_Slug = o.Bunch.Name,
+                Name = o.Name,
+                Location_Id = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
+                Timestamp = o.Cashgame.Any() ? o.Cashgame.First().Timestamp : DateTime.MinValue
+            });
 
-        return eventDayDtos.ToEvents();
+        var dtos = await query.ToListAsync();
+        return dtos.ToEvents();
     }
     
     public async Task<IList<string>> FindBySlug(string slug)
     {
-        var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        var result = await db.GetAsync<int>(query);
-        return result.Select(o => o.ToString()).ToList();
+        var query = db.PbEvent
+            .Where(o => o.Bunch.Name == slug)
+            .Select(o => o.EventId);
+
+        var ids = await query.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
         var query = EventCashgameQuery.Select(Schema.EventCashgame.EventId).Where(Schema.EventCashgame.EventId, int.Parse(cashgameId));
-        var result = await db.GetAsync<int>(query);
+        var result = await dbold.GetAsync<int>(query);
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -93,7 +91,7 @@ public class EventDb(IDb db)
             { Schema.Bunch.Slug.AsParam(), e.BunchSlug }
         };
 
-        var result = await db.CustomInsert(sql, parameters);
+        var result = await dbold.CustomInsert(sql, parameters);
         return result.ToString();
     }
 
@@ -105,7 +103,7 @@ public class EventDb(IDb db)
             { Schema.EventCashgame.CashgameId, int.Parse(cashgameId) }
         };
 
-        await db.InsertAsync(EventCashgameQuery, parameters);
+        await dbold.InsertAsync(EventCashgameQuery, parameters);
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)
@@ -114,6 +112,6 @@ public class EventDb(IDb db)
             .Where(Schema.EventCashgame.EventId, int.Parse(eventId))
             .Where(Schema.EventCashgame.CashgameId, int.Parse(cashgameId));
 
-        await db.DeleteAsync(query);
+        await dbold.DeleteAsync(query);
     }
 }
