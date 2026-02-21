@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
@@ -6,17 +7,18 @@ using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Models;
 using Infrastructure.Sql.Sql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class EventDb(PokerBunchDbContext db, IDb dbold)
+public class EventDb(PokerBunchDbContext db) : BaseDb(db)
 {
-    private static Query EventCashgameQuery => new(Schema.EventCashgame);
+    private readonly PokerBunchDbContext _db = db;
 
     public async Task<Event> Get(string id)
     {
-        var query = db.PbEvent
+        var query = _db.PbEvent
             .Where(o => o.EventId == int.Parse(id))
             .Select(o => new EventDayDto
             {
@@ -37,7 +39,7 @@ public class EventDb(PokerBunchDbContext db, IDb dbold)
 
     public async Task<IList<Event>> Get(IList<string> ids)
     {
-        var query = db.PbEvent
+        var query = _db.PbEvent
             .Where(o => ids.Select(int.Parse).Contains(o.EventId))
             .Select(o => new EventDayDto
             {
@@ -54,7 +56,7 @@ public class EventDb(PokerBunchDbContext db, IDb dbold)
     
     public async Task<IList<string>> FindBySlug(string slug)
     {
-        var query = db.PbEvent
+        var query = _db.PbEvent
             .Where(o => o.Bunch.Name == slug)
             .Select(o => o.EventId);
 
@@ -64,54 +66,43 @@ public class EventDb(PokerBunchDbContext db, IDb dbold)
 
     public async Task<IList<string>> FindByCashgameId(string cashgameId)
     {
-        var query = EventCashgameQuery.Select(Schema.EventCashgame.EventId).Where(Schema.EventCashgame.EventId, int.Parse(cashgameId));
-        var result = await dbold.GetAsync<int>(query);
+        var cashgame = _db.PbCashgame.First(o => o.CashgameId == int.Parse(cashgameId));
+        var query = _db.PbEvent
+            .Where(o => o.Cashgame.Contains(cashgame))
+            .Select(o => o.EventId);
+        
+        var result = await query.ToListAsync();
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<string> Add(Event e)
     {
-        var sql = $"""
-                  INSERT INTO {Schema.Event} 
-                  (
-                    {Schema.Event.BunchId.AsParam()},
-                    {Schema.Event.Name.AsParam()}
-                  )
-                  VALUES
-                  (
-                    (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}),
-                    @{Schema.Event.Name.AsParam()}
-                  )
-                  RETURNING {Schema.Event.Id.AsParam()}
-                  """;
+        var bunchId = await GetBunchId(e.BunchSlug);
         
-        var parameters = new Dictionary<string, object?>
+        var dto = new PbEvent
         {
-            { Schema.Event.Name.AsParam(), e.Name },
-            { Schema.Bunch.Slug.AsParam(), e.BunchSlug }
+            BunchId = bunchId,
+            Name = e.Name
         };
 
-        var result = await dbold.CustomInsert(sql, parameters);
-        return result.ToString();
+        _db.PbEvent.Add(dto);
+        await _db.SaveChangesAsync();
+        return dto.EventId.ToString();
     }
 
     public async Task AddCashgame(string eventId, string cashgameId)
     {
-        var parameters = new Dictionary<SqlColumn, object?>
-        {
-            { Schema.EventCashgame.EventId, int.Parse(eventId) },
-            { Schema.EventCashgame.CashgameId, int.Parse(cashgameId) }
-        };
-
-        await dbold.InsertAsync(EventCashgameQuery, parameters);
+        var e = _db.PbEvent.First(o => o.EventId == int.Parse(eventId));
+        var c = _db.PbCashgame.First(o => o.CashgameId == int.Parse(cashgameId));
+        e.Cashgame.Add(c);
+        await _db.SaveChangesAsync();
     }
 
     public async Task RemoveCashgame(string eventId, string cashgameId)
     {
-        var query = EventCashgameQuery
-            .Where(Schema.EventCashgame.EventId, int.Parse(eventId))
-            .Where(Schema.EventCashgame.CashgameId, int.Parse(cashgameId));
-
-        await dbold.DeleteAsync(query);
+        var e = _db.PbEvent.First(o => o.EventId == int.Parse(eventId));
+        var c = new PbCashgame { CashgameId = int.Parse(cashgameId) };
+        e.Cashgame.Remove(c);
+        await _db.SaveChangesAsync();
     }
 }

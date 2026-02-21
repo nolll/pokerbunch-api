@@ -7,9 +7,9 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class EventRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : IEventRepository
+public class EventRepository(PokerBunchDbContext db, ICache cache) : IEventRepository
 {
-    private readonly EventDb _eventDb = new(db, dbold);
+    private readonly EventDb _eventDb = new(db);
 
     public Task<Event> Get(string id)
     {
