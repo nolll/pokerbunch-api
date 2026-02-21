@@ -2,13 +2,14 @@ using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class LocationRepository(IDb container, ICache cache) : ILocationRepository
+public class LocationRepository(PokerBunchDbContext db, ICache cache) : ILocationRepository
 {
-    private readonly LocationDb _locationDb = new(container);
+    private readonly LocationDb _locationDb = new(db);
 
     public Task<Location> Get(string id)
     {

@@ -7,11 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class JoinRequestDb(PokerBunchDbContext db)
+public class JoinRequestDb(PokerBunchDbContext db) : BaseDb(db)
 {
+    private readonly PokerBunchDbContext _db = db;
+
     public async Task<IList<string>> Find(string slug)
     {
-        var query = db.PbJoinRequest
+        var query = _db.PbJoinRequest
             .Where(o => o.Bunch.Name == slug)
             .Select(o => o.JoinRequestId);
 
@@ -21,7 +23,7 @@ public class JoinRequestDb(PokerBunchDbContext db)
     
     public async Task<IList<string>> Find(string bunchId, string userId)
     {
-        var query = db.PbJoinRequest
+        var query = _db.PbJoinRequest
             .Where(o => o.Bunch.BunchId == int.Parse(bunchId))
             .Where(o => o.User.UserId == int.Parse(userId))
             .Select(o => o.JoinRequestId);
@@ -35,7 +37,7 @@ public class JoinRequestDb(PokerBunchDbContext db)
         if (!ids.Any())
             return [];
 
-        var query = db.PbJoinRequest
+        var query = _db.PbJoinRequest
             .Where(o => ids.Select(int.Parse).Contains(o.JoinRequestId))
             .Select(o => new JoinRequestDto
             {
@@ -60,20 +62,15 @@ public class JoinRequestDb(PokerBunchDbContext db)
             UserId = int.Parse(joinRequest.UserId)
         };
         
-        db.PbJoinRequest.Add(dto);
+        _db.PbJoinRequest.Add(dto);
 
-        await db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
         return dto.JoinRequestId.ToString();
     }
     
     public async Task Delete(string joinRequestId)
     {
-        db.PbJoinRequest.Remove(new PbJoinRequest { JoinRequestId = int.Parse(joinRequestId) });
-        await db.SaveChangesAsync();
+        _db.PbJoinRequest.Remove(new PbJoinRequest { JoinRequestId = int.Parse(joinRequestId) });
+        await _db.SaveChangesAsync();
     }
-
-    private async Task<int> GetBunchId(string slug) => await db.PbBunch
-        .Where(o => o.Name == slug)
-        .Select(o => o.BunchId)
-        .FirstOrDefaultAsync();
 }

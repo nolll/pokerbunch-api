@@ -4,9 +4,7 @@ using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Models;
-using Infrastructure.Sql.Sql;
 using Microsoft.EntityFrameworkCore;
-using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
@@ -16,7 +14,17 @@ public class UserDb(PokerBunchDbContext db)
     {
         var query = db.PbUser
             .Where(o => o.UserId == int.Parse(id))
-            .Select(o => ToDto(o));
+            .Select(o => (UserDto)new()
+            {
+                User_Id = o.UserId,
+                User_Name = o.UserName,
+                Display_Name = o.DisplayName,
+                Real_Name = o.RealName,
+                Email = o.Email,
+                Role_Id = o.RoleId,
+                Password = o.Password,
+                Salt = o.Salt
+            });
 
         var userDto = await query.FirstOrDefaultAsync();
         var user = userDto?.ToUser();
@@ -28,23 +36,21 @@ public class UserDb(PokerBunchDbContext db)
     {
         var query = db.PbUser
             .Where(o => ids.Select(int.Parse).Contains(o.UserId))
-            .Select(o => ToDto(o));
+            .Select(o => (UserDto)new()
+            {
+                User_Id = o.UserId,
+                User_Name = o.UserName,
+                Display_Name = o.DisplayName,
+                Real_Name = o.RealName,
+                Email = o.Email,
+                Role_Id = o.RoleId,
+                Password = o.Password,
+                Salt = o.Salt
+            });
 
         var userDtos = await query.ToListAsync();
         return userDtos.Select(UserMapper.ToUser).OrderBy(o => o.DisplayName).ToList();
     }
-
-    private static UserDto ToDto(PbUser user) => new()
-    {
-        User_Id = user.UserId,
-        User_Name = user.UserName,
-        Display_Name = user.DisplayName,
-        Real_Name = user.RealName,
-        Email = user.Email,
-        Role_Id = user.RoleId,
-        Password = user.Password,
-        Salt = user.Salt
-    };
 
     public async Task<IList<string>> Find() => await GetIds();
 
