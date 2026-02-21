@@ -3,14 +3,12 @@ using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
-using Infrastructure.Sql.Models;
 using Infrastructure.Sql.Sql;
-using Microsoft.EntityFrameworkCore;
 using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class BunchDb(IDb db, PokerBunchDbContext dbContext)
+public class BunchDb(IDb db)
 {
     private static Query BunchQuery => new(Schema.Bunch);
 
@@ -42,18 +40,6 @@ public class BunchDb(IDb db, PokerBunchDbContext dbContext)
         return dto.ToBunch();
     }
     
-    public async Task<Bunch> Get2(string id)
-    {
-        var dto = await dbContext.PbBunch
-            .Where(o => o.BunchId == int.Parse(id))
-            .FirstOrDefaultAsync();
-
-        if (dto is null)
-            throw new PokerBunchException($"Bunch with id {id} was not found");
-
-        return dto.ToBunch();
-    }
-
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
         var query = GetQuery.WhereIn(Schema.Bunch.Id, ids.Select(int.Parse));

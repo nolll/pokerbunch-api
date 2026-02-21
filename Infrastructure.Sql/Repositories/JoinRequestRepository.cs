@@ -2,13 +2,14 @@ using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class JoinRequestRepository(IDb db, ICache cache) : IJoinRequestRepository
+public class JoinRequestRepository(IDb db, PokerBunchDbContext dbc, ICache cache) : IJoinRequestRepository
 {
-    private readonly JoinRequestDb _joinRequestDb = new(db);
+    private readonly JoinRequestDb _joinRequestDb = new(dbc);
     
     public Task<string> Add(JoinRequest joinRequest)
     {

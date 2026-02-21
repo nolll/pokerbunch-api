@@ -2,81 +2,78 @@ using System.Linq;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
-using Infrastructure.Sql.Sql;
-using SqlKata;
+using Infrastructure.Sql.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class JoinRequestDb(IDb db)
+public class JoinRequestDb(PokerBunchDbContext db)
 {
-    private static Query JoinRequestQuery => new(Schema.JoinRequest);
-    
-    private static Query GetQuery => JoinRequestQuery
-        .Select(
-            Schema.JoinRequest.Id,
-            Schema.JoinRequest.BunchId,
-            Schema.JoinRequest.UserId,
-            Schema.User.UserName)
-        .LeftJoin(Schema.User, Schema.User.Id, Schema.JoinRequest.UserId);
-    
     public async Task<IList<string>> Find(string slug)
     {
-        var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
+        var query = db.PbJoinRequest
+            .Where(o => o.Bunch.Name == slug)
+            .Select(o => o.JoinRequestId);
+
+        var result = await query.ToListAsync();
+        return result.Select(o => o.ToString()).ToList();
     }
     
     public async Task<IList<string>> Find(string bunchId, string userId)
     {
-        var query = FindQuery
-            .Where(Schema.JoinRequest.BunchId, int.Parse(bunchId))
-            .Where(Schema.JoinRequest.UserId, int.Parse(userId));
-        return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
+        var query = db.PbJoinRequest
+            .Where(o => o.Bunch.BunchId == int.Parse(bunchId))
+            .Where(o => o.User.UserId == int.Parse(userId))
+            .Select(o => o.JoinRequestId);
+
+        var result = await query.ToListAsync();
+        return result.Select(o => o.ToString()).ToList();
     }
-    
-    private static Query FindQuery => JoinRequestQuery
-        .Select(Schema.JoinRequest.Id)
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.JoinRequest.BunchId);
     
     public async Task<IList<JoinRequest>> Get(IList<string> ids)
     {
         if (!ids.Any())
             return [];
 
-        var query = GetQuery.WhereIn(Schema.JoinRequest.Id, ids.Select(int.Parse));
-        var joinRequestDtos = await db.GetAsync<JoinRequestDto>(query);
+        var query = db.PbJoinRequest
+            .Where(o => ids.Select(int.Parse).Contains(o.JoinRequestId))
+            .Select(o => new JoinRequestDto
+            {
+                Join_Request_Id = o.JoinRequestId,
+                Bunch_Id = o.BunchId,
+                User_Id = o.UserId,
+                User_Name = o.User.UserName
+            });
 
-        return joinRequestDtos.Select(JoinRequestMapper.ToJoinRequest).ToList();
+        var result = await query.ToListAsync();
+
+        return result.Select(JoinRequestMapper.ToJoinRequest).ToList();
     }
     
     public async Task<string> Add(JoinRequest joinRequest)
     {
-        var sql = $"""
-                   INSERT INTO {Schema.JoinRequest} 
-                   (
-                     {Schema.JoinRequest.BunchId.AsParam()}, 
-                     {Schema.JoinRequest.UserId.AsParam()}
-                   )
-                   VALUES
-                   (
-                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
-                     @{Schema.JoinRequest.UserId.AsParam()}
-                   )
-                   RETURNING {Schema.JoinRequest.Id.AsParam()}
-                   """;
-
-        var parameters = new Dictionary<string, object?>
+        var bunchId = await GetBunchId(joinRequest.BunchId);
+        
+        var dto = new PbJoinRequest
         {
-            { Schema.Bunch.Slug.AsParam(), joinRequest.BunchId },
-            { Schema.JoinRequest.UserId.AsParam(), int.Parse(joinRequest.UserId) }
+            BunchId = bunchId,
+            UserId = int.Parse(joinRequest.UserId)
         };
         
-        var result = await db.CustomInsert(sql, parameters);
-        return result.ToString();
+        db.PbJoinRequest.Add(dto);
+
+        await db.SaveChangesAsync();
+        return dto.JoinRequestId.ToString();
     }
     
     public async Task Delete(string joinRequestId)
     {
-        var query = JoinRequestQuery.Where(Schema.JoinRequest.Id, int.Parse(joinRequestId));
-        await db.DeleteAsync(query);
+        db.PbJoinRequest.Remove(new PbJoinRequest { JoinRequestId = int.Parse(joinRequestId) });
+        await db.SaveChangesAsync();
     }
+
+    private async Task<int> GetBunchId(string slug) => await db.PbBunch
+        .Where(o => o.Name == slug)
+        .Select(o => o.BunchId)
+        .FirstOrDefaultAsync();
 }
