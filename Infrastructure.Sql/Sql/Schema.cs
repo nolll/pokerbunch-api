@@ -11,5 +11,4 @@ public static class Schema
     public static readonly SqlPlayer Player = new();
     public static readonly SqlRole Role = new();
     public static readonly SqlUser User = new();
-    public static readonly SqlJoinRequest JoinRequest = new();
 }
