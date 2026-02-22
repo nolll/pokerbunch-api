@@ -8,14 +8,12 @@ using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class BunchRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : IBunchRepository
+public class BunchRepository(PokerBunchDbContext db, ICache cache) : IBunchRepository
 {
-    private readonly BunchDb _bunchDb = new(db, dbold);
+    private readonly BunchDb _bunchDb = new(db);
 
-    public Task<Bunch> Get(string id)
-    {
-        return cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    public Task<Bunch> Get(string id) => 
+        cache.GetAndStoreAsync(_bunchDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
 
     public async Task<Bunch> GetBySlug(string slug)
     {
@@ -35,10 +33,8 @@ public class BunchRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : 
         return null;
     }
 
-    private Task<IList<Bunch>> List(IList<string> ids)
-    {
-        return cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    private Task<IList<Bunch>> List(IList<string> ids) => 
+        cache.GetAndStoreAsync(_bunchDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
 
     public async Task<IList<Bunch>> List()
     {
@@ -46,10 +42,7 @@ public class BunchRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : 
         return await List(ids);
     }
 
-    private Task<IList<string>> Search(string slug)
-    {
-        return _bunchDb.Search(slug);
-    }
+    private Task<IList<string>> Search(string slug) => _bunchDb.Search(slug);
 
     public async Task<IList<Bunch>> List(string userId)
     {
@@ -57,10 +50,7 @@ public class BunchRepository(PokerBunchDbContext db, IDb dbold, ICache cache) : 
         return await List(ids);
     }
 
-    public Task<string> Add(Bunch bunch)
-    {
-        return _bunchDb.Add(bunch);
-    }
+    public Task<string> Add(Bunch bunch) => _bunchDb.Add(bunch);
 
     public async Task Update(Bunch bunch)
     {

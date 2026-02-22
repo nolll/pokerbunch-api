@@ -6,34 +6,18 @@ using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Models;
 using Infrastructure.Sql.Sql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class BunchDb(PokerBunchDbContext db, IDb dbold)
+public class BunchDb(PokerBunchDbContext db)
 {
-    private static Query BunchQuery => new(Schema.Bunch);
-    private static Query FindQuery => BunchQuery.Select(Schema.Bunch.Id);
-
     public async Task<Bunch> Get(string id)
     {
         var query = db.PbBunch
             .Where(o => o.BunchId == int.Parse(id))
-            .Select(o => new BunchDto
-            {
-                Bunch_Id = o.BunchId,
-                Name = o .Name,
-                Display_Name = o.DisplayName,
-                Description = o.Description,
-                House_Rules = o.HouseRules,
-                Timezone = o.Timezone,
-                Default_Buyin = o.DefaultBuyin,
-                Currency_Layout = o.CurrencyLayout,
-                Currency = o.Currency,
-                Cashgames_Enabled = o.CashgamesEnabled,
-                Tournaments_Enabled = o.TournamentsEnabled,
-                Videos_Enabled = o.VideosEnabled
-            });
+            .ToBunchDto();
 
         var dto = await query.FirstAsync();
 
@@ -46,21 +30,7 @@ public class BunchDb(PokerBunchDbContext db, IDb dbold)
     {
         var query2 = db.PbBunch
             .Where(o => ids.Select(int.Parse).Contains(o.BunchId))
-            .Select(o => new BunchDto
-            {
-                Bunch_Id = o.BunchId,
-                Name = o .Name,
-                Display_Name = o.DisplayName,
-                Description = o.Description,
-                House_Rules = o.HouseRules,
-                Timezone = o.Timezone,
-                Default_Buyin = o.DefaultBuyin,
-                Currency_Layout = o.CurrencyLayout,
-                Currency = o.Currency,
-                Cashgames_Enabled = o.CashgamesEnabled,
-                Tournaments_Enabled = o.TournamentsEnabled,
-                Videos_Enabled = o.VideosEnabled
-            });
+            .ToBunchDto();
 
         var dtos2 = await query2.ToListAsync();
         return dtos2.Select(BunchMapper.ToBunch).ToList();
@@ -85,11 +55,13 @@ public class BunchDb(PokerBunchDbContext db, IDb dbold)
 
     public async Task<IList<string>> SearchByUser(string userId)
     {
-        var query = FindQuery.Join(Schema.Player, $"{Schema.Player.BunchId}", $"{Schema.Bunch.Id}")
-            .Where($"{Schema.Player.UserId}", int.Parse(userId))
-            .OrderBy($"{Schema.Bunch.Name}");
+        var query = db.PbPlayer
+            .Where(o => o.UserId == int.Parse(userId))
+            .Select(o => o.Bunch)
+            .OrderBy(o => o.Name)
+            .Select(o => o.BunchId);
 
-        var result = await dbold.GetAsync<int>(query);
+        var result = await query.ToListAsync();
         return result.Select(o => o.ToString()).ToList();
     }
 
@@ -117,23 +89,22 @@ public class BunchDb(PokerBunchDbContext db, IDb dbold)
 
     public async Task Update(Bunch bunch)
     {
-        var parameters = new Dictionary<SqlColumn, object?>
-        {
-            { Schema.Bunch.Name, bunch.Slug },
-            { Schema.Bunch.DisplayName, bunch.DisplayName },
-            { Schema.Bunch.Description, bunch.Description },
-            { Schema.Bunch.Currency, bunch.Currency.Symbol },
-            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
-            { Schema.Bunch.Timezone, bunch.Timezone.Id },
-            { Schema.Bunch.DefaultBuyin, bunch.DefaultBuyin },
-            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
-            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
-            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
-            { Schema.Bunch.HouseRules, bunch.HouseRules }
-        };
+        var dto = db.PbBunch
+            .First(o => o.BunchId == int.Parse(bunch.Id));
 
-        var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
-        await dbold.UpdateAsync(query, parameters);
+        dto.Name = bunch.Slug;
+        dto.DisplayName = bunch.DisplayName;
+        dto.Description = bunch.Description;
+        dto.Currency = bunch.Currency.Symbol;
+        dto.CurrencyLayout = bunch.Currency.Layout;
+        dto.Timezone = bunch.Timezone.Id;
+        dto.DefaultBuyin = bunch.DefaultBuyin;
+        dto.CashgamesEnabled = bunch.CashgamesEnabled;
+        dto.TournamentsEnabled = bunch.TournamentsEnabled;
+        dto.VideosEnabled = bunch.VideosEnabled;
+        dto.HouseRules = bunch.HouseRules;
+
+        await db.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteBunch(string id)
@@ -143,4 +114,23 @@ public class BunchDb(PokerBunchDbContext db, IDb dbold)
         var rowCount = await db.SaveChangesAsync();
         return rowCount > 0;
     }
+}
+
+internal static class DtoMapper
+{
+    internal static IQueryable<BunchDto> ToBunchDto(this IQueryable<PbBunch> input) => input.Select(o => new BunchDto
+    {
+        Bunch_Id = o.BunchId,
+        Name = o.Name,
+        Display_Name = o.DisplayName,
+        Description = o.Description,
+        House_Rules = o.HouseRules,
+        Timezone = o.Timezone,
+        Default_Buyin = o.DefaultBuyin,
+        Currency_Layout = o.CurrencyLayout,
+        Currency = o.Currency,
+        Cashgames_Enabled = o.CashgamesEnabled,
+        Tournaments_Enabled = o.TournamentsEnabled,
+        Videos_Enabled = o.VideosEnabled
+    });
 }
