@@ -1,14 +1,10 @@
 using System.Linq;
-using System.Runtime.InteropServices.Marshalling;
 using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
 using Infrastructure.Sql.Models;
-using Infrastructure.Sql.Sql;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using SqlKata;
 
 namespace Infrastructure.Sql.SqlDb;
 

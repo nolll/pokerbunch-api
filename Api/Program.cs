@@ -48,7 +48,9 @@ builder.Services.AddLogging(logging =>
 
 var connectionString = GetConnectionString(builder.Configuration);
 builder.Services.AddDbContext<PokerBunchDbContext>(options =>
-    options.UseNpgsql(connectionString));
+{
+    options.UseNpgsql(connectionString, opt => opt.MigrationsAssembly("Api"));
+});
 
 builder.Services.AddServices(settings, builder.Configuration, connectionString);
 

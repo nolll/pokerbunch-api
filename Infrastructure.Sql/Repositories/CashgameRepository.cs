@@ -2,11 +2,12 @@ using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class CashgameRepository(IDb db, ICache cache) : ICashgameRepository
+public class CashgameRepository(PokerBunchDbContext db, ICache cache) : ICashgameRepository
 {
     private readonly CashgameDb _cashgameDb = new(db);
 

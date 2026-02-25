@@ -1,8 +1,6 @@
 using System.Net;
 using Api.Models.UserModels;
 using Core.Entities;
-using Infrastructure.Sql.Sql;
-using SqlKata;
 
 namespace Tests.Integration.Tests;
 
@@ -24,13 +22,11 @@ public class Suite03UserRegistrationTests
 
     private static async Task SetAdminRole()
     {
-        var dbParameters = new Dictionary<SqlColumn, object?>
-        {
-            { Schema.User.RoleId, (int)Role.Admin }
-        };
+        var admin = TestSetup.Db!.PbUser
+            .First(o => o.UserName == TestData.AdminUserName);
 
-        var query = new Query(Schema.User).Where(Schema.User.Id, int.Parse(TestData.AdminUserId));
-        await TestSetup.Db.UpdateAsync(query, dbParameters);
+        admin.RoleId = (int)Role.Admin;
+        await TestSetup.Db.SaveChangesAsync();
     }
     
     [Test]

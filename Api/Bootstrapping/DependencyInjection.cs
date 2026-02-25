@@ -38,7 +38,6 @@ public static class DependencyInjection
         services.AddTransient<IPlayerRepository, PlayerRepository>();
         services.AddTransient<IJoinRequestRepository, JoinRequestRepository>();
         services.AddTransient(_ => GetEmailSender(configuration));
-        services.AddTransient<IDb>(_ => new PostgresDb(connectionString));
         services.AddTransient<IRandomizer, Randomizer>();
 
         // Admin
