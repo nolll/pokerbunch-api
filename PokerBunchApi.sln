@@ -26,9 +26,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\heroku.yaml = .github\workflows\heroku.yaml
 		build.yaml = build.yaml
 		README.md = README.md
+		data\migrate.py = data\migrate.py
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Integration", "Tests.Integration\Tests.Integration.csproj", "{03CBBEA4-045E-4F85-BC57-EF8629DBADFF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{87D12FE4-9DE5-4215-BF99-A5D130C1D37E}"
+	ProjectSection(SolutionItems) = preProject
+		data\db-add-dev-data.sql = data\db-add-dev-data.sql
+		data\db-add-master-data.sql = data\db-add-master-data.sql
+		data\db-create.sql = data\db-create.sql
+		data\db-create-tables.sql = data\db-create-tables.sql
+		data\db-drop-tables.sql = data\db-drop-tables.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,5 +84,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B2D8D5CB-8D77-4993-9494-D46D0E9B3227}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{87D12FE4-9DE5-4215-BF99-A5D130C1D37E} = {1FAF0722-81ED-417D-AF94-3E3E10B0A72F}
 	EndGlobalSection
 EndGlobal
