@@ -37,10 +37,6 @@ public partial class PbPlayer
     [InverseProperty("PbPlayer")]
     public virtual PbBunch Bunch { get; set; } = null!;
 
-    [ForeignKey("UserId")]
-    [InverseProperty("PbUser")]
-    public virtual PbUser? User { get; set; } = null!;
-    
     [InverseProperty("Player")]
     public virtual ICollection<PbCashgameCheckpoint> PbCashgameCheckpoint { get; set; } = new List<PbCashgameCheckpoint>();
 
@@ -49,4 +45,8 @@ public partial class PbPlayer
 
     [InverseProperty("Player")]
     public virtual ICollection<PbTournamentResult> PbTournamentResult { get; set; } = new List<PbTournamentResult>();
+
+    [ForeignKey("UserId")]
+    [InverseProperty("PbPlayer")]
+    public virtual PbUser? User { get; set; }
 }

@@ -38,6 +38,7 @@ public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
             return new List<Player>();
 
         var q = _db.PbPlayer
+            .Include(o => o.User)
             .Where(o => ids.Select(int.Parse).Contains(o.PlayerId))
             .Select(o => new PlayerDto
             {
@@ -45,7 +46,7 @@ public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
                 User_Id = o.UserId,
                 Role_Id = o.RoleId,
                 Color = o.Color,
-                User_Name = o.User != null ? o.User.DisplayName : o.PlayerName
+                Player_Name = o.User != null ? o.User.DisplayName : o.PlayerName ?? ""
             });
 
         var dtos = await q.ToListAsync();

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Sql.Models;
 
@@ -172,6 +174,8 @@ public partial class PokerBunchDbContext : DbContext
             entity.HasOne(d => d.Bunch).WithMany(p => p.PbPlayer)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_bunch");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PbPlayer).HasConstraintName("fk_user");
         });
 
         modelBuilder.Entity<PbRole>(entity =>

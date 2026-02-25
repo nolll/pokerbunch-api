@@ -51,6 +51,9 @@ public partial class PbUser
     public virtual ICollection<PbJoinRequest> PbJoinRequest { get; set; } = new List<PbJoinRequest>();
 
     [InverseProperty("User")]
+    public virtual ICollection<PbPlayer> PbPlayer { get; set; } = new List<PbPlayer>();
+
+    [InverseProperty("User")]
     public virtual ICollection<PbUserSharing> PbUserSharing { get; set; } = new List<PbUserSharing>();
 
     [InverseProperty("User")]
