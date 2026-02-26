@@ -141,6 +141,7 @@ public class CashgameDb(PokerBunchDbContext db)
 
         dto.LocationId = int.Parse(cashgame.LocationId);
         dto.Status = (int)cashgame.Status;
+        
 
         await db.SaveChangesAsync();
     }
@@ -165,7 +166,7 @@ public class CashgameDb(PokerBunchDbContext db)
             Type = (int)checkpoint.Type,
             Amount = checkpoint.Amount,
             Stack = checkpoint.Stack,
-            Timestamp = checkpoint.Timestamp.ToUniversalTime()
+            Timestamp = DateTime.SpecifyKind(checkpoint.Timestamp.ToUniversalTime(), DateTimeKind.Unspecified)
         };
 
         db.PbCashgameCheckpoint.Add(dto);
@@ -178,7 +179,7 @@ public class CashgameDb(PokerBunchDbContext db)
         var dto = db.PbCashgameCheckpoint
             .First(o => o.CheckpointId == int.Parse(checkpoint.Id));
 
-        dto.Timestamp = checkpoint.Timestamp;
+        dto.Timestamp = DateTime.SpecifyKind(checkpoint.Timestamp, DateTimeKind.Unspecified);
         dto.Amount = checkpoint.Amount;
         dto.Stack = checkpoint.Stack;
 

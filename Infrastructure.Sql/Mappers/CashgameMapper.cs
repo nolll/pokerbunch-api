@@ -10,7 +10,7 @@ internal static class CashgameMapper
     internal static Cashgame ToCashgame(this CashgameDto dto, IList<CheckpointDto> checkpointDtos) => new(
         dto.Bunch_Slug,
         dto.Location_Id.ToString(),
-        dto.Event_Id != 0 ? dto.Event_Id.ToString() : null,
+        dto.Event_Id != null ? dto.Event_Id.ToString() : null,
         (GameStatus)dto.Status,
         dto.Cashgame_Id.ToString(),
         checkpointDtos.Select(ToCheckpoint).ToList());

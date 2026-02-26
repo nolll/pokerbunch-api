@@ -96,7 +96,15 @@ public class EventDb(PokerBunchDbContext db) : BaseDb(db)
 
     public async Task RemoveCashgame(string eventId, string cashgameId)
     {
-        var e = _db.PbEvent.First(o => o.EventId == int.Parse(eventId));
+        var e = _db.PbEvent
+            .Include(o => o.Cashgame)
+            .First(o => o.EventId == int.Parse(eventId));
+        
+        foreach (var cashgame in e.Cashgame.Where(o => o.CashgameId == int.Parse(cashgameId)).ToList())
+        {
+            e.Cashgame.Remove(cashgame);
+        }
+
         var c = new PbCashgame { CashgameId = int.Parse(cashgameId) };
         e.Cashgame.Remove(c);
         await _db.SaveChangesAsync();
