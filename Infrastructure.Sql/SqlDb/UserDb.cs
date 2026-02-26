@@ -12,31 +12,15 @@ public class UserDb(PokerBunchDbContext db)
 {
     public async Task<User> Get(string id)
     {
-        var query = db.PbUser
-            .Where(o => o.UserId == int.Parse(id))
-            .Select(o => (UserDto)new()
-            {
-                User_Id = o.UserId,
-                User_Name = o.UserName,
-                Display_Name = o.DisplayName,
-                Real_Name = o.RealName,
-                Email = o.Email,
-                Role_Id = o.RoleId,
-                Password = o.Password,
-                Salt = o.Salt
-            });
-
-        var userDto = await query.FirstOrDefaultAsync();
-        var user = userDto?.ToUser();
-
-        return user ?? throw new PokerBunchException($"User with id {id} was not found");
+        var users = await Get([id]);
+        return users.Count > 0 ? users.First() : throw new PokerBunchException($"User with id {id} was not found");
     }
 
     public async Task<IList<User>> Get(IList<string> ids)
     {
         var query = db.PbUser
             .Where(o => ids.Select(int.Parse).Contains(o.UserId))
-            .Select(o => (UserDto)new()
+            .Select(o => new UserDto
             {
                 User_Id = o.UserId,
                 User_Name = o.UserName,

@@ -18,19 +18,17 @@ public class BunchRepository(PokerBunchDbContext db, ICache cache) : IBunchRepos
     public async Task<Bunch> GetBySlug(string slug)
     {
         var ids = await Search(slug);
-        if (!ids.Any())
-            throw new PokerBunchException($"Bunch with slug {slug} was not found");
-        
-        return await Get(ids.First());
+        return ids.Any() 
+            ? await Get(ids.First()) 
+            : throw new PokerBunchException($"Bunch with slug {slug} was not found");
     }
 
     public async Task<Bunch?> GetBySlugOrNull(string slug)
     {
         var ids = await Search(slug);
-        if (ids.Any())
-            return await Get(ids.First());
-
-        return null;
+        return ids.Any() 
+            ? await Get(ids.First()) 
+            : null;
     }
 
     private Task<IList<Bunch>> List(IList<string> ids) => 

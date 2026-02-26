@@ -12,14 +12,10 @@ public class BunchDb(PokerBunchDbContext db)
 {
     public async Task<Bunch> Get(string id)
     {
-        var query = db.PbBunch
-            .Where(o => o.BunchId == int.Parse(id))
-            .ToBunchDto();
-
-        var dto = await query.FirstAsync();
-
-        return dto is not null 
-            ? dto.ToBunch() 
+        var bunches = await Get([id]);
+        
+        return bunches.Count > 0 
+            ? bunches.First()
             : throw new PokerBunchException($"Bunch with id {id} was not found");
     }
     

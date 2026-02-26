@@ -11,34 +11,20 @@ public class LocationRepository(PokerBunchDbContext db, ICache cache) : ILocatio
 {
     private readonly LocationDb _locationDb = new(db);
 
-    public Task<Location> Get(string id)
-    {
-        return GetAndCache(id);
-    }
+    public Task<Location> Get(string id) => GetAndCache(id);
+    public Task<IList<Location>> List(IList<string> ids) => GetAndCache(ids);
 
-    public Task<IList<Location>> List(IList<string> ids)
-    {
-        return GetAndCache(ids);
-    }
-    
     public async Task<IList<Location>> List(string slug)
     {
         var ids = await _locationDb.Find(slug);
         return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
-    public Task<string> Add(Location location)
-    {
-        return _locationDb.Add(location);
-    }
+    public Task<string> Add(Location location) => _locationDb.Add(location);
 
-    private Task<Location> GetAndCache(string id)
-    {
-        return cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    private Task<Location> GetAndCache(string id) => 
+        cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
 
-    private Task<IList<Location>> GetAndCache(IList<string> ids)
-    {
-        return cache.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
-    }
+    private Task<IList<Location>> GetAndCache(IList<string> ids) => 
+        cache.GetAndStoreAsync(_locationDb.Get, ids, TimeSpan.FromMinutes(CacheTime.Long));
 }
