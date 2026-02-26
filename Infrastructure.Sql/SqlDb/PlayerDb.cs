@@ -73,7 +73,7 @@ public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
         {
             BunchId = bunchId,
             UserId = int.Parse(player.UserId!),
-            RoleId = (int)Role.Player,
+            RoleId = (int)player.Role,
             Approved = true,
             Color = player.Color
         };
