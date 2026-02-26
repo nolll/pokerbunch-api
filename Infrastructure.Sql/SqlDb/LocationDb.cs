@@ -68,6 +68,7 @@ public class LocationDb(PokerBunchDbContext db) : BaseDb(db)
         };
 
         _db.PbLocation.Add(dto);
+        await _db.SaveChangesAsync();
         
         return dto.LocationId.ToString();
     }
