@@ -6,12 +6,12 @@ namespace Infrastructure.Sql.Mappers;
 internal static class UserMapper
 {
     internal static User ToUser(this UserDto userDto) => new(
-        userDto.User_Id.ToString(),
-        userDto.User_Name,
-        userDto.Display_Name,
-        userDto.Real_Name,
+        userDto.UserId.ToString(),
+        userDto.UserName,
+        userDto.DisplayName,
+        userDto.RealName,
         userDto.Email,
-        (Role)userDto.Role_Id,
+        (Role)userDto.RoleId,
         userDto.Password,
         userDto.Salt);
 }

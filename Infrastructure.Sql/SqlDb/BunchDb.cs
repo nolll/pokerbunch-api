@@ -113,17 +113,17 @@ internal static class DtoMapper
 {
     internal static IQueryable<BunchDto> ToBunchDto(this IQueryable<PbBunch> input) => input.Select(o => new BunchDto
     {
-        Bunch_Id = o.BunchId,
+        BunchId = o.BunchId,
         Name = o.Name,
-        Display_Name = o.DisplayName,
+        DisplayName = o.DisplayName,
         Description = o.Description,
-        House_Rules = o.HouseRules,
+        HouseRules = o.HouseRules,
         Timezone = o.Timezone,
-        Default_Buyin = o.DefaultBuyin,
-        Currency_Layout = o.CurrencyLayout,
+        DefaultBuyin = o.DefaultBuyin,
+        CurrencyLayout = o.CurrencyLayout,
         Currency = o.Currency,
-        Cashgames_Enabled = o.CashgamesEnabled,
-        Tournaments_Enabled = o.TournamentsEnabled,
-        Videos_Enabled = o.VideosEnabled
+        CashgamesEnabled = o.CashgamesEnabled,
+        TournamentsEnabled = o.TournamentsEnabled,
+        VideosEnabled = o.VideosEnabled
     });
 }

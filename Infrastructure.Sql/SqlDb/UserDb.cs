@@ -22,12 +22,12 @@ public class UserDb(PokerBunchDbContext db)
             .Where(o => ids.Select(int.Parse).Contains(o.UserId))
             .Select(o => new UserDto
             {
-                User_Id = o.UserId,
-                User_Name = o.UserName,
-                Display_Name = o.DisplayName,
-                Real_Name = o.RealName,
+                UserId = o.UserId,
+                UserName = o.UserName,
+                DisplayName = o.DisplayName,
+                RealName = o.RealName,
                 Email = o.Email,
-                Role_Id = o.RoleId,
+                RoleId = o.RoleId,
                 Password = o.Password,
                 Salt = o.Salt
             });

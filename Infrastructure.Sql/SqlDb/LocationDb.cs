@@ -18,9 +18,9 @@ public class LocationDb(PokerBunchDbContext db) : BaseDb(db)
             .Where(o => o.LocationId == int.Parse(id))
             .Select(o => new LocationDto
             {
-                Location_Id = o.LocationId,
+                LocationId = o.LocationId,
                 Name = o.Name,
-                Bunch_Slug = o.Bunch.Name
+                BunchSlug = o.Bunch.Name
             });
 
         var dto = await query.FirstOrDefaultAsync();
@@ -38,9 +38,9 @@ public class LocationDb(PokerBunchDbContext db) : BaseDb(db)
             .Where(o => ids.Select(int.Parse).Contains(o.LocationId))
             .Select(o => new LocationDto
             {
-                Location_Id = o.LocationId,
+                LocationId = o.LocationId,
                 Name = o.Name,
-                Bunch_Slug = o.Bunch.Name
+                BunchSlug = o.Bunch.Name
             });
 
         var dtos = await q.ToListAsync();

@@ -13,10 +13,10 @@ internal static class EventMapper
     }
 
     private static Event ToEvent(this EventDto eventDto) => new(
-        eventDto.Event_Id.ToString(),
-        eventDto.Bunch_Slug,
+        eventDto.EventId.ToString(),
+        eventDto.BunchSlug,
         eventDto.Name,
-        eventDto.Location_Id?.ToString(),
+        eventDto.LocationId?.ToString(),
         new Date(eventDto.StartDate),
         new Date(eventDto.EndDate));
 
@@ -26,14 +26,14 @@ internal static class EventMapper
         foreach (var day in eventDayDtos)
         {
             IList<EventDayDto> list;
-            if (map.TryGetValue(day.Event_Id, out var value))
+            if (map.TryGetValue(day.EventId, out var value))
             {
                 list = value;
             }
             else
             {
                 list = new List<EventDayDto>();
-                map[day.Event_Id] = list;
+                map[day.EventId] = list;
             }
             list.Add(day);
         }
@@ -44,7 +44,7 @@ internal static class EventMapper
             var item = map[key];
             var firstItem = item.First();
             var lastItem = item.Last();
-            eventDtos.Add(new EventDto(firstItem.Event_Id, firstItem.Bunch_Slug, firstItem.Name, firstItem.Location_Id, firstItem.Timestamp, lastItem.Timestamp));
+            eventDtos.Add(new EventDto(firstItem.EventId, firstItem.BunchSlug, firstItem.Name, firstItem.LocationId, firstItem.Timestamp, lastItem.Timestamp));
         }
         return eventDtos;
     }

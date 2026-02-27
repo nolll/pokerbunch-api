@@ -31,10 +31,10 @@ public class CashgameDb(PokerBunchDbContext db)
             .Where(o => ids.Select(int.Parse).Contains(o.CashgameId))
             .Select(o => new CashgameDto
             {
-                Cashgame_Id = o.CashgameId,
-                Bunch_Slug = o.Bunch.Name,
-                Location_Id = o.LocationId,
-                Event_Id = o.Event.Count > 0 ? o.Event.First().EventId : null,
+                CashgameId = o.CashgameId,
+                BunchSlug = o.Bunch.Name,
+                LocationId = o.LocationId,
+                EventId = o.Event.Count > 0 ? o.Event.First().EventId : null,
                 Status = o.Status
             });
 
@@ -202,9 +202,9 @@ public class CashgameDb(PokerBunchDbContext db)
             .ThenByDescending(o => o.CheckpointId)
             .Select(o => new CheckpointDto
             {
-                Cashgame_Id = o.CashgameId,
-                Checkpoint_Id = o.CheckpointId,
-                Player_Id = o.PlayerId,
+                CashgameId = o.CashgameId,
+                CheckpointId = o.CheckpointId,
+                PlayerId = o.PlayerId,
                 Type = o.Type,
                 Stack = o.Stack,
                 Amount = o.Amount,

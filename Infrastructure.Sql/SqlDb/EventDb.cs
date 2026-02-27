@@ -18,10 +18,10 @@ public class EventDb(PokerBunchDbContext db) : BaseDb(db)
             .Where(o => o.EventId == int.Parse(id))
             .Select(o => new EventDayDto
             {
-                Event_Id = o.EventId,
-                Bunch_Slug = o.Bunch.Name,
+                EventId = o.EventId,
+                BunchSlug = o.Bunch.Name,
                 Name = o.Name,
-                Location_Id = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
+                LocationId = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
                 Timestamp = o.Cashgame.Any() ? o.Cashgame.First().Timestamp : DateTime.MinValue
             });
         
@@ -39,10 +39,10 @@ public class EventDb(PokerBunchDbContext db) : BaseDb(db)
             .Where(o => ids.Select(int.Parse).Contains(o.EventId))
             .Select(o => new EventDayDto
             {
-                Event_Id = o.EventId,
-                Bunch_Slug = o.Bunch.Name,
+                EventId = o.EventId,
+                BunchSlug = o.Bunch.Name,
                 Name = o.Name,
-                Location_Id = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
+                LocationId = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
                 Timestamp = o.Cashgame.Any() ? o.Cashgame.First().Timestamp : DateTime.MinValue
             });
 

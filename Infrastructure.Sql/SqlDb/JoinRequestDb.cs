@@ -41,10 +41,10 @@ public class JoinRequestDb(PokerBunchDbContext db) : BaseDb(db)
             .Where(o => ids.Select(int.Parse).Contains(o.JoinRequestId))
             .Select(o => new JoinRequestDto
             {
-                Join_Request_Id = o.JoinRequestId,
-                Bunch_Id = o.BunchId,
-                User_Id = o.UserId,
-                User_Name = o.User.UserName
+                JoinRequestId = o.JoinRequestId,
+                BunchId = o.BunchId,
+                UserId = o.UserId,
+                UserName = o.User.UserName
             });
 
         var result = await query.ToListAsync();
