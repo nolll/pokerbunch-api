@@ -1,3 +1,4 @@
+using System.Net;
 using Api.Models.CommonModels;
 using Core.Errors;
 using Core.UseCases;
@@ -17,18 +18,16 @@ public static class ResultHandler
         ? Error(error.Type, error.Message)
         : Error(ErrorType.Unknown, "Unknown error");
 
-    public static IResult Error(ErrorType errorType, string errorMessage)
-    {
-        var messageModel = new ErrorModel(errorMessage);
+    public static IResult Error(ErrorType errorType, string errorMessage) => 
+        Results.Json(new ErrorModel(errorMessage), statusCode: (int)GetStatusCode(errorType));
 
-        return errorType switch
-        {
-            ErrorType.Validation => Results.BadRequest(messageModel),
-            ErrorType.NotFound => Results.NotFound(messageModel),
-            ErrorType.Auth => Results.Unauthorized(),
-            ErrorType.AccessDenied => Results.StatusCode(StatusCodes.Status403Forbidden),
-            ErrorType.Conflict => Results.Conflict(messageModel),
-            _ => Results.InternalServerError(messageModel)
-        };
-    }
+    private static HttpStatusCode GetStatusCode(ErrorType errorType) => errorType switch
+    {
+        ErrorType.Validation => HttpStatusCode.BadRequest,
+        ErrorType.NotFound => HttpStatusCode.NotFound,
+        ErrorType.Auth => HttpStatusCode.Unauthorized,
+        ErrorType.AccessDenied => HttpStatusCode.Forbidden,
+        ErrorType.Conflict => HttpStatusCode.Conflict,
+        _ => HttpStatusCode.InternalServerError
+    };
 }
