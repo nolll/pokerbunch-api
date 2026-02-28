@@ -7,6 +7,9 @@ on:
 
 jobs:
   build:
+    env:
+      TESTCONTAINERS_HOST_OVERRIDE: "host.docker.internal"
+      TESTCONTAINERS_RYUK_DISABLED: "true"
     runs-on: ubuntu-latest
     environment: production
     steps:
