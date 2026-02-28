@@ -20,7 +20,8 @@ public class LocationRepository(PokerBunchDbContext db, ICache cache) : ILocatio
         return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
-    public Task<string> Add(Location location) => _locationDb.Add(location);
+    public Task<string> Add(Location location) => 
+        _locationDb.Add(location);
 
     private Task<Location> GetAndCache(string id) => 
         cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));
