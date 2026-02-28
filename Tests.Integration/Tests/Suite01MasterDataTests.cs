@@ -1,5 +1,4 @@
-using Infrastructure.Sql.Sql;
-using SqlKata;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Integration.Tests;
 
@@ -12,18 +11,15 @@ public class Suite01MasterDataTests
     [Order(1)]
     public async Task Test01MasterDataExists()
     {
-        var query = new Query(Schema.Role)
-            .Select(Schema.Role.Id, Schema.Role.Name)
-            .OrderBy(Schema.Role.Id);
-
-        var roles = (await TestSetup.Db.GetAsync<RoleInTest>(query)).ToList();
-
+        var query = TestSetup.Db!.PbRole.OrderBy(o => o.RoleId);
+        var roles = await query.ToListAsync();
+        
         roles.Count.Should().Be(3);
-        roles[0].Role_Id.Should().Be(1);
-        roles[0].Role_Name.Should().Be("Player");
-        roles[1].Role_Id.Should().Be(2);
-        roles[1].Role_Name.Should().Be("Manager");
-        roles[2].Role_Id.Should().Be(3);
-        roles[2].Role_Name.Should().Be("Admin");
+        roles[0].RoleId.Should().Be(1);
+        roles[0].RoleName.Should().Be("Player");
+        roles[1].RoleId.Should().Be(2);
+        roles[1].RoleName.Should().Be("Manager");
+        roles[2].RoleId.Should().Be(3);
+        roles[2].RoleName.Should().Be("Admin");
     }
 }

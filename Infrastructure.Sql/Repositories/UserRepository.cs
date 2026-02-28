@@ -2,11 +2,12 @@ using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class UserRepository(IDb db, ICache cache) : IUserRepository
+public class UserRepository(PokerBunchDbContext db, ICache cache) : IUserRepository
 {
     private readonly UserDb _userDb = new(db);
 
@@ -21,10 +22,9 @@ public class UserRepository(IDb db, ICache cache) : IUserRepository
     public async Task<User> GetByUserEmail(string email)
     {
         var id = await _userDb.FindByEmail(email.ToLower());
-        if (id == null)
-            throw new PokerBunchException($"User not found: {email}");
-
-        return await GetAndCache(id);
+        return id != null 
+            ? await GetAndCache(id) 
+            : throw new PokerBunchException($"User not found: {email}");
     }
 
     public async Task<User> GetByUserNameOrEmail(string nameOrEmail)

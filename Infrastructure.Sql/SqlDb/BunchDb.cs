@@ -3,123 +3,127 @@ using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
-using Infrastructure.Sql.Sql;
-using SqlKata;
+using Infrastructure.Sql.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class BunchDb(IDb db)
+public class BunchDb(PokerBunchDbContext db)
 {
-    private static Query BunchQuery => new(Schema.Bunch);
-
-    private static Query GetQuery => BunchQuery
-        .Select(
-            Schema.Bunch.Id,
-            Schema.Bunch.Name,
-            Schema.Bunch.DisplayName,
-            Schema.Bunch.Description,
-            Schema.Bunch.Currency,
-            Schema.Bunch.CurrencyLayout,
-            Schema.Bunch.Timezone,
-            Schema.Bunch.DefaultBuyin,
-            Schema.Bunch.CashgamesEnabled,
-            Schema.Bunch.TournamentsEnabled,
-            Schema.Bunch.VideosEnabled,
-            Schema.Bunch.HouseRules);
-
-    private static Query FindQuery => BunchQuery.Select(Schema.Bunch.Id);
-
     public async Task<Bunch> Get(string id)
     {
-        var query = GetQuery.Where(Schema.Bunch.Id, int.Parse(id));
-        var dto = await db.FirstAsync<BunchDto>(query);
-
-        if (dto is null)
-            throw new PokerBunchException($"Bunch with id {id} was not found");
-
-        return dto.ToBunch();
+        var bunches = await Get([id]);
+        
+        return bunches.Count > 0 
+            ? bunches.First()
+            : throw new PokerBunchException($"Bunch with id {id} was not found");
     }
-
+    
     public async Task<IList<Bunch>> Get(IList<string> ids)
     {
-        var query = GetQuery.WhereIn(Schema.Bunch.Id, ids.Select(int.Parse));
-        var dtos = await db.GetAsync<BunchDto>(query);
-        return dtos.Select(BunchMapper.ToBunch).ToList();
+        var query2 = db.PbBunch
+            .Where(o => ids.Select(int.Parse).Contains(o.BunchId))
+            .ToBunchDto();
+
+        var dtos2 = await query2.ToListAsync();
+        return dtos2.Select(BunchMapper.ToBunch).ToList();
     }
 
     public async Task<IList<string>> Search()
     {
-        var result = await db.GetAsync<int>(FindQuery);
+        var query = db.PbBunch.Select(o => o.BunchId);
+        var result = await query.ToListAsync();
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> Search(string slug)
     {
-        var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        var id = await db.FirstOrDefaultAsync<int?>(query);
+        var query2 = db.PbBunch
+            .Where(o => o.Name == slug)
+            .Select(o => o.BunchId);
 
-        return id is not null
-            ? [id.Value.ToString()]
-            : [];
+        var ids = await query2.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> SearchByUser(string userId)
     {
-        var query = FindQuery.Join(Schema.Player, $"{Schema.Player.BunchId}", $"{Schema.Bunch.Id}")
-            .Where($"{Schema.Player.UserId}", int.Parse(userId))
-            .OrderBy($"{Schema.Bunch.Name}");
+        var query = db.PbPlayer
+            .Where(o => o.UserId == int.Parse(userId))
+            .Select(o => o.Bunch)
+            .OrderBy(o => o.Name)
+            .Select(o => o.BunchId);
 
-        var result = await db.GetAsync<int>(query);
+        var result = await query.ToListAsync();
         return result.Select(o => o.ToString()).ToList();
     }
 
     public async Task<string> Add(Bunch bunch)
     {
-        var parameters = new Dictionary<SqlColumn, object?>
+        var dto = new PbBunch
         {
-            { Schema.Bunch.Name, bunch.Slug },
-            { Schema.Bunch.DisplayName, bunch.DisplayName },
-            { Schema.Bunch.Description, bunch.Description },
-            { Schema.Bunch.Currency, bunch.Currency.Symbol },
-            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
-            { Schema.Bunch.Timezone, bunch.Timezone.Id },
-            { Schema.Bunch.DefaultBuyin, 0 },
-            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
-            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
-            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
-            { Schema.Bunch.HouseRules, bunch.HouseRules }
+            Name = bunch.Slug,
+            DisplayName = bunch.DisplayName,
+            Description = bunch.Description,
+            Currency = bunch.Currency.Symbol,
+            CurrencyLayout = bunch.Currency.Layout,
+            Timezone = bunch.Timezone.Id,
+            DefaultBuyin = bunch.DefaultBuyin,
+            CashgamesEnabled = bunch.CashgamesEnabled,
+            TournamentsEnabled = bunch.TournamentsEnabled,
+            VideosEnabled = bunch.VideosEnabled,
+            HouseRules = bunch.HouseRules
         };
 
-        var result = await db.InsertGetIdAsync(BunchQuery, parameters);
-        return result.ToString();
+        db.PbBunch.Add(dto);
+        await db.SaveChangesAsync();
+        return dto.BunchId.ToString();
     }
 
     public async Task Update(Bunch bunch)
     {
-        var parameters = new Dictionary<SqlColumn, object?>
-        {
-            { Schema.Bunch.Name, bunch.Slug },
-            { Schema.Bunch.DisplayName, bunch.DisplayName },
-            { Schema.Bunch.Description, bunch.Description },
-            { Schema.Bunch.Currency, bunch.Currency.Symbol },
-            { Schema.Bunch.CurrencyLayout, bunch.Currency.Layout },
-            { Schema.Bunch.Timezone, bunch.Timezone.Id },
-            { Schema.Bunch.DefaultBuyin, bunch.DefaultBuyin },
-            { Schema.Bunch.CashgamesEnabled, bunch.CashgamesEnabled },
-            { Schema.Bunch.TournamentsEnabled, bunch.TournamentsEnabled },
-            { Schema.Bunch.VideosEnabled, bunch.VideosEnabled },
-            { Schema.Bunch.HouseRules, bunch.HouseRules }
-        };
+        var dto = db.PbBunch
+            .First(o => o.BunchId == int.Parse(bunch.Id));
 
-        var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(bunch.Id));
-        await db.UpdateAsync(query, parameters);
+        dto.Name = bunch.Slug;
+        dto.DisplayName = bunch.DisplayName;
+        dto.Description = bunch.Description;
+        dto.Currency = bunch.Currency.Symbol;
+        dto.CurrencyLayout = bunch.Currency.Layout;
+        dto.Timezone = bunch.Timezone.Id;
+        dto.DefaultBuyin = bunch.DefaultBuyin;
+        dto.CashgamesEnabled = bunch.CashgamesEnabled;
+        dto.TournamentsEnabled = bunch.TournamentsEnabled;
+        dto.VideosEnabled = bunch.VideosEnabled;
+        dto.HouseRules = bunch.HouseRules;
+
+        await db.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteBunch(string id)
     {
-        var query = BunchQuery.Where(Schema.Bunch.Id, int.Parse(id));
-        var rowCount = await db.DeleteAsync(query);
-
+        var dto = new PbBunch { BunchId = int.Parse(id) };
+        db.PbBunch.Remove(dto);
+        var rowCount = await db.SaveChangesAsync();
         return rowCount > 0;
     }
+}
+
+internal static class DtoMapper
+{
+    internal static IQueryable<BunchDto> ToBunchDto(this IQueryable<PbBunch> input) => input.Select(o => new BunchDto
+    {
+        BunchId = o.BunchId,
+        Name = o.Name,
+        DisplayName = o.DisplayName,
+        Description = o.Description,
+        HouseRules = o.HouseRules,
+        Timezone = o.Timezone,
+        DefaultBuyin = o.DefaultBuyin,
+        CurrencyLayout = o.CurrencyLayout,
+        Currency = o.Currency,
+        CashgamesEnabled = o.CashgamesEnabled,
+        TournamentsEnabled = o.TournamentsEnabled,
+        VideosEnabled = o.VideosEnabled
+    });
 }

@@ -3,44 +3,33 @@ using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
-using Infrastructure.Sql.Sql;
-using SqlKata;
+using Infrastructure.Sql.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class PlayerDb(IDb db)
+public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
 {
-    private static Query PlayerQuery => new(Schema.Player);
+    private readonly PokerBunchDbContext _db = db;
 
-    private static Query GetQuery => PlayerQuery
-        .Select(
-            Schema.Player.Id,
-            Schema.Player.UserId,
-            Schema.Player.RoleId,
-            Schema.Player.Color,
-            Schema.User.UserName,
-            Schema.Bunch.Name)
-        .SelectRaw($"COALESCE({Schema.User.DisplayName}, {Schema.Player.PlayerName}) AS {Schema.Player.PlayerName.AsParam()}")
-        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
-        .LeftJoin(Schema.User, Schema.User.Id, Schema.Player.UserId)
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
-
-    private static Query FindQuery => PlayerQuery
-        .Select(Schema.Player.Id)
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Player.BunchId);
-    
     public async Task<IList<string>> Find(string slug)
     {
-        var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        var result = await db.GetAsync<string>(query);
-        return result.Select(o => o.ToString()).ToList();
+        var q = _db.PbPlayer
+            .Where(o => o.Bunch.Name == slug)
+            .Select(o => o.PlayerId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {
-        var query = FindQuery.Where(Schema.Player.BunchId, int.Parse(bunchId)).Where(Schema.Player.UserId, int.Parse(userId));
-        var result = await db.GetAsync<string>(query);
-        return result.Select(o => o.ToString()).ToList();
+        var q = _db.PbPlayer
+            .Where(o => o.BunchId == int.Parse(bunchId) && o.UserId == int.Parse(userId))
+            .Select(o => o.PlayerId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
     }
 
     public async Task<IList<Player>> Get(IList<string> ids)
@@ -48,113 +37,76 @@ public class PlayerDb(IDb db)
         if (!ids.Any())
             return new List<Player>();
 
-        var query = GetQuery.WhereIn(Schema.Player.Id, ids.Select(int.Parse));
-        var playerDtos = await db.GetAsync<PlayerDto>(query);
+        var q = _db.PbPlayer
+            .Include(o => o.User)
+            .Include(o => o.Bunch)
+            .Where(o => ids.Select(int.Parse).Contains(o.PlayerId))
+            .Select(o => new PlayerDto
+            {
+                PlayerId = o.PlayerId,
+                UserId = o.UserId,
+                UserName = o.User != null ? o.User.UserName : null,
+                RoleId = o.RoleId,
+                Color = o.Color,
+                PlayerName = o.User != null ? o.User.DisplayName : o.PlayerName ?? "",
+                BunchSlug = o.Bunch.Name
+            });
 
-        return playerDtos.Select(PlayerMapper.ToPlayer).ToList();
+        var dtos = await q.ToListAsync();
+        return dtos.Select(PlayerMapper.ToPlayer).ToList();
     }
 
     public async Task<Player> Get(string id)
     {
-        var query = GetQuery.Where(Schema.Player.Id, int.Parse(id));
-        var playerDto = await db.FirstOrDefaultAsync<PlayerDto?>(query);
-        var player = playerDto?.ToPlayer();
+        var players = await Get([id]);
         
-        return player ?? throw new PokerBunchException($"Player with id {id} was not found");
+        return players.Count != 0 
+            ? players.First() 
+            : throw new PokerBunchException($"Player with id {id} was not found");
     }
 
-    public async Task<string> Add(Player player) => player.IsUser 
-        ? await AddWithUser(player) 
+    public async Task<string> Add(Player player) => player.IsUser
+        ? await AddWithUser(player)
         : await AddWithoutUser(player);
 
     private async Task<string> AddWithUser(Player player)
     {
-        var sql = $"""
-                   INSERT INTO {Schema.Player} 
-                   (
-                     {Schema.Player.BunchId.AsParam()}, 
-                     {Schema.Player.UserId.AsParam()},
-                     {Schema.Player.RoleId.AsParam()},
-                     {Schema.Player.Approved.AsParam()},
-                     {Schema.Player.Color.AsParam()}
-                   )
-                   VALUES
-                   (
-                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
-                     @{Schema.Player.UserId.AsParam()},
-                     @{Schema.Player.RoleId.AsParam()},
-                     @{Schema.Player.Approved.AsParam()},
-                     @{Schema.Player.Color.AsParam()}
-                   )
-                   RETURNING {Schema.Player.Id.AsParam()}
-                   """;
-
-        var parameters = new Dictionary<string, object?>
+        var bunchId = await GetBunchId(player.BunchSlug);
+        var dto = new PbPlayer
         {
-            { Schema.Bunch.Slug.AsParam(), player.BunchSlug },
-            { Schema.Player.UserId.AsParam(), int.Parse(player.UserId!) },
-            { Schema.Player.RoleId.AsParam(), (int)player.Role },
-            { Schema.Player.Approved.AsParam(), true },
-            { Schema.Player.Color.AsParam(), player.Color }
+            BunchId = bunchId,
+            UserId = int.Parse(player.UserId!),
+            RoleId = (int)player.Role,
+            Approved = true,
+            Color = player.Color
         };
-        
-        var result = await db.CustomInsert(sql, parameters);
-        return result.ToString();
+
+        _db.PbPlayer.Add(dto);
+        await _db.SaveChangesAsync();
+        return dto.PlayerId.ToString();
     }
-    
+
     private async Task<string> AddWithoutUser(Player player)
     {
-        var sql = $"""
-                   INSERT INTO {Schema.Player} 
-                   (
-                     {Schema.Player.BunchId.AsParam()}, 
-                     {Schema.Player.RoleId.AsParam()},
-                     {Schema.Player.Approved.AsParam()},
-                     {Schema.Player.PlayerName.AsParam()},
-                     {Schema.Player.Color.AsParam()}
-                   )
-                   VALUES
-                   (
-                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
-                     @{Schema.Player.RoleId.AsParam()},
-                     @{Schema.Player.Approved.AsParam()},
-                     @{Schema.Player.PlayerName.AsParam()},
-                     @{Schema.Player.Color.AsParam()}
-                   )
-                   RETURNING {Schema.Player.Id.AsParam()}
-                   """;
-
-        var parameters = new Dictionary<string, object?>
+        var bunchId = await GetBunchId(player.BunchSlug);
+        var dto = new PbPlayer
         {
-            { Schema.Bunch.Slug.AsParam(), player.BunchSlug },
-            { Schema.Player.RoleId.AsParam(), (int)Role.Player },
-            { Schema.Player.Approved.AsParam(), true },
-            { Schema.Player.PlayerName.AsParam(), player.DisplayName },
-            { Schema.Player.Color.AsParam(), player.Color }
-        };
-        
-        var result = await db.CustomInsert(sql, parameters);
-        return result.ToString();
-    }
-
-    public async Task<bool> JoinBunch(Player player, Bunch bunch, string userId)
-    {
-        var parameters = new Dictionary<SqlColumn, object?>
-        {
-            { Schema.Player.BunchId, int.Parse(bunch.Id) },
-            { Schema.Player.UserId, int.Parse(userId) },
-            { Schema.Player.RoleId, (int)player.Role },
-            { Schema.Player.Approved, true }
+            BunchId = bunchId,
+            RoleId = (int)Role.Player,
+            Approved = true,
+            PlayerName = player.DisplayName,
+            Color = player.Color
         };
 
-        var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(player.Id));
-        var rowCount = await db.UpdateAsync(query, parameters);
-        return rowCount > 0;
+        _db.PbPlayer.Add(dto);
+        await _db.SaveChangesAsync();
+        return dto.PlayerId.ToString();
     }
-
+    
     public async Task Delete(string playerId)
     {
-        var query = PlayerQuery.Where(Schema.Player.Id, int.Parse(playerId));
-        await db.DeleteAsync(query);
+        var dto = new PbPlayer { PlayerId = int.Parse(playerId) };
+        _db.PbPlayer.Remove(dto);
+        await _db.SaveChangesAsync();
     }
 }

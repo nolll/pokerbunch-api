@@ -81,6 +81,9 @@ CREATE TABLE IF NOT EXISTS pb_player(
     CONSTRAINT fk_bunch
         FOREIGN KEY(bunch_id)
         REFERENCES pb_bunch(bunch_id)
+    CONSTRAINT fk_user
+        FOREIGN KEY(user_id)
+        REFERENCES pb_user(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS pb_cashgame_checkpoint(

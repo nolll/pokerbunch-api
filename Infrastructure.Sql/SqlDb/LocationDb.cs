@@ -3,77 +3,73 @@ using Core;
 using Core.Entities;
 using Infrastructure.Sql.Dtos;
 using Infrastructure.Sql.Mappers;
-using Infrastructure.Sql.Sql;
-using SqlKata;
+using Infrastructure.Sql.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Sql.SqlDb;
 
-public class LocationDb(IDb db)
+public class LocationDb(PokerBunchDbContext db) : BaseDb(db)
 {
-    private static Query LocationQuery => new(Schema.Location);
-
-    private static Query GetQuery => LocationQuery
-        .Select(
-            Schema.Location.Id,
-            Schema.Location.Name)
-        .SelectRaw($"{Schema.Bunch.Name} AS {Schema.Bunch.Slug.AsParam()}")
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Location.BunchId);
-
-    private static Query FindQuery => LocationQuery
-        .Select(Schema.Location.Id)
-        .LeftJoin(Schema.Bunch, Schema.Bunch.Id, Schema.Location.BunchId);
+    private readonly PokerBunchDbContext _db = db;
 
     public async Task<Location> Get(string id)
     {
-        var query = GetQuery.Where(Schema.Location.Id, int.Parse(id));
-        var locationDto = await db.FirstOrDefaultAsync<LocationDto>(query);
-        var location = locationDto?.ToLocation();
+        var query = _db.PbLocation
+            .Where(o => o.LocationId == int.Parse(id))
+            .Select(o => new LocationDto
+            {
+                LocationId = o.LocationId,
+                Name = o.Name,
+                BunchSlug = o.Bunch.Name
+            });
 
-        if (location is null)
-            throw new PokerBunchException($"Location with id {id} was not found");
+        var dto = await query.FirstOrDefaultAsync();
+        var location = dto?.ToLocation();
 
-        return location;
+        return location ?? throw new PokerBunchException($"Location with id {id} was not found");
     }
         
     public async Task<IList<Location>> Get(IList<string> ids)
     {
         if (!ids.Any())
             return new List<Location>();
+        
+        var q = _db.PbLocation
+            .Where(o => ids.Select(int.Parse).Contains(o.LocationId))
+            .Select(o => new LocationDto
+            {
+                LocationId = o.LocationId,
+                Name = o.Name,
+                BunchSlug = o.Bunch.Name
+            });
 
-        var query = GetQuery.WhereIn(Schema.Location.Id, ids.Select(int.Parse));
-        var locationDtos = await db.GetAsync<LocationDto>(query);
-        return locationDtos.Select(LocationMapper.ToLocation).ToList();
+        var dtos = await q.ToListAsync();
+        return dtos.Select(LocationMapper.ToLocation).ToList();
     }
 
     public async Task<IList<string>> Find(string slug)
     {
-        var query = FindQuery.Where(Schema.Bunch.Name, slug);
-        return (await db.GetAsync<int>(query)).Select(o => o.ToString()).ToList();
+        var q = _db.PbLocation
+            .Where(o => o.Bunch.Name == slug)
+            .Select(o => o.LocationId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
     }
         
     public async Task<string> Add(Location location)
     {
-        var sql = $"""
-                   INSERT INTO {Schema.Location} 
-                   (
-                     {Schema.Location.BunchId.AsParam()}, 
-                     {Schema.Location.Name.AsParam()}
-                   )
-                   VALUES
-                   (
-                     (SELECT {Schema.Bunch.Id} FROM {Schema.Bunch} WHERE {Schema.Bunch.Name} = @{Schema.Bunch.Slug.AsParam()}), 
-                     @{Schema.Location.Name.AsParam()}
-                   )
-                   RETURNING {Schema.Location.Id.AsParam()}
-                   """;
+        var bunchId = await GetBunchId(location.BunchSlug);
 
-        var parameters = new Dictionary<string, object?>
+        var dto = new PbLocation()
         {
-            { Schema.Location.Name.AsParam(), location.Name },
-            { Schema.Bunch.Slug.AsParam(), location.BunchSlug }
+            BunchId = bunchId,
+            Name = location.Name
         };
+
+        _db.PbLocation.Add(dto);
+        await _db.SaveChangesAsync();
         
-        var result = await db.CustomInsert(sql, parameters);
-        return result.ToString();
+        return dto.LocationId.ToString();
     }
 }

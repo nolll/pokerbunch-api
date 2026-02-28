@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Api.Settings;
+﻿using Api.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,7 +16,9 @@ using Api.Bootstrapping;
 using Api.Extensions.Swagger;
 using Api.Middleware;
 using Api.Routes;
-using Microsoft.OpenApi;
+using Infrastructure.Sql.Models;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT");
@@ -45,7 +46,13 @@ builder.Services.AddLogging(logging =>
     logging.SetMinimumLevel(settings.Logging.LogLevel.Default);
 });
 
-builder.Services.AddServices(settings, builder.Configuration);
+var connectionString = GetConnectionString(builder.Configuration);
+builder.Services.AddDbContext<PokerBunchDbContext>(options =>
+{
+    options.UseNpgsql(connectionString, opt => opt.MigrationsAssembly("Api"));
+});
+
+builder.Services.AddServices(settings, builder.Configuration, connectionString);
 
 builder.Services.AddMvc(options =>
 {
@@ -136,6 +143,28 @@ app.Map();
 app.UseMvc();
 
 app.Run();
+return;
+
+static string GetConnectionString(IConfiguration configuration)
+{
+    var databaseUrl = configuration.GetValue<string>("DATABASE_URL");
+    if (string.IsNullOrEmpty(databaseUrl))
+        return "";
+
+    var databaseUri = new Uri(databaseUrl);
+    var userInfo = databaseUri.UserInfo.Split(':');
+    
+    var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+    {
+        Host = databaseUri.Host,
+        Port = databaseUri.Port,
+        Username = userInfo[0],
+        Password = userInfo[1],
+        Database = databaseUri.LocalPath.TrimStart('/')
+    };
+
+    return connectionStringBuilder.ToString();
+}
 
 static bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters param)
 {

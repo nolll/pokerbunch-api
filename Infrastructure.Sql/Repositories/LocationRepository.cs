@@ -2,26 +2,26 @@ using System.Linq;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class LocationRepository(IDb container, ICache cache) : ILocationRepository
+public class LocationRepository(PokerBunchDbContext db, ICache cache) : ILocationRepository
 {
-    private readonly LocationDb _locationDb = new(container);
+    private readonly LocationDb _locationDb = new(db);
 
     public Task<Location> Get(string id) => GetAndCache(id);
-
     public Task<IList<Location>> List(IList<string> ids) => GetAndCache(ids);
 
     public async Task<IList<Location>> List(string slug)
     {
         var ids = await _locationDb.Find(slug);
-        var locations = await GetAndCache(ids);
-        return locations.OrderBy(o => o.Name).ToList();
+        return (await GetAndCache(ids)).OrderBy(o => o.Name).ToList();
     }
 
-    public Task<string> Add(Location location) => _locationDb.Add(location);
+    public Task<string> Add(Location location) => 
+        _locationDb.Add(location);
 
     private Task<Location> GetAndCache(string id) => 
         cache.GetAndStoreAsync(_locationDb.Get, id, TimeSpan.FromMinutes(CacheTime.Long));

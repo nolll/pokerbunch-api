@@ -1,20 +1,17 @@
-// ReSharper disable InconsistentNaming
-using JetBrains.Annotations;
-
 namespace Infrastructure.Sql.Dtos;
 
 public class BunchDto
 {
-    [UsedImplicitly] public int Bunch_Id { get; set; }
-    [UsedImplicitly] public string Name { get; set; } = "";
-    [UsedImplicitly] public string? Display_Name { get; set; }
-    [UsedImplicitly] public string? Description { get; set; }
-    [UsedImplicitly] public string? House_Rules { get; set; }
-    [UsedImplicitly] public string? Timezone { get; set; }
-    [UsedImplicitly] public int Default_Buyin { get; set; }
-    [UsedImplicitly] public string? Currency_Layout { get; set; }
-    [UsedImplicitly] public string? Currency { get; set; }
-    [UsedImplicitly] public bool Cashgames_Enabled { get; set; }
-    [UsedImplicitly] public bool Tournaments_Enabled { get; set; }
-    [UsedImplicitly] public bool Videos_Enabled { get; set; }
+    public int BunchId { get; set; }
+    public string Name { get; set; } = "";
+    public string? DisplayName { get; set; }
+    public string? Description { get; set; }
+    public string? HouseRules { get; set; }
+    public string? Timezone { get; set; }
+    public int DefaultBuyin { get; set; }
+    public string? CurrencyLayout { get; set; }
+    public string? Currency { get; set; }
+    public bool CashgamesEnabled { get; set; }
+    public bool TournamentsEnabled { get; set; }
+    public bool VideosEnabled { get; set; }
 }

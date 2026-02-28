@@ -3,11 +3,12 @@ using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
+using Infrastructure.Sql.Models;
 using Infrastructure.Sql.SqlDb;
 
 namespace Infrastructure.Sql.Repositories;
 
-public class BunchRepository(IDb db, ICache cache) : IBunchRepository
+public class BunchRepository(PokerBunchDbContext db, ICache cache) : IBunchRepository
 {
     private readonly BunchDb _bunchDb = new(db);
 
@@ -25,7 +26,7 @@ public class BunchRepository(IDb db, ICache cache) : IBunchRepository
     public async Task<Bunch?> GetBySlugOrNull(string slug)
     {
         var ids = await Search(slug);
-        return ids.Any()
+        return ids.Any() 
             ? await Get(ids.First()) 
             : null;
     }

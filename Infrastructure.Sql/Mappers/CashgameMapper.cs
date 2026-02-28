@@ -8,11 +8,11 @@ namespace Infrastructure.Sql.Mappers;
 internal static class CashgameMapper
 {
     internal static Cashgame ToCashgame(this CashgameDto dto, IList<CheckpointDto> checkpointDtos) => new(
-        dto.Bunch_Slug,
-        dto.Location_Id.ToString(),
-        dto.Event_Id != 0 ? dto.Event_Id.ToString() : null,
+        dto.BunchSlug,
+        dto.LocationId.ToString(),
+        dto.EventId != null ? dto.EventId.ToString() : null,
         (GameStatus)dto.Status,
-        dto.Cashgame_Id.ToString(),
+        dto.CashgameId.ToString(),
         checkpointDtos.Select(ToCheckpoint).ToList());
 
     internal static IList<Cashgame> ToCashgameList(this IEnumerable<CashgameDto> dtos, IEnumerable<CheckpointDto> checkpointDtos)
@@ -22,7 +22,7 @@ internal static class CashgameMapper
         var cashgames = new List<Cashgame>();
         foreach (var cashgameDto in dtos)
         {
-            if (!checkpointMap.TryGetValue(cashgameDto.Cashgame_Id, out var cashgameCheckpointDtos))
+            if (!checkpointMap.TryGetValue(cashgameDto.CashgameId, out var cashgameCheckpointDtos))
                 cashgameCheckpointDtos = new List<CheckpointDto>();
 
             var cashgame = cashgameDto.ToCashgame(cashgameCheckpointDtos);
@@ -37,10 +37,10 @@ internal static class CashgameMapper
         var checkpointMap = new Dictionary<int, IList<CheckpointDto>>();
         foreach (var checkpoint in checkpoints)
         {
-            if (!checkpointMap.TryGetValue(checkpoint.Cashgame_Id, out var checkpointList))
+            if (!checkpointMap.TryGetValue(checkpoint.CashgameId, out var checkpointList))
             {
                 checkpointList = new List<CheckpointDto>();
-                checkpointMap.Add(checkpoint.Cashgame_Id, checkpointList);
+                checkpointMap.Add(checkpoint.CashgameId, checkpointList);
             }
             checkpointList.Add(checkpoint);
         }
@@ -48,9 +48,9 @@ internal static class CashgameMapper
     }
 
     private static Checkpoint ToCheckpoint(this CheckpointDto checkpointDto) => Checkpoint.Create(
-        checkpointDto.Checkpoint_Id.ToString(),
-        checkpointDto.Cashgame_Id.ToString(),
-        checkpointDto.Player_Id.ToString(),
+        checkpointDto.CheckpointId.ToString(),
+        checkpointDto.CashgameId.ToString(),
+        checkpointDto.PlayerId.ToString(),
         DateTime.SpecifyKind(checkpointDto.Timestamp, DateTimeKind.Utc),
         (CheckpointType)checkpointDto.Type,
         checkpointDto.Stack,
