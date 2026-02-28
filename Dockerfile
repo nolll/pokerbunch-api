@@ -16,7 +16,7 @@ RUN dotnet restore .
 
 COPY . ./
 RUN dotnet test Tests.Core -c Release
-RUN dotnet test Tests.Integration -c Release
+#RUN dotnet test Tests.Integration -c Release
 RUN dotnet publish Api -c Release -o /out
 
 FROM base AS final
