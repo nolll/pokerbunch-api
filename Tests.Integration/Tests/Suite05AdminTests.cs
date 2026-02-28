@@ -23,9 +23,7 @@ public class Suite05AdminTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.General.ClearCache(managerToken);
         
-        // todo: Find out why forbid returns 404
-        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Test]
@@ -44,8 +42,6 @@ public class Suite05AdminTests
         var managerToken = await LoginHelper.GetManagerToken();
         var result = await TestClient.General.TestEmail(managerToken);
         
-        // todo: Find out why forbid returns 404
-        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

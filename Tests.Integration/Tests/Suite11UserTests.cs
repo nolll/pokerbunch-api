@@ -54,9 +54,8 @@ public class Suite11UserTests
         var userToken = await LoginHelper.GetUserToken();
         var result = await TestClient.User.List(userToken);
         
-        // todo: Find out why forbid returns 404
-        //result.StatusCode.Should().Be(HttpStatusCode.Forbidden));
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        //result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Test]
