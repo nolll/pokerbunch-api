@@ -7,10 +7,13 @@ on:
 
 jobs:
   build:
-    env:
-      TESTCONTAINERS_HOST_OVERRIDE: "host.docker.internal"
-      TESTCONTAINERS_RYUK_DISABLED: "true"
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
     environment: production
     steps:
       - name: Install Heroku Cli
