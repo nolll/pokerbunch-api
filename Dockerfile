@@ -11,10 +11,7 @@ COPY Infrastructure.Cache/*.csproj ./Infrastructure.Cache/
 COPY Infrastructure.Email/*.csproj ./Infrastructure.Email/
 COPY Infrastructure.Sql/*.csproj ./Infrastructure.Sql/
 COPY Api/*.csproj ./Api/
-COPY Tests.Common/*.csproj ./Tests.Common/
-COPY Tests.Core/*.csproj ./Tests.Core/
-COPY Tests.Integration/*.csproj ./Tests.Integration/
-RUN dotnet restore .
+RUN dotnet restore Api
 
 COPY . ./
 RUN dotnet publish Api -c Release -o /out
