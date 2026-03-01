@@ -1,0 +1,36 @@
+name: Deploy to heroku.
+
+on:
+  push:
+    branches: [pipelines2]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Install Heroku Cli
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Unit tests
+        run: dotnet test Tests.Core -c Release
+      - name: Integration tests
+        run: dotnet test Tests.Integration -c Release
+      # - name: Deploy
+      #   uses: akhileshns/heroku-deploy@v3.13.15
+      #   with:
+      #     heroku_email: ${{ secrets.HEROKU_EMAIL }}
+      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+      #     heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+      #     usedocker: true
