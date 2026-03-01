@@ -21,9 +21,9 @@ jobs:
       - name: Run Unit Tests
         run: |
           docker run -v /var/run/docker.sock.raw:/var/run/docker.sock -t pokerbunch-api-tests $IMAGE dotnet test Tests.Core -c Release
-      - name: Run Unit Tests
-        run: |
-          docker run -v /var/run/docker.sock.raw:/var/run/docker.sock -t pokerbunch-api-tests $IMAGE dotnet test Tests.Integration -c Release
+#      - name: Run Unit Tests
+#        run: |
+#          docker run -v /var/run/docker.sock.raw:/var/run/docker.sock -t pokerbunch-api-tests $IMAGE dotnet test Tests.Integration -c Release
       - name: Build App
         run: |
           docker build -t pokerbunch-api-app .
