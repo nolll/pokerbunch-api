@@ -19,8 +19,6 @@ RUN dotnet restore .
 COPY . ./
 RUN dotnet publish Api -c Release -o /out
 
-FROM build AS test
-
 FROM base AS final
 WORKDIR /app
 COPY --from=build /out .
