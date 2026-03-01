@@ -2,7 +2,7 @@ name: Deploy to heroku.
 
 on:
   push:
-    branches: [main]
+    branches: [pipelines2]
   workflow_dispatch:
 
 jobs:
@@ -15,18 +15,19 @@ jobs:
           curl https://cli-assets.heroku.com/install.sh | sh
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Build Tests
-        run: |
-          docker build -t pokerbunch-api-tests --target test .
-      - name: Run Unit Tests
-        run: |
-          docker run -v /var/run/docker.sock.raw:/var/run/docker.sock -t pokerbunch-api-tests $IMAGE dotnet test Tests.Core -c Release
-#      - name: Run Unit Tests
-#        run: |
-#          docker run -v /var/run/docker.sock.raw:/var/run/docker.sock -t pokerbunch-api-tests $IMAGE dotnet test Tests.Integration -c Release
-      - name: Build App
-        run: |
-          docker build -t pokerbunch-api-app .
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+          cache: true
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Unit tests
+        run: dotnet test Tests.Core -c Release
+      - name: Integration tests
+        run: dotnet test Tests.Integration -c Release
       - name: Deploy
         uses: akhileshns/heroku-deploy@v3.13.15
         with:
