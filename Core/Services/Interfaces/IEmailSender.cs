@@ -1,3 +1,5 @@
+using Core.Messages;
+
 namespace Core.Services;
 
 public interface IEmailSender

@@ -10,6 +10,9 @@ public class UserDetails(IUserRepository userRepository) : UseCase<UserDetails.R
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var displayUser = await userRepository.GetByUserName(request.UserName);
+        if (displayUser is null)
+            return Error(new UserNotFoundError(request.UserName));
+        
         var isViewingCurrentUser = displayUser.UserName == request.Auth.UserName;
         var userName = displayUser.UserName;
         var displayName = displayUser.DisplayName;

@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Api.Urls.ApiUrls;
+using Core.Services.Interfaces;
 using Core.UseCases;
 
 namespace Api.Models.CashgameModels;
@@ -11,11 +11,11 @@ public class ApiCurrentGame
     
     [JsonPropertyName("url")]
     public string Url { get; }
-
-    public ApiCurrentGame(CurrentCashgames.Game game, UrlProvider urls)
+    
+    public ApiCurrentGame(CurrentCashgames.Game game, IApiUrlProvider urls)
     {
         Id = game.Id;
-        Url = urls.Api.Cashgame(game.Id);
+        Url = urls.Cashgame(game.Id);
     }
 
     [JsonConstructor]

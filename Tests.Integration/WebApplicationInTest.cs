@@ -10,7 +10,7 @@ using Tests.Common.FakeServices;
 
 namespace Tests.Integration;
 
-public class WebApplicationFactoryInTest(
+public class WebApplicationInTest(
     IEmailSender emailSender,
     string connectionString) : WebApplicationFactory<Program>
 {

@@ -18,7 +18,7 @@ public class ChangePasswordTests : TestBase
     public async Task ChangePassword_EmptyPassword_ReturnsError()
     {
         var user = Create.User(salt: "123456", encryptedPassword: "abcdef");
-        _userRepository.GetByUserName(user.UserName).Returns(Task.FromResult(user));
+        _userRepository.GetByUserName(user.UserName)!.Returns(Task.FromResult(user));
         
         var request = CreateRequest(user.UserName, "", "b");
         var result = await Sut.Execute(request);
@@ -30,7 +30,7 @@ public class ChangePasswordTests : TestBase
     public async Task ChangePassword_CurrentPasswordIsWrong_ReturnsError()
     {
         var user = Create.User(salt: "123456", encryptedPassword: "abcdef");
-        _userRepository.GetByUserName(user.UserName).Returns(Task.FromResult(user));
+        _userRepository.GetByUserName(user.UserName)!.Returns(Task.FromResult(user));
 
         var request = CreateRequest(user.UserName, "new-password", "current-password");
         var result = await Sut.Execute(request);
@@ -42,7 +42,7 @@ public class ChangePasswordTests : TestBase
     public async Task ChangePassword_EqualPasswords_SavesUserWithNewPassword()
     {
         var user = Create.User(salt: "123456", encryptedPassword: "9217510d5221554de3230b5634a3f81e3cf19d94");
-        _userRepository.GetByUserName(user.UserName).Returns(Task.FromResult(user));
+        _userRepository.GetByUserName(user.UserName)!.Returns(Task.FromResult(user));
         _randomizer.GetAllowedChars().Returns("a");
 
         var request = CreateRequest(user.UserName, "new-password", "current-password");

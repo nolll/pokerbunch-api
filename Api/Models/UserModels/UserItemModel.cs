@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Api.Urls.ApiUrls;
+using Core.Services.Interfaces;
 using Core.UseCases;
 
 namespace Api.Models.UserModels;
@@ -16,8 +16,8 @@ public class UserItemModel(string userName, string displayName, string url)
     [JsonPropertyName("url")]
     public string Url { get; } = url;
 
-    public UserItemModel(UserList.UserListItem r, UrlProvider urls)
-        : this(r.UserName, r.DisplayName, urls.Api.User(r.UserName))
+    public UserItemModel(UserList.UserListItem r, IApiUrlProvider urls)
+        : this(r.UserName, r.DisplayName, urls.User(r.UserName))
     {
     }
 }

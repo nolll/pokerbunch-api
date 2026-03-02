@@ -16,6 +16,9 @@ public class ChangePassword(IUserRepository userRepository, IRandomizer randomiz
             return Error(new ValidationError(validator));
 
         var user = await userRepository.GetByUserName(request.Auth.UserName);
+        if (user is null)
+            return Error(new UserNotFoundError(request.Auth.UserName));
+        
         var isCurrentPwdValid = PasswordService.IsValid(request.OldPassword, user.Salt, user.EncryptedPassword);
         if (!isCurrentPwdValid)
             return Error(new AuthError("The old password was not correct"));

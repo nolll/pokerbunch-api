@@ -1,5 +1,6 @@
 using Core;
 using Core.Errors;
+using Core.Messages;
 using Core.Services;
 using Core.UseCases;
 using NSubstitute;
@@ -23,7 +24,7 @@ public class TestEmailTests : TestBase
         result.Success.Should().BeTrue();
         result.Data!.Email.Should().Be(to);
         
-        _emailSender.Received().Send(Arg.Is(to), Arg.Any<IMessage>());
+        _emailSender.Received().Send(Arg.Is(to), Arg.Any<TestMessage>());
     }
 
     [Fact]

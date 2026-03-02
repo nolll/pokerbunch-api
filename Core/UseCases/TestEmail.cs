@@ -1,4 +1,5 @@
 using Core.Errors;
+using Core.Messages;
 using Core.Services;
 
 namespace Core.UseCases;
@@ -27,11 +28,5 @@ public class TestEmail(IEmailSender emailSender)
     {
         public string Email { get; } = email;
         public string Message { get; } = $"An email was sent to {email}";
-    }
-
-    private class TestMessage : IMessage
-    {
-        public string Subject => "Test Email";
-        public string Body => "This is a test email from pokerbunch.com";
     }
 }

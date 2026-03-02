@@ -22,6 +22,12 @@ public class PlayerRepository(PokerBunchDbContext db, ICache cache) : IPlayerRep
         var ids = await _playerDb.Find(slug);
         return await Get(ids);
     }
+    
+    public async Task<IList<Player>> List(string slug, Role role)
+    {
+        var ids = await _playerDb.FindByRole(slug, role);
+        return await Get(ids);
+    }
 
     public async Task<Player?> Get(string bunchId, string userId)
     {

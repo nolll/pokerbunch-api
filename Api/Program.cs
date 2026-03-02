@@ -52,7 +52,7 @@ builder.Services.AddDbContext<PokerBunchDbContext>(options =>
     options.UseNpgsql(connectionString, opt => opt.MigrationsAssembly("Api"));
 });
 
-builder.Services.AddServices(settings, builder.Configuration, connectionString);
+builder.Services.AddServices(settings, builder.Configuration);
 
 builder.Services.AddMvc(options =>
 {

@@ -1,6 +1,7 @@
 using System.Linq;
 using Core.Entities;
 using Core.Errors;
+using Core.Messages;
 using Core.Repositories;
 using Core.Services;
 
@@ -9,7 +10,9 @@ namespace Core.UseCases;
 public class AcceptJoinRequest(
     IBunchRepository bunchRepository,
     IPlayerRepository playerRepository,
-    IJoinRequestRepository joinRequestRepository)
+    IJoinRequestRepository joinRequestRepository,
+    IUserRepository userRepository,
+    IEmailSender emailSender)
     : UseCase<AcceptJoinRequest.Request, AcceptJoinRequest.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -28,6 +31,10 @@ public class AcceptJoinRequest(
 
         await playerRepository.Add(Player.New(bunch.Slug, joinRequest.UserId, joinRequest.UserName));
         await joinRequestRepository.Delete(request.Id);
+
+        var user = await userRepository.GetById(joinRequest.UserId);
+        var message = new AcceptJoinRequestMessage(bunch.DisplayName);
+        emailSender.Send(user.Email, message);
         
         return Success(new Result("Join request accepted!"));
     }

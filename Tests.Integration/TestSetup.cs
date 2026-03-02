@@ -10,7 +10,7 @@ namespace Tests.Integration;
 [SetUpFixture]
 public class TestSetup
 {
-    private static WebApplicationFactoryInTest? _webApplicationFactory;
+    private static WebApplicationInTest? _webApplicationFactory;
     public static FakeEmailSender? EmailSender;
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17.6")
         .Build();
@@ -34,7 +34,7 @@ public class TestSetup
         Db.PbRole.AddRange(player, manager, admin);
         await Db.SaveChangesAsync();
         
-        _webApplicationFactory = new WebApplicationFactoryInTest(EmailSender, _postgres.GetConnectionString());
+        _webApplicationFactory = new WebApplicationInTest(EmailSender, _postgres.GetConnectionString());
     }
     
     public static HttpClient GetClient(string? token = null, bool followRedirect = true)

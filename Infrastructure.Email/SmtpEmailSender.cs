@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using Core;
+using Core.Messages;
 
 namespace Infrastructure.Email;
 
@@ -11,8 +11,10 @@ public class SmtpEmailSender(string smtpHost, int port, string? userName = null,
 
     private SmtpClient Client => new(smtpHost, port)
     {
-        Credentials = userName != null && password != null
-            ? new NetworkCredential(userName, password)
-            : null
+        Credentials = Credentials
     };
+
+    private NetworkCredential? Credentials => userName != null && password != null
+        ? new NetworkCredential(userName, password)
+        : null;
 }

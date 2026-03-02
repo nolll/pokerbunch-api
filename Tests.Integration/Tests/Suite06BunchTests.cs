@@ -1,6 +1,8 @@
 using System.Net;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
+using Core.Messages;
+using Core.Services;
 
 namespace Tests.Integration.Tests;
 
@@ -43,8 +45,14 @@ public class Suite06BunchTests
         joinRequestListResult.StatusCode.Should().Be(HttpStatusCode.OK);
         var joinRequestId = joinRequestListResult.Model!.First().Id;
 
+        TestSetup.EmailSender!.LastSentTo.Should().Be(TestData.ManagerEmail);
+        TestSetup.EmailSender.LastMessage.Should().BeOfType<JoinRequestMessage>();
+
         var acceptResult = await TestClient.JoinRequest.Accept(managerToken, joinRequestId);
         acceptResult.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        TestSetup.EmailSender!.LastSentTo.Should().Be(TestData.UserEmail);
+        TestSetup.EmailSender.LastMessage.Should().BeOfType<AcceptJoinRequestMessage>();
     }
 
     [Test]

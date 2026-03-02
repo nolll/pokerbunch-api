@@ -1,4 +1,5 @@
 using Core;
+using Core.Messages;
 using Core.Services;
 
 namespace Infrastructure.Email;

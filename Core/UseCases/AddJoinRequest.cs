@@ -1,14 +1,20 @@
+using System.Linq;
 using Core.Entities;
 using Core.Errors;
+using Core.Messages;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Interfaces;
 
 namespace Core.UseCases;
 
 public class AddJoinRequest(
     IBunchRepository bunchRepository,
     IPlayerRepository playerRepository,
-    IJoinRequestRepository joinRequestRepository)
+    IJoinRequestRepository joinRequestRepository,
+    IUserRepository userRepository,
+    IEmailSender emailSender,
+    ISiteUrlProvider siteUrlProvider)
     : UseCase<AddJoinRequest.Request, AddJoinRequest.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -25,6 +31,19 @@ public class AddJoinRequest(
         var existingApplication = await joinRequestRepository.Get(bunch.Id, request.Auth.Id);
         if (existingApplication is not null)
             return Error(new ValidationError($"You have already applied for membership to {bunch.DisplayName}"));
+
+        var managerPlayers = await playerRepository.List(bunch.Slug, Role.Manager);
+        var managerUserIds = managerPlayers.Where(o => o.IsUser).Select(o => o.UserId!).ToList();
+        if (managerUserIds.Count > 0)
+        {
+            var managerUsers = await userRepository.GetByIds(managerUserIds);
+            var url = siteUrlProvider.JoinRequestList(bunch.Slug);
+            var message = new JoinRequestMessage(bunch.DisplayName, request.Auth.UserName, url);
+            foreach (var user in managerUsers)
+            {
+                emailSender.Send(user.Email, message);
+            }
+        }
         
         await joinRequestRepository.Add(new JoinRequest("", request.Slug, request.Auth.Id, request.Auth.UserName));
         

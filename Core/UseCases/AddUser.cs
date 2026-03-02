@@ -1,15 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.Errors;
+using Core.Messages;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Interfaces;
 
 namespace Core.UseCases;
 
 public class AddUser(
     IUserRepository userRepository,
     IRandomizer randomizer,
-    IEmailSender emailSender)
+    IEmailSender emailSender,
+    ISiteUrlProvider siteUrlProvider)
     : UseCase<AddUser.Request, AddUser.Result>
 {
     protected override async Task<UseCaseResult<Result>> Work(Request request)
@@ -33,35 +36,17 @@ public class AddUser(
 
         await userRepository.Add(user);
 
-        var message = new RegistrationMessage(request.LoginUrl);
+        var message = new RegistrationMessage(siteUrlProvider.Login());
         emailSender.Send(request.Email, message);
 
         return Success(new Result());
     }
 
-    private async Task<User?> GetExistingUserByUserName(string userName)
-    {
-        try
-        {
-            return await userRepository.GetByUserName(userName);
-        }
-        catch (PokerBunchException)
-        {
-            return null;
-        }
-    }
+    private async Task<User?> GetExistingUserByUserName(string userName) => 
+        await userRepository.GetByUserName(userName);
 
-    private async Task<User?> GetExistingUserByEmail(string email)
-    {
-        try
-        {
-            return await userRepository.GetByUserEmail(email);
-        }
-        catch (PokerBunchException)
-        {
-            return null;
-        }
-    }
+    private async Task<User?> GetExistingUserByEmail(string email) => 
+        await userRepository.GetByUserEmail(email);
 
     private static User CreateUser(Request request, string encryptedPassword, string salt) =>
         new(
@@ -76,7 +61,7 @@ public class AddUser(
             encryptedPassword,
             salt);
 
-    public class Request(string userName, string displayName, string email, string password, string loginUrl)
+    public class Request(string userName, string displayName, string email, string password)
     {
         [Required(ErrorMessage = "Login Name is required.")]
         public string UserName { get; } = userName.ToLower();
@@ -89,8 +74,6 @@ public class AddUser(
 
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; } = password;
-
-        public string LoginUrl { get; } = loginUrl;
     }
 
     public class Result

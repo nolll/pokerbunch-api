@@ -7,6 +7,7 @@ public interface IPlayerRepository
     Task<Player>  Get(string id);
     Task<IList<Player>> Get(IList<string> ids);
     Task<IList<Player>> List(string slug);
+    Task<IList<Player>> List(string slug, Role role);
     Task<Player?> Get(string bunchId, string userId);
     Task<string> Add(Player player);
     Task Delete(string playerId);

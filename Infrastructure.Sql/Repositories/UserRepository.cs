@@ -1,4 +1,3 @@
-using Core;
 using Core.Entities;
 using Core.Repositories;
 using Core.Services;
@@ -12,6 +11,7 @@ public class UserRepository(PokerBunchDbContext db, ICache cache) : IUserReposit
     private readonly UserDb _userDb = new(db);
 
     public Task<User> GetById(string id) => GetAndCache(id);
+    public Task<IList<User>> GetByIds(IList<string> ids) => GetAndCache(ids);
 
     public async Task<IList<User>> List()
     {
@@ -19,28 +19,28 @@ public class UserRepository(PokerBunchDbContext db, ICache cache) : IUserReposit
         return await GetAndCache(ids);
     }
 
-    public async Task<User> GetByUserEmail(string email)
+    public async Task<User?> GetByUserEmail(string email)
     {
         var id = await _userDb.FindByEmail(email.ToLower());
-        return id != null 
-            ? await GetAndCache(id) 
-            : throw new PokerBunchException($"User not found: {email}");
+        return id != null
+            ? await GetAndCache(id)
+            : null;
     }
 
-    public async Task<User> GetByUserNameOrEmail(string nameOrEmail)
+    public async Task<User?> GetByUserNameOrEmail(string nameOrEmail)
     {
         var id = await _userDb.FindByUserNameOrEmail(nameOrEmail.ToLower());
         return id != null 
             ? await GetAndCache(id) 
-            : throw new PokerBunchException($"User not found: {nameOrEmail}");
+            : null;
     }
 
-    public async Task<User> GetByUserName(string name)
+    public async Task<User?> GetByUserName(string name)
     {
         var id = await _userDb.FindByUserName(name.ToLower());
         return id != null 
             ? await GetAndCache(id) 
-            : throw new PokerBunchException($"User not found: {name}");
+            : null;
     }
 
     public async Task Update(User user)

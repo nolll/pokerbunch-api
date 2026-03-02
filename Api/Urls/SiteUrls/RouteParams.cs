@@ -17,7 +17,6 @@ public class RouteReplace
     public static RouteReplace BunchId(string bunchId) => new(nameof(bunchId), bunchId);
     public static RouteReplace JoinRequestId(string joinRequestId) => new(nameof(joinRequestId), joinRequestId);
     public static RouteReplace CashgameId(string cashgameId) => new(nameof(cashgameId), cashgameId);
-    public static RouteReplace Code(string code) => new(nameof(code), code);
     public static RouteReplace EventId(string eventId) => new(nameof(eventId), eventId);
     public static RouteReplace LocationId(string locationId) => new(nameof(locationId), locationId);
     public static RouteReplace PlayerId(string playerId) => new(nameof(playerId), playerId);

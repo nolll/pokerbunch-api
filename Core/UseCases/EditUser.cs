@@ -14,6 +14,9 @@ public class EditUser(IUserRepository userRepository) : UseCase<EditUser.Request
             return Error(new ValidationError(validator));
 
         var user = await userRepository.GetByUserName(request.UserName);
+        if (user is null)
+            return Error(new UserNotFoundError(request.UserName));
+        
         var userToSave = GetUser(user, request);
 
         await userRepository.Update(userToSave);

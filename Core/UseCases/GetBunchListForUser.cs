@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Errors;
 using Core.Repositories;
 
 namespace Core.UseCases;
@@ -9,6 +10,9 @@ public class GetBunchListForUser(IBunchRepository bunchRepository, IUserReposito
     protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         var user = await userRepository.GetByUserName(request.UserName);
+        if (user is null)
+            return Error(new UserNotFoundError(request.UserName));
+        
         var bunches = await bunchRepository.List(user.Id);
 
         return Success(new Result(bunches));

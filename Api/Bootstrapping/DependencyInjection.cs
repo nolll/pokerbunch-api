@@ -1,13 +1,14 @@
 using Api.Settings;
 using Api.Urls.ApiUrls;
+using Api.Urls.SiteUrls;
 using Core;
 using Core.Cache;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Interfaces;
 using Core.UseCases;
 using Infrastructure.Cache;
 using Infrastructure.Email;
-using Infrastructure.Sql;
 using Infrastructure.Sql.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +20,14 @@ public static class DependencyInjection
     public static void AddServices(
         this IServiceCollection services,
         AppSettings settings,
-        ConfigurationManager configuration,
-        string connectionString)
+        ConfigurationManager configuration)
     {
         services.AddTransient(_ => settings);
         services.AddHttpContextAccessor();
         services.AddTransient<IAuth, Auth.Auth>();
         services.AddTransient<ISettings>(_ => new Core.Settings(settings.InvitationSecret));
-        services.AddTransient(_ => new UrlProvider(settings.Urls.Api, settings.Urls.Site));
+        services.AddTransient<IApiUrlProvider>(_ => new ApiUrlProvider(settings.Urls.Api));
+        services.AddTransient<ISiteUrlProvider>(_ => new SiteUrlProvider(settings.Urls.Site));
 
         services.AddTransient<ICacheProvider, MemoryCacheProvider>();
         services.AddTransient<ICache, Cache>();

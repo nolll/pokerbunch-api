@@ -1,8 +1,10 @@
 ﻿using Core;
 using Core.Entities;
 using Core.Errors;
+using Core.Messages;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Interfaces;
 using Core.UseCases;
 using NSubstitute;
 using Tests.Common;
@@ -14,7 +16,13 @@ public class ResetPasswordTests : TestBase
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
     private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
+    private readonly ISiteUrlProvider _siteUrlProvider = Substitute.For<ISiteUrlProvider>();
 
+    public ResetPasswordTests()
+    {
+        _siteUrlProvider.Login().Returns("https://fakeurl.com/loginUrl");
+    }
+    
     [Fact]
     public async Task ResetPassword_WithInvalidEmail_ValidationExceptionIsThrown()
     {
@@ -41,30 +49,37 @@ public class ResetPasswordTests : TestBase
                             Here is your new password for Poker Bunch:
                             aaaaaaaa
 
-                            Please sign in here: https://loginUrl
+                            Please sign in here: https://fakeurl.com/loginUrl
                             """;
         _randomizer.GetAllowedChars().Returns("a");
 
         var user = Create.User();
         _userRepository.GetByUserEmail(user.Email).Returns(user);
         
-        var request = CreateRequest(email: user.Email, loginUrl: "https://loginUrl");
+        var request = CreateRequest(email: user.Email);
         await Sut.Execute(request);
 
+        var temp = """
+                   Here is your new password for Poker Bunch:
+                   aaaaaaaa
+
+                   Please sign in here: https://fakeurl.com/loginUrl
+                   """;
+        
         _emailSender.Received().Send(Arg.Is<string>(o => o == user.Email),
-            Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
+            Arg.Is<ResetPasswordMessage>(o => o.Subject == subject && o.Body == body));
 
         await _userRepository.Received().Update(Arg.Is<User>(o => o.Id == user.Id && 
                                                                   user.EncryptedPassword == "0478095c8ece0bbc11f94663ac2c4f10b29666de" &&
                                                                   user.Salt == "aaaaaaaaaa"));
     }
 
-    private ResetPassword.Request CreateRequest(string? email = null, string? loginUrl = null) => new(
-        email ?? Create.EmailAddress(),
-        loginUrl ?? Create.String());
+    private ResetPassword.Request CreateRequest(string? email = null) => new(
+        email ?? Create.EmailAddress());
 
     private ResetPassword Sut => new(
         _userRepository,
         _emailSender,
-        _randomizer);
+        _randomizer,
+        _siteUrlProvider);
 }

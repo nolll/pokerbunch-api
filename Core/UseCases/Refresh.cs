@@ -31,17 +31,8 @@ public class Refresh(
         return Success(new Result(user.Id, user.UserName, user.DisplayName, user.IsAdmin, bunchResults));
     }
     
-    private async Task<User?> GetLoggedInUser(string userName)
-    {
-        try
-        {
-            return await userRepository.GetByUserNameOrEmail(userName);
-        }
-        catch
-        {
-            return null;
-        }
-    }
+    private async Task<User?> GetLoggedInUser(string userName) => 
+        await userRepository.GetByUserNameOrEmail(userName);
 
     public class Request(string userName)
     {

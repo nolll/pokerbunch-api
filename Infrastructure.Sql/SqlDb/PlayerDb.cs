@@ -21,6 +21,17 @@ public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
         var ids = await q.ToListAsync();
         return ids.Select(o => o.ToString()).ToList();
     }
+    
+    public async Task<IList<string>> FindByRole(string slug, Role role)
+    {
+        var q = _db.PbPlayer
+            .Where(o => o.Bunch.Name == slug)
+            .Where(o => o.RoleId == (int)role)
+            .Select(o => o.PlayerId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
+    }
 
     public async Task<IList<string>> FindByUser(string bunchId, string userId)
     {

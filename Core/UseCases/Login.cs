@@ -30,19 +30,15 @@ public class Login(
 
         return Success(new Result(user.Id, user.UserName, user.DisplayName, user.IsAdmin, bunchResults));
     }
-    
+
     private async Task<User?> GetLoggedInUser(string userNameOrEmail, string password)
     {
-        try
-        {
-            var user = await userRepository.GetByUserNameOrEmail(userNameOrEmail);
-            var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
-            return isValid ? user : null;
-        }
-        catch
-        {
+        var user = await userRepository.GetByUserNameOrEmail(userNameOrEmail);
+        if (user is null)
             return null;
-        }
+
+        var isValid = PasswordService.IsValid(password, user.Salt, user.EncryptedPassword);
+        return isValid ? user : null;
     }
 
     public class Request(string userNameOrEmail, string password)

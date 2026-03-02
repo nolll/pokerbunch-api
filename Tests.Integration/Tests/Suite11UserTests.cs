@@ -87,7 +87,7 @@ public class Suite11UserTests
         var parameters = new ResetPasswordPostModel(TestData.UserEmail);
         var result = await TestClient.User.PasswordReset(parameters);
         result.Success.Should().BeTrue();
-        TestSetup.EmailSender!.To.Should().Be(TestData.UserEmail);
+        TestSetup.EmailSender!.LastSentTo.Should().Be(TestData.UserEmail);
     }
 
     [Test]

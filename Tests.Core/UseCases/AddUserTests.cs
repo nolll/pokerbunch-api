@@ -1,8 +1,9 @@
-﻿using Core;
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Errors;
+using Core.Messages;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Interfaces;
 using Core.UseCases;
 using NSubstitute;
 using Tests.Common;
@@ -14,7 +15,13 @@ public class AddUserTests : TestBase
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
     private readonly IRandomizer _randomizer = Substitute.For<IRandomizer>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
+    private readonly ISiteUrlProvider _siteUrlProvider = Substitute.For<ISiteUrlProvider>();
 
+    public AddUserTests()
+    {
+        _siteUrlProvider.Login().Returns("https://fakeurl.com/loginUrl");
+    }
+    
     [Fact]
     public async Task AddUser_WithEmptyUserName_ReturnsError()
     {
@@ -114,33 +121,32 @@ public class AddUserTests : TestBase
         const string body = """
                             Thanks for registering with Poker Bunch.
 
-                            Please sign in here: /loginUrl
+                            Please sign in here: https://fakeurl.com/loginUrl
                             """;
 
-        var request = CreateRequest(loginUrl: "/loginUrl");
+        var request = CreateRequest();
         await Sut.Execute(request);
 
         _emailSender.Received().Send(Arg.Is<string>(o => o == request.Email),
-            Arg.Is<IMessage>(o => o.Subject == subject && o.Body == body));
+            Arg.Is<RegistrationMessage>(o => o.Subject == subject && o.Body == body));
     }
     
     private AddUser.Request CreateRequest(
         string? userName = null,
         string? displayName = null,
         string? email = null,
-        string? password = null,
-        string? loginUrl = null)
+        string? password = null)
     {
         return new AddUser.Request(
             userName ?? Create.String(), 
             displayName ?? Create.String(), 
             email ?? Create.EmailAddress(), 
-            password ?? Create.String(), 
-            loginUrl ?? "/");
+            password ?? Create.String());
     }
 
     private AddUser Sut => new(
         _userRepository,
         _randomizer,
-        _emailSender);
+        _emailSender,
+        _siteUrlProvider);
 }
