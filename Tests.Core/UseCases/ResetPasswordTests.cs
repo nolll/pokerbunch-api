@@ -58,13 +58,6 @@ public class ResetPasswordTests : TestBase
         
         var request = CreateRequest(email: user.Email);
         await Sut.Execute(request);
-
-        var temp = """
-                   Here is your new password for Poker Bunch:
-                   aaaaaaaa
-
-                   Please sign in here: https://fakeurl.com/loginUrl
-                   """;
         
         _emailSender.Received().Send(Arg.Is<string>(o => o == user.Email),
             Arg.Is<ResetPasswordMessage>(o => o.Subject == subject && o.Body == body));
