@@ -59,7 +59,7 @@ public class ResetPasswordTests : TestBase
         var request = CreateRequest(email: user.Email);
         await Sut.Execute(request);
         
-        _emailSender.Received().Send(Arg.Is<string>(o => o == user.Email),
+        await _emailSender.Received().SendAsync(Arg.Is<string>(o => o == user.Email),
             Arg.Is<ResetPasswordMessage>(o => o.Subject == subject && o.Body == body));
 
         await _userRepository.Received().Update(Arg.Is<User>(o => o.Id == user.Id && 

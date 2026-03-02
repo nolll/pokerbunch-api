@@ -37,7 +37,7 @@ public class AddUser(
         await userRepository.Add(user);
 
         var message = new RegistrationMessage(siteUrlProvider.Login());
-        emailSender.Send(request.Email, message);
+        await emailSender.SendAsync(request.Email, message);
 
         return Success(new Result());
     }

@@ -24,7 +24,7 @@ public class TestEmailTests : TestBase
         result.Success.Should().BeTrue();
         result.Data!.Email.Should().Be(to);
         
-        _emailSender.Received().Send(Arg.Is(to), Arg.Any<TestMessage>());
+        await _emailSender.Received().SendAsync(Arg.Is(to), Arg.Any<TestMessage>());
     }
 
     [Fact]

@@ -37,12 +37,10 @@ public class AddJoinRequest(
         if (managerUserIds.Count > 0)
         {
             var managerUsers = await userRepository.GetByIds(managerUserIds);
+            var recipients = string.Join(",", managerUsers.Select(o => o.Email));
             var url = siteUrlProvider.JoinRequestList(bunch.Slug);
             var message = new JoinRequestMessage(bunch.DisplayName, request.Auth.UserName, url);
-            foreach (var user in managerUsers)
-            {
-                emailSender.Send(user.Email, message);
-            }
+            await emailSender.SendAsync(recipients, message);
         }
         
         await joinRequestRepository.Add(new JoinRequest("", request.Slug, request.Auth.Id, request.Auth.UserName));

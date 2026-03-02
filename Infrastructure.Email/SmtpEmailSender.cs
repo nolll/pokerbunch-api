@@ -1,13 +1,14 @@
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using Core.Messages;
 
 namespace Infrastructure.Email;
 
 public class SmtpEmailSender(string smtpHost, int port, string? userName = null, string? password = null) : EmailSender
 {
-    public override void Send(string to, IMessage message) => 
-        Client.Send(new MailMessage($"{FromName} <{FromEmail}>", to, message.Subject, message.Body));
+    public override Task SendAsync(string to, IMessage message) => 
+        Client.SendMailAsync(new MailMessage($"{FromName} <{FromEmail}>", to, message.Subject, message.Body));
 
     private SmtpClient Client => new(smtpHost, port)
     {

@@ -34,7 +34,7 @@ public class AcceptJoinRequest(
 
         var user = await userRepository.GetById(joinRequest.UserId);
         var message = new AcceptJoinRequestMessage(bunch.DisplayName);
-        emailSender.Send(user.Email, message);
+        await emailSender.SendAsync(user.Email, message);
         
         return Success(new Result("Join request accepted!"));
     }

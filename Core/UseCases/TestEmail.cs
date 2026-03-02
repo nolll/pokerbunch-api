@@ -7,15 +7,15 @@ namespace Core.UseCases;
 public class TestEmail(IEmailSender emailSender)
     : UseCase<TestEmail.Request, TestEmail.Result>
 {
-    protected override Task<UseCaseResult<Result>> Work(Request request)
+    protected override async Task<UseCaseResult<Result>> Work(Request request)
     {
         if (!request.Auth.CanSendTestEmail)
-            return Task.FromResult(Error(new AccessDeniedError()));
+            return Error(new AccessDeniedError());
         
         var message = new TestMessage();
-        emailSender.Send(request.To, message);
+        await emailSender.SendAsync(request.To, message);
 
-        return Task.FromResult(Success(new Result(request.To)));
+        return Success(new Result(request.To));
     }
     
     public class Request(IAuth auth, string to)

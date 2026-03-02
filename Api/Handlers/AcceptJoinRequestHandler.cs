@@ -14,6 +14,6 @@ public static class AcceptJoinRequestHandler
         var request = new AcceptJoinRequest.Request(auth, joinRequestId);
         var result = await acceptJoinRequest.Execute(request);
         return ResultHandler.Model(result, CreateModel);
-        MessageModel? CreateModel() => new("Join request accepted");
+        MessageModel? CreateModel() => new(result.Data?.Message);
     }
 }

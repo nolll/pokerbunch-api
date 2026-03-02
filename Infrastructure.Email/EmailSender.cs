@@ -1,4 +1,4 @@
-using Core;
+using System.Threading.Tasks;
 using Core.Messages;
 using Core.Services;
 
@@ -8,6 +8,6 @@ public abstract class EmailSender : IEmailSender
 {
     protected const string FromEmail = "noreply@pokerbunch.com";
     protected const string FromName = "PokerBunch.com";
-
-    public abstract void Send(string to, IMessage message);
+    
+    public abstract Task SendAsync(string to, IMessage message);
 }

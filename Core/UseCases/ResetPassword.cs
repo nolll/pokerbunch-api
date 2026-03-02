@@ -34,7 +34,7 @@ public class ResetPassword(
         await userRepository.Update(user);
 
         var message = new ResetPasswordMessage(password, siteUrlProvider.Login());
-        emailSender.Send(request.Email, message);
+        await emailSender.SendAsync(request.Email, message);
 
         return Success(new Result());
     }

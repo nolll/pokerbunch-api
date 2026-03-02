@@ -127,7 +127,7 @@ public class AddUserTests : TestBase
         var request = CreateRequest();
         await Sut.Execute(request);
 
-        _emailSender.Received().Send(Arg.Is<string>(o => o == request.Email),
+        await _emailSender.Received().SendAsync(Arg.Is<string>(o => o == request.Email),
             Arg.Is<RegistrationMessage>(o => o.Subject == subject && o.Body == body));
     }
     
