@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.RegularExpressions;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 
@@ -141,29 +140,14 @@ public class Suite06BunchTests
         result.Success.Should().BeTrue();
         result.Model!.Count().Should().Be(0);
     }
-
-    private static string GetVerificationCode(string messageBody) => 
-        GetMatch(messageBody, new("verification code: (.+)"));
-
-    private static string GetRelativeInvitationUrl1(string messageBody) => 
-        GetRelativeInvitationUrl(messageBody, new("invitation: (.+)\\."));
-
-    private static string GetRelativeInvitationUrl2(string messageBody) => 
-        GetRelativeInvitationUrl(messageBody, new("instead, (.+),"));
-
-    private static string GetRelativeInvitationUrl(string messageBody, Regex regex) => 
-        new Uri(regex.Match(messageBody).Groups[1].Value.Trim()).AbsolutePath;
-
-    private static string GetMatch(string messageBody, Regex regex) => regex.Match(messageBody).Groups[1].Value.Trim();
-
-    private async Task AddPlayer(string? token, string playerName)
+    private static async Task AddPlayer(string? token, string playerName)
     {
         var parameters = new PlayerAddPostModel(playerName);
         var result = await TestClient.Player.Add(token, TestData.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    private void AssertCommonProperties(BunchModel? bunch)
+    private static void AssertCommonProperties(BunchModel? bunch)
     {
         bunch!.Name.Should().Be(TestData.BunchDisplayName);
         bunch.Id.Should().Be(TestData.BunchId);

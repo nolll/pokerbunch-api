@@ -29,7 +29,6 @@ public class AuthInTest(
     bool canAddEvent = false,
     bool canEditCashgameAction = false,
     bool canListEvents = false,
-    bool canInvitePlayer = false,
     bool canSeeEventDetails = false,
     bool canListCashgames = false,
     bool canListPlayerCashgames = false,
@@ -64,7 +63,6 @@ public class AuthInTest(
     public bool CanAddEvent(string slug) => canAddEvent;
     public bool CanEditCashgameAction(string slug) => canEditCashgameAction;
     public bool CanListEvents(string slug) => canListEvents;
-    public bool CanInvitePlayer(string slug) => canInvitePlayer;
     public bool CanSeeEventDetails(string slug) => canSeeEventDetails;
     public bool CanListCashgames(string slug) => canListCashgames;
     public bool CanListPlayerCashgames(string slug) => canListPlayerCashgames;

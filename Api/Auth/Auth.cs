@@ -70,7 +70,6 @@ public class Auth : IAuth
     public bool CanSeePlayer(string slug) => IsPlayer(slug);
     public bool CanListPlayers(string slug) => IsPlayer(slug);
     public bool CanDeletePlayer(string slug) => IsManager(slug);
-    public bool CanInvitePlayer(string slug) => IsManager(slug);
 
     public bool CanAddEvent(string slug) => IsPlayer(slug);
     public bool CanListEvents(string slug) => IsPlayer(slug);

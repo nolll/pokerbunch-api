@@ -31,7 +31,6 @@ public interface IAuth
     bool CanAddEvent(string slug);
     bool CanEditCashgameAction(string slug);
     bool CanListEvents(string slug);
-    bool CanInvitePlayer(string slug);
     bool CanSeeEventDetails(string slug);
     bool CanListCashgames(string slug);
     bool CanListPlayerCashgames(string slug);
