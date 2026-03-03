@@ -10,40 +10,40 @@ public partial class IntegrationTests
     [Order(TestSuite.Event, 1)]
     public async Task Suite08_Event01AddEvent()
     {
-        var managerToken = await fixture.LoginHelper.GetManagerToken();
-        var parameters = new EventAddPostModel(TestData.EventName);
-        var result = await fixture.ApiClient.Event.Add(managerToken, TestData.BunchId, parameters);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var parameters = new EventAddPostModel(Data.EventName);
+        var result = await ApiClient.Event.Add(managerToken, Data.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(TestData.EventId);
+        result.Model.Id.Should().Be(Data.EventId);
     }
 
     [Fact]
     [Order(TestSuite.Event, 2)]
     public async Task Suite08_Event02ListEvents()
     {
-        var managerToken = await fixture.LoginHelper.GetManagerToken();
-        var result = await fixture.ApiClient.Event.List(managerToken, TestData.BunchId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await ApiClient.Event.List(managerToken, Data.BunchId);
 
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(1);
         var @event = result.Model?[0];
-        @event!.Id.Should().Be(TestData.EventId);
-        @event.Name.Should().Be(TestData.EventName);
-        @event.BunchId.Should().Be(TestData.BunchId);
+        @event!.Id.Should().Be(Data.EventId);
+        @event.Name.Should().Be(Data.EventName);
+        @event.BunchId.Should().Be(Data.BunchId);
     }
 
     [Fact]
     [Order(TestSuite.Event, 3)]
     public async Task Suite08_Event03GetEvent()
     {
-        var managerToken = await fixture.LoginHelper.GetManagerToken();
-        var result = await fixture.ApiClient.Event.Get(managerToken, TestData.EventId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await ApiClient.Event.Get(managerToken, Data.EventId);
 
         result.Success.Should().BeTrue();
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(TestData.EventId);
-        result.Model.Name.Should().Be(TestData.EventName);
-        result.Model.BunchId.Should().Be(TestData.BunchId);
+        result.Model.Id.Should().Be(Data.EventId);
+        result.Model.Name.Should().Be(Data.EventName);
+        result.Model.BunchId.Should().Be(Data.BunchId);
     }
 }

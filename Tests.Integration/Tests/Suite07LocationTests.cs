@@ -10,37 +10,37 @@ public partial class IntegrationTests
     [Order(TestSuite.Location, 1)]
     public async Task Suite07Location_01AddLocation()
     {
-        var managerToken = await fixture.LoginHelper.GetManagerToken();
-        var parameters = new LocationAddPostModel(TestData.BunchLocationName);
-        var result = await fixture.ApiClient.Location.Add(managerToken, TestData.BunchId, parameters);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var parameters = new LocationAddPostModel(Data.BunchLocationName);
+        var result = await ApiClient.Location.Add(managerToken, Data.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(TestData.BunchLocationId);
+        result.Model.Id.Should().Be(Data.BunchLocationId);
     }
 
     [Fact]
     [Order(TestSuite.Location, 2)]
     public async Task Suite07Location_02ListLocations()
     {
-        var managerToken = await fixture.LoginHelper.GetManagerToken();
-        var result = await fixture.ApiClient.Location.List(managerToken, TestData.BunchId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await ApiClient.Location.List(managerToken, Data.BunchId);
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(1);
         var location = result.Model?[0];
-        location!.Id.Should().Be(TestData.BunchLocationId);
-        location.Name.Should().Be(TestData.BunchLocationName);
-        location.Bunch.Should().Be(TestData.BunchId);
+        location!.Id.Should().Be(Data.BunchLocationId);
+        location.Name.Should().Be(Data.BunchLocationName);
+        location.Bunch.Should().Be(Data.BunchId);
     }
 
     [Fact]
     [Order(TestSuite.Location, 3)]
     public async Task Suite07Location_03GetLocation()
     {
-        var managerToken = await fixture.LoginHelper.GetManagerToken();
-        var result = await fixture.ApiClient.Location.Get(managerToken, TestData.BunchLocationId);
+        var managerToken = await LoginHelper.GetManagerToken();
+        var result = await ApiClient.Location.Get(managerToken, Data.BunchLocationId);
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(TestData.BunchLocationId);
-        result.Model.Name.Should().Be(TestData.BunchLocationName);
-        result.Model.Bunch.Should().Be(TestData.BunchId);
+        result.Model.Id.Should().Be(Data.BunchLocationId);
+        result.Model.Name.Should().Be(Data.BunchLocationName);
+        result.Model.Bunch.Should().Be(Data.BunchId);
     }
 }

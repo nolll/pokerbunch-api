@@ -1,25 +1,29 @@
+using Core.Entities;
 using Infrastructure.Sql.Models;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
+using Tests.Common;
 using Tests.Common.FakeServices;
 using Xunit;
 
 namespace Tests.Integration;
 
-[CollectionDefinition(nameof(TestSetup))]
-public class TestSetup : ICollectionFixture<TestSetup>, IDisposable
+[CollectionDefinition(nameof(TestFixture))]
+public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
 {
-    private readonly WebApplicationInTest? _webApplicationFactory;
-    public readonly FakeEmailSender? EmailSender;
+    private readonly WebApplicationInTest _webApplicationFactory;
+    public readonly FakeEmailSender EmailSender;
 
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17.6")
         .Build();
 
-    public PokerBunchDbContext? Db { get; }
+    public PokerBunchDbContext Db { get; }
     public ApiClientForTest ApiClient { get; }
     public LoginHelper LoginHelper { get; }
+    public TestDataFactory DataFactory { get; }
+    public TestData Data { get; }
     
-    public TestSetup()
+    public TestFixture()
     {
         EmailSender = new FakeEmailSender();
         Task.Run(() => _postgres.StartAsync()).GetAwaiter().GetResult();
@@ -28,16 +32,18 @@ public class TestSetup : ICollectionFixture<TestSetup>, IDisposable
         Db = new PokerBunchDbContext(optionsBuilder.Options);
         Db.Database.EnsureCreated();
 
-        var player = new PbRole { RoleId = 1, RoleName = "Player" };
-        var manager = new PbRole { RoleId = 2, RoleName = "Manager" };
-        var admin = new PbRole { RoleId = 3, RoleName = "Admin" };
-        
-        Db.PbRole.AddRange(player, manager, admin);
+        Db.PbRole.AddRange(
+            new PbRole { RoleId = 1, RoleName = nameof(Role.Player) },
+            new PbRole { RoleId = 2, RoleName = nameof(Role.Manager) },
+            new PbRole { RoleId = 3, RoleName = nameof(Role.Admin) }
+        );
         Db.SaveChanges();
         
         _webApplicationFactory = new WebApplicationInTest(EmailSender, _postgres.GetConnectionString());
         ApiClient = new ApiClientForTest(new HttpClientForTest(_webApplicationFactory));
-        LoginHelper = new LoginHelper(ApiClient);
+        DataFactory = new TestDataFactory();
+        Data = new TestData(DataFactory);
+        LoginHelper = new LoginHelper(ApiClient, Data);
     }
 
     public void Dispose()

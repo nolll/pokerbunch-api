@@ -9,7 +9,7 @@ public partial class IntegrationTests
     [Order(TestSuite.General, 1)]
     public async Task Suite02General_01Root()
     {
-        var result = await fixture.ApiClient.General.Root();
+        var result = await ApiClient.General.Root();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
@@ -17,7 +17,7 @@ public partial class IntegrationTests
     [Order(TestSuite.General, 2)]
     public async Task Suite02General_02Version()
     {
-        var result = await fixture.ApiClient.General.Version();
+        var result = await ApiClient.General.Version();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
@@ -25,7 +25,7 @@ public partial class IntegrationTests
     [Order(TestSuite.General, 3)]
     public async Task Suite02General_03Swagger()
     {
-        var result = await fixture.ApiClient.General.Swagger();
+        var result = await ApiClient.General.Swagger();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

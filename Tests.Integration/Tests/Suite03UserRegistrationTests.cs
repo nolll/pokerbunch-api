@@ -11,8 +11,8 @@ public partial class IntegrationTests
     [Order(TestSuite.UserRegistration, 1)]
     public async Task Suite03UserRegistration_01RegisterAdminReturns200()
     {
-        var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
-        var result = await fixture.ApiClient.User.Add(parameters);
+        var parameters = new AddUserPostModel(Data.AdminUserName, Data.AdminDisplayName, Data.AdminEmail, Data.AdminPassword);
+        var result = await ApiClient.User.Add(parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         await SetAdminRole();
@@ -22,8 +22,8 @@ public partial class IntegrationTests
     [Order(TestSuite.UserRegistration, 2)]
     public async Task Suite03UserRegistration_02RegisterManagerReturns200()
     {
-        var parameters = new AddUserPostModel(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
-        var result = await fixture.ApiClient.User.Add(parameters);
+        var parameters = new AddUserPostModel(Data.ManagerUserName, Data.ManagerDisplayName, Data.ManagerEmail, Data.ManagerPassword);
+        var result = await ApiClient.User.Add(parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
@@ -31,17 +31,17 @@ public partial class IntegrationTests
     [Order(TestSuite.UserRegistration, 3)]
     public async Task Suite03UserRegistration_03RegisterRegularUserReturns200()
     {
-        var parameters = new AddUserPostModel(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
-        var result = await fixture.ApiClient.User.Add(parameters);
+        var parameters = new AddUserPostModel(Data.UserUserName, Data.UserDisplayName, Data.UserEmail, Data.UserPassword);
+        var result = await ApiClient.User.Add(parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
     
     private async Task SetAdminRole()
     {
-        var admin = fixture.Db!.PbUser
-            .First(o => o.UserName == TestData.AdminUserName);
+        var admin = Db.PbUser
+            .First(o => o.UserName == Data.AdminUserName);
 
         admin.RoleId = (int)Role.Admin;
-        await fixture.Db.SaveChangesAsync();
+        await Db.SaveChangesAsync();
     }
 }

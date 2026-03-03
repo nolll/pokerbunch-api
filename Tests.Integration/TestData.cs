@@ -1,42 +1,44 @@
+using Tests.Common;
+
 namespace Tests.Integration;
 
-public static class TestData
+public class TestData(TestDataFactory dataFactory)
 {
-    public const string AdminUserId = "1";
-    public const string AdminUserName = "admin";
-    public const string AdminDisplayName = "Admin";
-    public const string AdminEmail = "admin@example.org";
-    public const string AdminPassword = "adminpassword";
+    public readonly string AdminUserName = dataFactory.String();
+    public readonly string AdminDisplayName = dataFactory.String();
+    public readonly string AdminEmail = dataFactory.EmailAddress();
+    public readonly string AdminPassword = dataFactory.String();
 
-    public const string ManagerUserName = "manager";
-    public const string ManagerDisplayName = "Manager";
-    public const string ManagerUserId = "2";
-    public const string ManagerEmail = "manager@example.org";
-    public const string ManagerPassword = "managerpassword";
-    public const string ManagerPlayerId = "1";
+    public readonly string ManagerUserName = "manager";
+    public readonly string ManagerDisplayName = "Manager";
+    public readonly string ManagerUserId = "2";
+    public readonly string ManagerEmail = "manager@example.org";
+    public readonly string ManagerPassword = "managerpassword";
+    public readonly string ManagerPlayerId = "1";
 
-    public const string UserUserName = "user";
-    public const string UserDisplayName = "User";
-    public const string UserUserId = "3";
-    public const string UserPlayerName = "User";
-    public const string UserEmail = "user@example.org";
-    public const string UserPassword = "userpassword";
-    public const string UserPlayerId = "2";
+    public readonly string UserUserName = "user";
+    public readonly string UserDisplayName = "User";
+    public readonly string UserUserId = "3";
+    public readonly string UserEmail = "user@example.org";
+    public readonly string UserPassword = "userpassword";
+    public readonly string UserPlayerId = "2";
 
-    public const string PlayerName = "Player Name";
-    public const string PlayerPlayerId = "3";
+    public readonly string PlayerName = "Player Name";
+    public readonly string PlayerPlayerId = "3";
+    public readonly string TempPlayerName = "Temp player";
+    public readonly string TempPlayerId = "4";
 
-    public const string BunchDisplayName = "Bunch 1";
-    public const string BunchId = "bunch-1";
-    public const string BunchDescription = "Bunch Description 1";
-    public const string BunchLocationId = "1";
-    public const string BunchLocationName = "Bunch Location 1";
-    public const string CurrencySymbol = "$";
-    public const string CurrencyLayout = "{SYMBOL}{AMOUNT}";
-    public const string TimeZone = "Europe/Stockholm";
+    public readonly string BunchDisplayName = "Bunch 1";
+    public readonly string BunchId = "bunch-1";
+    public readonly string BunchDescription = "Bunch Description 1";
+    public readonly string BunchLocationId = "1";
+    public readonly string BunchLocationName = "Bunch Location 1";
+    public readonly string CurrencySymbol = "$";
+    public readonly string CurrencyLayout = "{SYMBOL}{AMOUNT}";
+    public readonly string TimeZone = "Europe/Stockholm";
 
-    public const string EventName = "Event 1";
-    public const string EventId = "1";
+    public readonly string EventName = "Event 1";
+    public readonly string EventId = "1";
 
-    public const string CashgameId = "1";
+    public readonly string CashgameId = "1";
 }
