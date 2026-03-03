@@ -12,35 +12,10 @@ public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
 {
     private readonly PokerBunchDbContext _db = db;
 
-    public async Task<IList<string>> Find(string slug)
+    public async Task<Player> Get(string id)
     {
-        var q = _db.PbPlayer
-            .Where(o => o.Bunch.Name == slug)
-            .Select(o => o.PlayerId);
-
-        var ids = await q.ToListAsync();
-        return ids.Select(o => o.ToString()).ToList();
-    }
-    
-    public async Task<IList<string>> FindByRole(string slug, Role role)
-    {
-        var q = _db.PbPlayer
-            .Where(o => o.Bunch.Name == slug)
-            .Where(o => o.RoleId == (int)role)
-            .Select(o => o.PlayerId);
-
-        var ids = await q.ToListAsync();
-        return ids.Select(o => o.ToString()).ToList();
-    }
-
-    public async Task<IList<string>> FindByUser(string bunchId, string userId)
-    {
-        var q = _db.PbPlayer
-            .Where(o => o.BunchId == int.Parse(bunchId) && o.UserId == int.Parse(userId))
-            .Select(o => o.PlayerId);
-
-        var ids = await q.ToListAsync();
-        return ids.Select(o => o.ToString()).ToList();
+        var players = await Get([id]);
+        return players.FirstOrDefault() ?? throw new PokerBunchException($"Player with id {id} was not found");
     }
 
     public async Task<IList<Player>> Get(IList<string> ids)
@@ -66,14 +41,37 @@ public class PlayerDb(PokerBunchDbContext db) : BaseDb(db)
         var dtos = await q.ToListAsync();
         return dtos.Select(PlayerMapper.ToPlayer).ToList();
     }
-
-    public async Task<Player> Get(string id)
+    
+    public async Task<IList<string>> Find(string slug)
     {
-        var players = await Get([id]);
-        
-        return players.Count != 0 
-            ? players.First() 
-            : throw new PokerBunchException($"Player with id {id} was not found");
+        var q = _db.PbPlayer
+            .Where(o => o.Bunch.Name == slug)
+            .Select(o => o.PlayerId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
+    }
+    
+    public async Task<IList<string>> FindByRole(string slug, Role role)
+    {
+        var q = _db.PbPlayer
+            .Where(o => o.Bunch.Name == slug)
+            .Where(o => o.RoleId == (int)role)
+            .Select(o => o.PlayerId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
+    }
+
+    public async Task<IList<string>> FindByUser(string bunchId, string userId)
+    {
+        var q = _db.PbPlayer
+            .Where(o => o.BunchId == int.Parse(bunchId))
+            .Where(o => o.UserId == int.Parse(userId))
+            .Select(o => o.PlayerId);
+
+        var ids = await q.ToListAsync();
+        return ids.Select(o => o.ToString()).ToList();
     }
 
     public async Task<string> Add(Player player) => player.IsUser

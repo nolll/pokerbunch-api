@@ -13,10 +13,7 @@ public class BunchDb(PokerBunchDbContext db)
     public async Task<Bunch> Get(string id)
     {
         var bunches = await Get([id]);
-        
-        return bunches.Count > 0 
-            ? bunches.First()
-            : throw new PokerBunchException($"Bunch with id {id} was not found");
+        return bunches.FirstOrDefault() ?? throw new PokerBunchException($"Bunch with id {id} was not found");
     }
     
     public async Task<IList<Bunch>> Get(IList<string> ids)

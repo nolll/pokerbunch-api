@@ -14,10 +14,7 @@ public class CashgameDb(PokerBunchDbContext db)
     public async Task<Cashgame> Get(string id)
     {
         var cashgames = await Get([id]);
-
-        return cashgames.Count != 0 
-            ? cashgames.First() 
-            : throw new PokerBunchException($"Cashgame with id {id} was not found");
+        return cashgames.FirstOrDefault() ?? throw new PokerBunchException($"Cashgame with id {id} was not found");
     }
         
     public async Task<IList<Cashgame>> Get(IList<string> ids)

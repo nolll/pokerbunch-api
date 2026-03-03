@@ -14,23 +14,8 @@ public class EventDb(PokerBunchDbContext db) : BaseDb(db)
 
     public async Task<Event> Get(string id)
     {
-        var query = _db.PbEvent
-            .Where(o => o.EventId == int.Parse(id))
-            .Select(o => new EventDayDto
-            {
-                EventId = o.EventId,
-                BunchSlug = o.Bunch.Name,
-                Name = o.Name,
-                LocationId = o.Cashgame.Any() ? o.Cashgame.First().LocationId : null,
-                Timestamp = o.Cashgame.Any() ? o.Cashgame.First().Timestamp : DateTime.MinValue
-            });
-        
-        var dtos = await query.ToListAsync();
-        var events = dtos.ToEvents();
-        
-        return events.Count > 0 
-            ? events.First() 
-            : throw new PokerBunchException($"Event with id {id} was not found");
+        var events = await Get([id]);
+        return events.FirstOrDefault() ?? throw new PokerBunchException($"Event with id {id} was not found");
     }
 
     public async Task<IList<Event>> Get(IList<string> ids)

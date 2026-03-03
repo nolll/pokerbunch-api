@@ -11,6 +11,26 @@ public class JoinRequestDb(PokerBunchDbContext db) : BaseDb(db)
 {
     private readonly PokerBunchDbContext _db = db;
 
+    public async Task<IList<JoinRequest>> Get(IList<string> ids)
+    {
+        if (!ids.Any())
+            return [];
+
+        var query = _db.PbJoinRequest
+            .Where(o => ids.Select(int.Parse).Contains(o.JoinRequestId))
+            .Select(o => new JoinRequestDto
+            {
+                JoinRequestId = o.JoinRequestId,
+                BunchId = o.BunchId,
+                UserId = o.UserId,
+                UserName = o.User.UserName
+            });
+
+        var result = await query.ToListAsync();
+
+        return result.Select(JoinRequestMapper.ToJoinRequest).ToList();
+    }
+    
     public async Task<IList<string>> Find(string slug)
     {
         var query = _db.PbJoinRequest
@@ -30,26 +50,6 @@ public class JoinRequestDb(PokerBunchDbContext db) : BaseDb(db)
 
         var result = await query.ToListAsync();
         return result.Select(o => o.ToString()).ToList();
-    }
-    
-    public async Task<IList<JoinRequest>> Get(IList<string> ids)
-    {
-        if (!ids.Any())
-            return [];
-
-        var query = _db.PbJoinRequest
-            .Where(o => ids.Select(int.Parse).Contains(o.JoinRequestId))
-            .Select(o => new JoinRequestDto
-            {
-                JoinRequestId = o.JoinRequestId,
-                BunchId = o.BunchId,
-                UserId = o.UserId,
-                UserName = o.User.UserName
-            });
-
-        var result = await query.ToListAsync();
-
-        return result.Select(JoinRequestMapper.ToJoinRequest).ToList();
     }
     
     public async Task<string> Add(JoinRequest joinRequest)

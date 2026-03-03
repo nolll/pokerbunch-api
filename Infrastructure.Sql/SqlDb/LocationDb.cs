@@ -14,21 +14,10 @@ public class LocationDb(PokerBunchDbContext db) : BaseDb(db)
 
     public async Task<Location> Get(string id)
     {
-        var query = _db.PbLocation
-            .Where(o => o.LocationId == int.Parse(id))
-            .Select(o => new LocationDto
-            {
-                LocationId = o.LocationId,
-                Name = o.Name,
-                BunchSlug = o.Bunch.Name
-            });
-
-        var dto = await query.FirstOrDefaultAsync();
-        var location = dto?.ToLocation();
-
-        return location ?? throw new PokerBunchException($"Location with id {id} was not found");
+        var locations = await Get([id]);
+        return locations.FirstOrDefault() ?? throw new PokerBunchException($"Location with id {id} was not found");
     }
-        
+    
     public async Task<IList<Location>> Get(IList<string> ids)
     {
         if (!ids.Any())

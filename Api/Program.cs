@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Api;
 using Api.Bootstrapping;
+using Api.Extensions;
 using Api.Extensions.Swagger;
 using Api.Middleware;
 using Api.Routes;
@@ -46,10 +47,9 @@ builder.Services.AddLogging(logging =>
     logging.SetMinimumLevel(settings.Logging.LogLevel.Default);
 });
 
-var connectionString = GetConnectionString(builder.Configuration);
 builder.Services.AddDbContext<PokerBunchDbContext>(options =>
 {
-    options.UseNpgsql(connectionString, opt => opt.MigrationsAssembly("Api"));
+    options.UseNpgsql(builder.Configuration.BuildConnectionString(), opt => opt.MigrationsAssembly("Api"));
 });
 
 builder.Services.AddServices(settings, builder.Configuration);
@@ -91,7 +91,7 @@ builder.Services.AddAuthentication(x =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AuthSecretProvider.GetSecret(settings.Auth.Secret))),
             ValidateIssuer = false,
             ValidateAudience = false,
-            LifetimeValidator = CustomLifetimeValidator
+            LifetimeValidator = TokenLifetimeValidator.Validate
         };
     });
 
@@ -139,39 +139,7 @@ app.UseSwaggerUI(c =>
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.Map();
+app.MapEndpoints();
 app.UseMvc();
 
 app.Run();
-return;
-
-static string GetConnectionString(IConfiguration configuration)
-{
-    var databaseUrl = configuration.GetValue<string>("DATABASE_URL");
-    if (string.IsNullOrEmpty(databaseUrl))
-        return "";
-
-    var databaseUri = new Uri(databaseUrl);
-    var userInfo = databaseUri.UserInfo.Split(':');
-    
-    var connectionStringBuilder = new NpgsqlConnectionStringBuilder
-    {
-        Host = databaseUri.Host,
-        Port = databaseUri.Port,
-        Username = userInfo[0],
-        Password = userInfo[1],
-        Database = databaseUri.LocalPath.TrimStart('/')
-    };
-
-    return connectionStringBuilder.ToString();
-}
-
-static bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters param)
-{
-    if (expires != null)
-        return expires > DateTime.UtcNow;
-
-    return false;
-}
-
-public partial class Program { } // Needed for integration tests

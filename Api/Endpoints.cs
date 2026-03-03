@@ -29,7 +29,7 @@ public static class Endpoints
         public const string Events = "Events";
     }
     
-    public static void Map(this WebApplication app)
+    public static void MapEndpoints(this WebApplication app)
     {
         MapAuthEndpoints(app);
         MapUserEndpoints(app);
