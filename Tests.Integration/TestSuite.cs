@@ -1,6 +1,6 @@
 namespace Tests.Integration;
 
-public static class TestOrder
+public static class TestSuite
 {
     public const int MasterData = 1;
     public const int General = 2;

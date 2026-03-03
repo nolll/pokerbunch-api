@@ -1,66 +1,51 @@
-using Core;
 using Infrastructure.Sql.Models;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 using Tests.Common.FakeServices;
+using Xunit;
 
 namespace Tests.Integration;
 
-[SetUpFixture]
-public class TestSetup
+[CollectionDefinition(nameof(TestSetup))]
+public class TestSetup : ICollectionFixture<TestSetup>, IDisposable
 {
-    private static WebApplicationInTest? _webApplicationFactory;
-    public static FakeEmailSender? EmailSender;
+    private readonly WebApplicationInTest? _webApplicationFactory;
+    public readonly FakeEmailSender? EmailSender;
+
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17.6")
         .Build();
 
-    public static PokerBunchDbContext? Db { get; private set; }
+    public PokerBunchDbContext? Db { get; }
+    public ApiClientForTest ApiClient { get; }
+    public LoginHelper LoginHelper { get; }
     
-    [OneTimeSetUp]
-    public async Task SetUp()
+    public TestSetup()
     {
         EmailSender = new FakeEmailSender();
-        await _postgres.StartAsync();
+        Task.Run(() => _postgres.StartAsync()).GetAwaiter().GetResult();
         var optionsBuilder = new DbContextOptionsBuilder<PokerBunchDbContext>()
             .UseNpgsql(_postgres.GetConnectionString());
         Db = new PokerBunchDbContext(optionsBuilder.Options);
-        await Db.Database.EnsureCreatedAsync();
+        Db.Database.EnsureCreated();
 
         var player = new PbRole { RoleId = 1, RoleName = "Player" };
         var manager = new PbRole { RoleId = 2, RoleName = "Manager" };
         var admin = new PbRole { RoleId = 3, RoleName = "Admin" };
         
         Db.PbRole.AddRange(player, manager, admin);
-        await Db.SaveChangesAsync();
+        Db.SaveChanges();
         
         _webApplicationFactory = new WebApplicationInTest(EmailSender, _postgres.GetConnectionString());
+        ApiClient = new ApiClientForTest(new HttpClientForTest(_webApplicationFactory));
+        LoginHelper = new LoginHelper(ApiClient);
     }
-    
-    public static HttpClient GetClient(string? token = null, bool followRedirect = true)
-    {
-        if (_webApplicationFactory == null)
-            throw new PokerBunchException("WebApplicationFactory was not initialized.");
 
-        var options = new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = !followRedirect
-        };
-        
-        var client = _webApplicationFactory.CreateClient(options);
-
-        if(token != null)
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-        return client;
-    }
-    
-    [OneTimeTearDown]
-    public async Task TearDown()
+    public void Dispose()
     {
         if(_webApplicationFactory is not null)
-            await _webApplicationFactory.DisposeAsync();
+            _webApplicationFactory.Dispose();
         if(Db is not null)
-            await Db.DisposeAsync();
-        await _postgres.DisposeAsync();
+            Db.Dispose();
+        Task.Run(() => _postgres.DisposeAsync());
     }
 }

@@ -2,22 +2,19 @@ using System.Net;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Core.Messages;
-using Core.Services;
+using Xunit;
 
 namespace Tests.Integration.Tests;
 
-[TestFixture]
-[NonParallelizable]
-[Order(TestOrder.Bunch)]
-public class Suite06BunchTests
+public partial class IntegrationTests
 {
-    [Test]
-    [Order(1)]
-    public async Task Test01CreateBunch()
+    [Fact]
+    [Order(TestSuite.Bunch, 1)]
+    public async Task Suite06Bunch_01CreateBunch()
     {
-        var token = await LoginHelper.GetManagerToken();
+        var token = await fixture.LoginHelper.GetManagerToken();
         var parameters = new AddBunchPostModel(TestData.BunchDisplayName, TestData.BunchDescription, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout);
-        var result = await TestClient.Bunch.Add(token, parameters);
+        var result = await fixture.ApiClient.Bunch.Add(token, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
         result.Model!.Name.Should().Be(TestData.BunchDisplayName);
@@ -32,93 +29,93 @@ public class Suite06BunchTests
         result.Model!.ThousandSeparator.Should().Be(" ");
     }
 
-    [Test]
-    [Order(2)]
-    public async Task Test03ApplyForMembershipAndApprove()
+    [Fact]
+    [Order(TestSuite.Bunch, 2)]
+    public async Task Suite06Bunch_02ApplyForMembershipAndApprove()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var joinRequestResult = await TestClient.JoinRequest.Add(userToken, TestData.BunchId);
+        var userToken = await fixture.LoginHelper.GetUserToken();
+        var joinRequestResult = await fixture.ApiClient.JoinRequest.Add(userToken, TestData.BunchId);
         joinRequestResult.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        var managerToken = await LoginHelper.GetManagerToken();
-        var joinRequestListResult = await TestClient.JoinRequest.ListByBunch(managerToken, TestData.BunchId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var joinRequestListResult = await fixture.ApiClient.JoinRequest.ListByBunch(managerToken, TestData.BunchId);
         joinRequestListResult.StatusCode.Should().Be(HttpStatusCode.OK);
         var joinRequestId = joinRequestListResult.Model!.First().Id;
 
-        TestSetup.EmailSender!.LastSentTo.Should().Be(TestData.ManagerEmail);
-        TestSetup.EmailSender.LastMessage.Should().BeOfType<JoinRequestMessage>();
+        fixture.EmailSender!.LastSentTo.Should().Be(TestData.ManagerEmail);
+        fixture.EmailSender.LastMessage.Should().BeOfType<JoinRequestMessage>();
 
-        var acceptResult = await TestClient.JoinRequest.Accept(managerToken, joinRequestId);
+        var acceptResult = await fixture.ApiClient.JoinRequest.Accept(managerToken, joinRequestId);
         acceptResult.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        TestSetup.EmailSender!.LastSentTo.Should().Be(TestData.UserEmail);
-        TestSetup.EmailSender.LastMessage.Should().BeOfType<AcceptJoinRequestMessage>();
+        fixture.EmailSender!.LastSentTo.Should().Be(TestData.UserEmail);
+        fixture.EmailSender.LastMessage.Should().BeOfType<AcceptJoinRequestMessage>();
     }
 
-    [Test]
-    [Order(3)]
-    public async Task Test04AddPlayerWithoutUser()
+    [Fact]
+    [Order(TestSuite.Bunch, 3)]
+    public async Task Suite06Bunch_03AddPlayerWithoutUser()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
         await AddPlayer(managerToken, TestData.PlayerName);
     }
 
-    [Test]
-    [Order(4)]
-    public async Task Test05GetBunchAsAdmin()
+    [Fact]
+    [Order(TestSuite.Bunch, 4)]
+    public async Task Suite06Bunch_04GetBunchAsAdmin()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await TestClient.Bunch.Get(token, TestData.BunchId);
+        var token = await fixture.LoginHelper.GetAdminToken();
+        var result = await fixture.ApiClient.Bunch.Get(token, TestData.BunchId);
         result.Success.Should().BeFalse();
     }
 
-    [Test]
-    [Order(5)]
-    public async Task Test06GetBunchAsManager()
+    [Fact]
+    [Order(TestSuite.Bunch, 5)]
+    public async Task Suite06Bunch_05GetBunchAsManager()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var result = await fixture.ApiClient.Bunch.Get(managerToken, TestData.BunchId);
         result.Model.Should().NotBeNull();
         AssertCommonProperties(result.Model);
     }
 
-    [Test]
-    [Order(6)]
-    public async Task Test07GetBunchAsUser()
+    [Fact]
+    [Order(TestSuite.Bunch, 6)]
+    public async Task Suite06Bunch_06GetBunchAsUser()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await TestClient.Bunch.Get(userToken, TestData.BunchId);
+        var userToken = await fixture.LoginHelper.GetUserToken();
+        var result = await fixture.ApiClient.Bunch.Get(userToken, TestData.BunchId);
         result.Model.Should().NotBeNull();
         AssertCommonProperties(result.Model);
     }
 
-    [Test]
-    [Order(7)]
-    public async Task Test08UpdateBunch()
+    [Fact]
+    [Order(TestSuite.Bunch, 7)]
+    public async Task Suite06Bunch_07UpdateBunch()
     {
         const string newDescription = $"UPDATED: {TestData.BunchDescription}";
         const string houseRules = "UPDATED: house rules";
         const int defaultBuyin = 10_000;
 
-        var managerToken = await LoginHelper.GetManagerToken();
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
         var parameters = new UpdateBunchPostModel(newDescription, houseRules, TestData.TimeZone, TestData.CurrencySymbol, TestData.CurrencyLayout, defaultBuyin);
-        var updateResult = await TestClient.Bunch.Update(managerToken, TestData.BunchId, parameters);
+        var updateResult = await fixture.ApiClient.Bunch.Update(managerToken, TestData.BunchId, parameters);
         updateResult.Model!.Description.Should().Be(newDescription);
         updateResult.Model!.HouseRules.Should().Be(houseRules);
         updateResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
 
-        var getResult = await TestClient.Bunch.Get(managerToken, TestData.BunchId);
+        var getResult = await fixture.ApiClient.Bunch.Get(managerToken, TestData.BunchId);
         getResult.Model!.Description.Should().Be(newDescription);
         getResult.Model!.HouseRules.Should().Be(houseRules);
         getResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
     }
     
-    [Test]
-    [Order(8)]
-    public async Task Test10ListBunchesAsUser()
+    [Fact]
+    [Order(TestSuite.Bunch, 8)]
+    public async Task Suite06Bunch_08ListBunchesAsUser()
     {
-        var managerToken = await LoginHelper.GetUserToken();
-        var result = await TestClient.Bunch.List(managerToken);
+        var managerToken = await fixture.LoginHelper.GetUserToken();
+        var result = await fixture.ApiClient.Bunch.List(managerToken);
         result.Success.Should().BeTrue();
         var list = result.Model!.ToList();
         var first = list.First();
@@ -126,12 +123,12 @@ public class Suite06BunchTests
         first.Name.Should().Be(TestData.BunchDisplayName);
     }
 
-    [Test]
-    [Order(9)]
-    public async Task Test11ListUserBunchesForUserWithOneBunch()
+    [Fact]
+    [Order(TestSuite.Bunch, 9)]
+    public async Task Suite06Bunch_09ListUserBunchesForUserWithOneBunch()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Bunch.ListForUser(managerToken);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var result = await fixture.ApiClient.Bunch.ListForUser(managerToken);
         result.Success.Should().BeTrue();
         var list = result.Model!.ToList();
         var first = list.First();
@@ -139,19 +136,20 @@ public class Suite06BunchTests
         first.Name.Should().Be(TestData.BunchDisplayName);
     }
 
-    [Test]
-    [Order(10)]
-    public async Task Test12ListUserBunchesForUserWithNoBunches()
+    [Fact]
+    [Order(TestSuite.Bunch, 10)]
+    public async Task Suite06Bunch_10ListUserBunchesForUserWithNoBunches()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await TestClient.Bunch.ListForUser(token);
+        var token = await fixture.LoginHelper.GetAdminToken();
+        var result = await fixture.ApiClient.Bunch.ListForUser(token);
         result.Success.Should().BeTrue();
         result.Model!.Count().Should().Be(0);
     }
-    private static async Task AddPlayer(string? token, string playerName)
+    
+    private async Task AddPlayer(string? token, string playerName)
     {
         var parameters = new PlayerAddPostModel(playerName);
-        var result = await TestClient.Player.Add(token, TestData.BunchId, parameters);
+        var result = await fixture.ApiClient.Player.Add(token, TestData.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 

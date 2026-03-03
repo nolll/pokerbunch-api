@@ -1,49 +1,47 @@
 using System.Net;
 using Api.Models.UserModels;
 using Core.Entities;
+using Xunit;
 
 namespace Tests.Integration.Tests;
 
-[TestFixture]
-[NonParallelizable]
-[Order(TestOrder.UserRegistration)]
-public class Suite03UserRegistrationTests
+public partial class IntegrationTests
 {
-    [Test]
-    [Order(1)]
-    public async Task Test01RegisterAdminReturns200()
+    [Fact]
+    [Order(TestSuite.UserRegistration, 1)]
+    public async Task Suite03UserRegistration_01RegisterAdminReturns200()
     {
         var parameters = new AddUserPostModel(TestData.AdminUserName, TestData.AdminDisplayName, TestData.AdminEmail, TestData.AdminPassword);
-        var result = await TestClient.User.Add(parameters);
+        var result = await fixture.ApiClient.User.Add(parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
 
         await SetAdminRole();
     }
-
-    private static async Task SetAdminRole()
+    
+    [Fact]
+    [Order(TestSuite.UserRegistration, 2)]
+    public async Task Suite03UserRegistration_02RegisterManagerReturns200()
     {
-        var admin = TestSetup.Db!.PbUser
+        var parameters = new AddUserPostModel(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
+        var result = await fixture.ApiClient.User.Add(parameters);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    [Order(TestSuite.UserRegistration, 3)]
+    public async Task Suite03UserRegistration_03RegisterRegularUserReturns200()
+    {
+        var parameters = new AddUserPostModel(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
+        var result = await fixture.ApiClient.User.Add(parameters);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+    
+    private async Task SetAdminRole()
+    {
+        var admin = fixture.Db!.PbUser
             .First(o => o.UserName == TestData.AdminUserName);
 
         admin.RoleId = (int)Role.Admin;
-        await TestSetup.Db.SaveChangesAsync();
+        await fixture.Db.SaveChangesAsync();
     }
-    
-    [Test]
-    [Order(2)]
-    public async Task Test02RegisterManagerReturns200()
-    {
-        var parameters = new AddUserPostModel(TestData.ManagerUserName, TestData.ManagerDisplayName, TestData.ManagerEmail, TestData.ManagerPassword);
-        var result = await TestClient.User.Add(parameters);
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Test]
-    [Order(3)]
-    public async Task Test03RegisterRegularUserReturns200()
-    {
-        var parameters = new AddUserPostModel(TestData.UserUserName, TestData.UserDisplayName, TestData.UserEmail, TestData.UserPassword);
-        var result = await TestClient.User.Add(parameters);
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    }
+}

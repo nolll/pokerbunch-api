@@ -1,31 +1,29 @@
 using System.Net;
 using Api.Models.EventModels;
+using Xunit;
 
 namespace Tests.Integration.Tests;
 
-[TestFixture]
-[NonParallelizable]
-[Order(TestOrder.Event)]
-public class Suite08EventTests
+public partial class IntegrationTests
 {
-    [Test]
-    [Order(1)]
-    public async Task Test01AddEvent()
+    [Fact]
+    [Order(TestSuite.Event, 1)]
+    public async Task Suite08_Event01AddEvent()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
         var parameters = new EventAddPostModel(TestData.EventName);
-        var result = await TestClient.Event.Add(managerToken, TestData.BunchId, parameters);
+        var result = await fixture.ApiClient.Event.Add(managerToken, TestData.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
         result.Model.Id.Should().Be(TestData.EventId);
     }
 
-    [Test]
-    [Order(2)]
-    public async Task Test02ListEvents()
+    [Fact]
+    [Order(TestSuite.Event, 2)]
+    public async Task Suite08_Event02ListEvents()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Event.List(managerToken, TestData.BunchId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var result = await fixture.ApiClient.Event.List(managerToken, TestData.BunchId);
 
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(1);
@@ -35,12 +33,12 @@ public class Suite08EventTests
         @event.BunchId.Should().Be(TestData.BunchId);
     }
 
-    [Test]
-    [Order(3)]
-    public async Task Test03GetEvent()
+    [Fact]
+    [Order(TestSuite.Event, 3)]
+    public async Task Suite08_Event03GetEvent()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Event.Get(managerToken, TestData.EventId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var result = await fixture.ApiClient.Event.Get(managerToken, TestData.EventId);
 
         result.Success.Should().BeTrue();
         result.Model.Should().NotBeNull();

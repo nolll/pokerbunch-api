@@ -1,18 +1,16 @@
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace Tests.Integration.Tests;
 
-[TestFixture]
-[NonParallelizable]
-[Order(TestOrder.MasterData)]
-public class Suite01MasterDataTests
+public partial class IntegrationTests
 {
-    [Test]
-    [Order(1)]
-    public async Task Test01MasterDataExists()
+    [Fact]
+    [Order(TestSuite.MasterData, 1)]
+    public async Task Suite01MasterData_01MasterDataExists()
     {
-        var query = TestSetup.Db!.PbRole.OrderBy(o => o.RoleId);
-        var roles = await query.ToListAsync();
+        var query = fixture.Db!.PbRole.OrderBy(o => o.RoleId);
+        var roles = await query.ToListAsync(CancellationToken.None);
         
         roles.Count.Should().Be(3);
         roles[0].RoleId.Should().Be(1);

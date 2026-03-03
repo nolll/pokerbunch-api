@@ -1,23 +1,21 @@
 using System.Net;
 using Api.Models.PlayerModels;
+using Xunit;
 
 namespace Tests.Integration.Tests;
 
-[TestFixture]
-[NonParallelizable]
-[Order(TestOrder.Player)]
-public class Suite09PlayerTests
+public partial class IntegrationTests
 {
     private const string TempPlayerName = "Temp player";
     private const string TempPlayerId = "4";
 
-    [Test]
-    [Order(1)]
-    public async Task Test01AddPlayer()
+    [Fact]
+    [Order(TestSuite.Player, 1)]
+    public async Task Suite09_01AddPlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
         var parameters = new PlayerAddPostModel(TempPlayerName);
-        var result = await TestClient.Player.Add(managerToken, TestData.BunchId, parameters);
+        var result = await fixture.ApiClient.Player.Add(managerToken, TestData.BunchId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
         result.Model.Name.Should().Be(TempPlayerName);
@@ -29,12 +27,12 @@ public class Suite09PlayerTests
         result.Model.UserName.Should().BeNull();
     }
 
-    [Test]
-    [Order(2)]
-    public async Task Test02GetPlayer()
+    [Fact]
+    [Order(TestSuite.Player, 2)]
+    public async Task Suite09_02GetPlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Player.Get(managerToken, TempPlayerId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var result = await fixture.ApiClient.Player.Get(managerToken, TempPlayerId);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
         result.Model.Name.Should().Be(TempPlayerName);
@@ -46,12 +44,12 @@ public class Suite09PlayerTests
         result.Model.UserName.Should().BeNull();
     }
 
-    [Test]
-    [Order(3)]
-    public async Task Test03ListPlayers()
+    [Fact]
+    [Order(TestSuite.Player, 3)]
+    public async Task Suite09_03ListPlayers()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await TestClient.Player.List(managerToken, TestData.BunchId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var result = await fixture.ApiClient.Player.List(managerToken, TestData.BunchId);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(4);
@@ -85,15 +83,15 @@ public class Suite09PlayerTests
         player4.UserName.Should().Be(TestData.UserUserName);
     }
 
-    [Test]
-    [Order(4)]
-    public async Task Test04DeletePlayer()
+    [Fact]
+    [Order(TestSuite.Player, 4)]
+    public async Task Suite09_04DeletePlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var deleteResult = await TestClient.Player.Delete(managerToken, TempPlayerId);
+        var managerToken = await fixture.LoginHelper.GetManagerToken();
+        var deleteResult = await fixture.ApiClient.Player.Delete(managerToken, TempPlayerId);
         deleteResult.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var getResult = await TestClient.Player.Get(managerToken, TempPlayerId);
+        var getResult = await fixture.ApiClient.Player.Get(managerToken, TempPlayerId);
         getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
