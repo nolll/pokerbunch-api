@@ -10,40 +10,47 @@ public partial class IntegrationTests
     [Order(TestSuite.Event, 1)]
     public async Task Suite08_Event01AddEvent()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var parameters = new EventAddPostModel(Data.EventName);
-        var result = await ApiClient.Event.Add(managerToken, Data.BunchId, parameters);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        
+        var parameters = new EventAddPostModel(DataFactory.String());
+        var result = await ApiClient.Event.Add(manager.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(Data.EventId);
+        result.Model.Name.Should().Be(parameters.Name);
     }
 
     [Fact]
     [Order(TestSuite.Event, 2)]
     public async Task Suite08_Event02ListEvents()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.Event.List(managerToken, Data.BunchId);
-
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var eventFixture = await bunch.AddEvent();
+        
+        var result = await ApiClient.Event.List(manager.Token, bunch.Id);
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(1);
-        var @event = result.Model?[0];
-        @event!.Id.Should().Be(Data.EventId);
-        @event.Name.Should().Be(Data.EventName);
-        @event.BunchId.Should().Be(Data.BunchId);
+        var @event = result.Model[0];
+        @event.Id.Should().Be(eventFixture.Id);
+        @event.Name.Should().Be(eventFixture.Name);
+        @event.BunchId.Should().Be(eventFixture.BunchId);
     }
 
     [Fact]
     [Order(TestSuite.Event, 3)]
     public async Task Suite08_Event03GetEvent()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.Event.Get(managerToken, Data.EventId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var eventFixture = await bunch.AddEvent();
+        
+        var result = await ApiClient.Event.Get(manager.Token, eventFixture.Id);
 
         result.Success.Should().BeTrue();
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(Data.EventId);
-        result.Model.Name.Should().Be(Data.EventName);
-        result.Model.BunchId.Should().Be(Data.BunchId);
+        result.Model.Id.Should().Be(eventFixture.Id);
+        result.Model.Name.Should().Be(eventFixture.Name);
+        result.Model.BunchId.Should().Be(eventFixture.BunchId);
     }
 }

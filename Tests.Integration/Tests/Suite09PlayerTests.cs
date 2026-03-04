@@ -10,14 +10,16 @@ public partial class IntegrationTests
     [Order(TestSuite.Player, 1)]
     public async Task Suite09_01AddPlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var parameters = new PlayerAddPostModel(Data.TempPlayerName);
-        var result = await ApiClient.Player.Add(managerToken, Data.BunchId, parameters);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        
+        var parameters = new PlayerAddPostModel(DataFactory.String());
+        var result = await ApiClient.Player.Add(manager.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Name.Should().Be(Data.TempPlayerName);
+        result.Model.Name.Should().Be(parameters.Name);
         result.Model.Id.Should().NotBeEmpty();
-        result.Model.Slug.Should().Be(Data.BunchId);
+        result.Model.Slug.Should().Be(bunch.Id);
         result.Model.Color.Should().Be("#9e9e9e");
         result.Model.AvatarUrl.Should().Be("");
         result.Model.UserId.Should().BeNull();
@@ -28,13 +30,16 @@ public partial class IntegrationTests
     [Order(TestSuite.Player, 2)]
     public async Task Suite09_02GetPlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.Player.Get(managerToken, Data.TempPlayerId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        
+        var result = await ApiClient.Player.Get(manager.Token, player.Id);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Name.Should().Be(Data.TempPlayerName);
+        result.Model.Name.Should().Be(player.Name);
         result.Model.Id.Should().NotBeEmpty();
-        result.Model.Slug.Should().Be(Data.BunchId);
+        result.Model.Slug.Should().Be(bunch.Id);
         result.Model.Color.Should().Be("#9e9e9e");
         result.Model.AvatarUrl.Should().Be("");
         result.Model.UserId.Should().BeNull();
@@ -45,46 +50,27 @@ public partial class IntegrationTests
     [Order(TestSuite.Player, 3)]
     public async Task Suite09_03ListPlayers()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.Player.List(managerToken, Data.BunchId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        
+        var result = await ApiClient.Player.List(manager.Token, bunch.Id);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Count.Should().Be(4);
+        result.Model.Count.Should().Be(2);
 
-        var managerPlayer = result.Model.First(o => o.Id == Data.ManagerPlayerId);
-        managerPlayer.Name.Should().Be(Data.ManagerDisplayName);
-        managerPlayer.Id.Should().Be(Data.ManagerPlayerId);
-        managerPlayer.Color.Should().Be("#9e9e9e");
-        managerPlayer.UserId.Should().Be(Data.ManagerUserId);
-        managerPlayer.UserName.Should().Be(Data.ManagerUserName);
+        var managerPlayer = result.Model.First(o => o.Id != player.Id);
+        managerPlayer.Name.Should().Be(manager.DisplayName);
+        managerPlayer.UserName.Should().Be(manager.UserName);
         
-        var playerPlayer = result.Model.First(o => o.Id == Data.PlayerPlayerId);
-        playerPlayer.Name.Should().Be(Data.PlayerName);
-        playerPlayer.Id.Should().Be(Data.PlayerPlayerId);
-        playerPlayer.Color.Should().Be("#9e9e9e");
-        playerPlayer.UserId.Should().BeNull();
+        var playerPlayer = result.Model.First(o => o.Id == player.Id);
+        playerPlayer.Name.Should().Be(player.Name);
         playerPlayer.UserName.Should().BeNull();
-
-        var tempPlayer = result.Model.First(o => o.Id == Data.TempPlayerId);
-        tempPlayer.Name.Should().Be(Data.TempPlayerName);
-        tempPlayer.Id.Should().Be(Data.TempPlayerId);
-        tempPlayer.Color.Should().Be("#9e9e9e");
-        tempPlayer.UserId.Should().BeNull();
-        tempPlayer.UserName.Should().BeNull();
-
-        var userPlayer = result.Model.First(o => o.Id == Data.UserPlayerId);
-        userPlayer.Name.Should().Be(Data.UserDisplayName);
-        userPlayer.Id.Should().Be(Data.UserPlayerId);
-        userPlayer.Color.Should().Be("#9e9e9e");
-        userPlayer.UserId.Should().Be(Data.UserUserId);
-        userPlayer.UserName.Should().Be(Data.UserUserName);
         
         List<string> orderedNames =
         [
-            Data.ManagerDisplayName,
-            Data.PlayerName,
-            Data.TempPlayerName,
-            Data.UserDisplayName
+            manager.DisplayName,
+            player.Name!
         ];
         orderedNames.Sort();
         
@@ -95,11 +81,14 @@ public partial class IntegrationTests
     [Order(TestSuite.Player, 4)]
     public async Task Suite09_04DeletePlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var deleteResult = await ApiClient.Player.Delete(managerToken, Data.TempPlayerId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        
+        var deleteResult = await ApiClient.Player.Delete(manager.Token, player.Id);
         deleteResult.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var getResult = await ApiClient.Player.Get(managerToken, Data.TempPlayerId);
+        var getResult = await ApiClient.Player.Get(manager.Token, player.Id);
         getResult.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

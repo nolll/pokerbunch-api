@@ -44,12 +44,19 @@ public partial class IntegrationTests : IAsyncLifetime
     private async Task ClearDatabase()
     {
         Db.PbCashgameCheckpoint.RemoveRange(Db.PbCashgameCheckpoint);
+        await Db.SaveChangesAsync();
         Db.PbEvent.RemoveRange(Db.PbEvent);
+        await Db.SaveChangesAsync();
         Db.PbCashgame.RemoveRange(Db.PbCashgame);
+        await Db.SaveChangesAsync();
         Db.PbLocation.RemoveRange(Db.PbLocation);
+        await Db.SaveChangesAsync();
         Db.PbPlayer.RemoveRange(Db.PbPlayer);
+        await Db.SaveChangesAsync();
         Db.PbJoinRequest.RemoveRange(Db.PbJoinRequest);
+        await Db.SaveChangesAsync();
         Db.PbBunch.RemoveRange(Db.PbBunch);
+        await Db.SaveChangesAsync();
         Db.PbUser.RemoveRange(Db.PbUser);
         await Db.SaveChangesAsync();
     }

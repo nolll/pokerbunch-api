@@ -80,7 +80,8 @@ public partial class IntegrationTests
     [Order(TestSuite.Bunch, 4)]
     public async Task Suite06Bunch_04GetBunchAsAdmin()
     {
-        var admin = await Fixture.CreateUser(isAdmin: true);
+        var admin = await Fixture.CreateUser();
+        await admin.AsAdmin();
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         

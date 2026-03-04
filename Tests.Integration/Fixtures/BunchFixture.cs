@@ -1,4 +1,5 @@
 using Api.Models.BunchModels;
+using Api.Models.EventModels;
 using Api.Models.LocationModels;
 using Core.Entities;
 using Infrastructure.Sql.Models;
@@ -21,23 +22,36 @@ public class BunchFixture(
     public string Description { get; } = parameters.Description;
     public string Timezone { get; } = parameters.Timezone;
 
-    public async Task AddPlayer(UserFixture userToAdd)
+    public async Task<PlayerFixture> AddPlayer(UserFixture userToAdd)
     {
         var dbUser = db.PbUser.First(o => o.UserName == userToAdd.UserName);
+        var player = await AddPlayer(null, dbUser.UserId);
+        await userToAdd.Refresh();
+
+        return player;
+    }
+    
+    public Task<PlayerFixture> AddPlayer(string? playerName = null) => 
+        AddPlayer(playerName ?? dataFactory.String(), null);
+
+    private async Task<PlayerFixture> AddPlayer(string? playerName, int? userId)
+    {
         var dbBunch = db.PbBunch.First(o => o.Name == Id);
         var player = new PbPlayer
         {
+            PlayerName = playerName,
             BunchId = dbBunch.BunchId,
-            UserId = dbUser.UserId,
+            UserId = userId,
             RoleId = (int)Role.Player,
             Approved = true,
-            Color = "#000000"
+            Color = "#9e9e9e"
         };
 
         db.PbPlayer.Add(player);
 
         await db.SaveChangesAsync();
-        await userToAdd.Refresh();
+
+        return new PlayerFixture(player.PlayerId.ToString(), playerName, userId.ToString(), Id);
     }
     
     public async Task<LocationFixture> AddLocation(string? name = null)
@@ -45,5 +59,12 @@ public class BunchFixture(
         var parameters = new LocationAddPostModel(name ?? dataFactory.String());
         var result = await apiClient.Location.Add(manager.Token, Id, parameters);
         return new LocationFixture(result.Model!);
+    }
+    
+    public async Task<EventFixture> AddEvent(string? name = null)
+    {
+        var parameters = new EventAddPostModel(name ?? dataFactory.String());
+        var result = await apiClient.Event.Add(manager.Token, Id, parameters);
+        return new EventFixture(result.Model!);
     }
 }

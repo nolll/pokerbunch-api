@@ -72,8 +72,7 @@ public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
         string? userName = null, 
         string? displayName = null,
         string? email = null,
-        string? password = null,
-        bool isAdmin = false)
+        string? password = null)
     {
         var parameters = new AddUserPostModel(
             userName ?? DataFactory.String(), 
@@ -81,21 +80,10 @@ public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
             email ?? DataFactory.EmailAddress(), 
             password ?? DataFactory.String());
         await ApiClient.User.Add(parameters);
-        if (isAdmin)
-            await SetAdminRole(parameters.UserName);
         var loginResult = await ApiClient.Auth.Login(new LoginPostModel(parameters.UserName, parameters.Password));
         var accessToken = loginResult.Model!.AccessToken;
         var refreshToken = loginResult.Model!.RefreshToken;
-        return new UserFixture(ApiClient, parameters, accessToken, refreshToken);
-    }
-    
-    private async Task SetAdminRole(string? userName)
-    {
-        var admin = Db.PbUser
-            .First(o => o.UserName == userName);
-
-        admin.RoleId = (int)Role.Admin;
-        await Db.SaveChangesAsync();
+        return new UserFixture(Db, ApiClient, parameters, accessToken, refreshToken);
     }
     
     public void Dispose()
