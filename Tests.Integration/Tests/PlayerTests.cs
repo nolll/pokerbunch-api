@@ -1,19 +1,19 @@
 using System.Net;
 using Api.Models.PlayerModels;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class PlayerTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.Player, 1)]
-    public async Task Suite09_01AddPlayer()
+    public async Task AddPlayer()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         
-        var parameters = new PlayerAddPostModel(DataFactory.String());
+        var parameters = new PlayerAddPostModel(Data.String());
         var result = await ApiClient.Player.Add(manager.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
@@ -27,8 +27,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Player, 2)]
-    public async Task Suite09_02GetPlayer()
+    public async Task GetPlayer()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -47,8 +46,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Player, 3)]
-    public async Task Suite09_03ListPlayers()
+    public async Task ListPlayers()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -78,8 +76,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Player, 4)]
-    public async Task Suite09_04DeletePlayer()
+    public async Task DeletePlayer()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);

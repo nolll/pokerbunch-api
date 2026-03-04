@@ -1,14 +1,14 @@
 using System.Net;
 using Api.Models.CashgameModels;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class CashgameTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.Cashgame, 1)]
-    public async Task Suite10Cashgame_01AddCashgame()
+    public async Task AddCashgame()
     {
         var user = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(user);
@@ -22,8 +22,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 2)]
-    public async Task Suite10Cashgame_02Buyin()
+    public async Task BuyingIn()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -35,8 +34,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 3)]
-    public async Task Suite10Cashgame_03Report()
+    public async Task Reporting()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -49,8 +47,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 4)]
-    public async Task Suite10Cashgame_04AddUpdateAndDeleteAction()
+    public async Task AddUpdateAndDeleteAction()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -58,7 +55,7 @@ public partial class IntegrationTests
         var location = await bunch.AddLocation();
         var cashgame = await bunch.StartCashgame(location);
 
-        var initialReport = DataFactory.Int();
+        var initialReport = Data.Int();
         await Buyin(manager.Token, cashgame.Id, player.Id);
         await Report(manager.Token, cashgame.Id, player.Id, initialReport);
 
@@ -66,7 +63,7 @@ public partial class IntegrationTests
         var report = result.Model!.Players.SelectMany(o => o.Actions).First(o => o.Type == ActionType.Report);
         report.Stack.Should().Be(initialReport);
 
-        var updatedReport = DataFactory.Int();
+        var updatedReport = Data.Int();
         await Update(manager.Token, cashgame.Id, report.Id, updatedReport);
         
         result = await ApiClient.Cashgame.Get(manager.Token, cashgame.Id);
@@ -75,25 +72,23 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 5)]
-    public async Task Suite10Cashgame_05GetCurrentCashgameId()
+    public async Task GetCurrentCashgameId()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         var player = await bunch.AddPlayer();
         var location = await bunch.AddLocation();
-        var cashgameFixture = await bunch.StartCashgame(location);
-        await Buyin(manager.Token, cashgameFixture.Id, player.Id);
+        var cashgame = await bunch.StartCashgame(location);
+        await Buyin(manager.Token, cashgame.Id, player.Id);
         
         var result1 = await ApiClient.Cashgame.Current(manager.Token, bunch.Id);
         result1.Model.Should().NotBeNull();
         result1.Model.Count().Should().Be(1);
-        result1.Model.First().Id.Should().Be(cashgameFixture.Id);
+        result1.Model.First().Id.Should().Be(cashgame.Id);
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 6)]
-    public async Task Suite10Cashgame_06GetRunningCashgame()
+    public async Task GetRunningCashgame()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -102,13 +97,13 @@ public partial class IntegrationTests
         var location = await bunch.AddLocation();
         var cashgame = await bunch.StartCashgame(location);
 
-        var p1Buyin = DataFactory.Int();
-        var p2Buyin = DataFactory.Int();
+        var p1Buyin = Data.Int();
+        var p2Buyin = Data.Int();
         await Buyin(manager.Token, cashgame.Id, player1.Id, p1Buyin);
         await Buyin(manager.Token, cashgame.Id, player2.Id, p2Buyin);
         
-        var p1Report = DataFactory.Int();
-        var p2Report = DataFactory.Int();
+        var p1Report = Data.Int();
+        var p2Report = Data.Int();
         await Report(manager.Token, cashgame.Id, player1.Id, p1Report);
         await Report(manager.Token, cashgame.Id, player2.Id, p2Report);
         
@@ -134,8 +129,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 7)]
-    public async Task Suite10Cashgame_07Cashout()
+    public async Task CashingOut()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -149,8 +143,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 8)]
-    public async Task Suite10Cashgame_08GetFinishedCashgame()
+    public async Task GetFinishedCashgame()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -159,8 +152,8 @@ public partial class IntegrationTests
         var location = await bunch.AddLocation();
         var cashgame = await bunch.StartCashgame(location);
 
-        var p1Cashout = DataFactory.Int();
-        var p2Cashout = DataFactory.Int();
+        var p1Cashout = Data.Int();
+        var p2Cashout = Data.Int();
         await Buyin(manager.Token, cashgame.Id, player1.Id);
         await Buyin(manager.Token, cashgame.Id, player2.Id);
         await Report(manager.Token, cashgame.Id, player1.Id);
@@ -186,8 +179,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 9)]
-    public async Task Suite10Cashgame_09AddCashgameToEvent()
+    public async Task AddCashgameToEvent()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -206,8 +198,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 10)]
-    public async Task Suite10Cashgame_10ListCashgamesByBunch()
+    public async Task ListCashgamesByBunch()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -225,8 +216,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 11)]
-    public async Task Suite10Cashgame_11ListCashgamesByBunchAndYear()
+    public async Task ListCashgamesByBunchAndYear()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -244,8 +234,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 13)]
-    public async Task Suite10Cashgame_13ListCashgamesByPlayer()
+    public async Task ListCashgamesByPlayer()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -266,8 +255,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 14)]
-    public async Task Suite10Cashgame_14DeleteCashgameInEvent_Fails()
+    public async Task DeleteCashgameInEvent()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -284,8 +272,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 15)]
-    public async Task Suite10Cashgame_15RemoveCashgameFromEvent()
+    public async Task RemoveCashgameFromEvent()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -304,8 +291,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 16)]
-    public async Task Suite10Cashgame_16DeleteCashgameWithResults_Fails()
+    public async Task DeleteCashgameWithResults()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -320,8 +306,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Cashgame, 17)]
-    public async Task Suite10Cashgame_17ClearCashgameBeforeDeleting_Succeeds()
+    public async Task ClearCashgameBeforeDeleting()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -351,21 +336,21 @@ public partial class IntegrationTests
 
     private async Task Buyin(string? token, string cashgameId, string playerId, int? buyin = null, int leftInStack = 0)
     {
-        var parameters = new AddCashgameActionPostModel(ActionType.Buyin, playerId, buyin ?? DataFactory.Int(), leftInStack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Buyin, playerId, buyin ?? Data.Int(), leftInStack);
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private async Task Report(string? token, string cashgameId, string playerId, int? stack = null)
     {
-        var parameters = new AddCashgameActionPostModel(ActionType.Report, playerId, 0, stack ?? DataFactory.Int());
+        var parameters = new AddCashgameActionPostModel(ActionType.Report, playerId, 0, stack ?? Data.Int());
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private async Task Cashout(string? token, string cashgameId, string playerId, int? stack = null)
     {
-        var parameters = new AddCashgameActionPostModel(ActionType.Cashout, playerId, 0, stack ?? DataFactory.Int());
+        var parameters = new AddCashgameActionPostModel(ActionType.Cashout, playerId, 0, stack ?? Data.Int());
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }

@@ -1,19 +1,19 @@
 using System.Net;
 using Api.Models.EventModels;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class EventTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.Event, 1)]
-    public async Task Suite08_Event01AddEvent()
+    public async Task AddEvent()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         
-        var parameters = new EventAddPostModel(DataFactory.String());
+        var parameters = new EventAddPostModel(Data.String());
         var result = await ApiClient.Event.Add(manager.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
@@ -21,8 +21,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Event, 2)]
-    public async Task Suite08_Event02ListEvents()
+    public async Task ListEvents()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -38,8 +37,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Event, 3)]
-    public async Task Suite08_Event03GetEvent()
+    public async Task GetEvent()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);

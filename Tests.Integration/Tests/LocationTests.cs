@@ -1,19 +1,19 @@
 using System.Net;
 using Api.Models.LocationModels;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class LocationTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.Location, 1)]
-    public async Task Suite07Location_01AddLocation()
+    public async Task AddLocation()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         
-        var parameters = new LocationAddPostModel(DataFactory.String());
+        var parameters = new LocationAddPostModel(Data.String());
         var result = await ApiClient.Location.Add(manager.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
@@ -21,8 +21,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Location, 2)]
-    public async Task Suite07Location_02ListLocations()
+    public async Task ListLocations()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -38,8 +37,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Location, 3)]
-    public async Task Suite07Location_03GetLocation()
+    public async Task GetLocation()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);

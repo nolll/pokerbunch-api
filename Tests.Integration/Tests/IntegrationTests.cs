@@ -8,33 +8,24 @@ using Xunit;
 namespace Tests.Integration.Tests;
 
 [Collection(nameof(TestFixture))]
-[TestCaseOrderer(typeof(TestSorter))]
-public partial class IntegrationTests : IAsyncLifetime
+public abstract class IntegrationTests2(TestFixture fixture) : IAsyncLifetime
 {
-    public IntegrationTests(TestFixture fixture)
-    {
-        Fixture = fixture;
-        Db = fixture.Db;
-        Data = fixture.Data;
-        DataFactory = fixture.DataFactory;
-        LoginHelper = fixture.LoginHelper;
-        ApiClient = fixture.ApiClient;
-        EmailSender = fixture.EmailSender;
-    }
+    protected TestFixture Fixture { get; } = fixture;
+    protected PokerBunchDbContext Db { get; } = fixture.Db;
+    protected TestDataFactory Data { get; } = fixture.DataFactory;
+    protected ApiClientForTest ApiClient { get; } = fixture.ApiClient;
+    protected FakeEmailSender EmailSender { get; } = fixture.EmailSender;
 
-    public TestFixture Fixture { get; }
-    private PokerBunchDbContext Db { get; }
-    private TestData Data { get; }
-    private TestDataFactory DataFactory { get; }
-    private LoginHelper LoginHelper { get; }
-    private ApiClientForTest ApiClient { get; }
-    private FakeEmailSender EmailSender { get; }
-
-    private static class ActionType
+    protected static class ActionType
     {
         public const string Report = "report";
         public const string Buyin = "buyin";
         public const string Cashout = "cashout";
+    }
+    
+    public async ValueTask InitializeAsync()
+    {
+        await Task.CompletedTask;
     }
 
     public async ValueTask DisposeAsync()
@@ -53,10 +44,5 @@ public partial class IntegrationTests : IAsyncLifetime
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_join_request");
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_bunch");
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_user");
-    }
-
-    public async ValueTask InitializeAsync()
-    {
-        await Task.CompletedTask;
     }
 }

@@ -1,14 +1,14 @@
 using System.Net;
 using Api.Models.UserModels;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class UserTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.User, 1)]
-    public async Task Suite11User_01GetUserAsAdmin()
+    public async Task GetUserAsAdmin()
     {
         var admin = await Fixture.CreateUser();
         await admin.AsAdmin();
@@ -21,8 +21,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.User, 2)]
-    public async Task Suite11User_02GetUserAsUser()
+    public async Task GetUserAsUser()
     {
         var user = await Fixture.CreateUser();
         
@@ -34,8 +33,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.User, 3)]
-    public async Task Suite11User_03ListUsersAsAdmin()
+    public async Task ListUsersAsAdmin()
     {
         var user = await Fixture.CreateUser();
         var admin = await Fixture.CreateUser();
@@ -65,8 +63,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.User, 4)]
-    public async Task Suite11User_04ListUsersAsUser()
+    public async Task ListUsersAsUser()
     {
         var user = await Fixture.CreateUser();
         var result = await ApiClient.User.List(user.Token);
@@ -74,8 +71,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.User, 5)]
-    public async Task Suite11User_05Profile()
+    public async Task Profile()
     {
         var user = await Fixture.CreateUser();
         var result = await ApiClient.User.Profile(user.Token);
@@ -86,18 +82,16 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.User, 6)]
-    public async Task Suite11User_06ChangePassword()
+    public async Task ChangePassword()
     {
         var user = await Fixture.CreateUser();
-        var parameters = new ChangePasswordPostModel(DataFactory.String(), user.Password);
+        var parameters = new ChangePasswordPostModel(Data.String(), user.Password);
         var result = await ApiClient.User.PasswordChange(user.Token, parameters);
         result.Success.Should().BeTrue();
     }
 
     [Fact]
-    [Order(TestSuite.User, 7)]
-    public async Task Suite11User_07ResetPassword()
+    public async Task ResetPassword()
     {
         var user = await Fixture.CreateUser();
         var parameters = new ResetPasswordPostModel(user.Email);
@@ -107,13 +101,12 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.User, 8)]
-    public async Task Suite11User_08UpdateUser()
+    public async Task UpdateUser()
     {
         var user = await Fixture.CreateUser();
-        var displayName = DataFactory.String();
-        var realName = DataFactory.String();
-        var email = DataFactory.EmailAddress();
+        var displayName = Data.String();
+        var realName = Data.String();
+        var email = Data.EmailAddress();
         var parameters = new UpdateUserPostModel(displayName, email, realName);
         var result = await ApiClient.User.Update(user.Token, user.UserName, parameters);
         result.Success.Should().BeTrue();

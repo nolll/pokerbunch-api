@@ -1,20 +1,20 @@
 using System.Net;
 using Api.Models.UserModels;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class UserRegistrationTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.UserRegistration, 1)]
-    public async Task Suite03UserRegistration_01RegisterReturns200()
+    public async Task Register()
     {
         var parameters = new AddUserPostModel(
-            DataFactory.String(),
-            DataFactory.String(),
-            DataFactory.EmailAddress(),
-            DataFactory.String());
+            Data.String(),
+            Data.String(),
+            Data.EmailAddress(),
+            Data.String());
         
         var result = await ApiClient.User.Add(parameters);
         

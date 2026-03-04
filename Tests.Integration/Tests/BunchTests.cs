@@ -7,17 +7,16 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class BunchTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.Login, 0)]
-    public async Task Suite06Bunch_01CreateBunch()
+    public async Task CreateBunch()
     {
         var user = await Fixture.CreateUser();
         
         var parameters = new AddBunchPostModel(
             "Bunch 1",
-            DataFactory.String(), 
+            Data.String(), 
             "Europe/Stockholm", 
             "$", 
             "{SYMBOL}{AMOUNT}");
@@ -40,8 +39,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 2)]
-    public async Task Suite06Bunch_02ApplyForMembershipAndApprove()
+    public async Task ApplyForMembershipAndApprove()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -65,20 +63,18 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 3)]
-    public async Task Suite06Bunch_03AddPlayerWithoutUser()
+    public async Task AddPlayerWithoutUser()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         
-        var parameters = new PlayerAddPostModel(DataFactory.String());
+        var parameters = new PlayerAddPostModel(Data.String());
         var result = await ApiClient.Player.Add(manager.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 4)]
-    public async Task Suite06Bunch_04GetBunchAsAdmin()
+    public async Task GetBunchAsAdmin()
     {
         var admin = await Fixture.CreateUser();
         await admin.AsAdmin();
@@ -90,8 +86,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 5)]
-    public async Task Suite06Bunch_05GetBunchAsManager()
+    public async Task GetBunchAsManager()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -101,8 +96,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 6)]
-    public async Task Suite06Bunch_06GetBunchAsPlayer()
+    public async Task GetBunchAsPlayer()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -116,19 +110,18 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 7)]
-    public async Task Suite06Bunch_07UpdateBunch()
+    public async Task UpdateBunch()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
         
         var parameters = new UpdateBunchPostModel(
-            DataFactory.String(), 
-            DataFactory.String(), 
+            Data.String(), 
+            Data.String(), 
             "America/Jamaica", 
             "kr", 
             "{AMOUNT} {SYMBOL}", 
-            DataFactory.Int());
+            Data.Int());
         
         var updateResult = await ApiClient.Bunch.Update(manager.Token, bunch.Id, parameters);
         
@@ -142,8 +135,7 @@ public partial class IntegrationTests
     }
     
     [Fact]
-    [Order(TestSuite.Bunch, 8)]
-    public async Task Suite06Bunch_08ListBunches()
+    public async Task ListBunches()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -158,8 +150,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 9)]
-    public async Task Suite06Bunch_09ListUserBunchesForUserWithOneBunch()
+    public async Task ListUserBunchesForUserWithOneBunch()
     {
         var manager = await Fixture.CreateUser();
         var bunch = await Fixture.CreateBunch(manager);
@@ -173,8 +164,7 @@ public partial class IntegrationTests
     }
 
     [Fact]
-    [Order(TestSuite.Bunch, 10)]
-    public async Task Suite06Bunch_10ListUserBunchesForUserWithNoBunches()
+    public async Task ListUserBunchesForUserWithNoBunches()
     {
         var manager = await Fixture.CreateUser();
         await Fixture.CreateBunch(manager);

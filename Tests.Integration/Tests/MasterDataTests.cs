@@ -1,14 +1,14 @@
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public partial class IntegrationTests
+public class MasterDataTests(TestFixture fixture) : IntegrationTests2(fixture)
 {
     [Fact]
-    [Order(TestSuite.MasterData, 1)]
-    public async Task Suite01MasterData_01MasterDataExists()
+    public async Task MasterDataExists()
     {
         var query = Db.PbRole.OrderBy(o => o.RoleId);
         var roles = await query.ToListAsync(CancellationToken.None);

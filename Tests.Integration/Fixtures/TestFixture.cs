@@ -21,9 +21,7 @@ public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
 
     public PokerBunchDbContext Db { get; }
     public ApiClientForTest ApiClient { get; }
-    public LoginHelper LoginHelper { get; }
     public TestDataFactory DataFactory { get; }
-    public TestData Data { get; }
     
     public TestFixture()
     {
@@ -44,8 +42,6 @@ public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
         _webApplicationFactory = new WebApplicationInTest(EmailSender, _postgres.GetConnectionString());
         ApiClient = new ApiClientForTest(new HttpClientForTest(_webApplicationFactory));
         DataFactory = new TestDataFactory();
-        Data = new TestData(DataFactory);
-        LoginHelper = new LoginHelper(ApiClient, Data);
     }
 
     public async Task<BunchFixture> CreateBunch(
