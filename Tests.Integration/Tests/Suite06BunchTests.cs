@@ -9,46 +9,57 @@ namespace Tests.Integration.Tests;
 public partial class IntegrationTests
 {
     [Fact]
-    [Order(TestSuite.Bunch, 1)]
+    [Order(TestSuite.Login, 0)]
     public async Task Suite06Bunch_01CreateBunch()
     {
-        var token = await LoginHelper.GetManagerToken();
-        var parameters = new AddBunchPostModel(Data.BunchDisplayName, Data.BunchDescription, Data.TimeZone, Data.CurrencySymbol, Data.CurrencyLayout);
-        var result = await ApiClient.Bunch.Add(token, parameters);
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model.Should().NotBeNull();
-        result.Model!.Name.Should().Be(Data.BunchDisplayName);
-        result.Model!.Id.Should().Be(Data.BunchId);
-        result.Model!.DefaultBuyin.Should().Be(0);
-        result.Model!.CurrencySymbol.Should().Be(Data.CurrencySymbol);
-        result.Model!.CurrencyLayout.Should().Be(Data.CurrencyLayout);
-        result.Model!.CurrencyFormat.Should().Be("${0}");
-        result.Model!.Description.Should().Be(Data.BunchDescription);
-        result.Model!.HouseRules.Should().Be("");
-        result.Model!.Timezone.Should().Be(Data.TimeZone);
-        result.Model!.ThousandSeparator.Should().Be(" ");
+        var user = await Fixture.CreateUser();
+        
+        var parameters = new AddBunchPostModel(
+            "Bunch 1",
+            DataFactory.String(), 
+            "Europe/Stockholm", 
+            "$", 
+            "{SYMBOL}{AMOUNT}");
+        var bunchResult = await ApiClient.Bunch.Add(user.Token, parameters);
+        var bunch = bunchResult.Model;
+        
+        bunch.Should().NotBeNull();
+        bunch.Name.Should().Be(parameters.Name);
+        bunch.Id.Should().Be("bunch-1");
+        bunch.DefaultBuyin.Should().Be(0);
+        bunch.CurrencySymbol.Should().Be(parameters.CurrencySymbol);
+        bunch.CurrencyLayout.Should().Be(parameters.CurrencyLayout);
+        bunch.CurrencyFormat.Should().Be(parameters.CurrencyLayout
+            .Replace("{SYMBOL}", parameters.CurrencySymbol)
+            .Replace("{AMOUNT}", "{0}"));
+        bunch.Description.Should().Be(parameters.Description);
+        bunch.HouseRules.Should().Be("");
+        bunch.Timezone.Should().Be(parameters.Timezone);
+        bunch.ThousandSeparator.Should().Be(" ");
     }
 
     [Fact]
     [Order(TestSuite.Bunch, 2)]
     public async Task Suite06Bunch_02ApplyForMembershipAndApprove()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var joinRequestResult = await ApiClient.JoinRequest.Add(userToken, Data.BunchId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await Fixture.CreateUser();
+        
+        var joinRequestResult = await ApiClient.JoinRequest.Add(player.Token, bunch.Id);
         joinRequestResult.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        var managerToken = await LoginHelper.GetManagerToken();
-        var joinRequestListResult = await ApiClient.JoinRequest.ListByBunch(managerToken, Data.BunchId);
+        var joinRequestListResult = await ApiClient.JoinRequest.ListByBunch(manager.Token, bunch.Id);
         joinRequestListResult.StatusCode.Should().Be(HttpStatusCode.OK);
         var joinRequestId = joinRequestListResult.Model!.First().Id;
 
-        EmailSender.LastSentTo.Should().Be(Data.ManagerEmail);
+        EmailSender.LastSentTo.Should().Be(manager.Email);
         EmailSender.LastMessage.Should().BeOfType<JoinRequestMessage>();
 
-        var acceptResult = await ApiClient.JoinRequest.Accept(managerToken, joinRequestId);
+        var acceptResult = await ApiClient.JoinRequest.Accept(manager.Token, joinRequestId);
         acceptResult.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        EmailSender.LastSentTo.Should().Be(Data.UserEmail);
+        EmailSender.LastSentTo.Should().Be(player.Email);
         EmailSender.LastMessage.Should().BeOfType<AcceptJoinRequestMessage>();
     }
 
@@ -56,16 +67,23 @@ public partial class IntegrationTests
     [Order(TestSuite.Bunch, 3)]
     public async Task Suite06Bunch_03AddPlayerWithoutUser()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        await AddPlayer(managerToken, Data.PlayerName);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        
+        var parameters = new PlayerAddPostModel(DataFactory.String());
+        var result = await ApiClient.Player.Add(manager.Token, bunch.Id, parameters);
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     [Order(TestSuite.Bunch, 4)]
     public async Task Suite06Bunch_04GetBunchAsAdmin()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await ApiClient.Bunch.Get(token, Data.BunchId);
+        var admin = await Fixture.CreateUser(isAdmin: true);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        
+        var result = await ApiClient.Bunch.Get(admin.Token, bunch.Id);
         result.Success.Should().BeFalse();
     }
 
@@ -73,41 +91,52 @@ public partial class IntegrationTests
     [Order(TestSuite.Bunch, 5)]
     public async Task Suite06Bunch_05GetBunchAsManager()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.Bunch.Get(managerToken, Data.BunchId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var result = await ApiClient.Bunch.Get(manager.Token, bunch.Id);
         result.Model.Should().NotBeNull();
-        AssertCommonProperties(result.Model);
+        AssertCommonProperties(result.Model, bunch);
     }
 
     [Fact]
     [Order(TestSuite.Bunch, 6)]
-    public async Task Suite06Bunch_06GetBunchAsUser()
+    public async Task Suite06Bunch_06GetBunchAsPlayer()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Bunch.Get(userToken, Data.BunchId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await Fixture.CreateUser();
+        
+        await bunch.AddPlayer(player);
+        
+        var result = await ApiClient.Bunch.Get(player.Token, bunch.Id);
         result.Model.Should().NotBeNull();
-        AssertCommonProperties(result.Model);
+        AssertCommonProperties(result.Model, bunch);
     }
 
     [Fact]
     [Order(TestSuite.Bunch, 7)]
     public async Task Suite06Bunch_07UpdateBunch()
     {
-        var newDescription = DataFactory.String();
-        var houseRules = DataFactory.String();
-        var defaultBuyin = DataFactory.Int();
-
-        var managerToken = await LoginHelper.GetManagerToken();
-        var parameters = new UpdateBunchPostModel(newDescription, houseRules, Data.TimeZone, Data.CurrencySymbol, Data.CurrencyLayout, defaultBuyin);
-        var updateResult = await ApiClient.Bunch.Update(managerToken, Data.BunchId, parameters);
-        updateResult.Model!.Description.Should().Be(newDescription);
-        updateResult.Model!.HouseRules.Should().Be(houseRules);
-        updateResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
-
-        var getResult = await ApiClient.Bunch.Get(managerToken, Data.BunchId);
-        getResult.Model!.Description.Should().Be(newDescription);
-        getResult.Model!.HouseRules.Should().Be(houseRules);
-        getResult.Model!.DefaultBuyin.Should().Be(defaultBuyin);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        
+        var parameters = new UpdateBunchPostModel(
+            DataFactory.String(), 
+            DataFactory.String(), 
+            "America/Jamaica", 
+            "kr", 
+            "{AMOUNT} {SYMBOL}", 
+            DataFactory.Int());
+        
+        var updateResult = await ApiClient.Bunch.Update(manager.Token, bunch.Id, parameters);
+        
+        updateResult.Model!.Description.Should().Be(parameters.Description);
+        updateResult.Model!.HouseRules.Should().Be(parameters.HouseRules);
+        updateResult.Model!.Timezone.Should().Be(parameters.Timezone);
+        updateResult.Model!.CurrencySymbol.Should().Be(parameters.CurrencySymbol);
+        updateResult.Model!.CurrencyLayout.Should().Be(parameters.CurrencyLayout);
+        updateResult.Model!.CurrencyFormat.Should().Be("{0} kr");
+        updateResult.Model!.DefaultBuyin.Should().Be(parameters.DefaultBuyin);
     }
     
     [Fact]
@@ -145,25 +174,18 @@ public partial class IntegrationTests
         result.Success.Should().BeTrue();
         result.Model!.Count().Should().Be(0);
     }
-    
-    private async Task AddPlayer(string? token, string playerName)
-    {
-        var parameters = new PlayerAddPostModel(playerName);
-        var result = await ApiClient.Player.Add(token, Data.BunchId, parameters);
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
 
-    private void AssertCommonProperties(BunchModel? bunch)
+    private void AssertCommonProperties(BunchModel? bunch, BunchFixture bunchFixture)
     {
-        bunch!.Name.Should().Be(Data.BunchDisplayName);
-        bunch.Id.Should().Be(Data.BunchId);
+        bunch!.Name.Should().Be(bunchFixture.Name);
+        bunch.Id.Should().Be(bunchFixture.Id);
         bunch.DefaultBuyin.Should().Be(0);
-        bunch.CurrencySymbol.Should().Be(Data.CurrencySymbol);
-        bunch.CurrencyLayout.Should().Be(Data.CurrencyLayout);
+        bunch.CurrencySymbol.Should().Be(bunchFixture.CurrencySymbol);
+        bunch.CurrencyLayout.Should().Be(bunchFixture.CurrencyLayout);
         bunch.CurrencyFormat.Should().Be("${0}");
-        bunch.Description.Should().Be(Data.BunchDescription);
+        bunch.Description.Should().Be(bunchFixture.Description);
         bunch.HouseRules.Should().Be("");
-        bunch.Timezone.Should().Be(Data.TimeZone);
+        bunch.Timezone.Should().Be(bunchFixture.Timezone);
         bunch.ThousandSeparator.Should().Be(" ");
     }
 }

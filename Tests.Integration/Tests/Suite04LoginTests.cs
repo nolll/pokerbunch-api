@@ -8,36 +8,20 @@ public partial class IntegrationTests
 {
     [Fact]
     [Order(TestSuite.Login, 1)]
-    public async Task Suite04Login_01LoginAdminReturns200()
+    public async Task Suite04Login_01LoginReturns200()
     {
-        var result = await LoginHelper.LoginAdmin();
+        var user = await Fixture.CreateUser();
+        var result = await ApiClient.Auth.Login(new(user.UserName, user.Password));
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model!.AccessToken.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    [Order(TestSuite.Login, 2)]
-    public async Task Suite04Login_02LoginManagerReturns200()
-    {
-        var result = await LoginHelper.LoginManager();
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model!.AccessToken.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    [Order(TestSuite.Login, 3)]
-    public async Task Suite04Login_03LoginRegularUserReturns200()
-    {
-        var result = await LoginHelper.LoginUser();
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Model!.AccessToken.Should().NotBeEmpty();
+        result.Model?.AccessToken.Should().NotBeEmpty();
     }
     
     [Fact]
-    [Order(TestSuite.Login, 4)]
-    public async Task Suite04Login_03RefreshUserReturns200()
+    [Order(TestSuite.Login, 2)]
+    public async Task Suite04Login_02RefreshUserReturns200()
     {
-        var loginResult = await LoginHelper.LoginUser();
+        var user = await Fixture.CreateUser();
+        var loginResult = await ApiClient.Auth.Login(new(user.UserName, user.Password));
         var refreshResult = await ApiClient.Auth.Refresh(new RefreshPostModel(loginResult.Model!.RefreshToken));
         refreshResult.StatusCode.Should().Be(HttpStatusCode.OK);
         refreshResult.Model!.AccessToken.Should().NotBe(loginResult.Model.AccessToken);

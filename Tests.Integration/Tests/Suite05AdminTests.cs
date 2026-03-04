@@ -9,18 +9,17 @@ public partial class IntegrationTests
     [Order(TestSuite.Admin, 1)]
     public async Task Suite05Admin_01ClearCacheAsAdmin()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await ApiClient.General.ClearCache(token);
+        var user = await Fixture.CreateUser(isAdmin: true);
+        var result = await ApiClient.General.ClearCache(user.Token);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     [Order(TestSuite.Admin, 2)]
-    public async Task Suite05Admin_02ClearCacheAsManager()
+    public async Task Suite05Admin_02ClearCacheAsPlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.General.ClearCache(managerToken);
-        
+        var user = await Fixture.CreateUser();
+        var result = await ApiClient.General.ClearCache(user.Token);
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
@@ -28,17 +27,17 @@ public partial class IntegrationTests
     [Order(TestSuite.Admin, 3)]
     public async Task Suite05Admin_03SendTestEmailAsAdmin()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await ApiClient.General.TestEmail(token);
+        var user = await Fixture.CreateUser(isAdmin: true);
+        var result = await ApiClient.General.TestEmail(user.Token);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     [Order(TestSuite.Admin, 4)]
-    public async Task Suite05Admin_04SendTestEmailAsManager()
+    public async Task Suite05Admin_04SendTestEmailAsPlayer()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.General.TestEmail(managerToken);
+        var user = await Fixture.CreateUser(isAdmin: false);
+        var result = await ApiClient.General.TestEmail(user.Token);
         
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
