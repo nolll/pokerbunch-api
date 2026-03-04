@@ -2,6 +2,7 @@ using System.Net;
 using Api.Models.BunchModels;
 using Api.Models.PlayerModels;
 using Core.Messages;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;
@@ -141,41 +142,48 @@ public partial class IntegrationTests
     
     [Fact]
     [Order(TestSuite.Bunch, 8)]
-    public async Task Suite06Bunch_08ListBunchesAsUser()
+    public async Task Suite06Bunch_08ListBunches()
     {
-        var managerToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Bunch.List(managerToken);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var otherUser = await Fixture.CreateUser();
+        
+        var result = await ApiClient.Bunch.List(otherUser.Token);
         result.Success.Should().BeTrue();
         var list = result.Model!.ToList();
         var first = list.First();
         list.Count.Should().Be(1);
-        first.Name.Should().Be(Data.BunchDisplayName);
+        first.Name.Should().Be(bunch.Name);
     }
 
     [Fact]
     [Order(TestSuite.Bunch, 9)]
     public async Task Suite06Bunch_09ListUserBunchesForUserWithOneBunch()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var result = await ApiClient.Bunch.ListForUser(managerToken);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        
+        var result = await ApiClient.Bunch.ListForUser(manager.Token);
         result.Success.Should().BeTrue();
         var list = result.Model!.ToList();
         var first = list.First();
         list.Count.Should().Be(1);
-        first.Name.Should().Be(Data.BunchDisplayName);
+        first.Name.Should().Be(bunch.Name);
     }
 
     [Fact]
     [Order(TestSuite.Bunch, 10)]
     public async Task Suite06Bunch_10ListUserBunchesForUserWithNoBunches()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await ApiClient.Bunch.ListForUser(token);
+        var manager = await Fixture.CreateUser();
+        await Fixture.CreateBunch(manager);
+        var player = await Fixture.CreateUser();
+        var result = await ApiClient.Bunch.ListForUser(player.Token);
         result.Success.Should().BeTrue();
         result.Model!.Count().Should().Be(0);
     }
 
-    private void AssertCommonProperties(BunchModel? bunch, BunchFixture bunchFixture)
+    private static void AssertCommonProperties(BunchModel? bunch, BunchFixture bunchFixture)
     {
         bunch!.Name.Should().Be(bunchFixture.Name);
         bunch.Id.Should().Be(bunchFixture.Id);

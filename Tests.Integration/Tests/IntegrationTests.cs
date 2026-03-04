@@ -1,6 +1,7 @@
 using Infrastructure.Sql.Models;
 using Tests.Common;
 using Tests.Common.FakeServices;
+using Tests.Integration.Fixtures;
 using Xunit;
 
 namespace Tests.Integration.Tests;

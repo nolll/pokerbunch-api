@@ -1,5 +1,4 @@
 using Api.Models.BunchModels;
-using Api.Models.PlayerModels;
 using Api.Models.UserModels;
 using Core.Entities;
 using Infrastructure.Sql.Models;
@@ -9,7 +8,7 @@ using Tests.Common;
 using Tests.Common.FakeServices;
 using Xunit;
 
-namespace Tests.Integration;
+namespace Tests.Integration.Fixtures;
 
 [CollectionDefinition(nameof(TestFixture))]
 public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
@@ -66,7 +65,7 @@ public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
 
         var result = await ApiClient.Bunch.Add(user.Token, parameters);
         await user.Refresh();
-        return new BunchFixture(Db, ApiClient, DataFactory, result.Model!.Id, parameters);
+        return new BunchFixture(Db, ApiClient, DataFactory, user, result.Model!.Id, parameters);
     }
     
     public async Task<UserFixture> CreateUser(
@@ -104,53 +103,5 @@ public class TestFixture : ICollectionFixture<TestFixture>, IDisposable
         _webApplicationFactory.Dispose();
         Db.Dispose();
         Task.Run(() => _postgres.DisposeAsync());
-    }
-}
-
-public class UserFixture(ApiClientForTest apiClient, AddUserPostModel parameters, string token, string refreshToken)
-{
-    public string UserName { get; } = parameters.UserName;
-    public string Password { get; } = parameters.Password;
-    public string Email { get; } = parameters.Email;
-    public string Token { get; private set; } = token;
-    public string RefreshToken { get; } = refreshToken;
-    
-    public async Task Refresh()
-    {
-        var result = await apiClient.Auth.Refresh(new(RefreshToken));
-        
-        if (result.Success)
-            Token = result.Model!.AccessToken;
-        else
-            throw new Exception("Refresh failed");
-    }
-}
-
-public class BunchFixture(PokerBunchDbContext db, ApiClientForTest apiClient, TestDataFactory dataFactory, string id, AddBunchPostModel parameters)
-{
-    public string Id { get; } = id;
-    public string Name { get; } = parameters.Name;
-    public string CurrencySymbol { get; } = parameters.CurrencySymbol;
-    public string CurrencyLayout { get; } = parameters.CurrencyLayout;
-    public string Description { get; } = parameters.Description;
-    public string Timezone { get; } = parameters.Timezone;
-
-    public async Task AddPlayer(UserFixture userToAdd)
-    {
-        var dbUser = db.PbUser.First(o => o.UserName == userToAdd.UserName);
-        var dbBunch = db.PbBunch.First(o => o.Name == Id);
-        var player = new PbPlayer
-        {
-            BunchId = dbBunch.BunchId,
-            UserId = dbUser.UserId,
-            RoleId = (int)Role.Player,
-            Approved = true,
-            Color = "#000000"
-        };
-
-        db.PbPlayer.Add(player);
-
-        await db.SaveChangesAsync();
-        await userToAdd.Refresh();
     }
 }
