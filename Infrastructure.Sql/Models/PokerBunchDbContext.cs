@@ -172,7 +172,6 @@ public partial class PokerBunchDbContext : DbContext
             entity.HasKey(e => e.PlayerId).HasName("pb_player_pkey");
 
             entity.HasOne(d => d.Bunch).WithMany(p => p.PbPlayer)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_bunch");
 
             entity.HasOne(d => d.User).WithMany(p => p.PbPlayer).HasConstraintName("fk_user");

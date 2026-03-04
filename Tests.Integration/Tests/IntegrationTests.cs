@@ -1,4 +1,5 @@
 using Infrastructure.Sql.Models;
+using Microsoft.EntityFrameworkCore;
 using Tests.Common;
 using Tests.Common.FakeServices;
 using Tests.Integration.Fixtures;
@@ -21,7 +22,7 @@ public partial class IntegrationTests : IAsyncLifetime
         EmailSender = fixture.EmailSender;
     }
 
-    public TestFixture Fixture { get; set; }
+    public TestFixture Fixture { get; }
     private PokerBunchDbContext Db { get; }
     private TestData Data { get; }
     private TestDataFactory DataFactory { get; }
@@ -43,22 +44,14 @@ public partial class IntegrationTests : IAsyncLifetime
 
     private async Task ClearDatabase()
     {
-        Db.PbCashgameCheckpoint.RemoveRange(Db.PbCashgameCheckpoint);
-        await Db.SaveChangesAsync();
-        Db.PbEvent.RemoveRange(Db.PbEvent);
-        await Db.SaveChangesAsync();
-        Db.PbCashgame.RemoveRange(Db.PbCashgame);
-        await Db.SaveChangesAsync();
-        Db.PbLocation.RemoveRange(Db.PbLocation);
-        await Db.SaveChangesAsync();
-        Db.PbPlayer.RemoveRange(Db.PbPlayer);
-        await Db.SaveChangesAsync();
-        Db.PbJoinRequest.RemoveRange(Db.PbJoinRequest);
-        await Db.SaveChangesAsync();
-        Db.PbBunch.RemoveRange(Db.PbBunch);
-        await Db.SaveChangesAsync();
-        Db.PbUser.RemoveRange(Db.PbUser);
-        await Db.SaveChangesAsync();
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_cashgame_checkpoint");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_event");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_cashgame");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_location");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_player");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_join_request");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_bunch");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_user");
     }
 
     public async ValueTask InitializeAsync()
