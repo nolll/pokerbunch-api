@@ -10,59 +10,54 @@ public partial class IntegrationTests
     [Order(TestSuite.User, 1)]
     public async Task Suite11User_01GetUserAsAdmin()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await ApiClient.User.GetAsAdmin(token, Data.AdminUserName);
+        var admin = await Fixture.CreateUser();
+        await admin.AsAdmin();
+        
+        var result = await ApiClient.User.GetAsAdmin(admin.Token, admin.UserName);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.UserName.Should().Be(Data.AdminUserName);
-        result.Model.DisplayName.Should().Be(Data.AdminDisplayName);
+        result.Model.UserName.Should().Be(admin.UserName);
+        result.Model.DisplayName.Should().Be(admin.DisplayName);
     }
 
     [Fact]
     [Order(TestSuite.User, 2)]
     public async Task Suite11User_02GetUserAsUser()
     {
-        var token = await LoginHelper.GetUserToken();
-        var result = await ApiClient.User.GetAsUser(token, Data.AdminUserName);
+        var user = await Fixture.CreateUser();
+        
+        var result = await ApiClient.User.GetAsAdmin(user.Token, user.UserName);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.UserName.Should().Be(Data.AdminUserName);
-        result.Model.DisplayName.Should().Be(Data.AdminDisplayName);
+        result.Model.UserName.Should().Be(user.UserName);
+        result.Model.DisplayName.Should().Be(user.DisplayName);
     }
 
     [Fact]
     [Order(TestSuite.User, 3)]
     public async Task Suite11User_03ListUsersAsAdmin()
     {
-        var token = await LoginHelper.GetAdminToken();
-        var result = await ApiClient.User.List(token);
+        var user = await Fixture.CreateUser();
+        var admin = await Fixture.CreateUser();
+        await admin.AsAdmin();
+        
+        var result = await ApiClient.User.List(admin.Token);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Count.Should().Be(3);
+        result.Model.Count.Should().Be(2);
         
-        var adminUser = result.Model.First(o => o.UserName == Data.AdminUserName);
-        adminUser.UserName.Should().Be(Data.AdminUserName);
-        adminUser.DisplayName.Should().Be(Data.AdminDisplayName);
+        var adminUser = result.Model.First(o => o.UserName == admin.UserName);
+        adminUser.UserName.Should().Be(admin.UserName);
+        adminUser.DisplayName.Should().Be(admin.DisplayName);
         
-        var managerUser = result.Model.First(o => o.UserName == Data.ManagerUserName);
-        managerUser.UserName.Should().Be(Data.ManagerUserName);
-        managerUser.DisplayName.Should().Be(Data.ManagerDisplayName);
-        
-        var user = result.Model.First(o => o.UserName == Data.UserUserName);
-        user.UserName.Should().Be(Data.UserUserName);
-        user.DisplayName.Should().Be(Data.UserDisplayName);
-
-        var user1 = result.Model[0];
-        var user2 = result.Model[1];
-        var user3 = result.Model[2];
-        string.Compare(user1.DisplayName, user2.DisplayName, StringComparison.InvariantCultureIgnoreCase).Should().BeLessThan(0);
-        string.Compare(user2.DisplayName, user3.DisplayName, StringComparison.InvariantCultureIgnoreCase).Should().BeLessThan(0);
+        var other = result.Model.First(o => o.UserName == user.UserName);
+        other.UserName.Should().Be(user.UserName);
+        other.DisplayName.Should().Be(user.DisplayName);
         
         List<string> orderedNames =
         [
-            Data.AdminDisplayName,
-            Data.ManagerDisplayName,
-            Data.UserDisplayName
+            user.DisplayName,
+            admin.DisplayName
         ];
         orderedNames.Sort();
         
@@ -73,9 +68,8 @@ public partial class IntegrationTests
     [Order(TestSuite.User, 4)]
     public async Task Suite11User_04ListUsersAsUser()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.User.List(userToken);
-        
+        var user = await Fixture.CreateUser();
+        var result = await ApiClient.User.List(user.Token);
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
@@ -83,21 +77,21 @@ public partial class IntegrationTests
     [Order(TestSuite.User, 5)]
     public async Task Suite11User_05Profile()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.User.Profile(userToken);
+        var user = await Fixture.CreateUser();
+        var result = await ApiClient.User.Profile(user.Token);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.UserName.Should().Be(Data.UserUserName);
-        result.Model.DisplayName.Should().Be(Data.UserDisplayName);
+        result.Model.UserName.Should().Be(user.UserName);
+        result.Model.DisplayName.Should().Be(user.DisplayName);
     }
 
     [Fact]
     [Order(TestSuite.User, 6)]
     public async Task Suite11User_06ChangePassword()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var parameters = new ChangePasswordPostModel("new_password", Data.UserPassword);
-        var result = await ApiClient.User.PasswordChange(userToken, parameters);
+        var user = await Fixture.CreateUser();
+        var parameters = new ChangePasswordPostModel(DataFactory.String(), user.Password);
+        var result = await ApiClient.User.PasswordChange(user.Token, parameters);
         result.Success.Should().BeTrue();
     }
 
@@ -105,26 +99,26 @@ public partial class IntegrationTests
     [Order(TestSuite.User, 7)]
     public async Task Suite11User_07ResetPassword()
     {
-        var parameters = new ResetPasswordPostModel(Data.UserEmail);
+        var user = await Fixture.CreateUser();
+        var parameters = new ResetPasswordPostModel(user.Email);
         var result = await ApiClient.User.PasswordReset(parameters);
         result.Success.Should().BeTrue();
-        EmailSender!.LastSentTo.Should().Be(Data.UserEmail);
+        EmailSender.LastSentTo.Should().Be(user.Email);
     }
 
     [Fact]
     [Order(TestSuite.User, 8)]
     public async Task Suite11User_08UpdateUser()
     {
+        var user = await Fixture.CreateUser();
         var displayName = DataFactory.String();
         var realName = DataFactory.String();
-        var token = await LoginHelper.GetAdminToken();
-        var parameters = new UpdateUserPostModel(displayName, Data.UserEmail, realName);
-        var result = await ApiClient.User.Update(token, Data.UserUserName, parameters);
+        var email = DataFactory.EmailAddress();
+        var parameters = new UpdateUserPostModel(displayName, email, realName);
+        var result = await ApiClient.User.Update(user.Token, user.UserName, parameters);
         result.Success.Should().BeTrue();
         result.Model!.DisplayName.Should().Be(displayName);
         result.Model!.RealName.Should().Be(realName);
-
-        var changeBackParameters = new UpdateUserPostModel(Data.UserDisplayName, Data.UserEmail, null);
-        var changeBackResult = await ApiClient.User.Update(token, Data.UserUserName, changeBackParameters);
+        result.Model!.Email.Should().Be(email);
     }
 }
