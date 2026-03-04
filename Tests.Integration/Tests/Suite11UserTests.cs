@@ -39,12 +39,34 @@ public partial class IntegrationTests
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(3);
-        result.Model[0].UserName.Should().Be(Data.AdminUserName);
-        result.Model[0].DisplayName.Should().Be(Data.AdminDisplayName);
-        result.Model[1].UserName.Should().Be(Data.ManagerUserName);
-        result.Model[1].DisplayName.Should().Be(Data.ManagerDisplayName);
-        result.Model[2].UserName.Should().Be(Data.UserUserName);
-        result.Model[2].DisplayName.Should().Be(Data.UserDisplayName);
+        
+        var adminUser = result.Model.First(o => o.UserName == Data.AdminUserName);
+        adminUser.UserName.Should().Be(Data.AdminUserName);
+        adminUser.DisplayName.Should().Be(Data.AdminDisplayName);
+        
+        var managerUser = result.Model.First(o => o.UserName == Data.ManagerUserName);
+        managerUser.UserName.Should().Be(Data.ManagerUserName);
+        managerUser.DisplayName.Should().Be(Data.ManagerDisplayName);
+        
+        var user = result.Model.First(o => o.UserName == Data.UserUserName);
+        user.UserName.Should().Be(Data.UserUserName);
+        user.DisplayName.Should().Be(Data.UserDisplayName);
+
+        var user1 = result.Model[0];
+        var user2 = result.Model[1];
+        var user3 = result.Model[2];
+        string.Compare(user1.DisplayName, user2.DisplayName, StringComparison.InvariantCultureIgnoreCase).Should().BeLessThan(0);
+        string.Compare(user2.DisplayName, user3.DisplayName, StringComparison.InvariantCultureIgnoreCase).Should().BeLessThan(0);
+        
+        List<string> orderedNames =
+        [
+            Data.AdminDisplayName,
+            Data.ManagerDisplayName,
+            Data.UserDisplayName
+        ];
+        orderedNames.Sort();
+        
+        result.Model.Select(o => o.DisplayName).Should().BeEquivalentTo(orderedNames);
     }
 
     [Fact]

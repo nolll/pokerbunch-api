@@ -76,24 +76,24 @@ public partial class IntegrationTests
         result1.Model.Players.Count.Should().Be(3);
 
         result1.Model.Players[0].Name.Should().Be(Data.PlayerName);
-        result1.Model.Players[0].Actions[0].Type.Should().Be("buyin");
+        result1.Model.Players[0].Actions[0].Type.Should().Be(ActionType.Buyin);
         result1.Model.Players[0].Actions[0].Added.Should().Be(100);
-        result1.Model.Players[0].Actions[1].Type.Should().Be("report");
+        result1.Model.Players[0].Actions[1].Type.Should().Be(ActionType.Report);
         result1.Model.Players[0].Actions[1].Stack.Should().Be(175);
 
         result1.Model.Players[1].Name.Should().Be(Data.UserDisplayName);
-        result1.Model.Players[1].Actions[0].Type.Should().Be("buyin");
+        result1.Model.Players[1].Actions[0].Type.Should().Be(ActionType.Buyin);
         result1.Model.Players[1].Actions[0].Added.Should().Be(200);
-        result1.Model.Players[1].Actions[1].Type.Should().Be("report");
+        result1.Model.Players[1].Actions[1].Type.Should().Be(ActionType.Report);
         result1.Model.Players[1].Actions[1].Stack.Should().Be(265);
 
         result1.Model.Players[2].Name.Should().Be(Data.ManagerDisplayName);
-        result1.Model.Players[2].Actions[0].Type.Should().Be("buyin");
+        result1.Model.Players[2].Actions[0].Type.Should().Be(ActionType.Buyin);
         result1.Model.Players[2].Actions[0].Added.Should().Be(100);
-        result1.Model.Players[2].Actions[1].Type.Should().Be("buyin");
+        result1.Model.Players[2].Actions[1].Type.Should().Be(ActionType.Buyin);
         result1.Model.Players[2].Actions[1].Added.Should().Be(100);
         result1.Model.Players[2].Actions[1].Stack.Should().Be(150);
-        result1.Model.Players[2].Actions[2].Type.Should().Be("report");
+        result1.Model.Players[2].Actions[2].Type.Should().Be(ActionType.Report);
         result1.Model.Players[2].Actions[2].Stack.Should().Be(75);
     }
 
@@ -119,16 +119,16 @@ public partial class IntegrationTests
         result.Model.IsRunning.Should().BeFalse();
         result.Model.Players.Count.Should().Be(3);
 
-        result.Model.Players[0].Name.Should().Be("Player Name");
-        result.Model.Players[0].Actions[2].Type.Should().Be("cashout");
+        result.Model.Players[0].Name.Should().Be(Data.PlayerName);
+        result.Model.Players[0].Actions[2].Type.Should().Be(ActionType.Cashout);
         result.Model.Players[0].Actions[2].Stack.Should().Be(310);
 
-        result.Model.Players[1].Name.Should().Be("User");
-        result.Model.Players[1].Actions[2].Type.Should().Be("cashout");
+        result.Model.Players[1].Name.Should().Be(Data.UserDisplayName);
+        result.Model.Players[1].Actions[2].Type.Should().Be(ActionType.Cashout);
         result.Model.Players[1].Actions[2].Stack.Should().Be(255);
 
-        result.Model.Players[2].Name.Should().Be("Manager");
-        result.Model.Players[2].Actions[3].Type.Should().Be("cashout");
+        result.Model.Players[2].Name.Should().Be(Data.ManagerDisplayName);
+        result.Model.Players[2].Actions[3].Type.Should().Be(ActionType.Cashout);
         result.Model.Players[2].Actions[3].Stack.Should().Be(85);
     }
 
@@ -248,21 +248,21 @@ public partial class IntegrationTests
 
     private async Task Buyin(string? token, string cashgameId, string playerId, int buyin, int leftInStack = 0)
     {
-        var parameters = new AddCashgameActionPostModel("buyin", playerId, buyin, leftInStack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Buyin, playerId, buyin, leftInStack);
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private async Task Report(string? token, string cashgameId, string playerId, int stack)
     {
-        var parameters = new AddCashgameActionPostModel("report", playerId, 0, stack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Report, playerId, 0, stack);
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private async Task Cashout(string? token, string cashgameId, string playerId, int stack)
     {
-        var parameters = new AddCashgameActionPostModel("cashout", playerId, 0, stack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Cashout, playerId, 0, stack);
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }

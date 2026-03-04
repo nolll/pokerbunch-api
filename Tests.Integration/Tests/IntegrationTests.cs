@@ -15,4 +15,11 @@ public partial class IntegrationTests(TestFixture fixture)
     private LoginHelper LoginHelper { get; } = fixture.LoginHelper;
     private ApiClientForTest ApiClient { get; } = fixture.ApiClient;
     private FakeEmailSender EmailSender { get; } = fixture.EmailSender;
+
+    private static class ActionType
+    {
+        public const string Report = "report";
+        public const string Buyin = "buyin";
+        public const string Cashout = "cashout";
+    }
 }

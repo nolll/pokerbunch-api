@@ -51,33 +51,44 @@ public partial class IntegrationTests
         result.Model.Should().NotBeNull();
         result.Model.Count.Should().Be(4);
 
-        var player1 = result.Model[0];
-        player1.Name.Should().Be(Data.ManagerDisplayName);
-        player1.Id.Should().Be(Data.ManagerPlayerId);
-        player1.Color.Should().Be("#9e9e9e");
-        player1.UserId.Should().Be(Data.ManagerUserId);
-        player1.UserName.Should().Be(Data.ManagerUserName);
+        var managerPlayer = result.Model.First(o => o.Id == Data.ManagerPlayerId);
+        managerPlayer.Name.Should().Be(Data.ManagerDisplayName);
+        managerPlayer.Id.Should().Be(Data.ManagerPlayerId);
+        managerPlayer.Color.Should().Be("#9e9e9e");
+        managerPlayer.UserId.Should().Be(Data.ManagerUserId);
+        managerPlayer.UserName.Should().Be(Data.ManagerUserName);
+        
+        var playerPlayer = result.Model.First(o => o.Id == Data.PlayerPlayerId);
+        playerPlayer.Name.Should().Be(Data.PlayerName);
+        playerPlayer.Id.Should().Be(Data.PlayerPlayerId);
+        playerPlayer.Color.Should().Be("#9e9e9e");
+        playerPlayer.UserId.Should().BeNull();
+        playerPlayer.UserName.Should().BeNull();
 
-        var player2 = result.Model[1];
-        player2.Name.Should().Be(Data.PlayerName);
-        player2.Id.Should().Be(Data.PlayerPlayerId);
-        player2.Color.Should().Be("#9e9e9e");
-        player2.UserId.Should().BeNull();
-        player2.UserName.Should().BeNull();
+        var tempPlayer = result.Model.First(o => o.Id == Data.TempPlayerId);
+        tempPlayer.Name.Should().Be(Data.TempPlayerName);
+        tempPlayer.Id.Should().Be(Data.TempPlayerId);
+        tempPlayer.Color.Should().Be("#9e9e9e");
+        tempPlayer.UserId.Should().BeNull();
+        tempPlayer.UserName.Should().BeNull();
 
-        var player3 = result.Model[2];
-        player3.Name.Should().Be(Data.TempPlayerName);
-        player3.Id.Should().Be(Data.TempPlayerId);
-        player3.Color.Should().Be("#9e9e9e");
-        player3.UserId.Should().BeNull();
-        player3.UserName.Should().BeNull();
-
-        var player4 = result.Model[3];
-        player4.Name.Should().Be(Data.UserDisplayName);
-        player4.Id.Should().Be(Data.UserPlayerId);
-        player4.Color.Should().Be("#9e9e9e");
-        player4.UserId.Should().Be(Data.UserUserId);
-        player4.UserName.Should().Be(Data.UserUserName);
+        var userPlayer = result.Model.First(o => o.Id == Data.UserPlayerId);
+        userPlayer.Name.Should().Be(Data.UserDisplayName);
+        userPlayer.Id.Should().Be(Data.UserPlayerId);
+        userPlayer.Color.Should().Be("#9e9e9e");
+        userPlayer.UserId.Should().Be(Data.UserUserId);
+        userPlayer.UserName.Should().Be(Data.UserUserName);
+        
+        List<string> orderedNames =
+        [
+            Data.ManagerDisplayName,
+            Data.PlayerName,
+            Data.TempPlayerName,
+            Data.UserDisplayName
+        ];
+        orderedNames.Sort();
+        
+        result.Model.Select(o => o.Name).Should().BeEquivalentTo(orderedNames);
     }
 
     [Fact]
