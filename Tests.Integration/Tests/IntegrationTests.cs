@@ -45,6 +45,7 @@ public partial class IntegrationTests : IAsyncLifetime
     private async Task ClearDatabase()
     {
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_cashgame_checkpoint");
+        await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_event_cashgame");
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_event");
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_cashgame");
         await Db.Database.ExecuteSqlRawAsync("DELETE FROM pb_location");

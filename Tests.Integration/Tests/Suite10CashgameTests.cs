@@ -10,12 +10,14 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 1)]
     public async Task Suite10Cashgame_01AddCashgame()
     {
-        var token = await LoginHelper.GetUserToken();
-        var parameters = new AddCashgamePostModel(Data.BunchLocationId);
-        var result = await ApiClient.Cashgame.Add(token, Data.BunchId, parameters);
+        var user = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(user);
+        var location = await bunch.AddLocation();
+        
+        var parameters = new AddCashgamePostModel(location.Id);
+        var result = await ApiClient.Cashgame.Add(user.Token, bunch.Id, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be(Data.CashgameId);
         result.Model.IsRunning.Should().BeTrue();
     }
 
@@ -23,132 +25,199 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 2)]
     public async Task Suite10Cashgame_02Buyin()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var userToken = await LoginHelper.GetUserToken();
-        await Buyin(managerToken, Data.CashgameId, Data.ManagerPlayerId, 100);
-        await Buyin(userToken, Data.CashgameId, Data.UserPlayerId, 200);
-        await Buyin(managerToken, Data.CashgameId, Data.PlayerPlayerId, 100);
-        await Buyin(managerToken, Data.CashgameId, Data.ManagerPlayerId, 100, 50);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        
+        await Buyin(manager.Token, cashgame.Id, player.Id);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 3)]
     public async Task Suite10Cashgame_03Report()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var userToken = await LoginHelper.GetUserToken();
-        await Report(managerToken, Data.CashgameId, Data.ManagerPlayerId, 75);
-        await Report(userToken, Data.CashgameId, Data.UserPlayerId, 265);
-        await Report(managerToken, Data.CashgameId, Data.PlayerPlayerId, 175);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        
+        await Buyin(manager.Token, cashgame.Id, player.Id);
+        await Report(manager.Token, cashgame.Id, player.Id);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 4)]
     public async Task Suite10Cashgame_04AddUpdateAndDeleteAction()
     {
-        const string actionId = "8";
-        var managerToken = await LoginHelper.GetManagerToken();
-        await Report(managerToken, Data.CashgameId, Data.ManagerPlayerId, 5000);
-        await Update(managerToken, Data.CashgameId, actionId, 5001);
-        await Delete(managerToken, Data.CashgameId, actionId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+
+        var initialReport = DataFactory.Int();
+        await Buyin(manager.Token, cashgame.Id, player.Id);
+        await Report(manager.Token, cashgame.Id, player.Id, initialReport);
+
+        var result = await ApiClient.Cashgame.Get(manager.Token, cashgame.Id);
+        var report = result.Model!.Players.SelectMany(o => o.Actions).First(o => o.Type == ActionType.Report);
+        report.Stack.Should().Be(initialReport);
+
+        var updatedReport = DataFactory.Int();
+        await Update(manager.Token, cashgame.Id, report.Id, updatedReport);
+        
+        result = await ApiClient.Cashgame.Get(manager.Token, cashgame.Id);
+        report = result.Model!.Players.SelectMany(o => o.Actions).First(o => o.Type == ActionType.Report);
+        report.Stack.Should().Be(updatedReport);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 5)]
     public async Task Suite10Cashgame_05GetCurrentCashgameId()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result1 = await ApiClient.Cashgame.Current(userToken, Data.BunchId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgameFixture = await bunch.StartCashgame(location);
+        await Buyin(manager.Token, cashgameFixture.Id, player.Id);
+        
+        var result1 = await ApiClient.Cashgame.Current(manager.Token, bunch.Id);
         result1.Model.Should().NotBeNull();
         result1.Model.Count().Should().Be(1);
-        result1.Model.First().Id.Should().Be(Data.CashgameId);
+        result1.Model.First().Id.Should().Be(cashgameFixture.Id);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 6)]
     public async Task Suite10Cashgame_06GetRunningCashgame()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result1 = await ApiClient.Cashgame.Get(userToken, Data.CashgameId);
-        result1.Model.Should().NotBeNull();
-        result1.Model.Id.Should().Be("1");
-        result1.Model.IsRunning.Should().BeTrue();
-        result1.Model.Players.Count.Should().Be(3);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
 
-        result1.Model.Players[0].Name.Should().Be(Data.PlayerName);
-        result1.Model.Players[0].Actions[0].Type.Should().Be(ActionType.Buyin);
-        result1.Model.Players[0].Actions[0].Added.Should().Be(100);
-        result1.Model.Players[0].Actions[1].Type.Should().Be(ActionType.Report);
-        result1.Model.Players[0].Actions[1].Stack.Should().Be(175);
+        var p1Buyin = DataFactory.Int();
+        var p2Buyin = DataFactory.Int();
+        await Buyin(manager.Token, cashgame.Id, player1.Id, p1Buyin);
+        await Buyin(manager.Token, cashgame.Id, player2.Id, p2Buyin);
+        
+        var p1Report = DataFactory.Int();
+        var p2Report = DataFactory.Int();
+        await Report(manager.Token, cashgame.Id, player1.Id, p1Report);
+        await Report(manager.Token, cashgame.Id, player2.Id, p2Report);
+        
+        var result = await ApiClient.Cashgame.Get(manager.Token, cashgame.Id);
+        result.Model.Should().NotBeNull();
+        result.Model.Id.Should().Be(cashgame.Id);
+        result.Model.IsRunning.Should().BeTrue();
+        result.Model.Players.Count.Should().Be(2);
 
-        result1.Model.Players[1].Name.Should().Be(Data.UserDisplayName);
-        result1.Model.Players[1].Actions[0].Type.Should().Be(ActionType.Buyin);
-        result1.Model.Players[1].Actions[0].Added.Should().Be(200);
-        result1.Model.Players[1].Actions[1].Type.Should().Be(ActionType.Report);
-        result1.Model.Players[1].Actions[1].Stack.Should().Be(265);
+        var p1Results = result.Model.Players.First(o => o.Id == player1.Id);
+        p1Results.Name.Should().Be(player1.Name);
+        p1Results.Actions[0].Type.Should().Be(ActionType.Buyin);
+        p1Results.Actions[0].Added.Should().Be(p1Buyin);
+        p1Results.Actions[1].Type.Should().Be(ActionType.Report);
+        p1Results.Actions[1].Stack.Should().Be(p1Report);
 
-        result1.Model.Players[2].Name.Should().Be(Data.ManagerDisplayName);
-        result1.Model.Players[2].Actions[0].Type.Should().Be(ActionType.Buyin);
-        result1.Model.Players[2].Actions[0].Added.Should().Be(100);
-        result1.Model.Players[2].Actions[1].Type.Should().Be(ActionType.Buyin);
-        result1.Model.Players[2].Actions[1].Added.Should().Be(100);
-        result1.Model.Players[2].Actions[1].Stack.Should().Be(150);
-        result1.Model.Players[2].Actions[2].Type.Should().Be(ActionType.Report);
-        result1.Model.Players[2].Actions[2].Stack.Should().Be(75);
+        var p2Results = result.Model.Players.First(o => o.Id == player2.Id);
+        p2Results.Name.Should().Be(player2.Name);
+        p2Results.Actions[0].Type.Should().Be(ActionType.Buyin);
+        p2Results.Actions[0].Added.Should().Be(p2Buyin);
+        p2Results.Actions[1].Type.Should().Be(ActionType.Report);
+        p2Results.Actions[1].Stack.Should().Be(p2Report);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 7)]
     public async Task Suite10Cashgame_07Cashout()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var managerToken = await LoginHelper.GetManagerToken();
-        await Cashout(userToken, Data.CashgameId, Data.UserPlayerId, 255);
-        await Cashout(managerToken, Data.CashgameId, Data.ManagerPlayerId, 85);
-        await Cashout(managerToken, Data.CashgameId, Data.PlayerPlayerId, 310);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        
+        await Buyin(manager.Token, cashgame.Id, player.Id);
+        await Report(manager.Token, cashgame.Id, player.Id);
+        await Cashout(manager.Token, cashgame.Id, player.Id);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 8)]
     public async Task Suite10Cashgame_08GetFinishedCashgame()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Cashgame.Get(userToken, Data.CashgameId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+
+        var p1Cashout = DataFactory.Int();
+        var p2Cashout = DataFactory.Int();
+        await Buyin(manager.Token, cashgame.Id, player1.Id);
+        await Buyin(manager.Token, cashgame.Id, player2.Id);
+        await Report(manager.Token, cashgame.Id, player1.Id);
+        await Report(manager.Token, cashgame.Id, player2.Id);
+        await Cashout(manager.Token, cashgame.Id, player1.Id, p1Cashout);
+        await Cashout(manager.Token, cashgame.Id, player2.Id, p2Cashout);
+        
+        var result = await ApiClient.Cashgame.Get(manager.Token, cashgame.Id);
         result.Model.Should().NotBeNull();
-        result.Model.Id.Should().Be("1");
+        result.Model.Id.Should().Be(cashgame.Id);
         result.Model.IsRunning.Should().BeFalse();
-        result.Model.Players.Count.Should().Be(3);
+        result.Model.Players.Count.Should().Be(2);
+        
+        var p1Results = result.Model.Players.First(o => o.Id == player1.Id);
+        p1Results.Name.Should().Be(player1.Name);
+        p1Results.Actions.Last().Type.Should().Be(ActionType.Cashout);
+        p1Results.Actions.Last().Stack.Should().Be(p1Cashout);
 
-        result.Model.Players[0].Name.Should().Be(Data.PlayerName);
-        result.Model.Players[0].Actions[2].Type.Should().Be(ActionType.Cashout);
-        result.Model.Players[0].Actions[2].Stack.Should().Be(310);
-
-        result.Model.Players[1].Name.Should().Be(Data.UserDisplayName);
-        result.Model.Players[1].Actions[2].Type.Should().Be(ActionType.Cashout);
-        result.Model.Players[1].Actions[2].Stack.Should().Be(255);
-
-        result.Model.Players[2].Name.Should().Be(Data.ManagerDisplayName);
-        result.Model.Players[2].Actions[3].Type.Should().Be(ActionType.Cashout);
-        result.Model.Players[2].Actions[3].Stack.Should().Be(85);
+        var p2Results = result.Model.Players.First(o => o.Id == player2.Id);
+        p2Results.Name.Should().Be(player2.Name);
+        p2Results.Actions.Last().Type.Should().Be(ActionType.Cashout);
+        p2Results.Actions.Last().Stack.Should().Be(p2Cashout);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 9)]
     public async Task Suite10Cashgame_09AddCashgameToEvent()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var parameters = new UpdateCashgamePostModel(Data.BunchLocationId, Data.EventId);
-        var result = await ApiClient.Cashgame.Update(managerToken, Data.CashgameId, parameters);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var location = await bunch.AddLocation();
+        var @event = await bunch.AddEvent();
+        var cashgame = await bunch.StartCashgame(location);
+        
+        var parameters = new UpdateCashgamePostModel(location.Id, @event.Id);
+        var result = await ApiClient.Cashgame.Update(manager.Token, cashgame.Id, parameters);
         result.Success.Should().BeTrue();
-        result.Model!.Event!.Name.Should().Be(Data.EventName);
+        result.Model!.Event!.Name.Should().Be(@event.Name);
+        
+        var listResult = await ApiClient.Cashgame.ListByEvent(manager.Token, @event.Id);
+        listResult.Success.Should().BeTrue();
+        listResult.Model!.ToList().Count.Should().Be(1);
     }
 
     [Fact]
     [Order(TestSuite.Cashgame, 10)]
     public async Task Suite10Cashgame_10ListCashgamesByBunch()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Cashgame.ListByBunch(userToken, Data.BunchId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        await cashgame.Play(manager, player1, player2);
+        
+        var result = await ApiClient.Cashgame.ListByBunch(manager.Token, bunch.Id);
         result.Success.Should().BeTrue();
 
         var list = result.Model!.ToList();
@@ -159,20 +228,15 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 11)]
     public async Task Suite10Cashgame_11ListCashgamesByBunchAndYear()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Cashgame.ListByBunch(userToken, Data.BunchId, DateTime.Now.Year);
-        result.Success.Should().BeTrue();
-
-        var list = result.Model!.ToList();
-        list.Count.Should().Be(1);
-    }
-
-    [Fact]
-    [Order(TestSuite.Cashgame, 12)]
-    public async Task Suite10Cashgame_12ListCashgamesByEvent()
-    {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Cashgame.ListByEvent(userToken, Data.EventId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        await cashgame.Play(manager, player1, player2);
+        
+        var result = await ApiClient.Cashgame.ListByBunch(manager.Token, bunch.Id, DateTime.Now.Year);
         result.Success.Should().BeTrue();
 
         var list = result.Model!.ToList();
@@ -183,8 +247,18 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 13)]
     public async Task Suite10Cashgame_13ListCashgamesByPlayer()
     {
-        var userToken = await LoginHelper.GetUserToken();
-        var result = await ApiClient.Cashgame.ListByPlayer(userToken, Data.PlayerPlayerId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var player3 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame1 = await bunch.StartCashgame(location);
+        var cashgame2 = await bunch.StartCashgame(location);
+        await cashgame1.Play(manager, player1, player2);
+        await cashgame2.Play(manager, player2, player3);
+        
+        var result = await ApiClient.Cashgame.ListByPlayer(manager.Token, player1.Id);
         result.Success.Should().BeTrue();
 
         var list = result.Model!.ToList();
@@ -195,8 +269,17 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 14)]
     public async Task Suite10Cashgame_14DeleteCashgameInEvent_Fails()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var deleteResult = await ApiClient.Cashgame.Delete(managerToken, Data.CashgameId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var @event = await bunch.AddEvent();
+        var cashgame = await bunch.StartCashgame(location);
+        await cashgame.AddToEvent(manager.Token, @event);
+        await cashgame.Play(manager, player1, player2);
+        
+        var deleteResult = await ApiClient.Cashgame.Delete(manager.Token, cashgame.Id);
         deleteResult.Success.Should().BeFalse();
     }
 
@@ -204,9 +287,18 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 15)]
     public async Task Suite10Cashgame_15RemoveCashgameFromEvent()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var parameters = new UpdateCashgamePostModel(Data.BunchLocationId, null);
-        var result = await ApiClient.Cashgame.Update(managerToken, Data.CashgameId, parameters);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var @event = await bunch.AddEvent();
+        var cashgame = await bunch.StartCashgame(location);
+        await cashgame.AddToEvent(manager.Token, @event);
+        await cashgame.Play(manager, player1, player2);
+        
+        var parameters = new UpdateCashgamePostModel(location.Id, null);
+        var result = await ApiClient.Cashgame.Update(manager.Token, cashgame.Id, parameters);
         result.Success.Should().BeTrue();
         result.Model!.Event.Should().BeNull();
     }
@@ -215,8 +307,15 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 16)]
     public async Task Suite10Cashgame_16DeleteCashgameWithResults_Fails()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var deleteResult = await ApiClient.Cashgame.Delete(managerToken, Data.CashgameId);
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        await cashgame.Play(manager, player1, player2);
+        
+        var deleteResult = await ApiClient.Cashgame.Delete(manager.Token, cashgame.Id);
         deleteResult.Success.Should().BeFalse();
     }
 
@@ -224,45 +323,49 @@ public partial class IntegrationTests
     [Order(TestSuite.Cashgame, 17)]
     public async Task Suite10Cashgame_17ClearCashgameBeforeDeleting_Succeeds()
     {
-        var managerToken = await LoginHelper.GetManagerToken();
-        var cashgameResult = await ApiClient.Cashgame.Get(managerToken, Data.CashgameId);
-        var cashgame = cashgameResult.Model;
-        if (cashgame == null)
-            return;
+        var manager = await Fixture.CreateUser();
+        var bunch = await Fixture.CreateBunch(manager);
+        var player1 = await bunch.AddPlayer();
+        var player2 = await bunch.AddPlayer();
+        var location = await bunch.AddLocation();
+        var cashgame = await bunch.StartCashgame(location);
+        await cashgame.Play(manager, player1, player2);
+        
+        var cashgameResult = await ApiClient.Cashgame.Get(manager.Token, cashgame.Id);
 
-        foreach (var player in cashgame.Players)
+        foreach (var player in cashgameResult.Model!.Players)
         {
             foreach (var action in player.Actions.Reverse())
             {
-                await ApiClient.Action.Delete(managerToken, Data.CashgameId, action.Id);
+                await ApiClient.Action.Delete(manager.Token, cashgame.Id, action.Id);
             }
         }
 
-        var deleteResult = await ApiClient.Cashgame.Delete(managerToken, Data.CashgameId);
+        var deleteResult = await ApiClient.Cashgame.Delete(manager.Token, cashgame.Id);
         deleteResult.Success.Should().BeTrue();
 
-        var getResult = await ApiClient.Cashgame.ListByBunch(managerToken, Data.BunchId);
+        var getResult = await ApiClient.Cashgame.ListByBunch(manager.Token, bunch.Id);
         var list = getResult.Model!.ToList();
         list.Count.Should().Be(0);
     }
 
-    private async Task Buyin(string? token, string cashgameId, string playerId, int buyin, int leftInStack = 0)
+    private async Task Buyin(string? token, string cashgameId, string playerId, int? buyin = null, int leftInStack = 0)
     {
-        var parameters = new AddCashgameActionPostModel(ActionType.Buyin, playerId, buyin, leftInStack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Buyin, playerId, buyin ?? DataFactory.Int(), leftInStack);
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    private async Task Report(string? token, string cashgameId, string playerId, int stack)
+    private async Task Report(string? token, string cashgameId, string playerId, int? stack = null)
     {
-        var parameters = new AddCashgameActionPostModel(ActionType.Report, playerId, 0, stack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Report, playerId, 0, stack ?? DataFactory.Int());
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    private async Task Cashout(string? token, string cashgameId, string playerId, int stack)
+    private async Task Cashout(string? token, string cashgameId, string playerId, int? stack = null)
     {
-        var parameters = new AddCashgameActionPostModel(ActionType.Cashout, playerId, 0, stack);
+        var parameters = new AddCashgameActionPostModel(ActionType.Cashout, playerId, 0, stack ?? DataFactory.Int());
         var result = await ApiClient.Action.Add(token, cashgameId, parameters);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }

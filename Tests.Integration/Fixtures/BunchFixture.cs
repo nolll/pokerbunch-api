@@ -1,4 +1,5 @@
 using Api.Models.BunchModels;
+using Api.Models.CashgameModels;
 using Api.Models.EventModels;
 using Api.Models.LocationModels;
 using Core.Entities;
@@ -66,5 +67,12 @@ public class BunchFixture(
         var parameters = new EventAddPostModel(name ?? dataFactory.String());
         var result = await apiClient.Event.Add(manager.Token, Id, parameters);
         return new EventFixture(result.Model!);
+    }
+    
+    public async Task<CashgameFixture> StartCashgame(LocationFixture location)
+    {
+        var parameters = new AddCashgamePostModel(location.Id);
+        var result = await apiClient.Cashgame.Add(manager.Token, Id, parameters);
+        return new CashgameFixture(apiClient, dataFactory, result.Model!);
     }
 }
