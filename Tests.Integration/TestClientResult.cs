@@ -2,28 +2,15 @@ using System.Net;
 
 namespace Tests.Integration;
 
-public class TestClientResult<T> where T : class
+public class TestClientResult<T>(bool success, HttpStatusCode statusCode, T? model) where T : class
 {
-    public bool Success { get; }
-    public HttpStatusCode StatusCode { get; }
-    public T? Model { get; }
-
-    public TestClientResult(bool success, HttpStatusCode statusCode, T? model)
-    {
-        Success = success;
-        StatusCode = statusCode;
-        Model = model;
-    }
+    public bool Success { get; } = success;
+    public HttpStatusCode StatusCode { get; } = statusCode;
+    public T? Model { get; } = model;
 }
 
-public class TestClientResult
+public class TestClientResult(bool success, HttpStatusCode statusCode)
 {
-    public bool Success { get; }
-    public HttpStatusCode StatusCode { get; }
-
-    public TestClientResult(bool success, HttpStatusCode statusCode)
-    {
-        Success = success;
-        StatusCode = statusCode;
-    }
+    public bool Success { get; } = success;
+    public HttpStatusCode StatusCode { get; } = statusCode;
 }

@@ -20,9 +20,9 @@ public class WebApplicationInTest(
         {
             services.Remove(services.Single(x => x.ServiceType == typeof(IDbContextOptionsConfiguration<PokerBunchDbContext>)));
             services.AddDbContext<PokerBunchDbContext>(options => options.UseNpgsql(connectionString));
-            services.ReplaceSingleton(emailSender);
-            services.ReplaceSingleton<IRandomizer>(new FakeRandomizer());
-            services.ReplaceSingleton<ICache>(new FakeCache());
+            services.ReplaceTransient(emailSender);
+            services.ReplaceTransient<IRandomizer>(new FakeRandomizer());
+            services.ReplaceTransient<ICache>(new FakeCache());
         });
     }
 }
