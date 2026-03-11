@@ -13,10 +13,6 @@ public partial class PbUser
     [Column("user_id")]
     public int UserId { get; set; }
 
-    [Column("token")]
-    [StringLength(50)]
-    public string? Token { get; set; }
-
     [Column("user_name")]
     [StringLength(50)]
     public string UserName { get; set; } = null!;
