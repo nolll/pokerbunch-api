@@ -8,7 +8,7 @@ using Xunit;
 namespace Tests.Integration.Tests;
 
 [Collection(nameof(TestFixture))]
-public abstract class IntegrationTests2(TestFixture fixture) : IAsyncLifetime
+public abstract class IntegrationTests(TestFixture fixture) : IAsyncLifetime
 {
     protected TestFixture Fixture { get; } = fixture;
     protected PokerBunchDbContext Db { get; } = fixture.Db;

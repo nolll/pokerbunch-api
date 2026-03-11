@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class BunchTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class BunchTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task CreateBunch()

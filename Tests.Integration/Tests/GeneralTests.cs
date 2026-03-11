@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class GeneralTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class GeneralTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task Root()

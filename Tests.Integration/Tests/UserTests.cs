@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class UserTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class UserTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task GetUserAsAdmin()

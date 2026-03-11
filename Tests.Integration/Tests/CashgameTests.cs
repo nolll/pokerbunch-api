@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class CashgameTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class CashgameTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task AddCashgame()

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class MasterDataTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class MasterDataTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task MasterDataExists()

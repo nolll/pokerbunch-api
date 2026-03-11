@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class LoginTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class LoginTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task Login()

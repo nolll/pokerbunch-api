@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Tests.Integration.Tests;
 
-public class LocationTests(TestFixture fixture) : IntegrationTests2(fixture)
+public class LocationTests(TestFixture fixture) : IntegrationTests(fixture)
 {
     [Fact]
     public async Task AddLocation()
